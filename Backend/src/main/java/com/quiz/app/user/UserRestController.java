@@ -212,7 +212,6 @@ public class UserRestController {
                     return new BadResponse<User>(arrays.toString()).response();
                 }
 
-                currentUser.setPhoneNumber(newPhoneNumber);
                 savedUser = userService.saveUser(currentUser);
                 break;
             }

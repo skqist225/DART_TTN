@@ -2,9 +2,13 @@ package com.quiz.entity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.IdClass;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
@@ -21,20 +25,27 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "results")
-public class Exam extends BaseEntity {
-
+@Table(name = "exams")
+@IdClass(ExamId.class)
+public class Exam {
+	@Id
 	@ManyToOne
-	private Topic topic;
+	@JoinColumn(name = "class_id")
+	private Class classId;
 
-	@Builder.Default
-	@ManyToMany
-	@JoinTable(name = "exams_students", joinColumns = @JoinColumn(name = "exam_id"), inverseJoinColumns = @JoinColumn(name = "student_id"))
-	private List<User> students = new ArrayList<>();
+	@Id
+	@ManyToOne
+	@JoinColumn(name = "subject_id")
+	private Subject subjectId;
+
+	@Id
+	@Column(name = "try_time")
+	private Integer tryTime;
 
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
-	private LocalDateTime start;
+	private Date examDate;
 
-	@DateTimeFormat(pattern = "dd-MM-yyyy")
-	private LocalDateTime end;
+	private Integer numberOfQuestions;
+
+	private Integer timeInterval;
 }

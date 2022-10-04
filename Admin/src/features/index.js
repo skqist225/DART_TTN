@@ -1,3 +1,5 @@
+export { default as questionSlice } from "./questionSlice";
+
 export { default as amenitySlice } from "./amenity/amenitySlice";
 export { default as authSlice } from "./auth/authSlice";
 export { default as bookingSlice } from "./booking/bookingSlice";
@@ -13,5 +15,3 @@ export { default as stateSlice } from "./address/stateSlice";
 export { default as privacySlice } from "./privacy/privacySlice";
 export { default as currencySlice } from "./currency/currencySlice";
 export { default as dashboardSlice } from "./dashboard/dashboardSlice";
-// export { default as earningSlice } from "./progress/earningSlice";
-// export { default as inboxSlice } from "./inbox/inboxSlice";

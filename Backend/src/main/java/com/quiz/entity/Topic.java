@@ -4,6 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -23,12 +26,10 @@ public class Topic extends BaseEntity {
 
     @Builder.Default
     @JsonIgnore
-    @OneToMany(mappedBy = "topic")
-    private Set<Quiz> quizes = new HashSet<>();
+    @ManyToMany
+    @JoinTable(name = "topics_questions", joinColumns = @JoinColumn(name = "topic_id"), inverseJoinColumns = @JoinColumn(name = "question_id"))
+    private Set<Question> questions = new HashSet<>();
 
     @ManyToOne
     private Subject subject;
-
-    @ManyToOne
-    private User teacher;
 }

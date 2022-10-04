@@ -116,12 +116,6 @@ public class AdminUserRestController {
                 arrays.add(node);
             }
 
-            if (userService.checkPhoneNumber(updateUserDTO.getPhoneNumber(), true, userId)) {
-                ObjectNode node = objectMapper.createObjectNode();
-                node.put("phoneNumber", "Phone number has already been taken");
-                arrays.add(node);
-            }
-
             if (updateUserDTO.getPhoneNumber().length() != 10) {
                 ObjectNode node = objectMapper.createObjectNode();
                 node.put("phoneNumberCharacter", "Phone number must be 10 characters");
@@ -147,7 +141,6 @@ public class AdminUserRestController {
             Sex sex = newSex.equals("MALE") ? Sex.MALE : newSex.equals("FEMALE") ? Sex.FEMALE : Sex.OTHER;
             user.setSex(sex);
 
-            user.setPhoneNumber(updateUserDTO.getPhoneNumber());
 
             if (updateUserDTO.getPassword() != null) {
                 user.setPassword(updateUserDTO.getPassword());

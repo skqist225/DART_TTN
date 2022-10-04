@@ -9,7 +9,7 @@ export { default as UsersPage } from "./UsersPage";
 export { default as UserDetailsPage } from "./UserDetailsPage";
 export { default as AddUserPage } from "./AddUserPage";
 export { default as EditUserPage } from "./EditUserPage";
-export { default as AddRoomPage } from "./AddRoomPage";
+export { default as AddQuestionPage } from "./AddQuestionPage";
 export { default as EditRoomContent } from "./EditRoomContent";
 export { default as EditRoomPage } from "./EditRoomPage";
 export { default as AmenityCategoriesPage } from "./AmenityCategoriesPage";

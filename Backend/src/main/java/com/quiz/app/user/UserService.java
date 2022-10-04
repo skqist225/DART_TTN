@@ -150,15 +150,6 @@ public class UserService {
         return user;
     }
 
-    public boolean checkPhoneNumber(String phoneNumber, Boolean isEdit, Integer userId) {
-        if (!isEdit) {
-            Optional<User> user = userRepository.findByPhoneNumber(phoneNumber);
-            return user.isPresent();
-        } else {
-            return userRepository.findByPhoneNumberAndId(phoneNumber, userId).size() > 0;
-        }
-    }
-
     public boolean checkEmail(String email, Boolean isEdit, Integer userId) {
         if (!isEdit) {
             Optional<User> user = userRepository.findByEmail(email);
@@ -173,21 +164,12 @@ public class UserService {
         return period < 18;
     }
 
-    public User findByPhoneNumber(String phoneNumber) throws UserNotFoundException {
-        User user = userRepository.findByPhoneNumber(phoneNumber)
-                .orElseThrow(() -> new UserNotFoundException("User not found with phone number: " + phoneNumber));
-        return user;
-    }
-
     public CountUserByRole countUserByRole() {
         return new CountUserByRole(userRepository.countUserByRole(1), userRepository.countUserByRole(2),
                 userRepository.countUserByRole(3));
     }
 
-    @Transactional
-    public int verifyPhoneNumber(Integer userId) {
-        return userRepository.verifyPhoneNumber(userId);
-    }
+
 
     @Transactional
     public User saveUser(User user) {

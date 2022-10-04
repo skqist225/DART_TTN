@@ -5,15 +5,11 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import java.util.HashSet;
-import java.util.Set;
 
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Getter
@@ -25,13 +21,8 @@ import javax.persistence.Table;
 @Table(name = "classes")
 public class Class {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, unique = true)
     private String name;
-
-    @JsonIgnore
-    @Builder.Default
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "studentClass")
-    private Set<User> students = new HashSet<>();
 }

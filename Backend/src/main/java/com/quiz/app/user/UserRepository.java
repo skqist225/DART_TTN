@@ -19,10 +19,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     public Optional<User> findByEmail(String email);
 
     @Modifying
-    @Query(value = "UPDATE User u SET u.phoneVerified = true WHERE u.id = ?1")
-    public int verifyPhoneNumber(Integer userId);
-
-    @Modifying
     @Query(value = "delete from users_favorite_rooms where user_id = :userId and room_id = :roomId", nativeQuery = true)
     public void removeFromFavLists(Integer userId, Integer roomId);
 
@@ -30,10 +26,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query("SELECT u FROM User u WHERE CONCAT(u.id, ' ', u.email, ' ', u.firstName, ' ', u.lastName) LIKE %?1%")
     public Page<User> findAll(String keyword, Pageable pageable);
-
-    @Query("UPDATE User u SET u.status = ?2 WHERE u.id = ?1")
-    @Modifying
-    public void updateStatus(Integer id, boolean status);
 
     public Page<User> findAll(Pageable pageable);
 
@@ -43,10 +35,6 @@ public interface UserRepository extends JpaRepository<User, Integer> {
     @Query("SELECT count(*) From User ")
     public Integer getNumberOfUser();
 
-    public Optional<User> findByPhoneNumber(String phoneNumber);
-
-    @Query("SELECT u FROM User u WHERE u.phoneNumber = :phoneNumber AND u.id <> :userId")
-    public List<User> findByPhoneNumberAndId(String phoneNumber, Integer userId);
 
     @Query("SELECT u FROM User u WHERE u.email = :email AND u.id <> :userId")
     public List<User> findByEmailAndId(String email, Integer userId);

@@ -87,16 +87,6 @@ public class AuthRestController {
         return new OkResponse<String>("Log out successfully").response();
     }
 
-    @GetMapping("check-phonenumber/{phoneNumber}")
-    public ResponseEntity<StandardJSONResponse<String>> checkUsedPhoneNumber(
-            @PathVariable(value = "phoneNumber") String phoneNumber, @RequestParam(name = "edit", required = false) Boolean isEdit, @RequestParam(name = "userId", required = false) Integer userId) {
-        if (userService.checkPhoneNumber(phoneNumber, isEdit, userId)) {
-            return new BadResponse<String>("Phone number has already been taken").response();
-        }
-
-        return new OkResponse<String>("Phone number has not been used by anyone yet").response();
-    }
-
     @GetMapping("check-email/{email}")
     public ResponseEntity<StandardJSONResponse<String>> checkUsedEmail(
             @PathVariable(value = "email") String email, @RequestParam(name = "edit", required = false, defaultValue = "false") Boolean isEdit, @RequestParam(name = "userId", required = false) Integer userId) {
@@ -121,12 +111,6 @@ public class AuthRestController {
         if (userService.checkEmail(postUser.getEmail(), false, 0)) {
             ObjectNode node = objectMapper.createObjectNode();
             node.put("email", "Email has already been taken");
-            arrays.add(node);
-        }
-
-        if (userService.checkPhoneNumber(postUser.getPhoneNumber(), false, 0)) {
-            ObjectNode node = objectMapper.createObjectNode();
-            node.put("phoneNumber", "Phone number has already been taken");
             arrays.add(node);
         }
 
@@ -211,32 +195,5 @@ public class AuthRestController {
         }
     }
 
-    @PutMapping("reset-password-by-phonenumber")
-    public ResponseEntity<StandardJSONResponse<String>> resetPassword(
-            @RequestBody ResetPasswordByPhoneNumberDTO resetPassword) {
-        if (resetPassword.getPhone().isEmpty()) {
-            return new BadResponse<String>(
-                    "Phone number is required to reset password. Discard reset password session.").response();
-        }
 
-        String phoneNumber = resetPassword.getPhone();
-        String newPassword = resetPassword.getNewPassword();
-        String confirmNewPassword = resetPassword.getConfirmNewPassword();
-
-        try {
-            User user = userService.findByPhoneNumber(phoneNumber);
-
-            if (!newPassword.equals(confirmNewPassword))
-                return new BadResponse<String>("New password does not match confirm new password").response();
-
-            user.setPassword(userService.getEncodedPassword(newPassword));
-            user.setResetPasswordExpirationTime(null);
-            userService.saveUser(user);
-
-            return new OkResponse<String>("Your password has been changed successfully").response();
-        } catch (UserNotFoundException e) {
-            e.printStackTrace();
-            return new BadResponse<String>(e.getMessage()).response();
-        }
-    }
 }

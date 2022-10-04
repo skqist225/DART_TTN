@@ -14,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.quiz.app.FileUploadUtil;
 import com.quiz.app.common.GetResource;
 import com.quiz.app.exception.RoomNotFoundException;
-import com.quiz.entity.Image;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -108,14 +107,14 @@ public class HostRestController {
                 : DEV_STATIC_PATH + "/" + payload.getHost();
         // FileUploadUtil.cleanDir(uploadDir);
 
-        Set<Image> newImages = new HashSet<>();
-        for (MultipartFile multipartFile : payload.getPhotos()) {
-            if (!multipartFile.isEmpty()) {
-                String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
-                newImages.add(new Image(fileName));
-                FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
-            }
-        }
+//        Set<Image> newImages = new HashSet<>();
+//        for (MultipartFile multipartFile : payload.getPhotos()) {
+//            if (!multipartFile.isEmpty()) {
+//                String fileName = StringUtils.cleanPath(Objects.requireNonNull(multipartFile.getOriginalFilename()));
+//                newImages.add(new Image(fileName));
+//                FileUploadUtil.saveFile(uploadDir, fileName, multipartFile);
+//            }
+//        }
         // do not assign new set // get new set and push it to old set
         // Room room = roomService.findById(Integer.parseInt(payload.getRoomId()));
         // room.getImages().clear();

@@ -88,18 +88,10 @@ public class User {
     @JoinColumn(name = "role_id")
     private Role role;
 
-    @Pattern(regexp = "^[0-9]{10}$", message = "Số điện thoại phải là 10 chữ số")
-    @Column(length = 10, nullable = false, unique = true)
-    private String phoneNumber;
-
     @JsonIgnore
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "address_id")
     private Address address;
-
-    @Builder.Default
-    @Column(name = "phone_verified", columnDefinition = "boolean default false")
-    private boolean phoneVerified = false;
 
     @Builder.Default
     @Column(name = "email_verified", columnDefinition = "boolean default false")
@@ -112,7 +104,7 @@ public class User {
     private LocalDateTime resetPasswordExpirationTime;
 
     @ManyToOne
-    @Column(name = "class_id")
+    @JoinColumn(name = "class_id")
     private Class studentClass;
 
     @Builder.Default
@@ -133,8 +125,7 @@ public class User {
 
         return User.builder().firstName(registerDTO.getFirstName()).lastName(registerDTO.getLastName())
                 .email(registerDTO.getEmail()).password(registerDTO.getPassword()).sex(sex)
-                .birthday(registerDTO.getBirthday()).phoneNumber(registerDTO.getPhoneNumber()).role(role)
-                .phoneVerified(false)
+                .birthday(registerDTO.getBirthday()).role(role)
                 .emailVerified(false)
                 .build();
     }

@@ -35,7 +35,6 @@ public class UserListDTO {
                 .role(user.getRole().getName())
                 .birthday(user.getBirthday())
                 .emailVerified(user.isEmailVerified())
-                .phoneVerified(user.isPhoneVerified())
                 .identityVerified(false)
                 .build();
     }

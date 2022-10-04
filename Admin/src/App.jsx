@@ -8,7 +8,7 @@ import "./charts/ChartjsConfig";
 // Import pages
 import Dashboard from "./pages/Dashboard";
 import {
-    AddRoomPage,
+    AddQuestionPage,
     AddUserPage,
     EditRoomPage,
     EditUserPage,
@@ -35,7 +35,7 @@ function App() {
                 <Route path='/rooms' element={<Dashboard />} />
                 <Route path='/rooms/:roomid' element={<RoomDetailsPage />} />
                 <Route path='/rooms/:roomid/edit' element={<EditRoomPage />} />
-                <Route path='/add/room' element={<AddRoomPage />} />
+                <Route path='/add/question' element={<AddQuestionPage />} />
 
                 <Route path='/bookings' element={<Dashboard />} />
                 <Route path='/users' element={<Dashboard />} />
