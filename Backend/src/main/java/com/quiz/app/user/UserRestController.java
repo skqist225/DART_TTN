@@ -3,9 +3,6 @@ package com.quiz.app.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.quiz.app.FileUploadUtil;
-// import com.quiz.app.address.AddressService;
-import com.quiz.app.common.GetResource;
 import com.quiz.app.exception.UserNotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
@@ -13,14 +10,13 @@ import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.user.dto.PostUpdateUserDTO;
 import com.quiz.app.user.dto.UserSexDTO;
+import com.quiz.app.utils.ProcessImage;
 import com.quiz.entity.Sex;
 import com.quiz.entity.User;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -31,26 +27,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.attribute.FileAttribute;
-import java.nio.file.attribute.PosixFilePermission;
-import java.nio.file.attribute.PosixFilePermissions;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/user/")
 public class UserRestController {
 
-    public final String DEV_STATIC_PATH = "src/main/resources/static/user_images/";
-    public final String PROD_STATIC_PATH = "/opt/tomcat/webapps/ROOT/WEB-INF/classes/static/user_images/";
+    public final String DEV_STATIC_DIR = "src/main/resources/static/user_images/";
+    public final String PROD_STATIC_DIR = "/opt/tomcat/webapps/ROOT/WEB-INF/classes/static/user_images/";
+    public final String PROD_STATIC_PATH = "static/user_images/";
+
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -220,37 +210,14 @@ public class UserRestController {
         return new OkResponse<User>(savedUser).response();
     }
 
-    public User updateAvatar(User user, MultipartFile newAvatar, boolean isCallFromInternal, String environment)
+    public void updateAvatar(User user, MultipartFile newAvatar, boolean isCallFromInternal, String environment)
             throws IOException {
-        if (newAvatar != null) {
-            String fileName = StringUtils.cleanPath(newAvatar.getOriginalFilename());
-            String uploadDir = "";
-            if (environment.equals("development")) {
-                uploadDir = DEV_STATIC_PATH + user.getId() + "/";
-            } else {
-                String filePath = PROD_STATIC_PATH + user.getId() + "/";
-                Path uploadPath = Paths.get(filePath);
-                if (!Files.exists(uploadPath)) {
-                    Set<PosixFilePermission> permissions = PosixFilePermissions.fromString("rwxr--r--");
-                    FileAttribute<Set<PosixFilePermission>> fileAttributes = PosixFilePermissions
-                            .asFileAttribute(permissions);
+        String devUploadDir = String.format("%s/%s/", DEV_STATIC_DIR, user.getId());
+        String prodUploadDir = String.format("%s/%s/", PROD_STATIC_DIR, user.getId());
+        String staticPath = String.format("%s/%s/", PROD_STATIC_PATH, user.getId());
 
-                    Files.createDirectories(uploadPath, fileAttributes);
-                }
-                uploadDir = GetResource.getResourceAsFile("static/user_images/" + user.getId() + "/");
-                System.out.println(uploadDir);
-            }
-
-            FileUploadUtil.cleanDir(uploadDir);
-            FileUploadUtil.saveFile(uploadDir, fileName, newAvatar);
-            user.setAvatar(fileName);
-        } else {
-            if (isCallFromInternal) {
-                return null;
-            }
-        }
-
-        return user;
+        ProcessImage.uploadImage(devUploadDir, prodUploadDir, staticPath, newAvatar, environment);
+        user.setAvatar(newAvatar.getOriginalFilename());
     }
 
     @PutMapping("update-avatar")
@@ -259,13 +226,9 @@ public class UserRestController {
             @RequestParam(name = "newAvatar", required = false) MultipartFile newAvatar) throws IOException {
         User user = userDetailsImpl.getUser();
 
-        User savedAvatarUser = updateAvatar(user, newAvatar, true, environment);
-        if (savedAvatarUser != null) {
-            User savedUser = userService.saveUser(savedAvatarUser);
-            return new OkResponse<>(savedUser).response();
-        }
-
-        return new BadResponse<User>("Please add image").response();
+        updateAvatar(user, newAvatar, true, environment);
+        User savedUser = userService.saveUser(user);
+        return new OkResponse<>(savedUser).response();
     }
 
     @GetMapping("info")

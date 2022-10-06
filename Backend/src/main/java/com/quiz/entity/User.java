@@ -31,7 +31,6 @@ import javax.persistence.Transient;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.PastOrPresent;
-import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -52,7 +51,7 @@ public class User {
 
     @JsonIgnore
     private String avatar;
-
+    
     private String token;
 
     @NotEmpty(message = "Tên không được để trống.")
@@ -123,7 +122,7 @@ public class User {
             role = new Role(registerDTO.getRoleId());
         }
 
-        return User.builder().firstName(registerDTO.getFirstName()).lastName(registerDTO.getLastName())
+        return User.builder().id(registerDTO.getId()).firstName(registerDTO.getFirstName()).lastName(registerDTO.getLastName())
                 .email(registerDTO.getEmail()).password(registerDTO.getPassword()).sex(sex)
                 .birthday(registerDTO.getBirthday()).role(role)
                 .emailVerified(false)

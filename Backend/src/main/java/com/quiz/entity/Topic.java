@@ -32,4 +32,12 @@ public class Topic extends BaseEntity {
 
     @ManyToOne
     private Subject subject;
+
+    public void addQuestion(Question question) {
+        this.questions.add(question);
+    }
+
+    public void removeQuestion(Question question) {
+        this.questions.remove(question);
+    }
 }

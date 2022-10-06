@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.quiz.app.FileUploadUtil;
-import com.quiz.app.common.GetResource;
-import com.quiz.app.exception.RoomNotFoundException;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -23,7 +21,6 @@ import java.nio.file.attribute.FileAttribute;
 import java.nio.file.attribute.PosixFilePermission;
 import java.nio.file.attribute.PosixFilePermissions;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
@@ -73,7 +70,7 @@ public class HostRestController {
 
                 Files.createDirectories(uploadPath, fileAttributes);
             }
-            uploadDir = GetResource.getResourceAsFile(shortFilePath);
+//            uploadDir = GetResource.getResourceAsFile(shortFilePath);
         }
 
         return uploadDir;
@@ -101,7 +98,7 @@ public class HostRestController {
 
     @PostMapping("update/upload-room-photos")
     public String updatedUploadRoomPhotos(@ModelAttribute PhotoDTO payload)
-            throws IOException, NumberFormatException, RoomNotFoundException {
+            throws IOException, NumberFormatException {
         String uploadDir = !payload.getHost().equals("test@gmail.com")
                 ? DEV_STATIC_PATH + "/" + payload.getHost() + "/" + payload.getRoomId()
                 : DEV_STATIC_PATH + "/" + payload.getHost();

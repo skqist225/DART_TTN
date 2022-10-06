@@ -14,9 +14,9 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @ToString
 public class RegisterDTO {
+    private String id;
     private String firstName;
     private String lastName;
-    private String phoneNumber;
     private String email;
     private String password;
     private String sex;

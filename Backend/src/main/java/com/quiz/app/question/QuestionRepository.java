@@ -7,4 +7,6 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QuestionRepository extends CrudRepository<Question, Integer> {
+
+    public Question findByContent(String content);
 }
