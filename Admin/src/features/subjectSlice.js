@@ -3,11 +3,48 @@ import api from "../axios";
 
 export const fetchAllSubjects = createAsyncThunk(
     "subject/fetchAllSubjects",
-    async ({ page = 1, query = "" }, { rejectWithValue }) => {
+    async (
+        { page = 1, query = "", sortField = "id", sortDir = "asc" },
+        { dispatch, getState, rejectWithValue }
+    ) => {
         try {
+            const filterArray = [];
+
+            if (query) {
+                filterArray.push({
+                    field: "query",
+                    value: query,
+                });
+            }
+
+            if (page !== 1) {
+                filterArray.push({
+                    field: "page",
+                    value: page,
+                });
+            }
+
+            if (sortField !== "id") {
+                filterArray.push({
+                    field: "sortField",
+                    value: sortField,
+                });
+            }
+
+            if (sortDir !== "asc") {
+                filterArray.push({
+                    field: "sortDir",
+                    value: sortDir,
+                });
+            }
+
+            dispatch(setFilterObject(filterArray));
+
             const {
                 data: { subjects, totalElements, totalPages },
-            } = await api.get(`/subjects?page=${page}&query=${query}`);
+            } = await api.get(
+                `/subjects?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}`
+            );
 
             return { subjects, totalElements, totalPages };
         } catch ({ data: { error } }) {
@@ -33,7 +70,7 @@ export const addSubject = createAsyncThunk(
     "subject/addSubject",
     async (postData, { rejectWithValue }) => {
         try {
-            const data = await api.post(`/subjects/save`, postData);
+            const { data } = await api.post(`/subjects/save`, postData);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -46,7 +83,7 @@ export const editSubject = createAsyncThunk(
     "subject/editSubject",
     async (postData, { rejectWithValue }) => {
         try {
-            const data = await api.post(`/subjects/save`, postData);
+            const { data } = await api.post(`/subjects/save?isEdit=true`, postData);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -57,9 +94,9 @@ export const editSubject = createAsyncThunk(
 
 export const deleteSubject = createAsyncThunk(
     "subject/deleteSubject",
-    async (_, { rejectWithValue }) => {
+    async (subjectId, { rejectWithValue }) => {
         try {
-            const data = await api.delete(`/subjects/delete`);
+            const { data } = await api.delete(`/subjects/${subjectId}/delete`);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -73,14 +110,19 @@ const initialState = {
     subjects: [],
     totalElements: 0,
     totalPages: 0,
-    subject: null,
+    editedsubject: null,
+    filterObject: {
+        page: 1,
+        query: "",
+        sortField: "id",
+        sortDir: "asc",
+    },
+    errorObject: null,
     addSubject: {
         successMessage: null,
-        errorObject: null,
     },
     editSubject: {
         successMessage: null,
-        errorObject: null,
     },
     deleteSubject: {
         successMessage: null,
@@ -92,16 +134,34 @@ const subjectSlice = createSlice({
     name: "subject",
     initialState,
     reducers: {
-        clearAddSubjectState(state) {
+        clearSubjectState(state) {
             state.addSubject.successMessage = null;
-            state.addSubject.errorObject = null;
+            state.errorObject = null;
+
+            state.editSubject.successMessage = null;
+
+            state.deleteSubject.successMessage = null;
+            state.deleteSubject.errorObject = null;
         },
         clearErrorField(state, { payload }) {
             if (payload) {
-                if (state.addSubject.errorObject && state.addSubject.errorObject[payload]) {
-                    delete state.addSubject.errorObject[payload];
+                if (state.errorObject && state.errorObject[payload]) {
+                    delete state.errorObject[payload];
                 }
             }
+        },
+        setFilterObject(state, { payload }) {
+            if (payload) {
+                payload.forEach(({ field, value }) => {
+                    state.filterObject = {
+                        ...state.filterObject,
+                        [field]: value,
+                    };
+                });
+            }
+        },
+        setEditedsubject(state, { payload }) {
+            state.editedSubject = payload;
         },
     },
     extraReducers: builder => {
@@ -116,16 +176,16 @@ const subjectSlice = createSlice({
 
             .addCase(findSubject.pending, (state, { payload }) => {})
             .addCase(findSubject.fulfilled, (state, { payload }) => {
-                state.subject = payload.data;
+                // state.subject = payload.data;
             })
             .addCase(findSubject.rejected, (state, { payload }) => {})
 
             .addCase(addSubject.pending, (state, _) => {
                 state.addSubject.successMessage = null;
-                state.addSubject.errorObject = null;
+                state.errorObject = null;
             })
             .addCase(addSubject.fulfilled, (state, { payload }) => {
-                if (payload.data) {
+                if (payload) {
                     state.addSubject.successMessage = "Thêm môn học thành công";
                 }
             })
@@ -134,14 +194,14 @@ const subjectSlice = createSlice({
                     const errors = JSON.parse(payload);
                     errors.forEach(error => {
                         if (error.id) {
-                            state.addSubject.errorObject = {
-                                ...state.addSubject.errorObject,
+                            state.errorObject = {
+                                ...state.errorObject,
                                 id: error.id,
                             };
                         }
                         if (error.name) {
-                            state.addSubject.errorObject = {
-                                ...state.addSubject.errorObject,
+                            state.errorObject = {
+                                ...state.errorObject,
                                 name: error.name,
                             };
                         }
@@ -151,13 +211,31 @@ const subjectSlice = createSlice({
 
             .addCase(editSubject.pending, (state, _) => {
                 state.editSubject.successMessage = null;
-                state.editSubject.errorMessage = null;
+                state.errorObject = null;
             })
             .addCase(editSubject.fulfilled, (state, { payload }) => {
-                state.editSubject.successMessage = payload;
+                if (payload) {
+                    state.editSubject.successMessage = "Chỉnh sửa môn học thành công";
+                }
             })
             .addCase(editSubject.rejected, (state, { payload }) => {
-                state.editSubject.errorMessage = payload;
+                if (payload) {
+                    const errors = JSON.parse(payload);
+                    errors.forEach(error => {
+                        if (error.id) {
+                            state.errorObject = {
+                                ...state.errorObject,
+                                id: error.id,
+                            };
+                        }
+                        if (error.name) {
+                            state.errorObject = {
+                                ...state.errorObject,
+                                name: error.name,
+                            };
+                        }
+                    });
+                }
             })
 
             .addCase(deleteSubject.pending, (state, _) => {
@@ -165,7 +243,7 @@ const subjectSlice = createSlice({
                 state.deleteSubject.errorMessage = null;
             })
             .addCase(deleteSubject.fulfilled, (state, { payload }) => {
-                state.deleteSubject.successMessage = payload;
+                state.deleteSubject.successMessage = payload.data;
             })
             .addCase(deleteSubject.rejected, (state, { payload }) => {
                 state.deleteSubject.errorMessage = payload;
@@ -174,7 +252,7 @@ const subjectSlice = createSlice({
 });
 
 export const {
-    actions: { clearAddSubjectState, clearErrorField },
+    actions: { clearSubjectState, clearErrorField, setFilterObject, setEditedsubject },
 } = subjectSlice;
 
 export const subjectState = state => state.subject;

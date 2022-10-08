@@ -7,7 +7,8 @@ export { default as Input } from "./utils/userInputs/Input";
 export { default as ErrorMessage } from "./utils/errors/ErrorMessage";
 
 // forms
-export { default as Form } from "./utils/form/Form";
+export { default as Form } from "./utils/forms/Form";
+// export { default as ModalForm } from "./utils/forms/ModalForm";
 
 // frames
 export { default as Frame } from "./utils/frames/Frame";

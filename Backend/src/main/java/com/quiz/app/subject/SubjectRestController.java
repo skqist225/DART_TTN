@@ -11,7 +11,6 @@ import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.subject.dto.PostCreateSubjectDTO;
 import com.quiz.app.subject.dto.SubjectsDTO;
 import com.quiz.entity.Subject;
-import com.quiz.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -73,13 +71,14 @@ public class SubjectRestController {
 
     @PostMapping("save")
     public ResponseEntity<StandardJSONResponse<Subject>> saveSubject(
-            @RequestBody PostCreateSubjectDTO postCreateSubjectDTO) {
+            @RequestBody PostCreateSubjectDTO postCreateSubjectDTO,
+            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
+    ) {
         arrayNode = objectMapper.createArrayNode();
         Subject savedSubject = null;
 
         String id = postCreateSubjectDTO.getId();
         String name = postCreateSubjectDTO.getName();
-        boolean isEdit = postCreateSubjectDTO.isEdit();
 
         if (Objects.isNull(id)) {
             addError("id", "Mã môn học không được để trống");

@@ -7,12 +7,7 @@ import { useForm } from "react-hook-form";
 import { Frame, Form, Input } from "../../components";
 import { tailwindCss } from "../../tailwind";
 import { subjectSchema } from "../../validation";
-import {
-    addSubject,
-    clearAddSubjectState,
-    clearErrorField,
-    subjectState,
-} from "../../features/subjectSlice";
+import { addSubject, clearErrorField, subjectState } from "../../features/subjectSlice";
 import { useSelector } from "react-redux";
 import { callToast } from "../../helpers";
 import $ from "jquery";
@@ -60,7 +55,8 @@ const AddSubjectPage = () => {
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const {
-        addSubject: { successMessage, errorObject },
+        addSubject: { successMessage },
+        errorObject,
     } = useSelector(subjectState);
 
     const {
@@ -74,12 +70,6 @@ const AddSubjectPage = () => {
     const onSubmit = data => {
         dispatch(addSubject(data));
     };
-
-    useEffect(() => {
-        return () => {
-            dispatch(clearAddSubjectState());
-        };
-    }, []);
 
     useEffect(() => {
         if (successMessage) {

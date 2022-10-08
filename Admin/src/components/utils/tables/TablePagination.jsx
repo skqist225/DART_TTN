@@ -1,8 +1,8 @@
 import React from "react";
 
-function TablePagination({ totalElements }) {
+function TablePagination({ totalElements, totalPages }) {
     return (
-        <nav class='flex justify-between items-center pt-4' aria-label='Table navigation'>
+        <nav class='col-flex justify-between items-center pt-4' aria-label='Table navigation'>
             <span class='text-sm font-normal text-gray-500 dark:text-gray-400'>
                 Showing <span class='font-semibold text-gray-900 dark:text-white'>1-10</span> of{" "}
                 <span class='font-semibold text-gray-900 dark:text-white'>{totalElements}</span>
@@ -29,47 +29,16 @@ function TablePagination({ totalElements }) {
                         </svg>
                     </a>
                 </li>
-                <li>
-                    <a
-                        href='#'
-                        class='py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-                    >
-                        1
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href='#'
-                        class='py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-                    >
-                        2
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href='#'
-                        aria-current='page'
-                        class='z-10 py-2 px-3 leading-tight text-blue-600 bg-blue-50 border border-blue-300 hover:bg-blue-100 hover:text-blue-700 dark:border-gray-700 dark:bg-gray-700 dark:text-white'
-                    >
-                        3
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href='#'
-                        class='py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-                    >
-                        ...
-                    </a>
-                </li>
-                <li>
-                    <a
-                        href='#'
-                        class='py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
-                    >
-                        100
-                    </a>
-                </li>
+                {Array.from({ length: totalPages }).map((page, index) => (
+                    <li key={index + 1}>
+                        <a
+                            href='#'
+                            class='py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+                        >
+                            {index + 1}
+                        </a>
+                    </li>
+                ))}
                 <li>
                     <a
                         href='#'

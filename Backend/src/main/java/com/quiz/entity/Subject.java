@@ -1,5 +1,6 @@
 package com.quiz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.quiz.app.subject.dto.PostCreateSubjectDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -30,10 +31,12 @@ public class Subject {
 	@Column(nullable = false, unique = true)
 	private String name;
 
+	@JsonIgnore
 	@Builder.Default
 	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
 	private List<Topic> topics = new ArrayList<>();
 
+	@JsonIgnore
 	@Builder.Default
 	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
 	private List<Question> questions = new ArrayList<>();
