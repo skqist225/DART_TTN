@@ -1,5 +1,13 @@
-export { default as RoomDetails } from "./room/RoomDetails";
+//user inputs
+export { default as Select } from "./utils/userInputs/Select";
+export { default as TextArea } from "./utils/userInputs/TextArea";
+export { default as Input } from "./utils/userInputs/Input";
 
-export { default as Select } from "./utils/Select";
-export { default as TextArea } from "./utils/TextArea";
-export { default as ErrorMessage } from "./utils/ErrorMessage";
+// errors
+export { default as ErrorMessage } from "./utils/errors/ErrorMessage";
+
+// forms
+export { default as Form } from "./utils/form/Form";
+
+// frames
+export { default as Frame } from "./utils/frames/Frame";

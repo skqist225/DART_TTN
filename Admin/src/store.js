@@ -1,43 +1,10 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import {
-    amenitySlice,
-    authSlice,
-    bookingSlice,
-    bookingDetailSlice,
-    categorySlice,
-    citySlice,
-    countrySlice,
-    currencySlice,
-    privacySlice,
-    ruleSlice,
-    roomSlice,
-    userSlice,
-    stateSlice,
-    dashboardSlice,
-    // reviewSlice,
-    // earningSlice,
-    // inboxSlice,
-} from "./features";
+import { questionSlice, userSlice } from "./features";
 
 const rootReducer = combineReducers({
-    amenity: amenitySlice,
-    auth: authSlice,
-    booking: bookingSlice,
-    bookingDetail: bookingDetailSlice,
-    category: categorySlice,
-    city: citySlice,
-    country: countrySlice,
-    currency: currencySlice,
-    // earning: earningSlice,
-    // inbox: inboxSlice,
-    privacy: privacySlice,
-    rule: ruleSlice,
-    room: roomSlice,
-    // review: reviewSlice,
+    question: questionSlice,
     user: userSlice,
-    state: stateSlice,
-    dashboard: dashboardSlice,
 });
 
 const localUser = localStorage.getItem("admin-user")

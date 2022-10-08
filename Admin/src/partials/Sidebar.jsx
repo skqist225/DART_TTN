@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
+import SidebarElement from "./SidebarElement";
 
 import SidebarLinkGroup from "./SidebarLinkGroup";
 
@@ -327,6 +328,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                     );
                                 }}
                             </SidebarLinkGroup>
+
+                            <SidebarElement pathname={pathname} name='subjects' title='Môn học' />
 
                             <li
                                 className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${

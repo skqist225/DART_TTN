@@ -1,20 +1,10 @@
 import React, { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-
 import "./css/style.scss";
-
 import "./charts/ChartjsConfig";
 
-// Import pages
 import Dashboard from "./pages/Dashboard";
-import {
-    AddQuestionPage,
-    AddUserPage,
-    EditRoomPage,
-    EditUserPage,
-    RoomDetailsPage,
-    UserDetailsPage,
-} from "./pages";
+import { AddQuestionPage, AddSubjectPage } from "./pages";
 import LoginPage from "./pages/LoginPage";
 
 function App() {
@@ -32,12 +22,19 @@ function App() {
                 <Route exact path='/' element={<Dashboard />} />
                 <Route path='/login' element={<LoginPage />} />
 
-                <Route path='/rooms' element={<Dashboard />} />
-                <Route path='/rooms/:roomid' element={<RoomDetailsPage />} />
-                <Route path='/rooms/:roomid/edit' element={<EditRoomPage />} />
-                <Route path='/add/question' element={<AddQuestionPage />} />
+                <Route path='/subjects'>
+                    {/* <Route path='' element={<Dashboard />} /> */}
+                    <Route path='add' element={<AddSubjectPage />} />
+                    <Route path='edit' element={<AddSubjectPage />} />
+                </Route>
 
-                <Route path='/bookings' element={<Dashboard />} />
+                <Route path='/questions'>
+                    {/* <Route path='' element={<Dashboard />} /> */}
+                    <Route path='add' element={<AddQuestionPage />} />
+                    <Route path='edit' element={<AddQuestionPage />} />
+                </Route>
+
+                {/* <Route path='/bookings' element={<Dashboard />} />
                 <Route path='/users' element={<Dashboard />} />
                 <Route path='/users/:userid' element={<UserDetailsPage />} />
                 <Route path='/add/user' element={<AddUserPage />} />
@@ -46,7 +43,7 @@ function App() {
                 <Route path='/amenities' element={<Dashboard />} />
                 <Route path='/amenities/categories' element={<Dashboard />} />
                 <Route path='/rules' element={<Dashboard />} />
-                <Route path='/privacies' element={<Dashboard />} />
+                <Route path='/privacies' element={<Dashboard />} /> */}
             </Routes>
         </>
     );
