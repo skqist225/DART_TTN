@@ -3,6 +3,7 @@ export { default as AddQuestionPage } from "./questions/AddQuestionPage";
 
 //Subjects
 export { default as AddSubjectPage } from "./subjects/AddSubjectPage.jsx";
+export { default as SubjectsPage } from "./subjects/SubjectsPage.jsx";
 
 export { default as RoomsPage } from "./RoomsPage";
 export { default as UsersPage } from "./UsersPage";

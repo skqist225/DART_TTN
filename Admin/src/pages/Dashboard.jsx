@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Sidebar from "../partials/Sidebar";
 import Header from "../partials/Header";
 import { useDispatch, useSelector } from "react-redux";
-import { UsersPage } from ".";
+import { UsersPage, SubjectsPage } from ".";
 import { useLocation, useNavigate } from "react-router-dom";
 import { authState } from "../features/auth/authSlice";
 import SimpleStatNumber from "../components/booking/SimpleStatNumber";
@@ -11,6 +11,7 @@ import StackedBarChart from "../partials/dashboard/DashboardCard09";
 import LineChart from "../partials/dashboard/LineChart";
 import LineChartDashboard from "../partials/dashboard/LineChartDashboard";
 import CircleChart from "../partials/dashboard/CircleChart";
+import { userState } from "../features/user/userSlice";
 
 function Dashboard() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -26,12 +27,9 @@ function Dashboard() {
 
     return (
         <div className='flex h-screen overflow-hidden'>
-            {/* Sidebar */}
             <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
-            {/* Content area */}
             <div className='relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden'>
-                {/*  Site header */}
                 <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
                 <main>

@@ -11,6 +11,7 @@ function Input({
     type = "text",
     placeholder = "",
     required = true,
+    onKeyDown,
 }) {
     return (
         <>
@@ -23,12 +24,13 @@ function Input({
             <input
                 type={type}
                 id={name}
-                class={`${inputClassname} ${error && "bg-red-50 border border-red-500"}`}
+                className={`${inputClassname} ${error && "bg-red-50 border border-red-500"}`}
                 placeholder={placeholder}
                 required={required}
                 {...register(name)}
+                onKeyDown={onKeyDown}
             />
-            {error && <ErrorMessage message={error.message} />}
+            {error && <ErrorMessage message={error} />}
         </>
     );
 }

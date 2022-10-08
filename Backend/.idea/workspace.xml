@@ -5,8 +5,35 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/dto/SubjectsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/errors/ErrorMessage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/errors/ErrorMessage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/frames/Frame.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/frames/Frame.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/userInputs/Input.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/userInputs/Input.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/features/exampleSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/exampleSlice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/features/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/features/question/questionSlice.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/images/user-36-01.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/images/user-36-02.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/images/user-36-03.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/images/user-36-04.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/images/user-36-05.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/images/user-36-06.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/images/user-36-07.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/images/user-36-08.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/images/user-36-09.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/images/user-avatar-32.png" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/Dashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/subjects/AddSubjectPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/subjects/AddSubjectPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/store.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/store.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/tailwind/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/tailwind/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql /sql.txt" beforeDir="false" afterPath="$PROJECT_DIR$/sql /sql.txt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/dto/PostCreateSubjectDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/dto/PostCreateSubjectDTO.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Subject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Subject.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -98,7 +125,7 @@
       <workItem from="1664811928846" duration="2353000" />
       <workItem from="1664891120511" duration="6895000" />
       <workItem from="1665064572363" duration="9417000" />
-      <workItem from="1665199342860" duration="1460000" />
+      <workItem from="1665199342860" duration="8282000" />
     </task>
     <servers />
   </component>

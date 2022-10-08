@@ -91,11 +91,7 @@ const questionSlice = createSlice({
             .addCase(findQuestion.rejected, (state, { payload }) => {})
 
             .addCase(addQuestion.pending, (state, { payload }) => {})
-            .addCase(addQuestion.fulfilled, (state, { payload }) => {
-                if (payload.data) {
-                    state.addSubject.successMessage = "Thêm câu hỏi thành công";
-                }
-            })
+            .addCase(addQuestion.fulfilled, (state, { payload }) => {})
             .addCase(addQuestion.rejected, (state, { payload }) => {})
 
             .addCase(editQuestion.pending, (state, { payload }) => {})

@@ -1,6 +1,7 @@
 import React from "react";
 import Header from "../../../partials/Header";
 import Sidebar from "../../../partials/Sidebar";
+import Toast from "../../notify/Toast";
 
 function Frame({ sidebarOpen, setSidebarOpen, children, title }) {
     return (
@@ -10,6 +11,7 @@ function Frame({ sidebarOpen, setSidebarOpen, children, title }) {
                 <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} title={title} />
                 {children}
             </div>
+            <Toast />
         </div>
     );
 }

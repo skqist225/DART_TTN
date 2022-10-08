@@ -10,6 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 public class PostCreateSubjectDTO {
-    private Integer id;
+    private String id;
     private String name;
+    private boolean isEdit = false;
 }

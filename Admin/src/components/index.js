@@ -11,3 +11,6 @@ export { default as Form } from "./utils/form/Form";
 
 // frames
 export { default as Frame } from "./utils/frames/Frame";
+
+//tables
+export { default as Table } from "./utils/tables/Table";
