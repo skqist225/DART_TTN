@@ -5,38 +5,30 @@ export const fetchAllSubjects = createAsyncThunk(
     "subject/fetchAllSubjects",
     async (
         { page = 1, query = "", sortField = "id", sortDir = "asc" },
-        { dispatch, getState, rejectWithValue }
+        { dispatch, rejectWithValue }
     ) => {
         try {
             const filterArray = [];
 
-            if (query) {
-                filterArray.push({
-                    field: "query",
-                    value: query,
-                });
-            }
+            filterArray.push({
+                field: "query",
+                value: query,
+            });
 
-            if (page !== 1) {
-                filterArray.push({
-                    field: "page",
-                    value: page,
-                });
-            }
+            filterArray.push({
+                field: "page",
+                value: page,
+            });
 
-            if (sortField !== "id") {
-                filterArray.push({
-                    field: "sortField",
-                    value: sortField,
-                });
-            }
+            filterArray.push({
+                field: "sortField",
+                value: sortField,
+            });
 
-            if (sortDir !== "asc") {
-                filterArray.push({
-                    field: "sortDir",
-                    value: sortDir,
-                });
-            }
+            filterArray.push({
+                field: "sortDir",
+                value: sortDir,
+            });
 
             dispatch(setFilterObject(filterArray));
 

@@ -86,6 +86,11 @@ public class SubjectService {
             return false;
         }
     }
+
+    public List<Subject> findAll() {
+        return (List<Subject>) subjectRepository.findAll();
+    }
+
     public Page<Subject> findAllSubjects(Map<String, String> filters) {
         int page = Integer.parseInt(filters.get("page"));
         String searchQuery = filters.get("query");
@@ -93,7 +98,7 @@ public class SubjectService {
         String sortField = filters.get("sortField");
 
         Sort sort = Sort.by(sortField);
-        sort = sortDir.equals("ASC") ? sort.ascending() : sort.descending();
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
         Pageable pageable = PageRequest.of(page - 1, MAX_SUBJECTS_PER_PAGE, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -113,8 +118,8 @@ public class SubjectService {
         }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
+        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
 
-//        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
         TypedQuery<Subject> typedQuery = entityManager.createQuery(criteriaQuery);
 
         int totalRows = typedQuery.getResultList().size();

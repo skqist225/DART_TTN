@@ -1,12 +1,11 @@
 //Questions
 export { default as AddQuestionPage } from "./questions/AddQuestionPage";
+export { default as QuestionsPage } from "./questions/QuestionsPage";
 
 //Subjects
-export { default as AddSubjectPage } from "./subjects/AddSubjectPage.jsx";
 export { default as SubjectsPage } from "./subjects/SubjectsPage.jsx";
 
-export { default as RoomsPage } from "./RoomsPage";
-export { default as UsersPage } from "./UsersPage";
-export { default as UserDetailsPage } from "./UserDetailsPage";
-export { default as AddUserPage } from "./AddUserPage";
-export { default as EditUserPage } from "./EditUserPage";
+//Users
+export { default as UsersPage } from "./users/UsersPage";
+export { default as AddUserPage } from "./users/AddUserPage";
+export { default as EditUserPage } from "./users/EditUserPage";

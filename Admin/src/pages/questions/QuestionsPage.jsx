@@ -1,21 +1,69 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { Frame, SubjectModalBody, SubjectTableBody, Table } from "../../components";
-import {
-    addSubject,
-    clearSubjectState,
-    editSubject,
-    fetchAllSubjects,
-    subjectState,
-} from "../../features/subjectSlice";
+import { Frame, QuestionModalBody, QuestionTableBody, Table } from "../../components";
 import $ from "jquery";
-import { subjectSchema } from "../../validation";
+import { questionSchema } from "../../validation";
 import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
+import {
+    addQuestion,
+    editQuestion,
+    questionState,
+    clearQuestionState,
+    fetchAllQuestions,
+} from "../../features/questionSlice";
+import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
 
-function SubjectsPage() {
+const columns = [
+    {
+        name: "Mã câu hỏi",
+        sortField: "id",
+        sortable: true,
+    },
+    {
+        name: "Nội dung",
+        sortField: "content",
+        sortable: true,
+    },
+    {
+        name: "A",
+        sortField: "answerA",
+        sortable: true,
+    },
+    {
+        name: "B",
+        sortField: "answerB",
+        sortable: true,
+    },
+    {
+        name: "C",
+        sortField: "answerC",
+        sortable: true,
+    },
+    {
+        name: "D",
+        sortField: "answerD",
+        sortable: true,
+    },
+    {
+        name: "Đáp án",
+        sortField: "finalAnswer",
+        sortable: true,
+    },
+    {
+        name: "Mức độ",
+        sortField: "level",
+        sortable: true,
+    },
+    {
+        name: "Giảng viên",
+        sortField: "teacher",
+    },
+];
+
+function QuestionsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
@@ -25,43 +73,32 @@ function SubjectsPage() {
         handleSubmit,
         formState: { errors },
     } = useForm({
-        resolver: yupResolver(subjectSchema),
+        resolver: yupResolver(questionSchema),
     });
 
     const onSubmit = data => {
         if (isEdit) {
-            dispatch(editSubject(data));
+            dispatch(editQuestion(data));
         } else {
-            dispatch(addSubject(data));
+            dispatch(addQuestion(data));
         }
     };
 
     const {
-        subjects,
+        questions,
         totalElements,
         totalPages,
         filterObject,
-        addSubject: { successMessage },
-        editSubject: { successMessage: esSuccessMessage },
-        deleteSubject: { successMessage: dsSuccessMessage },
-    } = useSelector(subjectState);
+        addQuestion: { successMessage },
+        editQuestion: { successMessage: esSuccessMessage },
+        deleteQuestion: { successMessage: dsSuccessMessage },
+    } = useSelector(questionState);
 
-    const columns = [
-        {
-            name: "Mã môn học",
-            sortField: "id",
-            sortable: true,
-        },
-        {
-            name: "Tên môn học",
-            sortField: "name",
-            sortable: true,
-        },
-    ];
+    const { subjects } = useSelector(subjectState);
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
-            fetchAllSubjects({
+            fetchAllQuestions({
                 ...filterObject,
                 query,
             })
@@ -70,7 +107,7 @@ function SubjectsPage() {
 
     const handleSortChange = (sortField, sortDir) => {
         dispatch(
-            fetchAllSubjects({
+            fetchAllQuestions({
                 ...filterObject,
                 sortField,
                 sortDir,
@@ -80,7 +117,7 @@ function SubjectsPage() {
 
     useEffect(() => {
         return () => {
-            dispatch(clearSubjectState());
+            dispatch(clearQuestionState());
         };
     }, []);
 
@@ -88,14 +125,14 @@ function SubjectsPage() {
         if (successMessage) {
             callToast("success", successMessage);
             $("#subjectForm")[0].reset();
-            dispatch(fetchAllSubjects(filterObject));
+            dispatch(fetchAllQuestions(filterObject));
         }
     }, [successMessage]);
 
     useEffect(() => {
         if (esSuccessMessage) {
             callToast("success", esSuccessMessage);
-            dispatch(fetchAllSubjects(filterObject));
+            dispatch(fetchAllQuestions(filterObject));
             $("#subjectModal").css("display", "none");
             setIsEdit(false);
         }
@@ -104,15 +141,21 @@ function SubjectsPage() {
     useEffect(() => {
         if (dsSuccessMessage) {
             callToast("success", dsSuccessMessage);
-            dispatch(fetchAllSubjects(filterObject));
+            dispatch(fetchAllQuestions(filterObject));
         }
     }, [dsSuccessMessage]);
 
     const dispatch = useDispatch();
     useEffect(() => {
         dispatch(
-            fetchAllSubjects({
+            fetchAllQuestions({
                 page: 1,
+            })
+        );
+
+        dispatch(
+            fetchAllSubjects({
+                page: 0,
             })
         );
     }, []);
@@ -121,34 +164,35 @@ function SubjectsPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH MÔN HỌC"}
+            title={"DANH SÁCH CÂU HỎI"}
             children={
                 <Table
-                    searchPlaceHolder={"Tìm kiếm theo tên và mã môn học"}
+                    searchPlaceHolder={"Tìm kiếm theo tên và mã câu hỏi"}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={columns}
-                    rows={subjects}
+                    rows={questions}
                     totalElements={totalElements}
                     totalPages={totalPages}
                     TableBody={
-                        <SubjectTableBody
-                            rows={subjects}
+                        <QuestionTableBody
+                            rows={questions}
                             setIsEdit={setIsEdit}
                             dispatch={dispatch}
                         />
                     }
-                    modalId='subjectModal'
-                    formId='subjectForm'
-                    modalLabel='môn học'
+                    modalId='questionModal'
+                    formId='questionForm'
+                    modalLabel='câu hỏi'
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={
-                        <SubjectModalBody
+                        <QuestionModalBody
                             errors={errors}
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
+                            subjects={subjects.map(({ id, name }) => ({ title: name, value: id }))}
                         />
                     }
                     isEdit={isEdit}
@@ -159,4 +203,4 @@ function SubjectsPage() {
     );
 }
 
-export default SubjectsPage;
+export default QuestionsPage;

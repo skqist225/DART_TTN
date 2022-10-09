@@ -8,5 +8,4 @@ export { default as citySlice } from "./address/citySlice";
 export { default as stateSlice } from "./address/stateSlice";
 export { default as countrySlice } from "./address/countrySlice";
 
-export { default as roomSlice } from "./room/roomSlice";
 export { default as userSlice } from "./user/userSlice";

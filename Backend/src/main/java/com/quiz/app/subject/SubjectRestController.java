@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -49,8 +50,8 @@ public class SubjectRestController {
     public ResponseEntity<StandardJSONResponse<SubjectsDTO>> fetchAllSubjects(
             @RequestParam("page") String page,
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
-            @RequestParam(name = "sortDir", required = false, defaultValue = "DESC") String sortDir,
-            @RequestParam(name = "sortField", required = false, defaultValue = "createdDate") String sortField
+            @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
+            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField
     ) {
         Map<String, String> filters = new HashMap<>();
         filters.put("page",page);
@@ -60,12 +61,21 @@ public class SubjectRestController {
 
         SubjectsDTO subjectsDTO = new SubjectsDTO();
 
-        Page<Subject> subjectsPage =  subjectService.findAllSubjects(filters);
+        if(page.equals("0")) {
+            List<Subject> subjects = subjectService.findAll();
 
-        subjectsDTO.setSubjects(subjectsPage.getContent());
-        subjectsDTO.setTotalElements(subjectsPage.getTotalElements());
-        subjectsDTO.setTotalPages(subjectsPage.getTotalPages());
+            subjectsDTO.setSubjects(subjects);
+            subjectsDTO.setTotalElements(subjects.size());
+            subjectsDTO.setTotalPages(0);
 
+        } else {
+            Page<Subject> subjectsPage =  subjectService.findAllSubjects(filters);
+
+            subjectsDTO.setSubjects(subjectsPage.getContent());
+            subjectsDTO.setTotalElements(subjectsPage.getTotalElements());
+            subjectsDTO.setTotalPages(subjectsPage.getTotalPages());
+        }
+        
         return new OkResponse<>(subjectsDTO).response();
     }
 

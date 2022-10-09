@@ -7,25 +7,27 @@ import { tailwindCss } from "../../../tailwind";
 import $ from "jquery";
 
 function Table({
+    searchPlaceHolder,
     handleQueryChange,
+    modalId,
+    setIsEdit,
     columns,
     TableBody,
     totalElements,
     totalPages,
-    modalId,
     formId,
-    modalLabel,
-    ModalBody,
     handleSubmit,
     onSubmit,
+    modalLabel,
+    ModalBody,
     isEdit,
-    setIsEdit,
+    handleSortChange,
 }) {
     return (
         <div className='overflow-x-auto relative shadow-md sm:rounded-lg'>
             <div className='flex items-center'>
                 <TableSearch
-                    placeHolder='Tìm kiếm theo tên và mã môn học'
+                    placeHolder={searchPlaceHolder}
                     handleQueryChange={handleQueryChange}
                 />
 
@@ -34,18 +36,17 @@ function Table({
                         type='button'
                         className={tailwindCss.button}
                         onClick={() => {
-                            console.log("clicked");
                             $("#" + modalId).css("display", "flex");
                             setIsEdit(false);
                         }}
                     >
-                        Thêm môn học
+                        Thêm {modalLabel}
                     </button>
                 </div>
             </div>
 
             <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                <TableHeader columns={columns} />
+                <TableHeader columns={columns} handleSortChange={handleSortChange} />
                 {TableBody}
             </table>
             <TablePagination totalElements={totalElements} totalPages={totalPages} />

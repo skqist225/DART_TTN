@@ -1,8 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import Header from "../partials/Header";
-import Sidebar from "../partials/Sidebar";
+import Header from "../../partials/Header";
+import Sidebar from "../../partials/Sidebar";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -24,14 +24,13 @@ import {
     TextareaAutosize,
     Typography,
 } from "@mui/material";
-import Toast from "../components/notify/Toast";
-import { fetchRoles, fetchUser, updateUser, userState } from "../features/user/userSlice";
-import { callToast, getImage } from "../helpers";
-import $ from "jquery";
+import Toast from "../../components/notify/Toast";
+import { fetchRoles, fetchUser, updateUser, userState } from "../../features/user/userSlice";
+import { callToast, getImage } from "../../helpers";
 import { useParams } from "react-router-dom";
-import { Image } from "../globalStyle";
-import { fetchStatesByCountry, stateState } from "../features/address/stateSlice";
-import { cityState, fetchCitiesByState } from "../features/address/citySlice";
+import { Image } from "../../globalStyle";
+import { fetchStatesByCountry, stateState } from "../../features/address/stateSlice";
+import { cityState, fetchCitiesByState } from "../../features/address/citySlice";
 
 const AddUserPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);

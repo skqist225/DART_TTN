@@ -5,22 +5,50 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/css/tableHeader.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Admin/src/pages/questions/QuestionsPage.jsx" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/dto/QuestionsDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/home/Room.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/home/css/filter_time.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/home/css/home.css" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/home/script/add_to_wishlists.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/components/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/frames/Frame.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/frames/Frame.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/room_details/ClientReview.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/room_details/LocationAndLikeShare.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/room_details/RoomImages.tsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/room_details/components/ReviewLine.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/room_details/components/ReviewValue.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/room_details/components/index.ts" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/room_details/index.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/user/UserReview.jsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/Table.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/Table.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TableBody.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TableHeader.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TableHeader.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TableModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TableModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TablePagination.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TablePagination.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/userInputs/Input.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/userInputs/Input.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TableSearch.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TableSearch.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/features/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/features/questionSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/questionSlice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/features/room/roomSlice.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/features/rule/ruleSlice.js" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/features/subjectSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/subjectSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/images/index.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/images/index.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/subjects/AddSubjectPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/subjects/AddSubjectPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/features/user/userSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/user/userSlice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/AddUserPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/users/AddUserPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/EditUserPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/users/EditUserPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/RoomsPage.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/UserDetailsPage.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/UsersPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/users/UsersPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/questions/AddQuestionPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/questions/AddQuestionPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/subjects/AddSubjectPage.jsx" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/pages/subjects/SubjectsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/subjects/SubjectsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/tailwind/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/tailwind/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/partials/Sidebar.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/partials/Sidebar.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/partials/SidebarElement.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/partials/SidebarElement.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/dto/PostCreateSubjectDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/dto/PostCreateSubjectDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Subject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Subject.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectService.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,6 +107,9 @@
       <recent name="$PROJECT_DIR$/src/main/java/com/quiz/app" />
       <recent name="$PROJECT_DIR$/src/main/java/com/quiz/app/question" />
     </key>
+    <key name="CopyClassDialog.RECENTS_KEY">
+      <recent name="com.quiz.app.question.dto" />
+    </key>
   </component>
   <component name="RunManager">
     <configuration name="QuizApplication" type="SpringBootApplicationConfigurationType" factoryName="Spring Boot" temporary="true" nameIsGenerated="true">
@@ -111,7 +142,7 @@
       <workItem from="1664811928846" duration="2353000" />
       <workItem from="1664891120511" duration="6895000" />
       <workItem from="1665064572363" duration="9417000" />
-      <workItem from="1665199342860" duration="12118000" />
+      <workItem from="1665199342860" duration="16404000" />
     </task>
     <servers />
   </component>

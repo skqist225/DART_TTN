@@ -1,7 +1,6 @@
 import React from "react";
-import { useDispatch } from "react-redux";
 
-function TableSearch({ placeHolder, handleQueryChange }) {
+function TableSearch({ placeHolder, handleQueryChange, searchQuery }) {
     return (
         <div className='flex justify-between items-center py-4 bg-white dark:bg-gray-800'>
             <label for='table-search' className='sr-only'>
@@ -29,6 +28,7 @@ function TableSearch({ placeHolder, handleQueryChange }) {
                     className='block p-2 pl-10 w-80 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                     placeholder={placeHolder}
                     onChange={handleQueryChange}
+                    value={searchQuery}
                 />
             </div>
         </div>

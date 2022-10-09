@@ -4,7 +4,7 @@ import "./css/style.scss";
 import "./charts/ChartjsConfig";
 
 import Dashboard from "./pages/Dashboard";
-import { AddQuestionPage, AddSubjectPage, SubjectsPage } from "./pages";
+import { AddQuestionPage, QuestionsPage, SubjectsPage } from "./pages";
 import LoginPage from "./pages/LoginPage";
 
 function App() {
@@ -24,26 +24,13 @@ function App() {
 
                 <Route path='/subjects'>
                     <Route path='' element={<SubjectsPage />} />
-                    <Route path='add' element={<AddSubjectPage />} />
-                    <Route path='edit' element={<AddSubjectPage />} />
                 </Route>
 
                 <Route path='/questions'>
-                    {/* <Route path='' element={<Dashboard />} /> */}
+                    <Route path='' element={<QuestionsPage />} />
                     <Route path='add' element={<AddQuestionPage />} />
                     <Route path='edit' element={<AddQuestionPage />} />
                 </Route>
-
-                {/* <Route path='/bookings' element={<Dashboard />} />
-                <Route path='/users' element={<Dashboard />} />
-                <Route path='/users/:userid' element={<UserDetailsPage />} />
-                <Route path='/add/user' element={<AddUserPage />} />
-                <Route path='/edit/user/:userId' element={<EditUserPage />} />
-                <Route path='/categories' element={<Dashboard />} />
-                <Route path='/amenities' element={<Dashboard />} />
-                <Route path='/amenities/categories' element={<Dashboard />} />
-                <Route path='/rules' element={<Dashboard />} />
-                <Route path='/privacies' element={<Dashboard />} /> */}
             </Routes>
         </>
     );

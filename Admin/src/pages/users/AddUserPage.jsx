@@ -1,8 +1,8 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import Header from "../partials/Header";
-import Sidebar from "../partials/Sidebar";
+import Header from "../../partials/Header";
+import Sidebar from "../../partials/Sidebar";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
@@ -19,9 +19,9 @@ import { useForm } from "react-hook-form";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import { Divider, IconButton, InputAdornment, OutlinedInput, Typography } from "@mui/material";
-import Toast from "../components/notify/Toast";
-import { addUser, fetchRoles, userState } from "../features/user/userSlice";
-import { callToast } from "../helpers";
+import Toast from "../../components/notify/Toast";
+import { addUser, fetchRoles, userState } from "../../features/user/userSlice";
+import { callToast } from "../../helpers";
 import $ from "jquery";
 
 const schema = yup

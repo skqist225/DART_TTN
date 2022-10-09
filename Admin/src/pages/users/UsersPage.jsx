@@ -1,6 +1,6 @@
 import MaterialTable from "@material-table/core";
-import { tableIcons } from "../utils/tableIcon";
-import { callToast, getImage } from "../helpers";
+import { tableIcons } from "../../utils/tableIcon";
+import { callToast, getImage } from "../../helpers";
 import Stack from "@mui/material/Stack";
 import TablePagination from "@material-ui/core/TablePagination";
 import { Link } from "react-router-dom";
@@ -10,15 +10,14 @@ import {
     clearUserState,
     disableUser,
     enableUser,
-    fetchUser,
     fetchUsers,
     userState,
-} from "../features/user/userSlice";
-import { MyButton } from "../components/common";
-import Toast from "../components/notify/Toast";
+} from "../../features/user/userSlice";
+import { MyButton } from "../../components/common";
+import Toast from "../../components/notify/Toast";
 
 import $ from "jquery";
-import "../css/page/rooms.css";
+import "../../css/page/rooms.css";
 
 const UsersPage = () => {
     const dispatch = useDispatch();

@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
 import api from "../../axios";
-import { fetchRooms } from "../room/roomSlice";
 
 export const fetchUsers = createAsyncThunk(
     "user/fetchUsers",

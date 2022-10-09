@@ -11,7 +11,7 @@ function SidebarElement({ pathname, name, title, icon }) {
         >
             <NavLink
                 end
-                to='/subjects'
+                to={`/${name}`}
                 className={`block text-slate-200 hover:text-white truncate transition duration-150 ${
                     pathname.includes(name) && "hover:text-slate-200"
                 }`}

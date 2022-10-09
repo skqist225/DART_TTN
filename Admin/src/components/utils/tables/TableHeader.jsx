@@ -1,8 +1,30 @@
-import React from "react";
-import { SortableIcon } from "../../../images";
+import React, { useState } from "react";
 import { tailwindCss } from "../../../tailwind";
+import $ from "jquery";
+import "./css/tableHeader.css";
 
-function TableHeader({ columns }) {
+function TableHeader({ columns, handleSortChange }) {
+    const [sortDir, setSortDir] = useState("asc");
+
+    function reverseSortDir(selectedClassName) {
+        $(".sort").filter(".active").removeClass("active");
+        $(selectedClassName).addClass("active");
+
+        if (selectedClassName.includes("upper")) {
+            setSortDir("desc");
+        } else {
+            setSortDir("asc");
+        }
+    }
+
+    function sortData(event, sortField) {
+        handleSortChange(sortField, sortDir);
+
+        sortDir === "asc"
+            ? reverseSortDir(`.upper.${sortField}`)
+            : reverseSortDir(`.downer.${sortField}`);
+    }
+
     return (
         <thead className={tailwindCss.thead}>
             <tr>
@@ -18,17 +40,25 @@ function TableHeader({ columns }) {
                         </label>
                     </div>
                 </th>
-                {columns.map(({ name, sortable }) => (
+                {columns.map(({ name, sortField, sortable }) => (
                     <th scope='col' className='py-3 px-6'>
                         {!sortable ? (
                             name
                         ) : (
-                            <div className='flex items-center'>
-                                {name}
-                                <a href='#'>
-                                    <SortableIcon />
-                                </a>
-                            </div>
+                            <button
+                                className='table--header__sortButton'
+                                onClick={e => {
+                                    sortData(e, sortField);
+                                }}
+                            >
+                                <div className='flex items-center'>
+                                    {name}
+                                    <div className='col-flex ml-2'>
+                                        <span className={"upper sort " + sortField}></span>
+                                        <span className={"downer sort " + sortField}></span>
+                                    </div>
+                                </div>
+                            </button>
                         )}
                     </th>
                 ))}

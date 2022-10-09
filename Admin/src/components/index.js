@@ -15,3 +15,11 @@ export { default as Frame } from "./utils/frames/Frame";
 
 //tables
 export { default as Table } from "./utils/tables/Table";
+
+//questions
+export { default as QuestionModalBody } from "./questions/QuestionModalBody";
+export { default as QuestionTableBody } from "./questions/QuestionTableBody";
+
+//subjects
+export { default as SubjectModalBody } from "./subjects/SubjectModalBody";
+export { default as SubjectTableBody } from "./subjects/SubjectTableBody";
