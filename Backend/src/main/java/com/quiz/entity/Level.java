@@ -1,5 +1,5 @@
 package com.quiz.entity;
 
-public enum QuizLevel {
+public enum Level {
     EASY, MEDIUM, HARD
 }

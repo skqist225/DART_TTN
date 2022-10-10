@@ -21,7 +21,7 @@ function TableModal({
             className={tailwindCss.modal.container}
             style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
         >
-            <div className='relative w-full max-w-4xl h-full md:h-auto'>
+            <div className='relative w-full max-w-4xl h-full md:h-auto mt-24'>
                 <form
                     id={formId}
                     onSubmit={e => {

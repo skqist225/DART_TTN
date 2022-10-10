@@ -62,7 +62,11 @@ export const addQuestion = createAsyncThunk(
     "question/addQuestion",
     async (postData, { rejectWithValue }) => {
         try {
-            const { data } = await api.post(`/questions/save`, postData);
+            const { data } = await api.post(`/questions/save`, postData, {
+                headers: {
+                    "Content-Type": "multipart/formData",
+                },
+            });
 
             return { data };
         } catch ({ data: { error } }) {
@@ -75,7 +79,11 @@ export const editQuestion = createAsyncThunk(
     "question/editQuestion",
     async (postData, { rejectWithValue }) => {
         try {
-            const { data } = await api.post(`/questions/save?isEdit=true`, postData);
+            const { data } = await api.post(`/questions/save?isEdit=true`, postData, {
+                headers: {
+                    "Content-Type": "multipart/formData",
+                },
+            });
 
             return { data };
         } catch ({ data: { error } }) {
@@ -102,7 +110,7 @@ const initialState = {
     questions: [],
     totalElements: 0,
     totalPages: 0,
-    editedquestion: null,
+    editedQuestion: null,
     filterObject: {
         page: 1,
         query: "",
@@ -133,7 +141,7 @@ const questionSlice = createSlice({
             state.editQuestion.successMessage = null;
 
             state.deleteQuestion.successMessage = null;
-            state.deleteQuestion.errorObject = null;
+            state.deleteQuestion.errorMessage = null;
         },
         clearErrorField(state, { payload }) {
             if (payload) {
@@ -152,7 +160,7 @@ const questionSlice = createSlice({
                 });
             }
         },
-        setEditedquestion(state, { payload }) {
+        setEditedQuestion(state, { payload }) {
             state.editedQuestion = payload;
         },
     },
@@ -178,25 +186,20 @@ const questionSlice = createSlice({
             })
             .addCase(addQuestion.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.addQuestion.successMessage = "Thêm môn học thành công";
+                    state.addQuestion.successMessage = "Thêm câu hỏi thành công";
                 }
             })
             .addCase(addQuestion.rejected, (state, { payload }) => {
                 if (payload) {
                     const errors = JSON.parse(payload);
                     errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
+                        const key = Object.keys(error)[0];
+                        const value = error[key];
+
+                        state.errorObject = {
+                            ...state.errorObject,
+                            [key]: value,
+                        };
                     });
                 }
             })
@@ -207,25 +210,20 @@ const questionSlice = createSlice({
             })
             .addCase(editQuestion.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.editQuestion.successMessage = "Chỉnh sửa môn học thành công";
+                    state.editQuestion.successMessage = "Chỉnh sửa câu hỏi thành công";
                 }
             })
             .addCase(editQuestion.rejected, (state, { payload }) => {
                 if (payload) {
                     const errors = JSON.parse(payload);
                     errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
+                        const key = Object.keys(error)[0];
+                        const value = error[key];
+
+                        state.errorObject = {
+                            ...state.errorObject,
+                            [key]: value,
+                        };
                     });
                 }
             })
@@ -244,7 +242,7 @@ const questionSlice = createSlice({
 });
 
 export const {
-    actions: { clearQuestionState, clearErrorField, setFilterObject, setEditedquestion },
+    actions: { clearQuestionState, clearErrorField, setFilterObject, setEditedQuestion },
 } = questionSlice;
 
 export const questionState = state => state.question;

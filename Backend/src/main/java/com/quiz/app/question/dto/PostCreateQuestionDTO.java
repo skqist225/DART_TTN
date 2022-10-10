@@ -1,7 +1,6 @@
 package com.quiz.app.question.dto;
 
-import com.quiz.entity.QuizLevel;
-import com.quiz.entity.Subject;
+import com.quiz.entity.Level;
 
 
 import lombok.AllArgsConstructor;
@@ -22,8 +21,7 @@ public class PostCreateQuestionDTO {
     private String answerC;
     private String answerD;
     private String finalAnswer;
-    private QuizLevel level;
-    private Subject subject;
-    private Integer subjectId;
+    private Level level;
+    private String subjectId;
     private MultipartFile image;
 }

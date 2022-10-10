@@ -10,6 +10,8 @@ import DoNotTouchIcon from "@mui/icons-material/DoNotTouch";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 
+import ForbiddenImage from "../../images/forbidden.png";
+
 function MyButton(props) {
     let { type, label, disabled } = props;
     let buttonClassName = "",
@@ -31,6 +33,7 @@ function MyButton(props) {
             break;
         }
         case "disable": {
+            // buttonClassName = "bg-white-500 hover:bg-white-500";
             buttonClassName = "bg-rose-500 hover:bg-rose-500";
             buttonDisableClassName = "bg-rose-200 hover:bg-rose-200";
             break;
@@ -113,7 +116,12 @@ function MyButton(props) {
                 </svg>
             )}
             {type === "delete" && <DeleteIcon />}
-            {type === "disable" && <DoNotTouchIcon />}
+            {type === "disable" && (
+                <>
+                    <DoNotTouchIcon />
+                    {/* <img src={ForbiddenImage} /> */}
+                </>
+            )}
             {type === "enable" && <CheckIcon />}
             {type === "currentPosition" && <>{label}</>}
             {type === "lookGood" && <>{label}</>}

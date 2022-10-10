@@ -1,17 +1,17 @@
 package com.quiz.entity;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-
 import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,26 +22,30 @@ import lombok.Setter;
 @Table(name = "questions")
 public class Question extends BaseEntity {
 
-	@Column(columnDefinition = "TEXT NOT NULL", unique = true)
+	public Question(int id) {
+		super(id);
+	}
+
+	@Column(columnDefinition = "TEXT", nullable = false, unique = true)
 	private String content;
 
-	@Column(columnDefinition = "TEXT NOT NULL")
+	@Column(columnDefinition = "TEXT", nullable = false)
 	private String answerA;
 
-	@Column(columnDefinition = "TEXT NOT NULL")
+	@Column(columnDefinition = "TEXT", nullable = false)
 	private String answerB;
 
-	@Column(columnDefinition = "TEXT NOT NULL")
+	@Column(columnDefinition = "TEXT", nullable = false)
 	private String answerC;
 
-	@Column(columnDefinition = "TEXT NOT NULL")
+	@Column(columnDefinition = "TEXT", nullable = false)
 	private String answerD;
 
 	@Column(nullable = false)
 	private String finalAnswer;
 
 	@Column(nullable = false)
-	private QuizLevel level;
+	private Level level;
 
 	@ManyToOne
 	@JoinColumn(name = "subject_id", nullable = false)
@@ -50,9 +54,13 @@ public class Question extends BaseEntity {
 	private String image;
 
 	@ManyToOne
+	@JoinColumn(nullable = false)
 	private User teacher;
 
-	public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher) {
+	//	public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,
+//								 Subject subject) {
+	public static Question build(PostCreateQuestionDTO postCreateQuestionDTO,
+								 Subject subject) {
 		Question question = Question.builder()
 				.content(postCreateQuestionDTO.getContent())
 				.answerA(postCreateQuestionDTO.getAnswerA())
@@ -61,7 +69,7 @@ public class Question extends BaseEntity {
 				.answerD(postCreateQuestionDTO.getAnswerD())
 				.finalAnswer(postCreateQuestionDTO.getFinalAnswer())
 				.level(postCreateQuestionDTO.getLevel())
-				.teacher(teacher)
+				.subject(subject)
 				.build();
 
 		if(postCreateQuestionDTO.getImage() != null) {

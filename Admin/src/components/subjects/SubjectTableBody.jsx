@@ -1,6 +1,7 @@
 import React from "react";
 import { deleteSubject, setEditedsubject } from "../../features/subjectSlice";
 import { tailwindCss } from "../../tailwind";
+import MyButton from "../../components/common/MyButton";
 import $ from "jquery";
 
 function SubjectTableBody({ rows, setIsEdit, dispatch }) {

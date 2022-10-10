@@ -1,8 +1,21 @@
 import React from "react";
+import { deleteQuestion, setEditedQuestion } from "../../features/questionSlice";
 import { tailwindCss } from "../../tailwind";
 import { MyButton } from "../common";
+import $ from "jquery";
 
 function QuestionTableBody({ rows, setIsEdit, dispatch }) {
+    function lookupQuestionLevel(level) {
+        switch (level) {
+            case "HARD":
+                return "Khó";
+            case "MEDIUM":
+                return "Trung bình";
+            case "EASY":
+                return "Dễ";
+        }
+    }
+
     return (
         <tbody>
             {rows.map(row => (
@@ -20,21 +33,28 @@ function QuestionTableBody({ rows, setIsEdit, dispatch }) {
                         </div>
                     </td>
                     <td className='py-4 px-6  whitespace-nowrap dark:text-white'>{row.id}</td>
-                    <td className='py-4 px-6'>{row.name}</td>
+                    <td className='py-4 px-6'>{row.content}</td>
+                    <td className='py-4 px-6'>{row.answerA}</td>
+                    <td className='py-4 px-6'>{row.answerB}</td>
+                    <td className='py-4 px-6'>{row.answerC}</td>
+                    <td className='py-4 px-6'>{row.answerD}</td>
+                    <td className='py-4 px-6'>{row.finalAnswer}</td>
+                    <td className='py-4 px-6'>{lookupQuestionLevel(row.level)}</td>
+                    <td className='py-4 px-6'>Nguyễn Văn Tới</td>
                     <td class='py-4 px-6 flex items-center'>
                         <MyButton
                             type='edit'
                             onClick={() => {
-                                $("#subjectModal").css("display", "flex");
+                                $("#questionModal").css("display", "flex");
                                 setIsEdit(true);
-                                dispatch(setEditedsubject(row));
+                                dispatch(setEditedQuestion(row));
                             }}
                         />
                         <div className='mx-3'>
                             <MyButton
-                                type='delete'
+                                type='disable'
                                 onClick={() => {
-                                    dispatch(deleteSubject(row.id));
+                                    dispatch(deleteQuestion(row.id));
                                 }}
                             />
                         </div>

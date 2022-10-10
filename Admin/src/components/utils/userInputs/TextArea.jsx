@@ -1,7 +1,16 @@
 import React from "react";
 import ErrorMessage from "../errors/ErrorMessage";
 
-function TextArea({ label, labelClassName, textAreaClassName, error, register, name, rows = "2" }) {
+function TextArea({
+    label,
+    labelClassName,
+    textAreaClassName,
+    error,
+    register,
+    name,
+    rows = "2",
+    onKeyDown,
+}) {
     return (
         <>
             <label
@@ -15,8 +24,9 @@ function TextArea({ label, labelClassName, textAreaClassName, error, register, n
                 rows={rows}
                 className={`${textAreaClassName} ${error && "bg-red-50 border border-red-500"}`}
                 {...register(name)}
+                onKeyDown={onKeyDown}
             ></textarea>
-            {error && <ErrorMessage message={error.message} />}
+            {error && <ErrorMessage message={error} />}
         </>
     );
 }

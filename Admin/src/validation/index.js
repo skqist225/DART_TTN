@@ -9,12 +9,13 @@ export const subjectSchema = yup
 
 export const questionSchema = yup
     .object({
-        content: yup.string().required("Vui lòng điền nội dung câu hỏi"),
-        answerA: yup.string().required("Vui lòng điền đáp án A"),
-        answerB: yup.string().required("Vui lòng điền đáp án B"),
-        answerC: yup.string().required("Vui lòng điền đáp án C"),
-        answerD: yup.string().required("Vui lòng điền đáp án D"),
-        finalAnswer: yup.string().required("Vui lòng chọn đáp án"),
-        level: yup.string().required("Vui lòng chọn mức độ câu hỏi"),
+        content: yup.string().required("Nội dung câu hỏi không được để  trống"),
+        answerA: yup.string().required("Đáp án A không được để  trống"),
+        answerB: yup.string().required("Đáp án B không được để  trống"),
+        answerC: yup.string().required("Đáp án C không được để  trống"),
+        answerD: yup.string().required("Đáp án D không được để  trống"),
+        finalAnswer: yup.string().required("Đáp án không được để  trống"),
+        level: yup.string().required("Mức độ không được để  trống"),
+        subjectId: yup.string().required("Môn học không được để  trống"),
     })
     .required();

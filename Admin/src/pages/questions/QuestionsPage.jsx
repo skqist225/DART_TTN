@@ -66,6 +66,7 @@ const columns = [
 function QuestionsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+    const [image, setImage] = useState(null);
 
     const {
         register,
@@ -77,21 +78,32 @@ function QuestionsPage() {
     });
 
     const onSubmit = data => {
+        const formData = new FormData();
+
+        Object.entries(data).forEach(([key, value]) => {
+            formData.set(key, value);
+        });
+
+        if (image) {
+            formData.set("image", image);
+        }
+
         if (isEdit) {
-            dispatch(editQuestion(data));
+            dispatch(editQuestion(formData));
         } else {
-            dispatch(addQuestion(data));
+            dispatch(addQuestion(formData));
         }
     };
 
     const {
         questions,
+        errorObject,
         totalElements,
         totalPages,
         filterObject,
         addQuestion: { successMessage },
-        editQuestion: { successMessage: esSuccessMessage },
-        deleteQuestion: { successMessage: dsSuccessMessage },
+        editQuestion: { successMessage: eqSuccessMessage },
+        deleteQuestion: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
     } = useSelector(questionState);
 
     const { subjects } = useSelector(subjectState);
@@ -124,26 +136,39 @@ function QuestionsPage() {
     useEffect(() => {
         if (successMessage) {
             callToast("success", successMessage);
-            $("#subjectForm")[0].reset();
+            $("#questionForm")[0].reset();
             dispatch(fetchAllQuestions(filterObject));
+            setImage(null);
         }
     }, [successMessage]);
 
     useEffect(() => {
-        if (esSuccessMessage) {
-            callToast("success", esSuccessMessage);
+        if (eqSuccessMessage) {
+            callToast("success", eqSuccessMessage);
             dispatch(fetchAllQuestions(filterObject));
-            $("#subjectModal").css("display", "none");
+            $("#questionModal").css("display", "none");
             setIsEdit(false);
         }
-    }, [esSuccessMessage]);
+    }, [eqSuccessMessage]);
 
     useEffect(() => {
-        if (dsSuccessMessage) {
-            callToast("success", dsSuccessMessage);
+        if (dqSuccessMessage) {
+            callToast("success", dqSuccessMessage);
             dispatch(fetchAllQuestions(filterObject));
         }
-    }, [dsSuccessMessage]);
+    }, [dqSuccessMessage]);
+
+    useEffect(() => {
+        if (dqErrorMessage) {
+            callToast("error", dqErrorMessage);
+        }
+    }, [dqErrorMessage]);
+
+    useEffect(() => {
+        if (errorObject && errorObject.id) {
+            callToast("error", errorObject.id);
+        }
+    }, [errorObject]);
 
     const dispatch = useDispatch();
     useEffect(() => {
@@ -193,6 +218,7 @@ function QuestionsPage() {
                             dispatch={dispatch}
                             setValue={setValue}
                             subjects={subjects.map(({ id, name }) => ({ title: name, value: id }))}
+                            setImage={setImage}
                         />
                     }
                     isEdit={isEdit}

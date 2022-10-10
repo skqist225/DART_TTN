@@ -3,7 +3,6 @@ package com.quiz.app.question;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.entity.Question;
-import com.quiz.entity.Question;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -55,22 +54,23 @@ public class QuestionService {
     }
 
     public Question findById(Integer id) throws NotFoundException {
-        Optional<Question> question =questionRepository.findById(id);
-        if(question.isPresent()) {
+        Optional<Question> question = questionRepository.findById(id);
+
+        if (question.isPresent()) {
             return question.get();
         }
 
-        throw new NotFoundException("Không tìm thấy câu hỏi với id " + id);
+        throw new NotFoundException("Không tìm thấy câu hỏi với mã bằng " + id);
     }
 
-    public String checkContentDuplicated(Integer id, String content) {
-        Question question = questionRepository.findByContent(content);
+    public boolean isContentDuplicated(Integer id, String content, boolean isEdit) {
+        Question subject = questionRepository.findByContent(content);
 
-        if (Objects.nonNull(question) && !Objects.equals(question.getId(), id)) {
-            return "Duplicated";
+        if (isEdit) {
+            return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
+        } else {
+            return Objects.nonNull(subject);
         }
-
-        return "OK";
     }
 
     public Page<Question> findAllQuestions(Map<String, String> filters) {
