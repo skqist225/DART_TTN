@@ -18,45 +18,30 @@ const store = configureStore({
     devTools: process.env.NODE_ENV !== "production",
     preloadedState: {
         user: {
-            user: localUser,
             loading: true,
-            successMessage: null,
-            errorMessage: null,
-            wishlistsIDs: [],
-            wishlists: [],
-            bookedRooms: [],
-            update: {
-                loading: true,
+            user: null,
+            users: [],
+            totalElements: 0,
+            totalPages: 0,
+            editedUser: null,
+            filterObject: {
+                page: 1,
+                query: "",
+                sortField: "id",
+                sortDir: "asc",
+            },
+            errorObject: null,
+            addUser: {
+                successMessage: null,
+            },
+            deleteUser: {
                 successMessage: null,
                 errorMessage: null,
             },
-            wishlistsIDsFetching: true,
-            listing: {
-                users: [],
-                loading: true,
-                totalElements: 0,
-                totalPages: 0,
-            },
-            get: {
-                loading: true,
-                user: {},
-            },
-            addUserAction: {
-                loading: true,
-                successMessage: "",
-                errorMessage: "",
-            },
-            deleteUserAction: {
-                loading: true,
+            editUser: {
                 successMessage: null,
-                errorMessage: null,
             },
-            updateUserAction: {
-                loading: true,
-                successMessage: null,
-                errorMessage: null,
-            },
-            fetchRolesAction: {
+            fetchRoles: {
                 roles: [],
             },
         },

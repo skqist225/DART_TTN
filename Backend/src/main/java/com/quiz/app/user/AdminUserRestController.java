@@ -69,7 +69,7 @@ public class AdminUserRestController {
     }
 
     @GetMapping("users/{id}")
-    public ResponseEntity<StandardJSONResponse<User>> getUser(@PathVariable(value = "id") Integer id) {
+    public ResponseEntity<StandardJSONResponse<User>> getUser(@PathVariable(value = "id") String id) {
         try {
             User user = userService.findById(id);
 
@@ -80,7 +80,7 @@ public class AdminUserRestController {
     }
 
     @DeleteMapping("users/{userId}")
-    public ResponseEntity<StandardJSONResponse<String>> deleteUser(@PathVariable(value = "userId") Integer userId) {
+    public ResponseEntity<StandardJSONResponse<String>> deleteUser(@PathVariable(value = "userId") String userId) {
         try {
             return new OkResponse<>(userService.deleteById(userId)).response();
         } catch (UserNotFoundException | VerifiedUserException e) {
@@ -89,7 +89,7 @@ public class AdminUserRestController {
     }
 
     @PutMapping("users/{id}/{action}")
-    public ResponseEntity<StandardJSONResponse<String>> disableUser(@PathVariable(value = "id") Integer id,
+    public ResponseEntity<StandardJSONResponse<String>> disableUser(@PathVariable(value = "id") String id,
             @PathVariable(value = "action") String action) {
         try {
             User user = userService.findById(id);
@@ -103,7 +103,7 @@ public class AdminUserRestController {
     }
 
     @PutMapping("users/{id}/update")
-    public ResponseEntity<StandardJSONResponse<User>> updateUser(@PathVariable(value = "id") Integer userId,
+    public ResponseEntity<StandardJSONResponse<User>> updateUser(@PathVariable(value = "id") String userId,
             @RequestBody UpdateUserDTO updateUserDTO) throws IOException {
         try {
             User user = userService.findById(userId);

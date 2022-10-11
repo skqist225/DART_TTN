@@ -1,18 +1,17 @@
 package com.quiz.app.security;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-
+import com.quiz.entity.Role;
+import com.quiz.entity.User;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import com.quiz.entity.Role;
-import com.quiz.entity.User;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Objects;
 
 public class UserDetailsImpl implements UserDetails {
 	private static final long serialVersionUID = 1;
@@ -45,7 +44,7 @@ public class UserDetailsImpl implements UserDetails {
 
 	@Override
 	public String getUsername() {
-		return user.getEmail();
+		return this.user.getId();
 	}
 
 	@Override
@@ -72,24 +71,8 @@ public class UserDetailsImpl implements UserDetails {
 		return this.user;
 	}
 
-	public String getFullname() {
-		return this.user.getFirstName() + " " + this.user.getLastName();
-	}
-
 	public String getId() {
 		return this.user.getId();
-	}
-
-	public String getAvatarPath() {
-		return this.user.getAvatarPath();
-	}
-
-	public void setFirstName(String firstName) {
-		this.user.setFirstName(firstName);
-	}
-
-	public void setLastName(String lastName) {
-		this.user.setLastName(lastName);
 	}
 
 	@Override

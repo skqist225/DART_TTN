@@ -21,6 +21,6 @@ public class CityRestController {
 
     @GetMapping("/cities/state/{stateId}")
     public ResponseEntity<StandardJSONResponse<List<City>>> fetchCitiesByState(@PathVariable Integer stateId) {
-        return new OkResponse<List<City>>(cityService.fetchCitiesByState(stateId)).response();
+        return new OkResponse<>(cityService.fetchCitiesByState(stateId)).response();
     }
 }

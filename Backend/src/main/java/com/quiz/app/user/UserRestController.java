@@ -55,7 +55,7 @@ public class UserRestController {
     // private AddressService addressService;
 
     @GetMapping("{id}")
-    public ResponseEntity<StandardJSONResponse<User>> getUser(@PathVariable(value = "id") Integer id) {
+    public ResponseEntity<StandardJSONResponse<User>> getUser(@PathVariable(value = "id") String id) {
         try {
             User user = userService.findById(id);
 

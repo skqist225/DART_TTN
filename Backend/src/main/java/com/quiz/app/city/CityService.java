@@ -13,14 +13,6 @@ public class CityService {
     @Autowired
     CityRepository cityRepository;
 
-    public City getCityByName(String cityName) {
-        return cityRepository.findByName(cityName);
-    }
-
-    public City getCityById(Integer cityId) {
-        return cityRepository.findById(cityId).get();
-    }
-
     public City addCity(String cityName, State state) {
         City c = new City();
         c.setName(cityName);
@@ -28,10 +20,6 @@ public class CityService {
         City savedState = cityRepository.save(c);
 
         return savedState;
-    }
-
-    public List<City> listAll() {
-        return (List<City>) cityRepository.findAll();
     }
 
     public List<City> fetchCitiesByState(Integer stateId) {

@@ -4,8 +4,8 @@ import "./css/style.scss";
 import "./charts/ChartjsConfig";
 
 import Dashboard from "./pages/Dashboard";
-import { AddQuestionPage, QuestionsPage, SubjectsPage } from "./pages";
-import LoginPage from "./pages/LoginPage";
+import { AddQuestionPage, QuestionsPage, SubjectsPage, UsersPage } from "./pages";
+import LoginPage from "./pages/auth/LoginPage";
 
 function App() {
     const location = useLocation();
@@ -20,7 +20,9 @@ function App() {
         <>
             <Routes>
                 <Route exact path='/' element={<Dashboard />} />
-                <Route path='/login' element={<LoginPage />} />
+                <Route path='/auth'>
+                    <Route path='login' element={<LoginPage />} />
+                </Route>
 
                 <Route path='/subjects'>
                     <Route path='' element={<SubjectsPage />} />
@@ -28,8 +30,10 @@ function App() {
 
                 <Route path='/questions'>
                     <Route path='' element={<QuestionsPage />} />
-                    <Route path='add' element={<AddQuestionPage />} />
-                    <Route path='edit' element={<AddQuestionPage />} />
+                </Route>
+
+                <Route path='/users'>
+                    <Route path='' element={<UsersPage />} />
                 </Route>
             </Routes>
         </>

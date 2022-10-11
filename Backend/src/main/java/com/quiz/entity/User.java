@@ -111,6 +111,8 @@ public class User {
     @JoinTable(name = "user_subjects", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
     private Set<Subject> subjects = new HashSet<>();
 
+    private boolean status;
+
     @Transient
     @JsonIgnore
     public static User build(RegisterDTO registerDTO) {

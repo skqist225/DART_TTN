@@ -25,7 +25,7 @@ import {
     Typography,
 } from "@mui/material";
 import Toast from "../../components/notify/Toast";
-import { fetchRoles, fetchUser, updateUser, userState } from "../../features/user/userSlice";
+import { fetchUser, editUser, userState } from "../../features/user/userSlice";
 import { callToast, getImage } from "../../helpers";
 import { useParams } from "react-router-dom";
 import { Image } from "../../globalStyle";

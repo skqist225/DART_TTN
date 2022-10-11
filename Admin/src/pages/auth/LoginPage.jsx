@@ -11,14 +11,14 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { getImage } from "../helpers";
+import { getImage } from "../../helpers";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { authState, login, logout } from "../features/auth/authSlice";
+import { authState, login } from "../../features/auth/authSlice";
 import { useNavigate } from "react-router-dom";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
-import { userState } from "../features/user/userSlice";
+import { userState } from "../../features/user/userSlice";
 
 const loginSchema = yup
     .object({
@@ -68,7 +68,6 @@ function LoginPage() {
     useEffect(() => {
         if (successMessage) {
             // callToast("success", successMessage);
-            console.log(user);
             if (user) {
                 navigate("/");
             }
@@ -102,21 +101,19 @@ function LoginPage() {
                             <FormControl fullWidth>
                                 <TextField
                                     autoComplete='nope'
-                                    label={"Email"}
-                                    {...register("email")}
+                                    label={"Mã người dùng"}
+                                    {...register("id")}
                                     defaultValue=''
                                     required
-                                    error={errors?.email ? true : !!myErrors.email}
-                                    helperText={
-                                        errors?.email ? errors?.email.message : myErrors.email
-                                    }
+                                    error={errors?.id ? true : !!myErrors.id}
+                                    helperText={errors?.id ? errors?.id.message : myErrors.id}
                                 />
                             </FormControl>
                         </div>
                         <div className='mb-5'>
                             <FormControl fullWidth variant='outlined'>
                                 <InputLabel htmlFor='outlined-adornment-password'>
-                                    Password
+                                    Mật khẩu
                                 </InputLabel>
                                 <OutlinedInput
                                     type={showPassword ? "text" : "password"}
@@ -141,7 +138,6 @@ function LoginPage() {
                                 />
                                 <div className='mt-5 flex justify-center items-center'>
                                     <div>
-                                        {" "}
                                         {myErrors.password && (
                                             <PriorityHighIcon style={{ fill: "red" }} />
                                         )}

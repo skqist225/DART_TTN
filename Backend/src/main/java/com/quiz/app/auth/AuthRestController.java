@@ -14,7 +14,6 @@ import com.quiz.app.security.UserDetailsServiceImpl;
 import com.quiz.app.user.UserService;
 import com.quiz.app.user.dto.ForgotPasswordResponse;
 import com.quiz.app.user.dto.RegisterDTO;
-import com.quiz.app.user.dto.ResetPasswordByPhoneNumberDTO;
 import com.quiz.app.user.dto.ResetPasswordDTO;
 import com.quiz.entity.User;
 
@@ -62,11 +61,12 @@ public class AuthRestController {
                                                              @RequestParam(value = "admin", defaultValue = "false") String admin) {
         try {
             authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getEmail(), loginDTO.getPassword()));
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getId(),
+                            loginDTO.getPassword()));
 
-            final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(loginDTO.getEmail());
+            final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(loginDTO.getId());
             final String token = jwtUtils.generateToken(userDetails);
-            User user = userService.findByEmail(loginDTO.getEmail());
+            User user = userService.findById(loginDTO.getId());
             user.setToken(token);
 
             if (admin.equals("true") && !user.getRole().getName().equals("Admin")) {
@@ -74,7 +74,7 @@ public class AuthRestController {
                         "Your account does not have enough privileges to access this resource.").response();
             }
 
-            return new OkResponse<User>(user).response();
+            return new OkResponse<>(user).response();
         } catch (BadCredentialsException e) {
             return new BadResponse<User>(e.getMessage()).response();
         } catch (UserNotFoundException e) {
@@ -94,7 +94,7 @@ public class AuthRestController {
             return new BadResponse<String>("Email has already been taken").response();
         }
 
-        return new OkResponse<String>("Email has not been used by anyone yet").response();
+        return new OkResponse<>("Email has not been used by anyone yet").response();
     }
 
     @PostMapping("register")
@@ -118,7 +118,7 @@ public class AuthRestController {
             return new BadResponse<User>(arrays.toString()).response();
         }
 
-        return new OkResponse<User>(userService.save(User.build(postUser))).response();
+        return new OkResponse<>(userService.save(User.build(postUser))).response();
     }
 
     @PostMapping("forgot-password")

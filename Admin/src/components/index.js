@@ -23,3 +23,7 @@ export { default as QuestionTableBody } from "./questions/QuestionTableBody";
 //subjects
 export { default as SubjectModalBody } from "./subjects/SubjectModalBody";
 export { default as SubjectTableBody } from "./subjects/SubjectTableBody";
+
+//users
+export { default as UserModalBody } from "./users/UserModalBody";
+export { default as UserTableBody } from "./users/UserTableBody";

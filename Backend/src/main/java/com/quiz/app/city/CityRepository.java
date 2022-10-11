@@ -12,7 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface CityRepository extends CrudRepository<City, Integer> {
     public City findByName(String cityName);
 
-    public List<City> findAllByOrderByNameAsc();
-
     public List<City> findByStateOrderByNameAsc(State state);
 }

@@ -1,5 +1,12 @@
 package com.quiz.app.user;
 
+import com.quiz.app.exception.UserNotFoundException;
+import com.quiz.app.exception.VerifiedUserException;
+import com.quiz.app.user.dto.CountUserByRole;
+import com.quiz.app.user.dto.UserListDTO;
+import com.quiz.app.user.dto.UserListResponse;
+import com.quiz.entity.Role;
+import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -9,14 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import com.quiz.app.exception.UserNotFoundException;
-import com.quiz.app.exception.VerifiedUserException;
-import com.quiz.app.user.dto.CountUserByRole;
-import com.quiz.app.user.dto.UserListDTO;
-import com.quiz.app.user.dto.UserListResponse;
-import com.quiz.entity.Role;
-import com.quiz.entity.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
@@ -195,7 +194,7 @@ public class UserService {
         return userRepository.save(user);
     }
 
-    public String deleteById(Integer id)
+    public String deleteById(String id)
             throws UserNotFoundException, VerifiedUserException {
         try {
             userRepository.deleteById(id);
@@ -205,18 +204,8 @@ public class UserService {
         }
     }
 
-    public User findById(Integer id) throws UserNotFoundException {
-        User user = userRepository.findById(id)
+    public User findById(String id) throws UserNotFoundException {
+        return userRepository.findById(id)
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
-        return user;
-    }
-
-    @Transactional
-    public void removeFromFavLists(Integer userId, Integer roomId) {
-        userRepository.removeFromFavLists(userId, roomId);
-    }
-
-    public Integer getNumberOfUser() {
-        return userRepository.getNumberOfUser();
     }
 }

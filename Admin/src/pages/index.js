@@ -7,5 +7,4 @@ export { default as SubjectsPage } from "./subjects/SubjectsPage.jsx";
 
 //Users
 export { default as UsersPage } from "./users/UsersPage";
-export { default as AddUserPage } from "./users/AddUserPage";
 export { default as EditUserPage } from "./users/EditUserPage";

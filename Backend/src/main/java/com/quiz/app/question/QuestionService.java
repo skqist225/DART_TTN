@@ -54,10 +54,10 @@ public class QuestionService {
     }
 
     public Question findById(Integer id) throws NotFoundException {
-        Optional<Question> question = questionRepository.findById(id);
+        Question question = questionRepository.getById(id);
 
-        if (question.isPresent()) {
-            return question.get();
+        if(question != null) {
+            return question;
         }
 
         throw new NotFoundException("Không tìm thấy câu hỏi với mã bằng " + id);
