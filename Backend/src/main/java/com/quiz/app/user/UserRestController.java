@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 
 @RestController
-@RequestMapping("/api/user/")
+@RequestMapping("/api/users/")
 public class UserRestController {
 
     public final String DEV_STATIC_DIR = "src/main/resources/static/user_images/";
@@ -50,9 +50,6 @@ public class UserRestController {
 
     @Value("${env}")
     private String environment;
-
-    // @Autowired
-    // private AddressService addressService;
 
     @GetMapping("{id}")
     public ResponseEntity<StandardJSONResponse<User>> getUser(@PathVariable(value = "id") String id) {

@@ -121,11 +121,11 @@ function UserMenu() {
                                         if (user) {
                                             dispatch(logout());
                                         } else {
-                                            window.location.href = "/login";
+                                            window.location.href = "/auth/login";
                                         }
                                     }}
                                 >
-                                    {user ? "Sign Out" : "Sign In"}
+                                    {user ? "Đăng xuất" : "Đăng nhập"}
                                 </Button>
                             </li>
                         </ul>

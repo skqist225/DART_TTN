@@ -1,4 +1,4 @@
-package com.quiz.app.subject.dto;
+package com.quiz.app.classes.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -9,7 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostCreateSubjectDTO {
+public class PostCreateClassDTO {
     private String id;
     private String name;
 }

@@ -10,15 +10,18 @@ import com.quiz.app.question.dto.QuestionsDTO;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
+import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.app.utils.ProcessImage;
 import com.quiz.entity.Level;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
+import com.quiz.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -122,11 +125,11 @@ public class QuestionRestController {
 
     @PostMapping("save")
     public ResponseEntity<StandardJSONResponse<Question>> fetchCitiesByState(
-//            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
             @ModelAttribute PostCreateQuestionDTO postCreateQuestionDTO,
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) throws IOException {
         arrayNode = objectMapper.createArrayNode();
-//        User teacher = userDetailsImpl.getUser();
+        User teacher = userDetailsImpl.getUser();
         Question savedQuestion = null;
         Subject subject = null;
 
@@ -171,7 +174,7 @@ public class QuestionRestController {
                 question.setFinalAnswer(finalAnswer);
                 question.setLevel(level);
                 question.setSubject(subject);
-//                question.setTeacher(teacher);
+                question.setTeacher(teacher);
 
                 if (postCreateQuestionDTO.getImage() != null) {
                     question.setImage(postCreateQuestionDTO.getImage().getOriginalFilename());
@@ -184,9 +187,8 @@ public class QuestionRestController {
                 return new BadResponse<Question>(arrayNode.toString()).response();
             }
         } else {
-//            savedQuestion = questionService.save(Question.build(postCreateQuestionDTO,
-//                    userDetailsImpl.getUser(), subject));
-            savedQuestion = questionService.save(Question.build(postCreateQuestionDTO, subject));
+            savedQuestion = questionService.save(Question.build(postCreateQuestionDTO,
+                    userDetailsImpl.getUser(), subject));
         }
 
         if (postCreateQuestionDTO.getImage() != null) {

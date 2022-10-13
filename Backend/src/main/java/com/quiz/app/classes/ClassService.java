@@ -1,8 +1,8 @@
-package com.quiz.app.question;
+package com.quiz.app.classes;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.entity.Question;
+import com.quiz.entity.Class;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -24,46 +24,46 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 
 @Service
-public class QuestionService {
-    private final String DELETE_SUCCESSFULLY = "Xóa câu hỏi thành công";
-    private final String DELETE_FORBIDDEN = "Không thể xóa câu hỏi này vì ràng buộc dữ liệu";
+public class ClassService {
+    private final String DELETE_SUCCESSFULLY = "Xóa môn học thành công";
+    private final String DELETE_FORBIDDEN = "Không thể xóa môn học vì ràng buộc dữ liệu";
 
-    private final Integer MAX_QUESTIONS_PER_PAGE = 20;
+    private final Integer MAX_SUBJECTS_PER_PAGE = 20;
 
     @Autowired
-    QuestionRepository questionRepository;
+    ClassRepository classRepository;
 
     @Autowired
     private EntityManager entityManager;
 
-    public Question save(Question question) {
-        return questionRepository.save(question);
+    public Class save(Class cls) {
+        return classRepository.save(cls);
     }
 
-    public String deleteById(Integer id) throws ConstrainstViolationException {
+    public String deleteById(String id) throws ConstrainstViolationException {
         try {
-            questionRepository.deleteById(id);
+            classRepository.deleteById(id);
             return DELETE_SUCCESSFULLY;
         } catch (Exception ex) {
             throw new ConstrainstViolationException(DELETE_FORBIDDEN);
         }
     }
 
-    public Question findById(Integer id) throws NotFoundException {
-        Question question = questionRepository.getById(id);
-
-        if(question != null) {
-            return question;
+    public Class findById(String id) throws NotFoundException {
+        Optional<Class> subject = classRepository.findById(id);
+        if (subject.isPresent()) {
+            return subject.get();
         }
 
-        throw new NotFoundException("Không tìm thấy câu hỏi với mã bằng " + id);
+        throw new NotFoundException("Không tìm thấy môn học với mã " + id);
     }
 
-    public boolean isContentDuplicated(Integer id, String content, boolean isEdit) {
-        Question subject = questionRepository.findByContent(content);
+    public boolean isNameDuplicated(String id, String name, boolean isEdit) {
+        Class subject = classRepository.findByName(name);
 
         if (isEdit) {
             return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
@@ -72,7 +72,26 @@ public class QuestionService {
         }
     }
 
-    public Page<Question> findAllQuestions(Map<String, String> filters) {
+    public boolean isIdDuplicated(String id, boolean isEdit) {
+        Class subject = null;
+        try {
+            subject = findById(id);
+
+            if (isEdit) {
+                return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
+            } else {
+                return Objects.nonNull(subject);
+            }
+        } catch (NotFoundException e) {
+            return false;
+        }
+    }
+
+    public List<Class> findAll() {
+        return (List<Class>) classRepository.findAll();
+    }
+
+    public Page<Class> findAllSubjects(Map<String, String> filters) {
         int page = Integer.parseInt(filters.get("page"));
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
@@ -80,20 +99,20 @@ public class QuestionService {
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-        Pageable pageable = PageRequest.of(page - 1, MAX_QUESTIONS_PER_PAGE, sort);
+        Pageable pageable = PageRequest.of(page - 1, MAX_SUBJECTS_PER_PAGE, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);
-        Root<Question> root = criteriaQuery.from(Question.class);
+        CriteriaQuery<Class> criteriaQuery = criteriaBuilder.createQuery(Class.class);
+        Root<Class> root = criteriaQuery.from(Class.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
         if (!StringUtils.isEmpty(searchQuery)) {
             Expression<String> id = root.get("id");
-            Expression<String> content = root.get("content");
+            Expression<String> name = root.get("name");
 
             Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, content);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
@@ -101,7 +120,7 @@ public class QuestionService {
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
         criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
 
-        TypedQuery<Question> typedQuery = entityManager.createQuery(criteriaQuery);
+        TypedQuery<Class> typedQuery = entityManager.createQuery(criteriaQuery);
 
         int totalRows = typedQuery.getResultList().size();
         typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
@@ -109,4 +128,16 @@ public class QuestionService {
 
         return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
     }
+
+//    public boolean enableClass(String classId, String action) {
+//        try {
+//            Class cls = findById(classId);
+//            if(action.equals("enable")) {
+//                cls.set
+//            }
+//        } catch (NotFoundException ex) {
+//            return false;
+//        }
+//    }
+
 }

@@ -17,10 +17,6 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     public Optional<User> findByEmail(String email);
 
-    @Modifying
-    @Query(value = "delete from users_favorite_rooms where user_id = :userId and room_id = :roomId", nativeQuery = true)
-    public void removeFromFavLists(Integer userId, Integer roomId);
-
     public Page<User> findAll(Pageable pageable);
 
     @Query("SELECT count(*) FROM User u WHERE u.role.id = :roleId")

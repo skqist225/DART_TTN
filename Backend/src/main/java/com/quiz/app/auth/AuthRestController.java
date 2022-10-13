@@ -16,7 +16,6 @@ import com.quiz.app.user.dto.ForgotPasswordResponse;
 import com.quiz.app.user.dto.RegisterDTO;
 import com.quiz.app.user.dto.ResetPasswordDTO;
 import com.quiz.entity.User;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -57,8 +56,9 @@ public class AuthRestController {
     private JwtUtils jwtUtils;
 
     @PostMapping("login")
-    public ResponseEntity<StandardJSONResponse<User>> login2(@RequestBody LoginDTO loginDTO,
-                                                             @RequestParam(value = "admin", defaultValue = "false") String admin) {
+    public ResponseEntity<StandardJSONResponse<User>> login(
+            @RequestBody LoginDTO loginDTO,
+            @RequestParam(value = "admin", defaultValue = "false") String admin) {
         try {
             authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getId(),
@@ -71,20 +71,18 @@ public class AuthRestController {
 
             if (admin.equals("true") && !user.getRole().getName().equals("Admin")) {
                 return new ForbiddenResponse<User>(
-                        "Your account does not have enough privileges to access this resource.").response();
+                        "Tài khoản của bạn không đủ quyền để truy cập tài nguyên này").response();
             }
 
             return new OkResponse<>(user).response();
-        } catch (BadCredentialsException e) {
-            return new BadResponse<User>(e.getMessage()).response();
-        } catch (UserNotFoundException e) {
+        } catch (BadCredentialsException | UserNotFoundException e) {
             return new BadResponse<User>(e.getMessage()).response();
         }
     }
 
     @GetMapping("logout")
     public ResponseEntity<StandardJSONResponse<String>> logout() {
-        return new OkResponse<String>("Log out successfully").response();
+        return new OkResponse<>("Đăng xuất thành công").response();
     }
 
     @GetMapping("check-email/{email}")
@@ -104,13 +102,13 @@ public class AuthRestController {
 
         if (userService.checkBirthday(postUser.getBirthday())) {
             ObjectNode node = objectMapper.createObjectNode();
-            node.put("birthday", "Your age must be greater than 18");
+            node.put("birthday", "Tuổi của bạn phải lớn hơn 18");
             arrays.add(node);
         }
 
         if (userService.checkEmail(postUser.getEmail(), false, 0)) {
             ObjectNode node = objectMapper.createObjectNode();
-            node.put("email", "Email has already been taken");
+            node.put("email", "Địa chỉ email đã được sử dụng");
             arrays.add(node);
         }
 
@@ -146,7 +144,7 @@ public class AuthRestController {
             ForgotPasswordResponse forgotPasswordResponse = new ForgotPasswordResponse(resetPasswordCode, message,
                     email);
 
-            return new OkResponse<ForgotPasswordResponse>(forgotPasswordResponse).response();
+            return new OkResponse<>(forgotPasswordResponse).response();
         } catch (UserNotFoundException e) {
             return new BadResponse<ForgotPasswordResponse>(e.getMessage()).response();
         }
@@ -182,7 +180,7 @@ public class AuthRestController {
             user.setResetPasswordCode(null);
             userService.saveUser(user);
 
-            return new OkResponse<String>("Your password has been changed successfully").response();
+            return new OkResponse<>("Your password has been changed successfully").response();
         } catch (UserNotFoundException e) {
             e.printStackTrace();
             return new BadResponse<String>(e.getMessage()).response();

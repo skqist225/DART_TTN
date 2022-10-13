@@ -16,7 +16,7 @@ function TableModal({
     return (
         <div
             id={modalId}
-            tabindex='-1'
+            tabIndex='-1'
             aria-hidden='true'
             className={tailwindCss.modal.container}
             style={{ backgroundColor: "rgba(0,0,0,0.4)" }}

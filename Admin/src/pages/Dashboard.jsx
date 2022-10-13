@@ -5,8 +5,8 @@ import { useDispatch, useSelector } from "react-redux";
 import { UsersPage, SubjectsPage } from ".";
 import { useLocation, useNavigate } from "react-router-dom";
 import { authState } from "../features/auth/authSlice";
-import SimpleStatNumber from "../components/booking/SimpleStatNumber";
-import StackedBarChart from "../partials/dashboard/DashboardCard09";
+// import SimpleStatNumber from "../components/utils/SimpleStatNumber";
+// import StackedBarChart from "../partials/dashboard/DashboardCard09";
 
 import LineChart from "../partials/dashboard/LineChart";
 import LineChartDashboard from "../partials/dashboard/LineChartDashboard";
@@ -72,21 +72,21 @@ function Dashboard() {
                                     {/* <DashboardCard03 /> */}
 
                                     <div className='my-10'>
-                                        {!getCreatedRoomByMonthAndYearActionLoading && (
+                                        {/* {!getCreatedRoomByMonthAndYearActionLoading && (
                                             <LineChartDashboard
                                                 data={[lcdataSet1, lcdataSet2]}
                                                 label='Created Room By Month'
                                             />
-                                        )}
+                                        )} */}
                                     </div>
                                     <div>
                                         {/* <DashboardCard04 /> */}
                                         {/* <DashboardCard05 /> */}
-                                        {!countUserByRoleActionLoading && (
+                                        {/* {!countUserByRoleActionLoading && (
                                             <CircleChart
                                                 data={[numberOfUsers, numberOfHost, numberOfAdmin]}
                                             />
-                                        )}
+                                        )} */}
                                         {/* <DashboardCard06 /> */}
                                         {/* <DashboardCard07 />
                                         <DashboardCard08 /> */}

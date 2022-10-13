@@ -22,10 +22,6 @@ import javax.persistence.Table;
 @Table(name = "questions")
 public class Question extends BaseEntity {
 
-	public Question(int id) {
-		super(id);
-	}
-
 	@Column(columnDefinition = "TEXT", nullable = false, unique = true)
 	private String content;
 
@@ -51,15 +47,15 @@ public class Question extends BaseEntity {
 	@JoinColumn(name = "subject_id", nullable = false)
 	private Subject subject;
 
+	private Integer chapter;
+
 	private String image;
 
 	@ManyToOne
 	@JoinColumn(nullable = false)
 	private User teacher;
 
-	//	public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,
-//								 Subject subject) {
-	public static Question build(PostCreateQuestionDTO postCreateQuestionDTO,
+	public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,
 								 Subject subject) {
 		Question question = Question.builder()
 				.content(postCreateQuestionDTO.getContent())
@@ -70,12 +66,13 @@ public class Question extends BaseEntity {
 				.finalAnswer(postCreateQuestionDTO.getFinalAnswer())
 				.level(postCreateQuestionDTO.getLevel())
 				.subject(subject)
+				.teacher(teacher)
 				.build();
 
-		if(postCreateQuestionDTO.getImage() != null) {
+		if (postCreateQuestionDTO.getImage() != null) {
 			question.setImage(postCreateQuestionDTO.getImage().getOriginalFilename());
 		}
 
-		return  question;
+		return question;
 	}
 }

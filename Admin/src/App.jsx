@@ -4,7 +4,7 @@ import "./css/style.scss";
 import "./charts/ChartjsConfig";
 
 import Dashboard from "./pages/Dashboard";
-import { AddQuestionPage, QuestionsPage, SubjectsPage, UsersPage } from "./pages";
+import { AddQuestionPage, ClassesPage, QuestionsPage, SubjectsPage, UsersPage } from "./pages";
 import LoginPage from "./pages/auth/LoginPage";
 
 function App() {
@@ -34,6 +34,10 @@ function App() {
 
                 <Route path='/users'>
                     <Route path='' element={<UsersPage />} />
+                </Route>
+
+                <Route path='/classes'>
+                    <Route path='' element={<ClassesPage />} />
                 </Route>
             </Routes>
         </>

@@ -122,12 +122,7 @@ public class UserService {
 
         Page<User> result = new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
 
-        List<UserListDTO> userListDTOS = new ArrayList<>();
-        for (User b : result.getContent()) {
-            userListDTOS.add(UserListDTO.build(b));
-        }
-
-        return new UserListResponse(userListDTOS, result.getTotalElements(), result.getTotalPages());
+        return new UserListResponse(result.getContent(), result.getTotalElements(), result.getTotalPages());
     }
 
     public void encodePassword(User user) {

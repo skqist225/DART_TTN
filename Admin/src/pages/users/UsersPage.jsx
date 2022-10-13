@@ -34,8 +34,28 @@ const columns = [
         sortable: true,
     },
     {
+        name: "Ngày sinh",
+        sortField: "birthday",
+        sortable: true,
+    },
+    {
+        name: "Địa chỉ",
+        sortField: "address",
+        sortable: true,
+    },
+    {
+        name: "Email",
+        sortField: "email",
+        sortable: true,
+    },
+    {
         name: "Giới tính",
         sortField: "sex",
+        sortable: true,
+    },
+    {
+        name: "Lớp",
+        sortField: "class",
         sortable: true,
     },
     {
@@ -49,6 +69,7 @@ const UsersPage = () => {
     const dispatch = useDispatch();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+    const [image, setImage] = useState(null);
 
     const {
         register,
@@ -195,7 +216,7 @@ const UsersPage = () => {
                             dispatch={dispatch}
                             setValue={setValue}
                             // subjects={subjects.map(({ id, name }) => ({ title: name, value: id }))}
-                            // setImage={setImage}
+                            setImage={setImage}
                         />
                     }
                     isEdit={isEdit}

@@ -1,35 +1,48 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { clearErrorField, questionState, setEditedQuestion } from "../../features/questionSlice";
 import { tailwindCss } from "../../tailwind";
 import Select from "../utils/userInputs/Select";
-import TextArea from "../utils/userInputs/TextArea";
-import $ from "jquery";
+
 import { CloseIcon } from "../../images";
+import Input from "../utils/userInputs/Input";
+import { userState } from "../../features/user/userSlice";
+import $ from "jquery";
+import DatePicker from "../utils/datePicker/DatePicker";
+
+const sexOptions = [
+    {
+        title: "Nam",
+        value: "MALE",
+    },
+    {
+        title: "Nữ",
+        value: "FEMALE",
+    },
+];
 
 function QuestionModalBody({ errors, register, dispatch, setValue, subjects, setImage }) {
-    const { editedQuestion, errorObject } = useSelector(questionState);
+    const { editedUser, errorObject } = useSelector(userState);
 
     const onKeyDown = ({ target: { name } }) => {
         if (errorObject) {
             dispatch(clearErrorField(name));
         }
-        if (editedQuestion) {
-            dispatch(setEditedQuestion(null));
-        }
+        // if (editedUser) {
+        //     dispatch(setEditedQuestion(null));
+        // }
     };
 
-    if (editedQuestion) {
-        setValue("id", editedQuestion.id);
-        setValue("content", editedQuestion.content);
-        setValue("answerA", editedQuestion.answerA);
-        setValue("answerB", editedQuestion.answerB);
-        setValue("answerC", editedQuestion.answerC);
-        setValue("answerD", editedQuestion.answerD);
-        setValue("finalAnswer", editedQuestion.finalAnswer);
-        setValue("level", editedQuestion.level);
-        setValue("subjectId", editedQuestion.subject.id);
-    }
+    // if (editedQuestion) {
+    //     setValue("id", editedQuestion.id);
+    //     setValue("content", editedQuestion.content);
+    //     setValue("answerA", editedQuestion.answerA);
+    //     setValue("answerB", editedQuestion.answerB);
+    //     setValue("answerC", editedQuestion.answerC);
+    //     setValue("answerD", editedQuestion.answerD);
+    //     setValue("finalAnswer", editedQuestion.finalAnswer);
+    //     setValue("level", editedQuestion.level);
+    //     setValue("subjectId", editedQuestion.subject.id);
+    // }
 
     const previewImage = event => {
         const image = event.target.files[0];
@@ -56,103 +69,97 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
     return (
         <div>
             <div className='col-flex items-center justify-center w-full'>
-                <div className='w-full'>
-                    <TextArea
-                        label='Nội dung câu hỏi *'
-                        labelClassName={tailwindCss.label}
-                        textAreaClassName={tailwindCss.textArea}
+                <div className='w-full flex items-center mb-5'>
+                    <div className='flex-1 mr-5'>
+                        <Input
+                            label='Họ *'
+                            error={
+                                (errors.firstName && errors.firstName.message) ||
+                                (errorObject && errorObject.firstName)
+                            }
+                            register={register}
+                            name='firstName'
+                            onKeyDown={onKeyDown}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <Input
+                            label='Tên *'
+                            error={
+                                (errors.lastName && errors.lastName.message) ||
+                                (errorObject && errorObject.lastName)
+                            }
+                            register={register}
+                            name='lastName'
+                            onKeyDown={onKeyDown}
+                        />
+                    </div>
+                </div>
+                <div className='w-full mb-5'>
+                    <div>
+                        <Input
+                            label='Địa chỉ email *'
+                            error={
+                                (errors.email && errors.email.message) ||
+                                (errorObject && errorObject.email)
+                            }
+                            register={register}
+                            name='email'
+                            type='email'
+                            onKeyDown={onKeyDown}
+                        />
+                    </div>
+                </div>
+                <div className='w-full mb-5'>
+                    <Input
+                        label='Mật khẩu *'
                         error={
-                            (errors.content && errors.content.message) ||
-                            (errorObject && errorObject.content)
+                            (errors.password && errors.password.message) ||
+                            (errorObject && errorObject.password)
                         }
                         register={register}
-                        name='content'
+                        name='password'
+                        type='password'
                         onKeyDown={onKeyDown}
                     />
                 </div>
-                <div className='w-full'>
-                    <div className='flex my-5'>
-                        <div className='flex-1 mr-5'>
-                            <TextArea
-                                label='A *'
-                                labelClassName={tailwindCss.label}
-                                textAreaClassName={tailwindCss.textArea}
-                                error={errors.answerA && errors.answerA.message}
-                                register={register}
-                                name='answerA'
-                            />
-                        </div>
-                        <div className='flex-1'>
-                            <TextArea
-                                label='B *'
-                                labelClassName={tailwindCss.label}
-                                textAreaClassName={tailwindCss.textArea}
-                                error={errors.answerB && errors.answerB.message}
-                                register={register}
-                                name='answerB'
-                            />
-                        </div>
-                    </div>
-                    <div className='flex'>
-                        <div className='flex-1 mr-5'>
-                            <TextArea
-                                label='B *'
-                                labelClassName={tailwindCss.label}
-                                textAreaClassName={tailwindCss.textArea}
-                                error={errors.answerC && errors.answerC.message}
-                                register={register}
-                                name='answerC'
-                            />
-                        </div>
-                        <div className='flex-1'>
-                            <TextArea
-                                label='D *'
-                                labelClassName={tailwindCss.label}
-                                textAreaClassName={tailwindCss.textArea}
-                                error={errors.answerD && errors.answerD.message}
-                                register={register}
-                                name='answerD'
-                            />
-                        </div>
-                    </div>
+                <div className='w-full mb-5'>
+                    <DatePicker />
                 </div>
-
-                <div className='flex items-center w-full'>
-                    <div className='my-3 w-full mr-5'>
-                        <Select
-                            label='Đáp án *'
-                            labelClassName={tailwindCss.label}
-                            selectClassName={tailwindCss.select}
-                            error={errors.finalAnswer && errors.finalAnswer.message}
-                            register={register}
-                            name='finalAnswer'
-                            options={finalAnswerOptions}
-                        />
-                    </div>
-
-                    <div className='my-3 w-full'>
-                        <Select
-                            label='Mức độ *'
-                            labelClassName={tailwindCss.label}
-                            selectClassName={tailwindCss.select}
-                            error={errors.level && errors.level.message}
-                            register={register}
-                            name='level'
-                            options={levelOptions}
-                        />
-                    </div>
+                <div className='w-full mb-5'>
+                    <Input
+                        label='Địa chỉ'
+                        error={
+                            (errors.address && errors.address.message) ||
+                            (errorObject && errorObject.address)
+                        }
+                        register={register}
+                        name='address'
+                        type='address'
+                        onKeyDown={onKeyDown}
+                    />
                 </div>
-
-                <div className='my-3 w-full'>
+                <div className='w-full mb-5'>
                     <Select
-                        label='Môn học *'
+                        label='Giới tính *'
+                        labelClassName={tailwindCss.label}
+                        selectClassName={tailwindCss.select}
+                        error={errors.sex && errors.sex.message}
+                        register={register}
+                        name='sex'
+                        options={sexOptions}
+                    />
+                </div>
+                <div className='w-full mb-5'>
+                    {/* <Select
+                        label='Lớp *'
                         labelClassName={tailwindCss.label}
                         selectClassName={tailwindCss.select}
                         error={errors.subjectId && errors.subjectId.message}
                         register={register}
                         name='subjectId'
                         options={subjects}
-                    />
+                    /> */}
                 </div>
             </div>
 
@@ -204,7 +211,7 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
                         id='removePreviewImage'
                         type='button'
                         className={`${tailwindCss.modal.closeButton} absolute top-0 right-0 hidden`}
-                        onClick={removePreviewImage}
+                        // onClick={removePreviewImage}
                     >
                         <CloseIcon />
                     </button>

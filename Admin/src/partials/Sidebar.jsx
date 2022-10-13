@@ -53,7 +53,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     return (
         <div>
-            {/* Sidebar backdrop (mobile only) */}
             <div
                 className={`fixed inset-0 bg-slate-900 bg-opacity-30 z-40 lg:hidden lg:z-auto transition-opacity duration-200 ${
                     sidebarOpen ? "opacity-100" : "opacity-0 pointer-events-none"
@@ -61,7 +60,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                 aria-hidden='true'
             ></div>
 
-            {/* Sidebar */}
             <div
                 id='sidebar'
                 ref={sidebar}
@@ -69,9 +67,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     sidebarOpen ? "translate-x-0" : "-translate-x-64"
                 }`}
             >
-                {/* Sidebar header */}
                 <div className='flex justify-between mb-10 pr-3 sm:px-2'>
-                    {/* Close button */}
                     <button
                         ref={trigger}
                         className='lg:hidden text-slate-500 hover:text-slate-400'
@@ -88,7 +84,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <path d='M10.7 18.7l1.4-1.4L7.8 13H20v-2H7.8l4.3-4.3-1.4-1.4L4 12z' />
                         </svg>
                     </button>
-                    {/* Logo */}
                     <NavLink end to='/' className='block'>
                         <svg width='32' height='32' viewBox='0 0 32 32'>
                             <defs>
@@ -130,9 +125,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                     </NavLink>
                 </div>
 
-                {/* Links */}
                 <div className='space-y-8'>
-                    {/* Pages group */}
                     <div>
                         <h3 className='text-xs uppercase text-slate-500 font-semibold pl-3'>
                             <span
@@ -192,6 +185,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             <SidebarElement pathname={pathname} name='subjects' title='Môn học' />
 
                             <SidebarElement pathname={pathname} name='users' title='Người dùng' />
+
+                            <SidebarElement pathname={pathname} name='classes' title='Lớp học' />
                         </ul>
                     </div>
                 </div>

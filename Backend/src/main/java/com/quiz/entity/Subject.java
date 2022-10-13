@@ -34,7 +34,7 @@ public class Subject {
 	@JsonIgnore
 	@Builder.Default
 	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
-	private List<Topic> topics = new ArrayList<>();
+	private List<ExamPaper> topics = new ArrayList<>();
 
 	@JsonIgnore
 	@Builder.Default

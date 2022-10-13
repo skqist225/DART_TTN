@@ -11,8 +11,6 @@ import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.user.dto.UpdateUserDTO;
 import com.quiz.app.user.dto.UserListResponse;
-import com.quiz.entity.Address;
-import com.quiz.entity.City;
 import com.quiz.entity.Sex;
 import com.quiz.entity.User;
 
@@ -33,7 +31,6 @@ import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

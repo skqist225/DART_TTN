@@ -16,6 +16,9 @@ export { default as Frame } from "./utils/frames/Frame";
 //tables
 export { default as Table } from "./utils/tables/Table";
 
+// date pickers
+export { default as DatePicker } from "./utils/datePicker/DatePicker";
+
 //questions
 export { default as QuestionModalBody } from "./questions/QuestionModalBody";
 export { default as QuestionTableBody } from "./questions/QuestionTableBody";
@@ -27,3 +30,7 @@ export { default as SubjectTableBody } from "./subjects/SubjectTableBody";
 //users
 export { default as UserModalBody } from "./users/UserModalBody";
 export { default as UserTableBody } from "./users/UserTableBody";
+
+//classes
+export { default as ClassModalBody } from "./classes/ClassModalBody";
+export { default as ClassTableBody } from "./classes/ClassTableBody";

@@ -48,7 +48,7 @@ function UserTableModal({ rows, setIsEdit, dispatch }) {
                     <td className='py-4 px-6  whitespace-nowrap dark:text-white'>{row.id}</td>
                     <td className='py-4 px-6'>
                         <div className='normal-flex' style={{ width: "300px" }}>
-                            <img src={getImage(row.avatar)} className='image' />
+                            <img src={getImage(row.avatarPath)} className='image' />
                             <span className='listings__room-name'>{row.fullName}</span>
                         </div>
                     </td>
@@ -56,6 +56,7 @@ function UserTableModal({ rows, setIsEdit, dispatch }) {
                         <div style={{ maxWidth: "20px" }}>
                             <div className='normal-flex'>
                                 <div className='mr-10'>
+                                    {console.log(row.status)}
                                     {row.status === true ? (
                                         <svg
                                             viewBox='0 0 16 16'
@@ -81,11 +82,15 @@ function UserTableModal({ rows, setIsEdit, dispatch }) {
                                         />
                                     )}
                                 </div>
-                                <div>{row.status === true ? "Enabled" : "Disabled"}</div>
+                                <div>{row.status === true ? "Hoạt động" : "Hủy"}</div>
                             </div>
                         </div>
                     </td>
+                    <td className='py-4 px-6'>{row.birthday}</td>
+                    <td className='py-4 px-6'>{row.address}</td>
+                    <td className='py-4 px-6'>{row.email}</td>
                     <td className='py-4 px-6'>{lookupUserSex(row.sex)}</td>
+                    {/* <td className='py-4 px-6'>{row.studentClass.name}</td> */}
                     <td className='py-4 px-6'>{lookupRole(row.role)}</td>
                     <td class='py-4 px-6 flex items-center'>
                         <MyButton
