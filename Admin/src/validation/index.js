@@ -22,17 +22,42 @@ export const questionSchema = yup
 
 export const userSchema = yup
     .object({
+        id: yup.string().required("Mã người dùng"),
         firstName: yup.string().required("Họ không được để trống"),
         lastName: yup.string().required("Tên không được để  trống"),
         sex: yup.string().required("Giới tính không được để  trống"),
         birthday: yup.string().required("Ngày sinh không được để  trống"),
+        address: yup.string().required("Địa chỉ không được để  trống"),
         email: yup
             .string()
-            .required("Email không được để  trống")
+            .required("Địa chỉ email không được để  trống")
             .email("Địa chỉ email không đúng định dạng"),
         password: yup.string().min(8, "Mật khẩu ít nhất tám ký tự"),
-        studentClass: yup.string().required("Lớp không được để  trống"),
+        roleId: yup.string().required("Vai trò không được để  trống"),
+        classId: yup.string().required("Lớp không được để  trống"),
     })
     .required();
 
-export const classSchema = yup.object().required();
+export const userRegisterSchema = yup
+    .object({
+        id: yup.string().required("Mã người dùng"),
+        firstName: yup.string().required("Họ không được để trống"),
+        lastName: yup.string().required("Tên không được để  trống"),
+        sex: yup.string().required("Giới tính không được để  trống"),
+        birthday: yup.string().required("Ngày sinh không được để  trống"),
+        address: yup.string().required("Địa chỉ không được để  trống"),
+        email: yup
+            .string()
+            .required("Địa chỉ email không được để  trống")
+            .email("Địa chỉ email không đúng định dạng"),
+        roleId: yup.string().required("Vai trò không được để  trống"),
+        classId: yup.string().required("Lớp không được để  trống"),
+    })
+    .required();
+
+export const classSchema = yup
+    .object({
+        id: yup.string().required("Mã lớp không được để trống"),
+        name: yup.string().required("Tên lớp không được để trống"),
+    })
+    .required();

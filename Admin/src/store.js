@@ -42,9 +42,7 @@ const store = configureStore({
             editUser: {
                 successMessage: null,
             },
-            fetchRoles: {
-                roles: [],
-            },
+            roles: [],
         },
     },
 });

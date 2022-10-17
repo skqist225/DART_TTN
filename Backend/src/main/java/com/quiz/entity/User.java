@@ -96,15 +96,16 @@ public class User {
 
     @Transient
     @JsonIgnore
-    public static User build(RegisterDTO registerDTO) {
+    public static User build(RegisterDTO registerDTO, Class cls) {
         String id = registerDTO.getId();
         String firstName = registerDTO.getFirstName();
         String lastName = registerDTO.getLastName();
         String email = registerDTO.getEmail();
         String password = registerDTO.getPassword();
         Sex sex = registerDTO.getSex();
-        LocalDate birthday = registerDTO.getBirthday();
+        LocalDate birthday = LocalDate.parse(registerDTO.getBirthday());
         Integer roleId = registerDTO.getRoleId();
+        String address = registerDTO.getAddress();
 
         Role role = new Role(2);
         if (Objects.nonNull(roleId)) {
@@ -116,6 +117,8 @@ public class User {
                 .birthday(birthday).role(role)
                 .emailVerified(false)
                 .status(true)
+                .cls(cls)
+                .address(address)
                 .build();
     }
 

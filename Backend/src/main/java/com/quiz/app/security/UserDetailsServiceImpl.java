@@ -24,6 +24,6 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 			return UserDetailsImpl.build(user.get());
 		}
 
-		throw new UsernameNotFoundException("Could not find user with id: " + id);
+		throw new UsernameNotFoundException("Không tìm thấy người dùng với mã " + id);
 	}
 }

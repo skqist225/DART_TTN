@@ -30,4 +30,8 @@ public class Class {
                 .name(postCreateClassDTO.getName())
                 .build();
     }
+
+    public Class(String id) {
+        this.id = id;
+    }
 }

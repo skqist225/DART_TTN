@@ -1,7 +1,27 @@
 import React from "react";
 import ErrorMessage from "../errors/ErrorMessage";
 
-function Select({ label, labelClassName, selectClassName, error, register, name, options }) {
+function Select({
+    label,
+    labelClassName,
+    selectClassName,
+    error,
+    register,
+    name,
+    options,
+    defaultValue,
+    setValue,
+}) {
+    if (setValue) {
+        if (defaultValue) {
+            setValue(name, defaultValue);
+        } else {
+            if (options[0] && options[0].value) {
+                setValue(name, options[0].value);
+            }
+        }
+    }
+
     return (
         <>
             <label
@@ -14,10 +34,13 @@ function Select({ label, labelClassName, selectClassName, error, register, name,
                 id={name}
                 className={`${selectClassName} ${error && "bg-red-50 border border-red-500"}`}
                 {...register(name)}
-                defaultValue=''
             >
                 {options.map(({ value, title }) => (
-                    <option value={value} key={value}>
+                    <option
+                        value={value}
+                        key={value}
+                        selected={defaultValue ? value === defaultValue : null}
+                    >
                         {title}
                     </option>
                 ))}

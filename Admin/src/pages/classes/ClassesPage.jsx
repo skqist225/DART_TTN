@@ -15,6 +15,19 @@ import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
 
+const columns = [
+    {
+        name: "Mã lớp",
+        sortField: "id",
+        sortable: true,
+    },
+    {
+        name: "Tên lớp",
+        sortField: "name",
+        sortable: true,
+    },
+];
+
 function ClassesPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -46,19 +59,6 @@ function ClassesPage() {
         deleteClass: { successMessage: dsSuccessMessage },
     } = useSelector(classState);
 
-    const columns = [
-        {
-            name: "Mã lớp",
-            sortField: "id",
-            sortable: true,
-        },
-        {
-            name: "Tên lớp",
-            sortField: "name",
-            sortable: true,
-        },
-    ];
-
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
             fetchAllClasses({
@@ -84,19 +84,22 @@ function ClassesPage() {
         };
     }, []);
 
+    function closeForm(successMessage) {
+        callToast("success", successMessage);
+        $("#classForm")[0].reset();
+        $("#classModal").css("display", "none");
+        dispatch(fetchAllClasses(filterObject));
+    }
+
     useEffect(() => {
         if (successMessage) {
-            callToast("success", successMessage);
-            $("#classForm")[0].reset();
-            dispatch(fetchAllClasses(filterObject));
+            closeForm(successMessage);
         }
     }, [successMessage]);
 
     useEffect(() => {
         if (esSuccessMessage) {
-            callToast("success", esSuccessMessage);
-            dispatch(fetchAllClasses(filterObject));
-            $("#classModal").css("display", "none");
+            closeForm(successMessage);
             setIsEdit(false);
         }
     }, [esSuccessMessage]);
@@ -131,7 +134,12 @@ function ClassesPage() {
                     totalElements={totalElements}
                     totalPages={totalPages}
                     TableBody={
-                        <ClassTableBody rows={classes} setIsEdit={setIsEdit} dispatch={dispatch} />
+                        <ClassTableBody
+                            rows={classes}
+                            setIsEdit={setIsEdit}
+                            dispatch={dispatch}
+                            modalId='classModal'
+                        />
                     }
                     modalId='classModal'
                     formId='classForm'

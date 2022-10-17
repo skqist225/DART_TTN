@@ -29,8 +29,8 @@ import java.util.Optional;
 
 @Service
 public class ClassService {
-    private final String DELETE_SUCCESSFULLY = "Xóa môn học thành công";
-    private final String DELETE_FORBIDDEN = "Không thể xóa môn học vì ràng buộc dữ liệu";
+    private final String DELETE_SUCCESSFULLY = "Xóa lớp học thành công";
+    private final String DELETE_FORBIDDEN = "Không thể xóa lớp học vì ràng buộc dữ liệu";
 
     private final Integer MAX_SUBJECTS_PER_PAGE = 20;
 
@@ -54,12 +54,12 @@ public class ClassService {
     }
 
     public Class findById(String id) throws NotFoundException {
-        Optional<Class> subject = classRepository.findById(id);
-        if (subject.isPresent()) {
-            return subject.get();
+        Optional<Class> cls = classRepository.findById(id);
+        if (cls.isPresent()) {
+            return cls.get();
         }
 
-        throw new NotFoundException("Không tìm thấy môn học với mã " + id);
+        throw new NotFoundException("Không tìm thấy lớp học với mã " + id);
     }
 
     public boolean isNameDuplicated(String id, String name, boolean isEdit) {
@@ -73,14 +73,14 @@ public class ClassService {
     }
 
     public boolean isIdDuplicated(String id, boolean isEdit) {
-        Class subject = null;
+        Class cls = null;
         try {
-            subject = findById(id);
+            cls = findById(id);
 
             if (isEdit) {
-                return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
+                return Objects.nonNull(cls) && !Objects.equals(cls.getId(), id);
             } else {
-                return Objects.nonNull(subject);
+                return Objects.nonNull(cls);
             }
         } catch (NotFoundException e) {
             return false;

@@ -1,10 +1,10 @@
 import React from "react";
-import { deleteSubject, setEditedsubject } from "../../features/subjectSlice";
 import { tailwindCss } from "../../tailwind";
 import MyButton from "../common/MyButton";
 import $ from "jquery";
+import { deleteClass, setEditedClass } from "../../features/classSlice";
 
-function ClassTableBody({ rows, setIsEdit, dispatch }) {
+function ClassTableBody({ rows, setIsEdit, dispatch, modalId }) {
     return (
         <tbody>
             {rows.map(row => (
@@ -27,16 +27,16 @@ function ClassTableBody({ rows, setIsEdit, dispatch }) {
                         <MyButton
                             type='edit'
                             onClick={() => {
-                                $("#subjectModal").css("display", "flex");
+                                $(`#${modalId}`).css("display", "flex");
                                 setIsEdit(true);
-                                dispatch(setEditedsubject(row));
+                                dispatch(setEditedClass(row));
                             }}
                         />
                         <div className='mx-3'>
                             <MyButton
                                 type='delete'
                                 onClick={() => {
-                                    dispatch(deleteSubject(row.id));
+                                    dispatch(deleteClass(row.id));
                                 }}
                             />
                         </div>

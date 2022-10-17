@@ -84,6 +84,19 @@ export const editClass = createAsyncThunk(
     }
 );
 
+export const deleteClass = createAsyncThunk(
+    "class/deleteClass",
+    async (id, { rejectWithValue }) => {
+        try {
+            const { data } = await api.delete(`/classes/${id}/delete`);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 export const enableClass = createAsyncThunk(
     "class/enableClass",
     async (classId, { rejectWithValue }) => {
@@ -241,6 +254,9 @@ const classSlice = createSlice({
                         }
                     });
                 }
+            })
+            .addCase(deleteClass.fulfilled, (state, { payload }) => {
+                state.deleteClass.successMessage = payload.data;
             });
     },
 });

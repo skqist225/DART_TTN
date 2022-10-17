@@ -3,7 +3,6 @@ package com.quiz.app.user;
 import com.quiz.app.exception.UserNotFoundException;
 import com.quiz.app.exception.VerifiedUserException;
 import com.quiz.app.user.dto.CountUserByRole;
-import com.quiz.app.user.dto.UserListDTO;
 import com.quiz.app.user.dto.UserListResponse;
 import com.quiz.entity.Role;
 import com.quiz.entity.User;
@@ -31,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -82,10 +80,10 @@ public class UserService {
         List<String> userRoles = new ArrayList<>();
         if (roles.split(",").length > 0) {
             for (String role : roles.split(",")) {
-                if (Objects.equals(role, "User")) {
-                    userRoles.add("User");
-                } else if (Objects.equals(role, "Host")) {
-                    userRoles.add("Host");
+                if (Objects.equals(role, "Student")) {
+                    userRoles.add("Student");
+                } else if (Objects.equals(role, "Teacher")) {
+                    userRoles.add("Teacher");
                 } else {
                     userRoles.add("Admin");
                 }
@@ -139,17 +137,17 @@ public class UserService {
     }
 
     public User findByEmail(String email) throws UserNotFoundException {
-        User user = userRepository.findByEmail(email)
+        return userRepository.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
-        return user;
     }
 
-    public boolean checkEmail(String email, Boolean isEdit, Integer userId) {
-        if (!isEdit) {
-            Optional<User> user = userRepository.findByEmail(email);
-            return user.isPresent();
+    public boolean isEmailDuplicated(String id, String email, boolean isEdit) {
+        User user = userRepository.findByEmail(email).get();
+
+        if (isEdit) {
+            return Objects.nonNull(user) && !Objects.equals(user.getId(), id);
         } else {
-            return userRepository.findByEmailAndId(email, userId).size() > 0;
+            return Objects.nonNull(user);
         }
     }
 
@@ -162,8 +160,6 @@ public class UserService {
         return new CountUserByRole(userRepository.countUserByRole(1), userRepository.countUserByRole(2),
                 userRepository.countUserByRole(3));
     }
-
-
 
     @Transactional
     public User saveUser(User user) {

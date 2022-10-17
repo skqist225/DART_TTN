@@ -5,7 +5,7 @@ import Select from "../utils/userInputs/Select";
 
 import { CloseIcon } from "../../images";
 import Input from "../utils/userInputs/Input";
-import { userState } from "../../features/user/userSlice";
+import { setEditedUser, userState } from "../../features/user/userSlice";
 import $ from "jquery";
 import DatePicker from "../utils/datePicker/DatePicker";
 
@@ -20,29 +20,41 @@ const sexOptions = [
     },
 ];
 
-function QuestionModalBody({ errors, register, dispatch, setValue, subjects, setImage }) {
+function QuestionModalBody({
+    errors,
+    register,
+    dispatch,
+    setValue,
+    classes,
+    roles,
+    setImage,
+    isEdit,
+}) {
     const { editedUser, errorObject } = useSelector(userState);
 
     const onKeyDown = ({ target: { name } }) => {
         if (errorObject) {
             dispatch(clearErrorField(name));
         }
-        // if (editedUser) {
-        //     dispatch(setEditedQuestion(null));
-        // }
+        if (editedUser) {
+            dispatch(setEditedUser(null));
+        }
     };
 
-    // if (editedQuestion) {
-    //     setValue("id", editedQuestion.id);
-    //     setValue("content", editedQuestion.content);
-    //     setValue("answerA", editedQuestion.answerA);
-    //     setValue("answerB", editedQuestion.answerB);
-    //     setValue("answerC", editedQuestion.answerC);
-    //     setValue("answerD", editedQuestion.answerD);
-    //     setValue("finalAnswer", editedQuestion.finalAnswer);
-    //     setValue("level", editedQuestion.level);
-    //     setValue("subjectId", editedQuestion.subject.id);
-    // }
+    if (editedUser) {
+        setValue("id", editedUser.id);
+        setValue("firstName", editedUser.firstName);
+        setValue("lastName", editedUser.lastName);
+        setValue("email", editedUser.email);
+
+        let birthday = editedUser.birthday.split("-");
+        birthday = birthday[2] + "/" + birthday[1] + "/" + birthday[0];
+        setValue("birthday", birthday);
+        setValue("sex", editedUser.sex);
+        setValue("address", editedUser.address);
+        setValue("roleId", editedUser.role.id);
+        setValue("classId", editedUser.cls.id);
+    }
 
     const previewImage = event => {
         const image = event.target.files[0];
@@ -69,7 +81,21 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
     return (
         <div>
             <div className='col-flex items-center justify-center w-full'>
-                <div className='w-full flex items-center mb-5'>
+                <div className='w-full mb-5'>
+                    <div>
+                        <Input
+                            label='Mã người dùng *'
+                            error={
+                                (errors.id && errors.id.message) || (errorObject && errorObject.id)
+                            }
+                            register={register}
+                            name='id'
+                            onKeyDown={onKeyDown}
+                            readOnly={isEdit}
+                        />
+                    </div>
+                </div>
+                <div className='w-full flex items-start mb-5'>
                     <div className='flex-1 mr-5'>
                         <Input
                             label='Họ *'
@@ -95,8 +121,8 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
                         />
                     </div>
                 </div>
-                <div className='w-full mb-5'>
-                    <div>
+                <div className='flex items-start w-full mb-5'>
+                    <div className='flex-1 mr-5'>
                         <Input
                             label='Địa chỉ email *'
                             error={
@@ -109,22 +135,44 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
                             onKeyDown={onKeyDown}
                         />
                     </div>
+                    <div className='flex-1'>
+                        <Input
+                            label='Mật khẩu *'
+                            error={
+                                (errors.password && errors.password.message) ||
+                                (errorObject && errorObject.password)
+                            }
+                            register={register}
+                            name='password'
+                            type='password'
+                            onKeyDown={onKeyDown}
+                        />
+                    </div>
                 </div>
-                <div className='w-full mb-5'>
-                    <Input
-                        label='Mật khẩu *'
-                        error={
-                            (errors.password && errors.password.message) ||
-                            (errorObject && errorObject.password)
-                        }
-                        register={register}
-                        name='password'
-                        type='password'
-                        onKeyDown={onKeyDown}
-                    />
-                </div>
-                <div className='w-full mb-5'>
-                    <DatePicker />
+
+                <div className='flex items-start w-full mb-5'>
+                    <div className='flex-1 mr-5'>
+                        <DatePicker
+                            error={
+                                (errors.birthday && errors.birthday.message) ||
+                                (errorObject && errorObject.birthday)
+                            }
+                            register={register}
+                            name='birthday'
+                            onKeyDown={onKeyDown}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <Select
+                            label='Giới tính *'
+                            labelClassName={tailwindCss.label}
+                            selectClassName={tailwindCss.select}
+                            error={errors.sex && errors.sex.message}
+                            register={register}
+                            name='sex'
+                            options={sexOptions}
+                        />
+                    </div>
                 </div>
                 <div className='w-full mb-5'>
                     <Input
@@ -139,33 +187,37 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
                         onKeyDown={onKeyDown}
                     />
                 </div>
-                <div className='w-full mb-5'>
-                    <Select
-                        label='Giới tính *'
-                        labelClassName={tailwindCss.label}
-                        selectClassName={tailwindCss.select}
-                        error={errors.sex && errors.sex.message}
-                        register={register}
-                        name='sex'
-                        options={sexOptions}
-                    />
-                </div>
-                <div className='w-full mb-5'>
-                    {/* <Select
-                        label='Lớp *'
-                        labelClassName={tailwindCss.label}
-                        selectClassName={tailwindCss.select}
-                        error={errors.subjectId && errors.subjectId.message}
-                        register={register}
-                        name='subjectId'
-                        options={subjects}
-                    /> */}
+                <div className='flex items-start w-full mb-5'>
+                    <div className='flex-1 mr-5'>
+                        <Select
+                            label='Vai trò *'
+                            labelClassName={tailwindCss.label}
+                            selectClassName={tailwindCss.select}
+                            error={errors.roleId && errors.roleId.message}
+                            register={register}
+                            name='roleId'
+                            options={roles}
+                            setValue={setValue}
+                        />
+                    </div>
+                    <div className='flex-1'>
+                        <Select
+                            label='Lớp *'
+                            labelClassName={tailwindCss.label}
+                            selectClassName={tailwindCss.select}
+                            error={errors.classId && errors.classId.message}
+                            register={register}
+                            name='classId'
+                            options={classes}
+                            setValue={setValue}
+                        />
+                    </div>
                 </div>
             </div>
 
             <div className='mt-3'>
                 <label htmlFor='countries' className={tailwindCss.label}>
-                    Hình ảnh <span id='imagePreviewName'></span>
+                    Ảnh đại diện <span id='imagePreviewName'></span>
                 </label>
             </div>
 
@@ -211,7 +263,7 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
                         id='removePreviewImage'
                         type='button'
                         className={`${tailwindCss.modal.closeButton} absolute top-0 right-0 hidden`}
-                        // onClick={removePreviewImage}
+                        onClick={removePreviewImage}
                     >
                         <CloseIcon />
                     </button>

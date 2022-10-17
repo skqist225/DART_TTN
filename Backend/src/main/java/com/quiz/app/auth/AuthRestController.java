@@ -3,7 +3,9 @@ package com.quiz.app.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.quiz.app.classes.ClassService;
 import com.quiz.app.email.SendEmail;
+import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.exception.UserNotFoundException;
 import com.quiz.app.jwt.JwtUtils;
 import com.quiz.app.response.StandardJSONResponse;
@@ -15,6 +17,7 @@ import com.quiz.app.user.UserService;
 import com.quiz.app.user.dto.ForgotPasswordResponse;
 import com.quiz.app.user.dto.RegisterDTO;
 import com.quiz.app.user.dto.ResetPasswordDTO;
+import com.quiz.entity.Class;
 import com.quiz.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +27,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.mail.MessagingException;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.Random;
@@ -42,6 +46,9 @@ import java.util.Random;
 public class AuthRestController {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private ClassService classService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -85,28 +92,18 @@ public class AuthRestController {
         return new OkResponse<>("Đăng xuất thành công").response();
     }
 
-    @GetMapping("check-email/{email}")
-    public ResponseEntity<StandardJSONResponse<String>> checkUsedEmail(
-            @PathVariable(value = "email") String email, @RequestParam(name = "edit", required = false, defaultValue = "false") Boolean isEdit, @RequestParam(name = "userId", required = false) Integer userId) {
-        if (userService.checkEmail(email, isEdit, userId)) {
-            return new BadResponse<String>("Email has already been taken").response();
-        }
-
-        return new OkResponse<>("Email has not been used by anyone yet").response();
-    }
-
     @PostMapping("register")
-    public ResponseEntity<StandardJSONResponse<User>> registerUser(@Validated @RequestBody RegisterDTO postUser
+    public ResponseEntity<StandardJSONResponse<User>> registerUser(@Validated @ModelAttribute RegisterDTO postUser
     ) {
         ArrayNode arrays = objectMapper.createArrayNode();
 
-        if (userService.checkBirthday(postUser.getBirthday())) {
+        if (userService.checkBirthday(LocalDate.parse(postUser.getBirthday()))) {
             ObjectNode node = objectMapper.createObjectNode();
             node.put("birthday", "Tuổi của bạn phải lớn hơn 18");
             arrays.add(node);
         }
 
-        if (userService.checkEmail(postUser.getEmail(), false, 0)) {
+        if (userService.isEmailDuplicated(postUser.getId(), postUser.getEmail(), false)) {
             ObjectNode node = objectMapper.createObjectNode();
             node.put("email", "Địa chỉ email đã được sử dụng");
             arrays.add(node);
@@ -116,7 +113,12 @@ public class AuthRestController {
             return new BadResponse<User>(arrays.toString()).response();
         }
 
-        return new OkResponse<>(userService.save(User.build(postUser))).response();
+        try {
+            Class cls = classService.findById(postUser.getClassId());
+            return new OkResponse<>(userService.save(User.build(postUser, cls))).response();
+        } catch (NotFoundException e) {
+            return new BadResponse<User>(e.getMessage()).response();
+        }
     }
 
     @PostMapping("forgot-password")

@@ -4,14 +4,14 @@ import api from "../../axios";
 export const fetchAllUsers = createAsyncThunk(
     "user/fetchAllUsers",
     async (
-        { page = 1, query = "", roles = "User,Host,Admin", statuses = "1,0" },
+        { page = 1, query = "", roles = "Student,Teacher,Admin", statuses = "1,0" },
         { rejectWithValue }
     ) => {
         try {
             const {
                 data: { users, totalElements, totalPages },
             } = await api.get(
-                `/admin/users/listings/${page}?query=${query}&roles=${roles}&statuses=${statuses}`
+                `/admin/users?page=${page}&query=${query}&roles=${roles}&statuses=${statuses}`
             );
 
             return { users, totalElements, totalPages };
@@ -85,22 +85,19 @@ export const enableUser = createAsyncThunk(
     }
 );
 
-export const editUser = createAsyncThunk(
-    "user/editUser",
-    async ({ id, formData }, { rejectWithValue }) => {
-        try {
-            const { data } = await api.put(`/admin/users/${id}/update`, formData, {
-                headers: {
-                    "Content-Type": "multipart/formData",
-                },
-            });
+export const editUser = createAsyncThunk("user/editUser", async (formData, { rejectWithValue }) => {
+    try {
+        const { data } = await api.put(`/admin/users/update`, formData, {
+            headers: {
+                "Content-Type": "multipart/formData",
+            },
+        });
 
-            return { data };
-        } catch ({ data: { error } }) {
-            return rejectWithValue(error);
-        }
+        return { data };
+    } catch ({ data: { error } }) {
+        return rejectWithValue(error);
     }
-);
+});
 
 export const fetchAllRoles = createAsyncThunk(
     "user/fetchAllRoles",
@@ -138,9 +135,7 @@ const initialState = {
     editUser: {
         successMessage: null,
     },
-    fetchRoles: {
-        roles: [],
-    },
+    roles: [],
 };
 
 const userSlice = createSlice({
@@ -158,6 +153,9 @@ const userSlice = createSlice({
 
             state.deleteUser.successMessage = null;
             state.deleteUser.errorMessage = null;
+        },
+        setErrorField(state, { payload: { key, value } }) {
+            state.errorObject[key] = value;
         },
         clearErrorField(state, { payload }) {
             if (payload) {
@@ -227,19 +225,27 @@ const userSlice = createSlice({
             })
 
             .addCase(editUser.pending, (state, { payload }) => {
-                state.updateUserAction.loading = true;
-                state.updateUserAction.successMessage = null;
-                state.updateUserAction.errorMessage = null;
+                state.editUser.successMessage = null;
+                state.errorObject = null;
             })
             .addCase(editUser.fulfilled, (state, { payload }) => {
-                state.updateUserAction.loading = false;
                 if (payload.data) {
-                    state.updateUserAction.successMessage = "Update User Successfully";
+                    state.editUser.successMessage = "Cập nhật người dùng thành công";
                 }
             })
             .addCase(editUser.rejected, (state, { payload }) => {
-                state.updateUserAction.loading = false;
-                state.updateUserAction.errorMessage = JSON.parse(payload);
+                if (payload) {
+                    const errors = JSON.parse(payload);
+                    errors.forEach(error => {
+                        const key = Object.keys(error)[0];
+                        const value = error[key];
+
+                        state.errorObject = {
+                            ...state.errorObject,
+                            [key]: value,
+                        };
+                    });
+                }
             })
 
             .addCase(deleteUser.pending, (state, { payload }) => {
@@ -251,12 +257,22 @@ const userSlice = createSlice({
             })
             .addCase(deleteUser.rejected, (state, { payload }) => {
                 state.deleteUser.errorMessage = payload;
+            })
+
+            .addCase(fetchAllRoles.fulfilled, (state, { payload }) => {
+                state.roles = payload.data;
             });
     },
 });
 
-export const { setUser, clearUserState, clearErrorField, setFilterObject, setEditedUser } =
-    userSlice.actions;
+export const {
+    setUser,
+    clearUserState,
+    clearErrorField,
+    setFilterObject,
+    setEditedUser,
+    setErrorField,
+} = userSlice.actions;
 
 export const userState = state => state.user;
 export default userSlice.reducer;

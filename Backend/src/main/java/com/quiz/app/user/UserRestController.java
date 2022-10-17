@@ -175,39 +175,12 @@ public class UserRestController {
                 savedUser = userService.saveUser(currentUser);
                 break;
             }
-            case "phoneNumber": {
-                String newPhoneNumber = updateData.get("phoneNumber");
-
-                ArrayNode arrays = objectMapper.createArrayNode();
-
-                // if (userService.checkPhoneNumber(newPhoneNumber, true, currentUser.getId()))
-                // {
-                // ObjectNode node = objectMapper.createObjectNode();
-                // node.put("phoneNumber", "Phone number has already been taken");
-                // arrays.add(node);
-                // }
-
-                try {
-                    Integer.parseInt(newPhoneNumber);
-                } catch (Exception ex) {
-                    ObjectNode node = objectMapper.createObjectNode();
-                    node.put("phoneNumber", "Phone number is not valid");
-                    arrays.add(node);
-                }
-
-                if (arrays.size() > 0) {
-                    return new BadResponse<User>(arrays.toString()).response();
-                }
-
-                savedUser = userService.saveUser(currentUser);
-                break;
-            }
         }
 
         return new OkResponse<User>(savedUser).response();
     }
 
-    public void updateAvatar(User user, MultipartFile newAvatar, boolean isCallFromInternal, String environment)
+    public void updateAvatar(User user, MultipartFile newAvatar, String environment)
             throws IOException {
         String devUploadDir = String.format("%s/%s/", DEV_STATIC_DIR, user.getId());
         String prodUploadDir = String.format("%s/%s/", PROD_STATIC_DIR, user.getId());
@@ -223,7 +196,7 @@ public class UserRestController {
             @RequestParam(name = "newAvatar", required = false) MultipartFile newAvatar) throws IOException {
         User user = userDetailsImpl.getUser();
 
-        updateAvatar(user, newAvatar, true, environment);
+        updateAvatar(user, newAvatar, environment);
         User savedUser = userService.saveUser(user);
         return new OkResponse<>(savedUser).response();
     }

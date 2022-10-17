@@ -2,20 +2,24 @@ import { callToast } from "../../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import {
+    addUser,
     clearUserState,
     disableUser,
+    editUser,
     enableUser,
     fetchAllRoles,
     fetchAllUsers,
+    setErrorField,
     userState,
 } from "../../features/user/userSlice";
 
 import $ from "jquery";
 import "../../css/page/rooms.css";
 import { Frame, Table, UserModalBody, UserTableBody } from "../../components";
-import { userSchema } from "../../validation";
+import { userRegisterSchema, userSchema } from "../../validation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { classState, fetchAllClasses } from "../../features/classSlice";
 
 const columns = [
     {
@@ -77,17 +81,22 @@ const UsersPage = () => {
         handleSubmit,
         formState: { errors },
     } = useForm({
-        resolver: yupResolver(userSchema),
+        resolver: yupResolver(isEdit ? userRegisterSchema : userSchema),
     });
 
     const {
         users,
+        roles,
+        filterObject,
         errorObject,
         totalElements,
         totalPages,
-        filterObject,
-        // deleteUser: { successMessage, errorMessage },
+        addUser: { successMessage },
+        editUser: { successMessage: euSuccessMessage },
+        deleteUser: { successMessage: duSuccessMessage },
     } = useSelector(userState);
+
+    const { classes } = useSelector(classState);
 
     const handleDisableUser = id => {
         dispatch(disableUser(id));
@@ -119,18 +128,25 @@ const UsersPage = () => {
         };
     }, []);
 
-    // useEffect(() => {
-    //     if (successMessage) {
-    //         callToast("success", successMessage);
-    //         dispatch(fetchAllUsers(page + 1));
-    //     }
-    // }, [successMessage]);
+    function closeForm(successMessage) {
+        callToast("success", successMessage);
+        $("#userForm")[0].reset();
+        $("#userModal").css("display", "none");
+        dispatch(fetchAllUsers(filterObject));
+    }
 
-    // useEffect(() => {
-    //     if (errorMessage) {
-    //         callToast("error", errorMessage);
-    //     }
-    // }, [errorMessage]);
+    useEffect(() => {
+        if (successMessage) {
+            closeForm(successMessage);
+        }
+    }, [successMessage]);
+
+    useEffect(() => {
+        if (euSuccessMessage) {
+            closeForm(euSuccessMessage);
+            setIsEdit(false);
+        }
+    }, [euSuccessMessage]);
 
     function getSelectedRoles() {
         const roles = $("input.isRoleSelected");
@@ -181,11 +197,59 @@ const UsersPage = () => {
                 page: 1,
             })
         );
-
         dispatch(fetchAllRoles());
+        dispatch(fetchAllClasses({ page: 0 }));
     }, []);
 
-    const onSubmit = () => {};
+    const onSubmit = data => {
+        let { birthday } = data;
+        birthday = birthday.split("/");
+        birthday = birthday[2] + "-" + birthday[1] + "-" + birthday[0];
+
+        const formData = new FormData();
+
+        Object.entries(data).forEach(([key, value]) => {
+            formData.set(key, value);
+        });
+        formData.delete("birthday");
+        formData.set("birthday", birthday);
+
+        if (image) {
+            formData.set("image", image);
+        }
+
+        if (isEdit) {
+            if (data.password) {
+                if (data.password.length < 8) {
+                    dispatch(
+                        setErrorField({
+                            key: "password",
+                            value: "Mật khẩu ít nhất 8 ký tự",
+                        })
+                    );
+                    return;
+                }
+            }
+
+            dispatch(editUser(formData));
+        } else {
+            dispatch(addUser(formData));
+        }
+    };
+
+    const lookupRole = role => {
+        switch (role) {
+            case "Admin": {
+                return "Quản trị viên";
+            }
+            case "Student": {
+                return "Sinh viên";
+            }
+            case "Teacher": {
+                return "Giảng viên";
+            }
+        }
+    };
 
     return (
         <Frame
@@ -215,8 +279,17 @@ const UsersPage = () => {
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
-                            // subjects={subjects.map(({ id, name }) => ({ title: name, value: id }))}
+                            classes={classes.map(({ id, name }) => ({
+                                title: name,
+                                value: id,
+                            }))}
+                            roles={roles.map(({ id, name }) => {
+                                let role = lookupRole(name);
+
+                                return { title: role, value: id };
+                            })}
                             setImage={setImage}
+                            isEdit={isEdit}
                         />
                     }
                     isEdit={isEdit}

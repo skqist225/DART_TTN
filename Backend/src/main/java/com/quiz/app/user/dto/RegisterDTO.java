@@ -6,8 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.time.LocalDate;
+import org.springframework.web.multipart.MultipartFile;
 
 @Getter
 @Setter
@@ -21,6 +20,9 @@ public class RegisterDTO {
     private String email;
     private String password;
     private Sex sex;
-    private LocalDate birthday;
+    private String address;
+    private String birthday;
     private Integer roleId;
+    private String classId;
+    private MultipartFile avatar;
 }

@@ -90,8 +90,8 @@ function UserTableModal({ rows, setIsEdit, dispatch }) {
                     <td className='py-4 px-6'>{row.address}</td>
                     <td className='py-4 px-6'>{row.email}</td>
                     <td className='py-4 px-6'>{lookupUserSex(row.sex)}</td>
-                    {/* <td className='py-4 px-6'>{row.studentClass.name}</td> */}
-                    <td className='py-4 px-6'>{lookupRole(row.role)}</td>
+                    <td className='py-4 px-6'>{row.cls.name}</td>
+                    <td className='py-4 px-6'>{lookupRole(row.role.name)}</td>
                     <td class='py-4 px-6 flex items-center'>
                         <MyButton
                             type='edit'
