@@ -23,5 +23,7 @@ public class PostCreateQuestionDTO {
     private String finalAnswer;
     private Level level;
     private String subjectId;
+    private Integer chapter;
     private MultipartFile image;
+    private MultipartFile excelFile;
 }

@@ -12,6 +12,7 @@ import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
+import com.quiz.app.utils.ExcelUtils;
 import com.quiz.app.utils.ProcessImage;
 import com.quiz.entity.Level;
 import com.quiz.entity.Question;
@@ -30,9 +31,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -89,9 +94,9 @@ public class QuestionRestController {
     }
 
     public void catchQuestionInputException(String content, String answerA, String answerB, String answerC,
-                                            String answerD, String finalAnswer, Level level
+                                            String answerD, String finalAnswer, Level level,
+                                            Integer chapter, String subjectId
     ) {
-
         if (Objects.isNull(content)) {
             addError("content", "Nội dung câu hỏi không được để trống");
         }
@@ -120,7 +125,13 @@ public class QuestionRestController {
             addError("level", "Mức độ không được để trống");
         }
 
+        if (Objects.isNull(chapter)) {
+            addError("chapter", "Chương không được để trống");
+        }
 
+        if (Objects.isNull(subjectId)) {
+            addError("subjectId", "Môn học không được để trống");
+        }
     }
 
     @PostMapping("save")
@@ -142,8 +153,10 @@ public class QuestionRestController {
         String finalAnswer = postCreateQuestionDTO.getFinalAnswer();
         String subjectId = postCreateQuestionDTO.getSubjectId();
         Level level = postCreateQuestionDTO.getLevel();
+        Integer chapter = postCreateQuestionDTO.getChapter();
 
-        catchQuestionInputException(content, answerA, answerB, answerC, answerD, finalAnswer, level);
+        catchQuestionInputException(content, answerA, answerB, answerC, answerD, finalAnswer,
+                level, chapter, subjectId);
 
         try {
             subject = subjectService.findById(subjectId);
@@ -200,6 +213,23 @@ public class QuestionRestController {
 
         return new OkResponse<>(savedQuestion).response();
     }
+
+    @PostMapping("import")
+    public ResponseEntity<StandardJSONResponse<Question>> mapReapExcelDatatoDB(@RequestParam("file") MultipartFile reapExcelDataFile) throws IOException {
+        List<Question> questions = new ArrayList<>();
+        ExcelUtils excelUtils = new ExcelUtils((FileInputStream) reapExcelDataFile.getInputStream());
+
+
+        try {
+            excelUtils.readQuestionFromFile(questions);
+
+
+
+        } catch (NotFoundException e) {
+            return new BadResponse<Question>(e.getMessage()).response();
+        }
+    }
+
 
     @DeleteMapping("{id}/delete")
     public ResponseEntity<StandardJSONResponse<String>> delete(@PathVariable("id") Integer id) {
