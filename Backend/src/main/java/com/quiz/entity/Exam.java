@@ -1,11 +1,15 @@
 package com.quiz.entity;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.JoinColumn;
@@ -26,12 +30,12 @@ public class Exam {
 	@Id
 	@ManyToOne
 	@JoinColumn(name = "class_id")
-	private Class classId;
+	private Class cls;
 
 	@Id
 	@ManyToOne
 	@JoinColumn(name = "subject_id")
-	private Subject subjectId;
+	private Subject subject;
 
 	@Id
 	@Column(name = "try_time")
@@ -41,4 +45,10 @@ public class Exam {
 	private LocalDateTime examDate;
 
 	private Integer timeInterval;
+
+	@Builder.Default
+	@ManyToMany
+	@JoinTable(name = "exams_tests", joinColumns = @JoinColumn(name = "exam_id"),
+			inverseJoinColumns = @JoinColumn(name = "test_id"))
+	private Set<Test> tests = new HashSet<>();
 }

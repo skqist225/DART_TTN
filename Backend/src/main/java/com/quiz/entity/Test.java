@@ -20,12 +20,10 @@ import lombok.Builder;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "topics")
-public class ExamPaper extends BaseEntity {
+@Table(name = "tests")
+public class Test extends BaseEntity {
 
     private String name;
-
-    private Integer numberOfTimes;
 
     @Builder.Default
     @JsonIgnore
@@ -34,10 +32,13 @@ public class ExamPaper extends BaseEntity {
             inverseJoinColumns = @JoinColumn(name = "question_id"))
     private Set<Question> questions = new HashSet<>();
 
+    private int numberOfTimes;
+
     @ManyToOne
     private Subject subject;
 
-    private String time;
+    @ManyToOne
+    private User teacher;
 
     public void addQuestion(Question question) {
         this.questions.add(question);

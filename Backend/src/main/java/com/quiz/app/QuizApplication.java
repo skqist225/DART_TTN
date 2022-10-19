@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuizApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
-
-		ExcelUtils excelUtils = new ExcelUtils();
-
 		SpringApplication.run(QuizApplication.class, args);
 	}
 }

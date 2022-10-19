@@ -39,11 +39,6 @@ public class User {
     @Id
     private String id;
 
-    @JsonIgnore
-    private String avatar;
-
-    private String token;
-
     @Column(nullable = false, length = 48)
     private String firstName;
 
@@ -56,32 +51,16 @@ public class User {
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
+    @Column(nullable = false)
     private LocalDate birthday;
 
     @Column(nullable = false, unique = true)
     private String email;
 
+    @JsonIgnore
     @Column(nullable = false, length = 255)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
-    @JsonIgnore
     private String password;
-
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
-
-    @Builder.Default
-    @Column(name = "email_verified", columnDefinition = "boolean default false")
-    private boolean emailVerified = false;
-
-    @ManyToOne
-    @JoinColumn(name = "class_id")
-    private Class cls;
-
-    @Builder.Default
-    @ManyToMany
-    @JoinTable(name = "user_subjects", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "subject_id"))
-    private Set<Subject> subjects = new HashSet<>();
 
     @Column(columnDefinition = "TEXT", nullable = false)
     private String address;
@@ -93,6 +72,30 @@ public class User {
 
     @JsonIgnore
     private LocalDateTime resetPasswordExpirationTime;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id")
+    private Role role;
+
+    @Builder.Default
+    @Column(name = "email_verified", columnDefinition = "boolean default false")
+    private boolean emailVerified = false;
+
+    @JsonIgnore
+    private String avatar;
+
+    @Transient
+    private String token;
+
+    @ManyToOne
+    @JoinColumn(name = "class_id")
+    private Class cls;
+
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(name = "users_subjects", joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "subject_id"))
+    private Set<Subject> subjects = new HashSet<>();
 
     @Transient
     @JsonIgnore

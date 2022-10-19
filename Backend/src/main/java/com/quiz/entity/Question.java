@@ -43,13 +43,13 @@ public class Question extends BaseEntity {
 	@Column(nullable = false)
 	private Level level;
 
-	@ManyToOne
-	@JoinColumn(name = "subject_id", nullable = false)
-	private Subject subject;
-
 	private Integer chapter;
 
 	private String image;
+
+	@ManyToOne
+	@JoinColumn(name = "subject_id", nullable = false)
+	private Subject subject;
 
 	@ManyToOne
 	@JoinColumn(nullable = false)

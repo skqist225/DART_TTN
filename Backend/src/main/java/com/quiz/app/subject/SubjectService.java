@@ -72,8 +72,8 @@ public class SubjectService {
         throw new NotFoundException("Không tìm thấy môn học với tên " + name);
     }
 
-    public boolean isNameDuplicated(String id, String name, boolean isEdit) throws NotFoundException {
-        Subject subject = findByName(name);
+    public boolean isNameDuplicated(String id, String name, boolean isEdit) {
+        Subject subject = subjectRepository.findByName(name);
 
         if (isEdit) {
             return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);

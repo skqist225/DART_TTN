@@ -10,8 +10,8 @@ import java.io.Serializable;
 @AllArgsConstructor
 @NoArgsConstructor
 @EqualsAndHashCode
-public class ExamId implements Serializable {
-    private Class cls;
-    private Subject subject;
-    private Integer tryTime;
+public class ResultId implements Serializable {
+    private User user;
+    private Test test;
+    private Exam exam;
 }

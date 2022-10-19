@@ -224,7 +224,7 @@ public class QuestionRestController {
             excelUtils.readQuestionFromFile(questions);
 
 
-
+            return null;
         } catch (NotFoundException e) {
             return new BadResponse<Question>(e.getMessage()).response();
         }

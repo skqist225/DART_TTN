@@ -1,7 +1,7 @@
 package com.quiz.app.examPaper;
 
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.entity.ExamPaper;
+import com.quiz.entity.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,7 +16,7 @@ public class ExamPaperService {
     @Autowired
     ExamPaperRepository topicRepository;
 
-    public ExamPaper save(ExamPaper topic) {
+    public Test save(Test topic) {
         return topicRepository.save(topic);
     }
 
@@ -29,8 +29,8 @@ public class ExamPaperService {
 //        }
 //    }
 
-    public ExamPaper findById(Integer id) throws NotFoundException {
-        Optional<ExamPaper> topic =topicRepository.findById(id);
+    public Test findById(Integer id) throws NotFoundException {
+        Optional<Test> topic =topicRepository.findById(id);
         if(topic.isPresent()) {
             return topic.get();
         }
