@@ -21,6 +21,7 @@ export { default as DatePicker } from "./utils/datePicker/DatePicker";
 
 //questions
 export { default as QuestionModalBody } from "./questions/QuestionModalBody";
+export { default as QuestionExcelModalBody } from "./questions/QuestionExcelModalBody";
 export { default as QuestionTableBody } from "./questions/QuestionTableBody";
 
 //subjects

@@ -7,6 +7,7 @@ import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import com.quiz.app.question.dto.QuestionsDTO;
+import com.quiz.app.question.dto.ReadQuestionExcelDTO;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
@@ -28,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -135,10 +137,7 @@ public class QuestionRestController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<StandardJSONResponse<Question>> fetchCitiesByState(
-            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
-            @ModelAttribute PostCreateQuestionDTO postCreateQuestionDTO,
-            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) throws IOException {
+    public ResponseEntity<StandardJSONResponse<Question>> saveQuestion(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @ModelAttribute PostCreateQuestionDTO postCreateQuestionDTO, @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) throws IOException {
         arrayNode = objectMapper.createArrayNode();
         User teacher = userDetailsImpl.getUser();
         Question savedQuestion = null;
@@ -214,19 +213,79 @@ public class QuestionRestController {
         return new OkResponse<>(savedQuestion).response();
     }
 
-    @PostMapping("import")
-    public ResponseEntity<StandardJSONResponse<Question>> mapReapExcelDatatoDB(@RequestParam("file") MultipartFile reapExcelDataFile) throws IOException {
-        List<Question> questions = new ArrayList<>();
-        ExcelUtils excelUtils = new ExcelUtils((FileInputStream) reapExcelDataFile.getInputStream());
+    @PostMapping("save/multiple")
+    public ResponseEntity<StandardJSONResponse<QuestionsDTO>> saveMultipleQuestions(
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+            @RequestBody PostCreateQuestionDTO postCreateQuestionDTO) throws IOException {
+        arrayNode = objectMapper.createArrayNode();
+        User teacher = userDetailsImpl.getUser();
 
+        List<ReadQuestionExcelDTO> questions = postCreateQuestionDTO.getQuestions();
+
+        for (ReadQuestionExcelDTO question : questions) {
+            String content = question.getContent();
+            String answerA = question.getAnswerA();
+            String answerB = question.getAnswerB();
+            String answerC = question.getAnswerC();
+            String answerD = question.getAnswerD();
+            String finalAnswer = question.getFinalAnswer();
+            String subjectName = question.getSubjectName();
+            Integer chapter = question.getChapter();
+
+            String levelStr = question.getLevel();
+            Level level = Level.EASY;
+            if (Objects.equals(levelStr, "Khó")) {
+                level = Level.HARD;
+            } else if (Objects.equals(levelStr, "Trung bình")) {
+                level = Level.MEDIUM;
+            }
+
+            Subject subject = null;
+            try {
+                subject = subjectService.findByName(subjectName);
+            } catch (NotFoundException e) {
+                String subjectId = "";
+                for (String s : subjectName.split(" ")) {
+                    subjectId += s.charAt(0);
+                }
+
+                subject = subjectService.save(new Subject(subjectId.toUpperCase(), subjectName));
+            }
+
+            questionService.save(new Question(content, answerA, answerB, answerC, answerD,
+                    finalAnswer, level, chapter, null, subject, teacher));
+        }
+
+        QuestionsDTO<Question> questionsDTO = new QuestionsDTO<Question>();
+        Map<String, String> filters = new HashMap<>();
+        filters.put("page", "0");
+
+        Page<Question> questionPage = questionService.findAllQuestions(filters);
+
+        questionsDTO.setQuestions(questionPage.getContent());
+        questionsDTO.setTotalElements(questionPage.getTotalElements());
+        questionsDTO.setTotalPages(questionPage.getTotalPages());
+
+        return new OkResponse<QuestionsDTO>(questionsDTO).response();
+    }
+
+    @PostMapping("excel/read")
+    public ResponseEntity<StandardJSONResponse<QuestionsDTO>> readExcelFile(@RequestParam(name = "file") MultipartFile excelFile) throws IOException {
+        List<ReadQuestionExcelDTO> questions = new ArrayList<>();
+        ExcelUtils excelUtils = new ExcelUtils((FileInputStream) excelFile.getInputStream());
 
         try {
             excelUtils.readQuestionFromFile(questions);
 
+            QuestionsDTO<ReadQuestionExcelDTO> questionsDTO = new QuestionsDTO();
 
-            return null;
+            questionsDTO.setQuestions(questions);
+            questionsDTO.setTotalElements(questions.size());
+            questionsDTO.setTotalPages((int) Math.ceil(questions.size() / 10.0));
+
+            return new OkResponse<QuestionsDTO>(questionsDTO).response();
         } catch (NotFoundException e) {
-            return new BadResponse<Question>(e.getMessage()).response();
+            return new BadResponse<QuestionsDTO>(e.getMessage()).response();
         }
     }
 

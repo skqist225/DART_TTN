@@ -25,21 +25,14 @@ import lombok.NoArgsConstructor;
 @Builder
 @Entity
 @Table(name = "exams")
-@IdClass(ExamId.class)
-public class Exam {
-	@Id
+public class Exam extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "class_id")
 	private Class cls;
 
-	@Id
 	@ManyToOne
 	@JoinColumn(name = "subject_id")
 	private Subject subject;
-
-	@Id
-	@Column(name = "try_time")
-	private Integer tryTime;
 
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	private LocalDateTime examDate;

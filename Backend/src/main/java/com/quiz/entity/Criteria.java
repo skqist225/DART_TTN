@@ -7,7 +7,16 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.HashSet;
+import java.util.Set;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -16,9 +25,23 @@ import javax.persistence.Table;
 @Builder
 @Entity
 @Table(name = "criteria")
-public class Criteria extends BaseEntity {
-    private int chapter;
-    private int numberOfEasyQuestions;
-    private int numberOfMediumQuestions;
-    private int numberOfHardQuestions;
+public class Criteria {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @ManyToOne
+    private Subject subject;
+
+    private int numberOfQuestions;
+
+    @ManyToOne
+    private User teacher;
+
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(name = "criteria_criteriadetails", joinColumns = @JoinColumn(name =
+            "criteria_id"),
+            inverseJoinColumns = @JoinColumn(name = "criteriaDetail_id"))
+    private Set<CriteriaDetail> criteria = new HashSet<>();
 }

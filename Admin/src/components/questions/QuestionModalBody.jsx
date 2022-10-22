@@ -6,6 +6,7 @@ import Select from "../utils/userInputs/Select";
 import TextArea from "../utils/userInputs/TextArea";
 import $ from "jquery";
 import { CloseIcon } from "../../images";
+import { QuestionExcelModalBody } from "..";
 
 const finalAnswerOptions = [
     {
@@ -49,7 +50,7 @@ const levelOptions = [
     },
 ];
 
-function QuestionModalBody({ errors, register, dispatch, setValue, subjects, setImage }) {
+function QuestionModalBody({ errors, register, dispatch, setValue, subjects, setImage, excelAdd }) {
     const { editedQuestion, errorObject } = useSelector(questionState);
 
     const onKeyDown = ({ target: { name } }) => {
@@ -97,161 +98,168 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
 
     return (
         <div>
-            <div className='col-flex items-center justify-center w-full'>
-                <div className='w-full'>
-                    <TextArea
-                        label='Nội dung câu hỏi *'
-                        labelClassName={tailwindCss.label}
-                        textAreaClassName={tailwindCss.textArea}
-                        error={
-                            (errors.content && errors.content.message) ||
-                            (errorObject && errorObject.content)
-                        }
-                        register={register}
-                        name='content'
-                        onKeyDown={onKeyDown}
-                    />
-                </div>
-                <div className='w-full'>
-                    <div className='flex my-5'>
-                        <div className='flex-1 mr-5'>
+            {!excelAdd ? (
+                <div>
+                    <div className='col-flex items-center justify-center w-full'>
+                        <div className='w-full'>
                             <TextArea
-                                label='A *'
+                                label='Nội dung câu hỏi *'
                                 labelClassName={tailwindCss.label}
                                 textAreaClassName={tailwindCss.textArea}
-                                error={errors.answerA && errors.answerA.message}
+                                error={
+                                    (errors.content && errors.content.message) ||
+                                    (errorObject && errorObject.content)
+                                }
                                 register={register}
-                                name='answerA'
+                                name='content'
+                                onKeyDown={onKeyDown}
                             />
                         </div>
-                        <div className='flex-1'>
-                            <TextArea
-                                label='B *'
+                        <div className='w-full'>
+                            <div className='flex my-5'>
+                                <div className='flex-1 mr-5'>
+                                    <TextArea
+                                        label='A *'
+                                        labelClassName={tailwindCss.label}
+                                        textAreaClassName={tailwindCss.textArea}
+                                        error={errors.answerA && errors.answerA.message}
+                                        register={register}
+                                        name='answerA'
+                                    />
+                                </div>
+                                <div className='flex-1'>
+                                    <TextArea
+                                        label='B *'
+                                        labelClassName={tailwindCss.label}
+                                        textAreaClassName={tailwindCss.textArea}
+                                        error={errors.answerB && errors.answerB.message}
+                                        register={register}
+                                        name='answerB'
+                                    />
+                                </div>
+                            </div>
+                            <div className='flex'>
+                                <div className='flex-1 mr-5'>
+                                    <TextArea
+                                        label='B *'
+                                        labelClassName={tailwindCss.label}
+                                        textAreaClassName={tailwindCss.textArea}
+                                        error={errors.answerC && errors.answerC.message}
+                                        register={register}
+                                        name='answerC'
+                                    />
+                                </div>
+                                <div className='flex-1'>
+                                    <TextArea
+                                        label='D *'
+                                        labelClassName={tailwindCss.label}
+                                        textAreaClassName={tailwindCss.textArea}
+                                        error={errors.answerD && errors.answerD.message}
+                                        register={register}
+                                        name='answerD'
+                                    />
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className='flex items-center w-full'>
+                            <div className='my-3 w-full mr-5'>
+                                <Select
+                                    label='Đáp án *'
+                                    labelClassName={tailwindCss.label}
+                                    selectClassName={tailwindCss.select}
+                                    error={errors.finalAnswer && errors.finalAnswer.message}
+                                    register={register}
+                                    name='finalAnswer'
+                                    options={finalAnswerOptions}
+                                />
+                            </div>
+
+                            <div className='my-3 w-full'>
+                                <Select
+                                    label='Mức độ *'
+                                    labelClassName={tailwindCss.label}
+                                    selectClassName={tailwindCss.select}
+                                    error={errors.level && errors.level.message}
+                                    register={register}
+                                    name='level'
+                                    options={levelOptions}
+                                />
+                            </div>
+                        </div>
+
+                        <div className='my-3 w-full'>
+                            <Select
+                                label='Môn học *'
                                 labelClassName={tailwindCss.label}
-                                textAreaClassName={tailwindCss.textArea}
-                                error={errors.answerB && errors.answerB.message}
+                                selectClassName={tailwindCss.select}
+                                error={errors.subjectId && errors.subjectId.message}
                                 register={register}
-                                name='answerB'
+                                name='subjectId'
+                                options={subjects}
                             />
                         </div>
                     </div>
+
+                    <div className='mt-3'>
+                        <label htmlFor='countries' className={tailwindCss.label}>
+                            Hình ảnh <span id='imagePreviewName'></span>
+                        </label>
+                    </div>
+
                     <div className='flex'>
-                        <div className='flex-1 mr-5'>
-                            <TextArea
-                                label='B *'
-                                labelClassName={tailwindCss.label}
-                                textAreaClassName={tailwindCss.textArea}
-                                error={errors.answerC && errors.answerC.message}
-                                register={register}
-                                name='answerC'
-                            />
+                        <div className='flex flex-initial justify-center items-center w-3/6 mr-5'>
+                            <label htmlFor='dropzone-file' className={tailwindCss.dropZoneLabel}>
+                                <div className='flex flex-col justify-center items-center pt-5 pb-6'>
+                                    <svg
+                                        aria-hidden='true'
+                                        className='mb-3 w-10 h-10 text-gray-400'
+                                        fill='none'
+                                        stroke='currentColor'
+                                        viewBox='0 0 24 24'
+                                        xmlns='http://www.w3.org/2000/svg'
+                                    >
+                                        <path
+                                            strokeLinecap='round'
+                                            strokeLinejoin='round'
+                                            strokeWidth='2'
+                                            d='M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12'
+                                        ></path>
+                                    </svg>
+                                    <p className='mb-2 text-sm text-gray-500 dark:text-gray-400'>
+                                        <span className='font-semibold'>Nhấn để chọn ảnh</span> hoặc
+                                        kéo thả
+                                    </p>
+                                </div>
+                                <input
+                                    id='dropzone-file'
+                                    type='file'
+                                    accept='image/*'
+                                    className='hidden'
+                                    onChange={previewImage}
+                                />
+                            </label>
                         </div>
-                        <div className='flex-1'>
-                            <TextArea
-                                label='D *'
-                                labelClassName={tailwindCss.label}
-                                textAreaClassName={tailwindCss.textArea}
-                                error={errors.answerD && errors.answerD.message}
-                                register={register}
-                                name='answerD'
-                            />
-                        </div>
-                    </div>
-                </div>
+                        <div
+                            className='flex flex-initial justify-center items-center w-3/6 rounded-lg border-2 border-gray-300 border-dashed overflow-hidden relative'
+                            style={{ maxHeight: "119px" }}
+                        >
+                            <img id='imagePreview' src='' alt='' className='object-contain' />
 
-                <div className='flex items-center w-full'>
-                    <div className='my-3 w-full mr-5'>
-                        <Select
-                            label='Đáp án *'
-                            labelClassName={tailwindCss.label}
-                            selectClassName={tailwindCss.select}
-                            error={errors.finalAnswer && errors.finalAnswer.message}
-                            register={register}
-                            name='finalAnswer'
-                            options={finalAnswerOptions}
-                        />
-                    </div>
-
-                    <div className='my-3 w-full'>
-                        <Select
-                            label='Mức độ *'
-                            labelClassName={tailwindCss.label}
-                            selectClassName={tailwindCss.select}
-                            error={errors.level && errors.level.message}
-                            register={register}
-                            name='level'
-                            options={levelOptions}
-                        />
-                    </div>
-                </div>
-
-                <div className='my-3 w-full'>
-                    <Select
-                        label='Môn học *'
-                        labelClassName={tailwindCss.label}
-                        selectClassName={tailwindCss.select}
-                        error={errors.subjectId && errors.subjectId.message}
-                        register={register}
-                        name='subjectId'
-                        options={subjects}
-                    />
-                </div>
-            </div>
-
-            <div className='mt-3'>
-                <label htmlFor='countries' className={tailwindCss.label}>
-                    Hình ảnh <span id='imagePreviewName'></span>
-                </label>
-            </div>
-
-            <div className='flex'>
-                <div className='flex flex-initial justify-center items-center w-3/6 mr-5'>
-                    <label htmlFor='dropzone-file' className={tailwindCss.dropZoneLabel}>
-                        <div className='flex flex-col justify-center items-center pt-5 pb-6'>
-                            <svg
-                                aria-hidden='true'
-                                className='mb-3 w-10 h-10 text-gray-400'
-                                fill='none'
-                                stroke='currentColor'
-                                viewBox='0 0 24 24'
-                                xmlns='http://www.w3.org/2000/svg'
+                            <button
+                                id='removePreviewImage'
+                                type='button'
+                                className={`${tailwindCss.modal.closeButton} absolute top-0 right-0 hidden`}
+                                onClick={removePreviewImage}
                             >
-                                <path
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                    strokeWidth='2'
-                                    d='M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12'
-                                ></path>
-                            </svg>
-                            <p className='mb-2 text-sm text-gray-500 dark:text-gray-400'>
-                                <span className='font-semibold'>Nhấn để chọn ảnh</span> hoặc kéo thả
-                            </p>
+                                <CloseIcon />
+                            </button>
                         </div>
-                        <input
-                            id='dropzone-file'
-                            type='file'
-                            accept='image/*'
-                            className='hidden'
-                            onChange={previewImage}
-                        />
-                    </label>
+                    </div>
                 </div>
-                <div
-                    className='flex flex-initial justify-center items-center w-3/6 rounded-lg border-2 border-gray-300 border-dashed overflow-hidden relative'
-                    style={{ maxHeight: "119px" }}
-                >
-                    <img id='imagePreview' src='' alt='' className='object-contain' />
-
-                    <button
-                        id='removePreviewImage'
-                        type='button'
-                        className={`${tailwindCss.modal.closeButton} absolute top-0 right-0 hidden`}
-                        onClick={removePreviewImage}
-                    >
-                        <CloseIcon />
-                    </button>
-                </div>
-            </div>
+            ) : (
+                <QuestionExcelModalBody />
+            )}
         </div>
     );
 }

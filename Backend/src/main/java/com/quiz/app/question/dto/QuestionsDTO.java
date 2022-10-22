@@ -13,8 +13,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class QuestionsDTO {
-    private List<Question> questions;
+public class QuestionsDTO<T> {
+    private List<T> questions;
     private long totalElements;
     private long totalPages;
 }

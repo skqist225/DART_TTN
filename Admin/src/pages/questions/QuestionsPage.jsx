@@ -13,6 +13,7 @@ import {
     questionState,
     clearQuestionState,
     fetchAllQuestions,
+    addMultipleQuestions,
 } from "../../features/questionSlice";
 import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
 
@@ -48,11 +49,6 @@ const columns = [
         sortable: true,
     },
     {
-        name: "Đáp án",
-        sortField: "finalAnswer",
-        sortable: true,
-    },
-    {
         name: "Mức độ",
         sortField: "level",
         sortable: true,
@@ -61,11 +57,17 @@ const columns = [
         name: "Giảng viên",
         sortField: "teacher",
     },
+    {
+        name: "Môn học",
+        sortField: "teacher",
+    },
 ];
 
 function QuestionsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+    const [excelAdding, setExcelAdding] = useState(false);
+    const [excelAdd, setExcelAdd] = useState(false);
     const [image, setImage] = useState(null);
 
     const {
@@ -96,7 +98,9 @@ function QuestionsPage() {
     };
 
     const {
+        loading,
         questions,
+        questionsExcel,
         errorObject,
         totalElements,
         totalPages,
@@ -185,6 +189,16 @@ function QuestionsPage() {
         );
     }, []);
 
+    useEffect(() => {
+        if (!loading) {
+            setExcelAdding(true);
+        }
+    }, [loading]);
+
+    const handleAddSelectedQuestionFromExcelFile = () => {
+        dispatch(addMultipleQuestions(questionsExcel));
+    };
+
     return (
         <Frame
             sidebarOpen={sidebarOpen}
@@ -219,10 +233,15 @@ function QuestionsPage() {
                             setValue={setValue}
                             subjects={subjects.map(({ id, name }) => ({ title: name, value: id }))}
                             setImage={setImage}
+                            excelAdd={excelAdd}
                         />
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
+                    setExcelAdd={setExcelAdd}
+                    excelAdd={excelAdd}
+                    excelAdding={excelAdding}
+                    handleAddSelectedQuestionFromExcelFile={handleAddSelectedQuestionFromExcelFile}
                 />
             }
         />

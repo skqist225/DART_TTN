@@ -12,6 +12,8 @@ function TableModal({
     ModalBody,
     buttonLabel,
     setIsEdit,
+    excelAdd,
+    handleAddSelectedQuestionFromExcelFile,
 }) {
     return (
         <div
@@ -47,8 +49,16 @@ function TableModal({
                     </div>
                     <div className='p-6 space-y-6'>{ModalBody}</div>
                     <div className='flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600'>
-                        <button type='submit' className={tailwindCss.modal.saveButton}>
-                            {buttonLabel}
+                        <button
+                            type={!excelAdd ? "submit" : "button"}
+                            className={tailwindCss.modal.saveButton}
+                            onClick={() => {
+                                if (excelAdd && handleAddSelectedQuestionFromExcelFile) {
+                                    handleAddSelectedQuestionFromExcelFile();
+                                }
+                            }}
+                        >
+                            {excelAdd && excelAdd === true ? "Thêm tất cả" : buttonLabel}
                         </button>
                     </div>
                 </form>

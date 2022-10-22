@@ -25,7 +25,6 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -39,6 +38,7 @@ import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 @RestController
@@ -93,7 +93,7 @@ public class AuthRestController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<StandardJSONResponse<User>> registerUser(@Validated @ModelAttribute RegisterDTO postUser
+    public ResponseEntity<StandardJSONResponse<User>> registerUser(@ModelAttribute RegisterDTO postUser
     ) {
         ArrayNode arrays = objectMapper.createArrayNode();
 
@@ -114,7 +114,11 @@ public class AuthRestController {
         }
 
         try {
-            Class cls = classService.findById(postUser.getClassId());
+            Class cls = null;
+            if (Objects.nonNull(postUser.getRoleId()) && postUser.getRoleId().equals(1)) {
+                cls = classService.findById(postUser.getClassId());
+            }
+
             return new OkResponse<>(userService.save(User.build(postUser, cls))).response();
         } catch (NotFoundException e) {
             return new BadResponse<User>(e.getMessage()).response();

@@ -1,10 +1,11 @@
 import React from "react";
 
-function TablePagination({ totalElements, totalPages }) {
+function TablePagination({ totalElements, totalPages, setPage }) {
     return (
         <nav className='col-flex justify-between items-center pt-4' aria-label='Table navigation'>
             <span className='text-sm font-normal text-gray-500 dark:text-gray-400'>
-                Showing <span className='font-semibold text-gray-900 dark:text-white'>1-10</span> of{" "}
+                Hiển thị <span className='font-semibold text-gray-900 dark:text-white'>1-10</span>{" "}
+                của{" "}
                 <span className='font-semibold text-gray-900 dark:text-white'>{totalElements}</span>
             </span>
             <ul className='inline-flex items-center -space-x-px'>
@@ -31,12 +32,16 @@ function TablePagination({ totalElements, totalPages }) {
                 </li>
                 {Array.from({ length: totalPages }).map((page, index) => (
                     <li key={index + 1}>
-                        <a
-                            href='#'
+                        <button
                             className='py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+                            onClick={e => {
+                                if (setPage) {
+                                    setPage(index + 1);
+                                }
+                            }}
                         >
                             {index + 1}
-                        </a>
+                        </button>
                     </li>
                 ))}
                 <li>

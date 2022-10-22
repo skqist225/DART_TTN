@@ -41,7 +41,7 @@ function TableHeader({ columns, handleSortChange }) {
                     </div>
                 </th>
                 {columns.map(({ name, sortField, sortable }) => (
-                    <th scope='col' className='py-3 px-6'>
+                    <th scope='col' className='py-2 px-3'>
                         {!sortable ? (
                             name
                         ) : (

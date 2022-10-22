@@ -138,16 +138,20 @@ public class UserService {
 
     public User findByEmail(String email) throws UserNotFoundException {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("User not found with email: " + email));
+                .orElseThrow(() -> new UserNotFoundException("Không tìm thấy người dùng với email" +
+                        " " + email));
     }
 
     public boolean isEmailDuplicated(String id, String email, boolean isEdit) {
-        User user = userRepository.findByEmail(email).get();
-
-        if (isEdit) {
-            return Objects.nonNull(user) && !Objects.equals(user.getId(), id);
-        } else {
-            return Objects.nonNull(user);
+        User user = null;
+        try {
+            user = findByEmail(email);
+            if (isEdit) {
+                return Objects.nonNull(user) && !Objects.equals(user.getId(), id);
+            }
+            return true;
+        } catch (UserNotFoundException e) {
+            return false;
         }
     }
 

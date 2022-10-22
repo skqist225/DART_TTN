@@ -105,9 +105,48 @@ export const deleteQuestion = createAsyncThunk(
     }
 );
 
+export const readExcelFile = createAsyncThunk(
+    "question/readExcelFile",
+    async (excelFile, { rejectWithValue }) => {
+        try {
+            const formData = new FormData();
+            formData.set("file", excelFile);
+
+            const {
+                data: { questions, totalElements, totalPages },
+            } = await api.post(`/questions/excel/read`, formData);
+
+            return { questions, totalElements, totalPages };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
+export const addMultipleQuestions = createAsyncThunk(
+    "question/addMultipleQuestions",
+    async (questionsExcel, { rejectWithValue }) => {
+        try {
+            const formData = new FormData();
+            formData.set("questions", questionsExcel);
+
+            const {
+                data: { questions, totalElements, totalPages },
+            } = await api.post(`/questions/save/multiple`, { questions: questionsExcel });
+
+            return { questions, totalElements, totalPages };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 const initialState = {
     loading: true,
     questions: [],
+    questionsExcel: [],
+    totalExcelElements: 0,
+    totalExcelPages: 0,
     totalElements: 0,
     totalPages: 0,
     editedQuestion: null,
@@ -173,6 +212,18 @@ const questionSlice = createSlice({
                 state.totalPages = payload.totalPages;
             })
             .addCase(fetchAllQuestions.rejected, (state, { payload }) => {})
+
+            .addCase(readExcelFile.pending, (state, { payload }) => {
+                state.loading = true;
+            })
+            .addCase(readExcelFile.fulfilled, (state, { payload }) => {
+                state.loading = false;
+                // state.questions = payload.questions;
+                state.questionsExcel = payload.questions;
+                state.totalExcelElements = payload.totalElements;
+                state.totalExcelPages = payload.totalPages;
+            })
+            .addCase(readExcelFile.rejected, (state, { payload }) => {})
 
             .addCase(findQuestion.pending, (state, { payload }) => {})
             .addCase(findQuestion.fulfilled, (state, { payload }) => {

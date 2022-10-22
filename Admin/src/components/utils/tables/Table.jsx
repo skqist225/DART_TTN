@@ -5,6 +5,7 @@ import TableModal from "./TableModal";
 import TableSearch from "./TableSearch";
 import { tailwindCss } from "../../../tailwind";
 import $ from "jquery";
+import { ExcelIcon } from "../../../images";
 
 function Table({
     searchPlaceHolder,
@@ -22,6 +23,10 @@ function Table({
     ModalBody,
     isEdit,
     handleSortChange,
+    setExcelAdd,
+    excelAdd,
+    excelAdding,
+    handleAddSelectedQuestionFromExcelFile,
 }) {
     return (
         <div className='overflow-x-auto relative shadow-md sm:rounded-lg'>
@@ -31,7 +36,7 @@ function Table({
                     handleQueryChange={handleQueryChange}
                 />
 
-                <div>
+                <div className='mr-5'>
                     <button
                         type='button'
                         className={tailwindCss.button}
@@ -43,6 +48,21 @@ function Table({
                         Thêm {modalLabel}
                     </button>
                 </div>
+                {modalLabel === "câu hỏi" && (
+                    <div>
+                        <button
+                            type='button'
+                            className={tailwindCss.lightButton}
+                            onClick={() => {
+                                setExcelAdd(true);
+                                $("#" + modalId).css("display", "flex");
+                            }}
+                        >
+                            <ExcelIcon />
+                            Thêm từ file Excel
+                        </button>
+                    </div>
+                )}
             </div>
 
             <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
@@ -60,6 +80,8 @@ function Table({
                 ModalBody={ModalBody}
                 buttonLabel={isEdit ? `Chỉnh sửa` : `Thêm`}
                 setIsEdit={setIsEdit}
+                excelAdd={excelAdd}
+                handleAddSelectedQuestionFromExcelFile={handleAddSelectedQuestionFromExcelFile}
             />
         </div>
     );

@@ -1,13 +1,13 @@
 package com.quiz.app.question.dto;
 
 import com.quiz.entity.Level;
-
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,5 +25,5 @@ public class PostCreateQuestionDTO {
     private String subjectId;
     private Integer chapter;
     private MultipartFile image;
-    private MultipartFile excelFile;
+    private List<ReadQuestionExcelDTO> questions;
 }

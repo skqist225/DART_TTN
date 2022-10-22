@@ -4,7 +4,7 @@ import { tailwindCss } from "../../tailwind";
 import { MyButton } from "../common";
 import $ from "jquery";
 
-function QuestionTableBody({ rows, setIsEdit, dispatch }) {
+function QuestionTableBody({ rows, setIsEdit, dispatch, page = null }) {
     function lookupQuestionLevel(level) {
         switch (level) {
             case "HARD":
@@ -15,6 +15,12 @@ function QuestionTableBody({ rows, setIsEdit, dispatch }) {
                 return "Dễ";
         }
     }
+
+    if (page !== null) {
+        rows = rows.slice(page * 10, (page + 1) * 10);
+    }
+
+    const cellCss = "py-2 px-3 text-black";
 
     return (
         <tbody>
@@ -32,16 +38,42 @@ function QuestionTableBody({ rows, setIsEdit, dispatch }) {
                             </label>
                         </div>
                     </td>
-                    <td className='py-4 px-6  whitespace-nowrap dark:text-white'>{row.id}</td>
-                    <td className='py-4 px-6'>{row.content}</td>
-                    <td className='py-4 px-6'>{row.answerA}</td>
-                    <td className='py-4 px-6'>{row.answerB}</td>
-                    <td className='py-4 px-6'>{row.answerC}</td>
-                    <td className='py-4 px-6'>{row.answerD}</td>
-                    <td className='py-4 px-6'>{row.finalAnswer}</td>
-                    <td className='py-4 px-6'>{lookupQuestionLevel(row.level)}</td>
-                    <td className='py-4 px-6'>Nguyễn Văn Tới</td>
-                    <td class='py-4 px-6 flex items-center'>
+                    <td className='py-2 px-3 whitespace-nowrap dark:text-white'>{row.id}</td>
+                    <td className={cellCss}>{row.content}</td>
+                    <td
+                        className={`${cellCss} ${
+                            row.finalAnswer === "A" && "text-green-600 font-semibold"
+                        }`}
+                    >
+                        {row.answerA}
+                    </td>
+                    <td
+                        className={`${cellCss} ${
+                            row.finalAnswer === "B" && "text-green-600 font-semibold"
+                        }`}
+                    >
+                        {row.answerB}
+                    </td>
+                    <td
+                        className={`${cellCss} ${
+                            row.finalAnswer === "C" && "text-green-600 font-semibold"
+                        }`}
+                    >
+                        {row.answerC}
+                    </td>
+                    <td
+                        className={`${cellCss} ${
+                            row.finalAnswer === "D" && "text-green-600 font-semibold"
+                        }`}
+                    >
+                        {row.answerD}
+                    </td>
+                    <td className={cellCss}>{lookupQuestionLevel(row.level)}</td>
+                    <td className={cellCss}>
+                        {row.teacher.firstName} {row.teacher.lastName}
+                    </td>
+                    <td className={cellCss}>{row.subject.name}</td>
+                    <td class='py-2 px-3 flex items-center'>
                         <MyButton
                             type='edit'
                             onClick={() => {
