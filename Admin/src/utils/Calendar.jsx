@@ -41,8 +41,6 @@ const Calendar = ({
     }
 
     useEffect(() => {
-        console.log("called");
-
         firstMonthAndYear = $(".firstMonthAndYear").first();
         secondMonthAndYear = $(".secondMonthAndYear").first();
         sadf(firstMonthAndYear, secondMonthAndYear);
@@ -144,12 +142,7 @@ const Calendar = ({
         t(monthOfFirstMonth, yearOfFirstMonth, firstMonth, secondMonth);
     }
 
-    function t(
-        monthOfFirstMonth,
-        yearOfFirstMonth,
-        firstMonth,
-        secondMonth
-    ) {
+    function t(monthOfFirstMonth, yearOfFirstMonth, firstMonth, secondMonth) {
         const monthDates = $("#month__dates").first();
         const monthDatesNext = $("#month__dates--next").first();
 
@@ -193,11 +186,6 @@ const Calendar = ({
             $(this)
                 .off("click")
                 .on("click", function () {
-                    console.log("------------------------");
-                    console.log("start date:", startDate);
-                    console.log("have sd: ", haveStartDate);
-                    console.log("have ed: ", haveEndDate);
-
                     if (!haveStartDate && !haveEndDate) {
                         $(this).addClass("checked");
                         startDate +=
@@ -245,7 +233,6 @@ const Calendar = ({
                         ).getTime();
 
                         if (mills1 === mills3) {
-                            console.log("true");
                             startDate = "";
                             haveStartDate = false;
                         }
@@ -257,13 +244,12 @@ const Calendar = ({
 
                         $(this).removeClass("checked");
                     } else if (haveStartDate && haveEndDate) {
-                        console.log("go continue");
                         const [currDate, currMonth, currYear] = getElementsOfDate(
                             $(this).text() +
-                            "/" +
-                            $(this).data("month") +
-                            "/" +
-                            $(this).data("year")
+                                "/" +
+                                $(this).data("month") +
+                                "/" +
+                                $(this).data("year")
                         );
 
                         const [startDateDate, startDateMonth, startDateYear] =
@@ -375,10 +361,10 @@ const Calendar = ({
                         //end date
                         const [date2, month2, year2] = getElementsOfDate(
                             $(this).text() +
-                            "/" +
-                            $(this).data("month") +
-                            "/" +
-                            $(this).data("year")
+                                "/" +
+                                $(this).data("month") +
+                                "/" +
+                                $(this).data("year")
                         );
 
                         const [startDateDate, startDateMonth, startDateYear] =
@@ -568,7 +554,6 @@ const Calendar = ({
         startDate = "";
         startDate = currDate + "/" + currMonth + "/" + currYear;
         haveStartDate = true;
-        console.log("start date", startDate);
 
         hightlightBetween(startDate, endDate);
     }
@@ -597,7 +582,6 @@ const Calendar = ({
         endDate = "";
         endDate = currDate + "/" + currMonth + "/" + currYear;
         haveEndDate = true;
-        console.log("end date", endDate);
 
         hightlightBetween(startDate, endDate);
     }
@@ -610,7 +594,7 @@ const Calendar = ({
         weeks.forEach(week => {
             daysInMonthJs.push('<tbody class="calendar"><tr>');
             const weekArray = week.trim().split(" ");
-            weekArray.forEach((dayInWeek) => {
+            weekArray.forEach(dayInWeek => {
                 if (dayInWeek === "") {
                 } else if (dayInWeek.trim() !== "_") {
                     let isBlocked = false;
@@ -636,8 +620,9 @@ const Calendar = ({
                             });
                     }
 
-                    const dayInHtml = `<td><div data-is-blocked="${false}" data-month="${month}" data-year="${year}" class="dayInWeek ${isBlocked && "block__date"
-                        }">${dayInWeek.trim()}</div></td>`;
+                    const dayInHtml = `<td><div data-is-blocked="${false}" data-month="${month}" data-year="${year}" class="dayInWeek ${
+                        isBlocked && "block__date"
+                    }">${dayInWeek.trim()}</div></td>`;
                     daysInMonthJs.push(dayInHtml);
                 } else if (dayInWeek.trim() === "_") daysInMonthJs.push("<td></td>");
             });

@@ -15,10 +15,10 @@ import { getImage } from "../../helpers";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
-import { authState, login } from "../../features/auth/authSlice";
+import { authState, login } from "../../features/authSlice";
 import { useNavigate } from "react-router-dom";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
-import { userState } from "../../features/user/userSlice";
+import { userState } from "../../features/userSlice";
 
 const loginSchema = yup
     .object({

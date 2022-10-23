@@ -73,25 +73,37 @@ public class QuestionRestController {
     }
 
     @GetMapping("")
-    public ResponseEntity<StandardJSONResponse<QuestionsDTO>> fetchAllSubjects(
+    public ResponseEntity<StandardJSONResponse<QuestionsDTO<Question>>> fetchAllSubjects(
             @RequestParam("page") String page,
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
-            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField
+            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
+            @RequestParam(name = "subject", required = false, defaultValue = "id") String subjectId
     ) {
-        Map<String, String> filters = new HashMap<>();
-        filters.put("page", page);
-        filters.put("query", query);
-        filters.put("sortDir", sortDir);
-        filters.put("sortField", sortField);
+        QuestionsDTO<Question> questionsDTO = new QuestionsDTO<>();
 
-        QuestionsDTO questionsDTO = new QuestionsDTO();
+        if (page.equals("0")) {
+            List<Question> questions = null;
+            if (Objects.nonNull(subjectId)) {
+                questions = questionService.findAll(subjectId);
+            } else {
+                questions = questionService.findAll();
+            }
+            questionsDTO.setQuestions(questions);
+            questionsDTO.setTotalElements(questions.size());
+            questionsDTO.setTotalPages(0);
+        } else {
+            Map<String, String> filters = new HashMap<>();
+            filters.put("page", page);
+            filters.put("query", query);
+            filters.put("sortDir", sortDir);
+            filters.put("sortField", sortField);
 
-        Page<Question> questionPage = questionService.findAllQuestions(filters);
-
-        questionsDTO.setQuestions(questionPage.getContent());
-        questionsDTO.setTotalElements(questionPage.getTotalElements());
-        questionsDTO.setTotalPages(questionPage.getTotalPages());
+            Page<Question> questionPage = questionService.findAllQuestions(filters);
+            questionsDTO.setQuestions(questionPage.getContent());
+            questionsDTO.setTotalElements(questionPage.getTotalElements());
+            questionsDTO.setTotalPages(questionPage.getTotalPages());
+        }
 
         return new OkResponse<>(questionsDTO).response();
     }

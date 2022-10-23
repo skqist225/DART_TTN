@@ -1,10 +1,9 @@
 import React from "react";
-import { deleteQuestion, setEditedQuestion } from "../../features/questionSlice";
 import { tailwindCss } from "../../tailwind";
 import { MyButton } from "../common";
 import $ from "jquery";
 import { getImage } from "../../helpers";
-import { deleteUser, setEditedUser } from "../../features/user/userSlice";
+import { deleteUser, setEditedUser } from "../../features/userSlice";
 
 function UserTableModal({ rows, setIsEdit, dispatch }) {
     function lookupUserSex(level) {
@@ -56,7 +55,6 @@ function UserTableModal({ rows, setIsEdit, dispatch }) {
                         <div style={{ maxWidth: "20px" }}>
                             <div className='normal-flex'>
                                 <div className='mr-10'>
-                                    {console.log(row.status)}
                                     {row.status === true ? (
                                         <svg
                                             viewBox='0 0 16 16'

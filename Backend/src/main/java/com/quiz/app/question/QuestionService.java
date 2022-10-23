@@ -2,7 +2,9 @@ package com.quiz.app.question;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.subject.SubjectService;
 import com.quiz.entity.Question;
+import com.quiz.entity.Subject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -34,6 +36,9 @@ public class QuestionService {
 
     @Autowired
     QuestionRepository questionRepository;
+
+    @Autowired
+    SubjectService subjectService;
 
     @Autowired
     private EntityManager entityManager;
@@ -137,5 +142,19 @@ public class QuestionService {
         typedQuery.setMaxResults(pageable.getPageSize());
 
         return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
+    }
+
+    public List<Question> findAll() {
+        return (List<Question>) questionRepository.findAll();
+    }
+
+    public List<Question> findAll(String subjectId) {
+        Subject subject = null;
+        try {
+            subject = subjectService.findById(subjectId);
+            return questionRepository.findBySubject(subject);
+        } catch (NotFoundException e) {
+            return null;
+        }
     }
 }

@@ -34,6 +34,13 @@ function TableHeader({ columns, handleSortChange }) {
                             id='checkbox-all-search'
                             type='checkbox'
                             className={tailwindCss.checkbox}
+                            onChange={e => {
+                                if ($(e.target).prop("checked")) {
+                                    $(".checkbox-table-search-1").prop("checked", true);
+                                } else {
+                                    $(".checkbox-table-search-1").prop("checked", false);
+                                }
+                            }}
                         />
                         <label for='checkbox-all-search' className='sr-only'>
                             checkbox

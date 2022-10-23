@@ -63,8 +63,6 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
         }
     };
 
-    console.log(editedQuestion);
-
     if (editedQuestion) {
         setValue("id", editedQuestion.id);
         setValue("content", editedQuestion.content);

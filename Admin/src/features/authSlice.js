@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
-import api from "../../axios";
-import { removeUserFromLocalStorage, setUserToLocalStorage } from "../common";
-import { setUser } from "../user/userSlice";
+import api from "../axios";
+import { removeUserFromLocalStorage, setUserToLocalStorage } from "./common";
+import { setUser } from "./userSlice";
 
 export const login = createAsyncThunk(
     "auth/login",

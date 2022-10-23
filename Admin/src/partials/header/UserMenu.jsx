@@ -2,10 +2,10 @@ import React, { useState, useRef, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Transition from "../../utils/Transition";
 
-import { authState, logout } from "../../features/auth/authSlice";
+import { authState, logout } from "../../features/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { getImage } from "../../helpers";
-import { userState } from "../../features/user/userSlice";
+import { userState } from "../../features/userSlice";
 import { Button } from "@mui/material";
 
 function UserMenu() {

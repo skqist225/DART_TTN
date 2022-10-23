@@ -2,16 +2,14 @@ import React from "react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import CheckIcon from "@mui/icons-material/Check";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
-import DoNotTouchIcon from "@mui/icons-material/DoNotTouch";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 
-import ForbiddenImage from "../../images/forbidden.png";
 import DisableImage from "../../images/disable-icon.png";
+import ChooseImage from "../../images/icons8-choose-48.png";
+import { withWidth } from "@material-ui/core";
 
 function MyButton(props) {
     let { type, label, disabled } = props;
@@ -122,32 +120,17 @@ function MyButton(props) {
                     <img
                         src={DisableImage}
                         style={{
+                            maxWidth: "24px",
                             filter: "invert(100%) sepia(64%) saturate(371%) hue-rotate(284deg) brightness(108%) contrast(104%)",
                         }}
-                        width='24px'
-                        height={"24px"}
                     />
                 </>
             )}
             {type === "enable" && <CheckIcon />}
-            {type === "currentPosition" && <>{label}</>}
-            {type === "lookGood" && <>{label}</>}
             {type === "edit" && <EditIcon />}
             {type === "view" && <VisibilityIcon />}
             {type === "add" && <span className='hidden xs:block ml-2'>{label}</span>}
             {type === "update" && <span className='hidden xs:block ml-2'>{label}</span>}
-            {type === "next" && (
-                <>
-                    {label}
-                    <NavigateNextIcon />
-                </>
-            )}
-            {type === "back" && (
-                <>
-                    <ArrowBackIcon />
-                    {label}
-                </>
-            )}
             {type === "approve" && <CheckIcon />}
             {type === "deny" && <DoDisturbIcon />}
             {type === "search" && (

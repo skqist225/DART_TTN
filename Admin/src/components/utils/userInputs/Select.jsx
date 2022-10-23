@@ -1,4 +1,6 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { fetchAllQuestions } from "../../../features/questionSlice";
 import ErrorMessage from "../errors/ErrorMessage";
 
 function Select({
@@ -7,33 +9,44 @@ function Select({
     selectClassName,
     error,
     register,
-    name,
+    name: propName,
     options,
     defaultValue,
     setValue,
 }) {
     if (setValue) {
         if (defaultValue) {
-            setValue(name, defaultValue);
+            setValue(propName, defaultValue);
         } else {
             if (options[0] && options[0].value) {
-                setValue(name, options[0].value);
+                setValue(propName, options[0].value);
             }
         }
     }
 
+    const { onChange, onBlur, name, ref } = register(propName);
+    const dispatch = useDispatch();
+
     return (
         <>
             <label
-                htmlFor={name}
+                htmlFor={propName}
                 className={`${labelClassName} ${error && "text-red-700 dark:text-red-500"}`}
             >
                 {label}
             </label>
             <select
-                id={name}
+                id={propName}
                 className={`${selectClassName} ${error && "bg-red-50 border border-red-500"}`}
-                {...register(name)}
+                name={name}
+                onChange={e => {
+                    onChange(e);
+                    if (propName === "testSubjectId") {
+                        dispatch(fetchAllQuestions({ page: 0, subject: e.target.value }));
+                    }
+                }}
+                onBlur={onBlur}
+                ref={ref}
             >
                 {options.map(({ value, title }) => (
                     <option

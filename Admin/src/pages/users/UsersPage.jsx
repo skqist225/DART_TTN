@@ -11,7 +11,7 @@ import {
     fetchAllUsers,
     setErrorField,
     userState,
-} from "../../features/user/userSlice";
+} from "../../features/userSlice";
 
 import $ from "jquery";
 import "../../css/page/rooms.css";

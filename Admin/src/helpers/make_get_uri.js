@@ -10,7 +10,6 @@ export default function makeGetURI(uri, fieldName, position) {
         }
         uris[position] = fieldName;
         finalURI = uris.join("/");
-        console.log(finalURI);
     }
 
     return finalURI;

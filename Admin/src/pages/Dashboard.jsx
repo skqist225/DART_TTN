@@ -4,14 +4,14 @@ import Header from "../partials/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { UsersPage, SubjectsPage } from ".";
 import { useLocation, useNavigate } from "react-router-dom";
-import { authState } from "../features/auth/authSlice";
+import { authState } from "../features/authSlice";
 // import SimpleStatNumber from "../components/utils/SimpleStatNumber";
 // import StackedBarChart from "../partials/dashboard/DashboardCard09";
 
 import LineChart from "../partials/dashboard/LineChart";
 import LineChartDashboard from "../partials/dashboard/LineChartDashboard";
 import CircleChart from "../partials/dashboard/CircleChart";
-import { userState } from "../features/user/userSlice";
+import { userState } from "../features/userSlice";
 
 function Dashboard() {
     const [sidebarOpen, setSidebarOpen] = useState(false);

@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import api from "../../axios";
+import api from "../axios";
 
 export const statsCount = createAsyncThunk(
     "dashboard/statsCount",

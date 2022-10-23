@@ -1,11 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { useSelector } from "react-redux";
 import { tailwindCss } from "../../tailwind";
 import Select from "../utils/userInputs/Select";
 
 import { CloseIcon } from "../../images";
 import Input from "../utils/userInputs/Input";
-import { setEditedUser, userState } from "../../features/user/userSlice";
+import { setEditedUser, userState } from "../../features/userSlice";
 import $ from "jquery";
 import DatePicker from "../utils/datePicker/DatePicker";
 

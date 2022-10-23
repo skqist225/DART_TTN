@@ -6,6 +6,7 @@ import "./charts/ChartjsConfig";
 import Dashboard from "./pages/Dashboard";
 import { AddQuestionPage, ClassesPage, QuestionsPage, SubjectsPage, UsersPage } from "./pages";
 import LoginPage from "./pages/auth/LoginPage";
+import TestsPage from "./pages/tests/TestsPage";
 
 function App() {
     const location = useLocation();
@@ -33,7 +34,7 @@ function App() {
                 </Route>
 
                 <Route path='/tests'>
-                    <Route path='' element={<QuestionsPage />} />
+                    <Route path='' element={<TestsPage />} />
                 </Route>
 
                 <Route path='/users'>

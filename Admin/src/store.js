@@ -1,6 +1,13 @@
 import { configureStore } from "@reduxjs/toolkit";
 import { combineReducers } from "redux";
-import { authSlice, classSlice, questionSlice, subjectSlice, userSlice } from "./features";
+import {
+    authSlice,
+    classSlice,
+    questionSlice,
+    subjectSlice,
+    testSlice,
+    userSlice,
+} from "./features";
 
 const rootReducer = combineReducers({
     auth: authSlice,
@@ -8,6 +15,7 @@ const rootReducer = combineReducers({
     subject: subjectSlice,
     user: userSlice,
     class: classSlice,
+    test: testSlice,
 });
 
 const localUser = localStorage.getItem("admin-user")

@@ -13,8 +13,6 @@ function DashboardCard01() {
         listing: { bookings, totalElements },
     } = useSelector(bookingState);
 
-    console.log(totalElements);
-
     const chartData = {
         labels: [
             "12-01-2020",

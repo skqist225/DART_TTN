@@ -25,12 +25,10 @@ import {
     Typography,
 } from "@mui/material";
 import Toast from "../../components/notify/Toast";
-import { fetchUser, editUser, userState } from "../../features/user/userSlice";
+import { fetchUser, userState } from "../../features/userSlice";
 import { callToast, getImage } from "../../helpers";
 import { useParams } from "react-router-dom";
 import { Image } from "../../globalStyle";
-import { fetchStatesByCountry, stateState } from "../../features/address/stateSlice";
-import { cityState, fetchCitiesByState } from "../../features/address/citySlice";
 
 const AddUserPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -164,8 +162,6 @@ const AddUserPage = () => {
     const onSubmit = e => {
         e.preventDefault();
 
-        console.log(processUserBirthday(birthday));
-
         const updateObject = {
             ...fieldValues,
             sex,
@@ -184,7 +180,6 @@ const AddUserPage = () => {
             updateObject["street"] = street;
         }
 
-        console.log(updateObject);
         const formData = new FormData();
         for (const key in updateObject) {
             formData.set(key, updateObject[key]);

@@ -2,8 +2,15 @@ import * as yup from "yup";
 
 export const subjectSchema = yup
     .object({
-        id: yup.string().required("Vui lòng điền mã môn học"),
-        name: yup.string().required("Vui lòng điền tên môn học"),
+        id: yup.string().required("Mã môn học không được để trống"),
+        name: yup.string().required("Tên môn học không được để trống"),
+    })
+    .required();
+
+export const testSchema = yup
+    .object({
+        name: yup.string().required("Tên bộ đề không được để trống"),
+        testSubjectId: yup.string().required("Môn học không được để trống"),
     })
     .required();
 

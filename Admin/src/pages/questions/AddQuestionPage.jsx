@@ -39,8 +39,6 @@ const AddQuestionPage = () => {
         // if(data.image) {
         //            formData.set("image", content);
         // }
-
-        console.log(data);
     };
 
     return (

@@ -5,7 +5,7 @@ import TableModal from "./TableModal";
 import TableSearch from "./TableSearch";
 import { tailwindCss } from "../../../tailwind";
 import $ from "jquery";
-import { ExcelIcon } from "../../../images";
+import { DropDownIcon, ExcelIcon } from "../../../images";
 import { useDispatch } from "react-redux";
 import { useSelector } from "react-redux";
 import { questionState, setExcelAdd } from "../../../features/questionSlice";
@@ -72,32 +72,15 @@ function Table({
                             style={{ width: "170px" }}
                         >
                             Thêm {modalLabel}
-                            <svg
-                                className='ml-2 w-4 h-4'
-                                aria-hidden='true'
-                                fill='none'
-                                stroke='currentColor'
-                                viewBox='0 0 24 24'
-                                xmlns='http://www.w3.org/2000/svg'
-                            >
-                                <path
-                                    strokeLinecap='round'
-                                    strokeLinejoin='round'
-                                    strokeWidth='2'
-                                    d='M19 9l-7 7-7-7'
-                                ></path>
-                            </svg>
+                            <DropDownIcon />
                         </button>
-                        <div
-                            id='dropdown'
-                            className='absolute top-11 left-0 hidden z-10 w-44 bg-white divide-y divide-gray-100 shadow dark:bg-gray-700 border border-gray-200 rounded-lg'
-                        >
+                        <div id='dropdown' className={tailwindCss.dropdown.button}>
                             <ul
                                 className='py-1 text-sm text-gray-700 dark:text-gray-200'
                                 aria-labelledby='dropdownMenuIconButton'
                             >
                                 <li
-                                    className='block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:font-bold cursor-pointer'
+                                    className={tailwindCss.dropdown.li}
                                     onClick={() => {
                                         $("#" + modalId).css("display", "flex");
                                         setIsEdit(false);

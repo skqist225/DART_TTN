@@ -5,7 +5,7 @@ import api from "../axios";
 export const fetchAllQuestions = createAsyncThunk(
     "question/fetchAllQuestions",
     async (
-        { page = 1, query = "", sortField = "id", sortDir = "asc" },
+        { page = 1, query = "", sortField = "id", sortDir = "asc", subject },
         { dispatch, rejectWithValue }
     ) => {
         try {
@@ -36,7 +36,7 @@ export const fetchAllQuestions = createAsyncThunk(
             const {
                 data: { questions, totalElements, totalPages },
             } = await api.get(
-                `/questions?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}`
+                `/questions?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}`
             );
 
             return { questions, totalElements, totalPages };
@@ -253,7 +253,6 @@ const questionSlice = createSlice({
 
             .addCase(addMultipleQuestions.pending, (state, { payload }) => {})
             .addCase(addMultipleQuestions.fulfilled, (state, { payload }) => {
-                console.log(data);
                 state.addMultipleQuestions.successMessage = payload.data;
             })
             .addCase(addMultipleQuestions.rejected, (state, { payload }) => {})

@@ -9,8 +9,6 @@ import SimpleStackedBarChart from "../../charts/SimpleStackedBarChart";
 function StackedBarChart({ data }) {
     const [dataSet1, dataSet2, dataSet3] = data;
 
-    console.log([dataSet1, dataSet2, dataSet3]);
-
     const chartData = {
         labels: [
             "01-01-2022",

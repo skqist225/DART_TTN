@@ -35,3 +35,7 @@ export { default as UserTableBody } from "./users/UserTableBody";
 //classes
 export { default as ClassModalBody } from "./classes/ClassModalBody";
 export { default as ClassTableBody } from "./classes/ClassTableBody";
+
+//tests
+export { default as TestModalBody } from "./tests/TestModalBody";
+export { default as TestTableBody } from "./tests/TestTableBody";
