@@ -88,6 +88,7 @@ function SubjectsPage() {
         if (successMessage) {
             callToast("success", successMessage);
             $("#subjectForm")[0].reset();
+            $("#subjectModal").css("display", "none");
             dispatch(fetchAllSubjects(filterObject));
         }
     }, [successMessage]);

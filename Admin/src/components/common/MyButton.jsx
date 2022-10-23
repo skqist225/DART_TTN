@@ -11,6 +11,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 
 import ForbiddenImage from "../../images/forbidden.png";
+import DisableImage from "../../images/disable-icon.png";
 
 function MyButton(props) {
     let { type, label, disabled } = props;
@@ -118,8 +119,14 @@ function MyButton(props) {
             {type === "delete" && <DeleteIcon />}
             {type === "disable" && (
                 <>
-                    <DoNotTouchIcon />
-                    {/* <img src={ForbiddenImage} /> */}
+                    <img
+                        src={DisableImage}
+                        style={{
+                            filter: "invert(100%) sepia(64%) saturate(371%) hue-rotate(284deg) brightness(108%) contrast(104%)",
+                        }}
+                        width='24px'
+                        height={"24px"}
+                    />
                 </>
             )}
             {type === "enable" && <CheckIcon />}

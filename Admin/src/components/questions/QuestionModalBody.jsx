@@ -7,6 +7,7 @@ import TextArea from "../utils/userInputs/TextArea";
 import $ from "jquery";
 import { CloseIcon } from "../../images";
 import { QuestionExcelModalBody } from "..";
+import { Input } from "..";
 
 const finalAnswerOptions = [
     {
@@ -62,6 +63,8 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
         }
     };
 
+    console.log(editedQuestion);
+
     if (editedQuestion) {
         setValue("id", editedQuestion.id);
         setValue("content", editedQuestion.content);
@@ -71,6 +74,7 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
         setValue("answerD", editedQuestion.answerD);
         setValue("finalAnswer", editedQuestion.finalAnswer);
         setValue("level", editedQuestion.level);
+        setValue("chapter", editedQuestion.chapter);
         setValue("subjectId", editedQuestion.subject.id);
     }
 
@@ -188,16 +192,31 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
                             </div>
                         </div>
 
-                        <div className='my-3 w-full'>
-                            <Select
-                                label='Môn học *'
-                                labelClassName={tailwindCss.label}
-                                selectClassName={tailwindCss.select}
-                                error={errors.subjectId && errors.subjectId.message}
-                                register={register}
-                                name='subjectId'
-                                options={subjects}
-                            />
+                        <div className='flex items-center w-full'>
+                            <div className='my-3 w-full mr-5'>
+                                <Input
+                                    label='Chương *'
+                                    error={
+                                        (errors.chapter && errors.chapter.message) ||
+                                        (errorObject && errorObject.chapter)
+                                    }
+                                    register={register}
+                                    name='chapter'
+                                    onKeyDown={onKeyDown}
+                                />
+                            </div>
+
+                            <div className='my-3 w-full'>
+                                <Select
+                                    label='Môn học *'
+                                    labelClassName={tailwindCss.label}
+                                    selectClassName={tailwindCss.select}
+                                    error={errors.subjectId && errors.subjectId.message}
+                                    register={register}
+                                    name='subjectId'
+                                    options={subjects}
+                                />
+                            </div>
                         </div>
                     </div>
 

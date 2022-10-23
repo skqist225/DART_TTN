@@ -30,7 +30,6 @@ import java.util.Objects;
 public class QuestionService {
     private final String DELETE_SUCCESSFULLY = "Xóa câu hỏi thành công";
     private final String DELETE_FORBIDDEN = "Không thể xóa câu hỏi này vì ràng buộc dữ liệu";
-
     private final Integer MAX_QUESTIONS_PER_PAGE = 20;
 
     @Autowired
@@ -52,14 +51,44 @@ public class QuestionService {
         }
     }
 
+    public String enableOrDisable(Integer id, String action) throws NotFoundException {
+        try {
+            Question question = findById(id);
+            String responseMessage = "";
+            if (action.equals("enable")) {
+                question.setStatus(true);
+                responseMessage = "Kích họat câu hỏi thành công";
+            } else {
+                question.setStatus(false);
+                responseMessage = "Hủy kích họat câu hỏi thành công";
+            }
+
+            questionRepository.save(question);
+
+            return responseMessage;
+        } catch (NotFoundException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
+    }
+
     public Question findById(Integer id) throws NotFoundException {
         Question question = questionRepository.getById(id);
 
-        if(question != null) {
+        if (Objects.nonNull(question)) {
             return question;
         }
 
         throw new NotFoundException("Không tìm thấy câu hỏi với mã bằng " + id);
+    }
+
+    public Question findByContent(String content) throws NotFoundException {
+        Question question = questionRepository.findByContent(content);
+
+        if (Objects.nonNull(question)) {
+            return question;
+        }
+
+        throw new NotFoundException("Không tìm thấy câu hỏi với nội dung câu hỏi là " + content);
     }
 
     public boolean isContentDuplicated(Integer id, String content, boolean isEdit) {

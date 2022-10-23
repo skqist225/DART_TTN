@@ -14,6 +14,7 @@ import {
     clearQuestionState,
     fetchAllQuestions,
     addMultipleQuestions,
+    setExcelAdd,
 } from "../../features/questionSlice";
 import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
 
@@ -54,20 +55,20 @@ const columns = [
         sortable: true,
     },
     {
-        name: "Giảng viên",
-        sortField: "teacher",
-    },
-    {
         name: "Môn học",
         sortField: "teacher",
+        sortable: true,
+    },
+    {
+        name: "Giảng viên",
+        sortField: "teacher",
+        sortable: true,
     },
 ];
 
 function QuestionsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
-    const [excelAdding, setExcelAdding] = useState(false);
-    const [excelAdd, setExcelAdd] = useState(false);
     const [image, setImage] = useState(null);
 
     const {
@@ -98,16 +99,18 @@ function QuestionsPage() {
     };
 
     const {
-        loading,
         questions,
         questionsExcel,
         errorObject,
         totalElements,
         totalPages,
         filterObject,
+        excelAdd,
         addQuestion: { successMessage },
         editQuestion: { successMessage: eqSuccessMessage },
         deleteQuestion: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
+        addMultipleQuestions: { successMessage: amqSuccessMessage },
+        enableOrDisableQuestion: { successMessage: eodqSuccessMessage },
     } = useSelector(questionState);
 
     const { subjects } = useSelector(subjectState);
@@ -189,14 +192,28 @@ function QuestionsPage() {
         );
     }, []);
 
-    useEffect(() => {
-        if (!loading) {
-            setExcelAdding(true);
-        }
-    }, [loading]);
-
     const handleAddSelectedQuestionFromExcelFile = () => {
         dispatch(addMultipleQuestions(questionsExcel));
+    };
+
+    useEffect(() => {
+        if (amqSuccessMessage) {
+            callToast("success", amqSuccessMessage);
+            $("#questionModal").css("display", "none");
+            dispatch(fetchAllQuestions(filterObject));
+            dispatch(setExcelAdd(false));
+        }
+    }, [amqSuccessMessage]);
+
+    useEffect(() => {
+        if (eodqSuccessMessage) {
+            callToast("success", eodqSuccessMessage);
+            dispatch(fetchAllQuestions(filterObject));
+        }
+    }, [eodqSuccessMessage]);
+
+    const fetchDataByPageNumber = pageNumber => {
+        dispatch(fetchAllQuestions({ ...filterObject, page: pageNumber }));
     };
 
     return (
@@ -218,6 +235,7 @@ function QuestionsPage() {
                             rows={questions}
                             setIsEdit={setIsEdit}
                             dispatch={dispatch}
+                            excelAdd={excelAdd}
                         />
                     }
                     modalId='questionModal'
@@ -238,10 +256,8 @@ function QuestionsPage() {
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
-                    setExcelAdd={setExcelAdd}
-                    excelAdd={excelAdd}
-                    excelAdding={excelAdding}
                     handleAddSelectedQuestionFromExcelFile={handleAddSelectedQuestionFromExcelFile}
+                    fetchDataByPageNumber={fetchDataByPageNumber}
                 />
             }
         />

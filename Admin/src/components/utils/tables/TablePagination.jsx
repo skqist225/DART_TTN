@@ -1,6 +1,11 @@
 import React from "react";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { questionState } from "../../../features/questionSlice";
 
-function TablePagination({ totalElements, totalPages, setPage }) {
+function TablePagination({ totalElements, totalPages, setPage, fetchDataByPageNumber }) {
+    const { excelAdd } = useSelector(questionState);
+
     return (
         <nav className='col-flex justify-between items-center pt-4' aria-label='Table navigation'>
             <span className='text-sm font-normal text-gray-500 dark:text-gray-400'>
@@ -35,8 +40,10 @@ function TablePagination({ totalElements, totalPages, setPage }) {
                         <button
                             className='py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
                             onClick={e => {
-                                if (setPage) {
+                                if (excelAdd && setPage) {
                                     setPage(index + 1);
+                                } else {
+                                    fetchDataByPageNumber(index + 1);
                                 }
                             }}
                         >

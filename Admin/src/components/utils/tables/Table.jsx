@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import TablePagination from "./TablePagination";
 import TableHeader from "./TableHeader";
 import TableModal from "./TableModal";
@@ -6,6 +6,9 @@ import TableSearch from "./TableSearch";
 import { tailwindCss } from "../../../tailwind";
 import $ from "jquery";
 import { ExcelIcon } from "../../../images";
+import { useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
+import { questionState, setExcelAdd } from "../../../features/questionSlice";
 
 function Table({
     searchPlaceHolder,
@@ -23,44 +26,100 @@ function Table({
     ModalBody,
     isEdit,
     handleSortChange,
-    setExcelAdd,
-    excelAdd,
-    excelAdding,
     handleAddSelectedQuestionFromExcelFile,
+    fetchDataByPageNumber,
 }) {
+    const [open, setOpen] = useState(false);
+    const dispatch = useDispatch();
+
     return (
-        <div className='overflow-x-auto relative shadow-md sm:rounded-lg'>
+        <div className='overflow-x-auto relative shadow-md sm:rounded-lg overflow-y-auto'>
             <div className='flex items-center'>
                 <TableSearch
                     placeHolder={searchPlaceHolder}
                     handleQueryChange={handleQueryChange}
                 />
 
-                <div className='mr-5'>
-                    <button
-                        type='button'
-                        className={tailwindCss.button}
-                        onClick={() => {
-                            $("#" + modalId).css("display", "flex");
-                            setIsEdit(false);
-                        }}
-                    >
-                        Thêm {modalLabel}
-                    </button>
-                </div>
-                {modalLabel === "câu hỏi" && (
-                    <div>
+                {!["câu hỏi"].includes(modalLabel) ? (
+                    <div className='mr-5'>
                         <button
                             type='button'
-                            className={tailwindCss.lightButton}
+                            className={tailwindCss.button}
                             onClick={() => {
-                                setExcelAdd(true);
                                 $("#" + modalId).css("display", "flex");
+                                setIsEdit(false);
                             }}
                         >
-                            <ExcelIcon />
-                            Thêm từ file Excel
+                            Thêm {modalLabel}
                         </button>
+                    </div>
+                ) : (
+                    <div className='relative'>
+                        <button
+                            id='dropdownDefault'
+                            data-dropdown-toggle='dropdown'
+                            className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800'
+                            type='button'
+                            onClick={() => {
+                                if (!open) {
+                                    $("#dropdown").css("display", "block");
+                                    setOpen(true);
+                                } else {
+                                    $("#dropdown").css("display", "none");
+                                    setOpen(false);
+                                }
+                            }}
+                            style={{ width: "170px" }}
+                        >
+                            Thêm {modalLabel}
+                            <svg
+                                className='ml-2 w-4 h-4'
+                                aria-hidden='true'
+                                fill='none'
+                                stroke='currentColor'
+                                viewBox='0 0 24 24'
+                                xmlns='http://www.w3.org/2000/svg'
+                            >
+                                <path
+                                    strokeLinecap='round'
+                                    strokeLinejoin='round'
+                                    strokeWidth='2'
+                                    d='M19 9l-7 7-7-7'
+                                ></path>
+                            </svg>
+                        </button>
+                        <div
+                            id='dropdown'
+                            className='absolute top-11 left-0 hidden z-10 w-44 bg-white divide-y divide-gray-100 shadow dark:bg-gray-700 border border-gray-200 rounded-lg'
+                        >
+                            <ul
+                                className='py-1 text-sm text-gray-700 dark:text-gray-200'
+                                aria-labelledby='dropdownMenuIconButton'
+                            >
+                                <li
+                                    className='block py-2 px-4 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white hover:font-bold cursor-pointer'
+                                    onClick={() => {
+                                        $("#" + modalId).css("display", "flex");
+                                        setIsEdit(false);
+                                    }}
+                                >
+                                    Thêm {modalLabel}
+                                </li>
+                                <li className='flex items-center align-middle'>
+                                    <button
+                                        type='button'
+                                        className={tailwindCss.lightButton}
+                                        onClick={() => {
+                                            dispatch(setExcelAdd(true));
+                                            $("#" + modalId).css("display", "flex");
+                                        }}
+                                    >
+                                        <ExcelIcon />
+                                        Thêm từ file Excel
+                                    </button>
+                                </li>
+                            </ul>
+                        </div>
                     </div>
                 )}
             </div>
@@ -69,7 +128,11 @@ function Table({
                 <TableHeader columns={columns} handleSortChange={handleSortChange} />
                 {TableBody}
             </table>
-            <TablePagination totalElements={totalElements} totalPages={totalPages} />
+            <TablePagination
+                totalElements={totalElements}
+                totalPages={totalPages}
+                fetchDataByPageNumber={fetchDataByPageNumber}
+            />
 
             <TableModal
                 modalId={modalId}
@@ -80,7 +143,6 @@ function Table({
                 ModalBody={ModalBody}
                 buttonLabel={isEdit ? `Chỉnh sửa` : `Thêm`}
                 setIsEdit={setIsEdit}
-                excelAdd={excelAdd}
                 handleAddSelectedQuestionFromExcelFile={handleAddSelectedQuestionFromExcelFile}
             />
         </div>

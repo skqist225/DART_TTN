@@ -32,6 +32,10 @@ function App() {
                     <Route path='' element={<QuestionsPage />} />
                 </Route>
 
+                <Route path='/tests'>
+                    <Route path='' element={<QuestionsPage />} />
+                </Route>
+
                 <Route path='/users'>
                     <Route path='' element={<UsersPage />} />
                 </Route>

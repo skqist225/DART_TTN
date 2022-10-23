@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
+import { data } from "jquery";
 import api from "../axios";
 
 export const fetchAllQuestions = createAsyncThunk(
@@ -130,11 +131,24 @@ export const addMultipleQuestions = createAsyncThunk(
             const formData = new FormData();
             formData.set("questions", questionsExcel);
 
-            const {
-                data: { questions, totalElements, totalPages },
-            } = await api.post(`/questions/save/multiple`, { questions: questionsExcel });
+            const { data } = await api.post(`/questions/save/multiple`, {
+                questions: questionsExcel,
+            });
 
-            return { questions, totalElements, totalPages };
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
+export const enableOrDisableQuestion = createAsyncThunk(
+    "question/enableQuestion",
+    async ({ id, action }, { rejectWithValue }) => {
+        try {
+            const { data } = await api.put(`/questions/${id}?action=${action}`);
+
+            return { data };
         } catch ({ data: { error } }) {
             return rejectWithValue(error);
         }
@@ -167,6 +181,13 @@ const initialState = {
         successMessage: null,
         errorMessage: null,
     },
+    addMultipleQuestions: {
+        successMessage: null,
+    },
+    excelAdd: false,
+    enableOrDisableQuestion: {
+        successMessage: null,
+    },
 };
 
 const questionSlice = createSlice({
@@ -181,6 +202,8 @@ const questionSlice = createSlice({
 
             state.deleteQuestion.successMessage = null;
             state.deleteQuestion.errorMessage = null;
+
+            state.enableOrDisableQuestion.successMessage = null;
         },
         clearErrorField(state, { payload }) {
             if (payload) {
@@ -201,6 +224,9 @@ const questionSlice = createSlice({
         },
         setEditedQuestion(state, { payload }) {
             state.editedQuestion = payload;
+        },
+        setExcelAdd(state, { payload }) {
+            state.excelAdd = payload;
         },
     },
     extraReducers: builder => {
@@ -224,6 +250,21 @@ const questionSlice = createSlice({
                 state.totalExcelPages = payload.totalPages;
             })
             .addCase(readExcelFile.rejected, (state, { payload }) => {})
+
+            .addCase(addMultipleQuestions.pending, (state, { payload }) => {})
+            .addCase(addMultipleQuestions.fulfilled, (state, { payload }) => {
+                console.log(data);
+                state.addMultipleQuestions.successMessage = payload.data;
+            })
+            .addCase(addMultipleQuestions.rejected, (state, { payload }) => {})
+
+            .addCase(enableOrDisableQuestion.pending, (state, { payload }) => {
+                state.enableOrDisableQuestion.successMessage = null;
+            })
+            .addCase(enableOrDisableQuestion.fulfilled, (state, { payload }) => {
+                state.enableOrDisableQuestion.successMessage = payload.data;
+            })
+            .addCase(enableOrDisableQuestion.rejected, (state, { payload }) => {})
 
             .addCase(findQuestion.pending, (state, { payload }) => {})
             .addCase(findQuestion.fulfilled, (state, { payload }) => {
@@ -293,7 +334,13 @@ const questionSlice = createSlice({
 });
 
 export const {
-    actions: { clearQuestionState, clearErrorField, setFilterObject, setEditedQuestion },
+    actions: {
+        clearQuestionState,
+        clearErrorField,
+        setFilterObject,
+        setEditedQuestion,
+        setExcelAdd,
+    },
 } = questionSlice;
 
 export const questionState = state => state.question;

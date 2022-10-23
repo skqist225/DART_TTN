@@ -2,6 +2,9 @@ import React from "react";
 import { CloseIcon } from "../../../images";
 import { tailwindCss } from "../../../tailwind";
 import $ from "jquery";
+import { useSelector } from "react-redux";
+import { questionState, setExcelAdd } from "../../../features/questionSlice";
+import { useDispatch } from "react-redux";
 
 function TableModal({
     modalId,
@@ -12,9 +15,11 @@ function TableModal({
     ModalBody,
     buttonLabel,
     setIsEdit,
-    excelAdd,
     handleAddSelectedQuestionFromExcelFile,
 }) {
+    const dispatch = useDispatch();
+    const { excelAdd } = useSelector(questionState);
+
     return (
         <div
             id={modalId}
@@ -23,7 +28,7 @@ function TableModal({
             className={tailwindCss.modal.container}
             style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
         >
-            <div className='relative w-full max-w-4xl h-full md:h-auto mt-24'>
+            <div className='relative w-full max-w-4xl h-full md:h-full mt-24'>
                 <form
                     id={formId}
                     onSubmit={e => {
@@ -41,6 +46,7 @@ function TableModal({
                             data-modal-toggle={modalId}
                             onClick={() => {
                                 $("#" + modalId).css("display", "none");
+                                dispatch(setExcelAdd(false));
                                 setIsEdit(false);
                             }}
                         >

@@ -1,8 +1,14 @@
 import React from "react";
-import { deleteQuestion, setEditedQuestion } from "../../features/questionSlice";
+import {
+    deleteQuestion,
+    enableOrDisableQuestion,
+    questionState,
+    setEditedQuestion,
+} from "../../features/questionSlice";
 import { tailwindCss } from "../../tailwind";
 import { MyButton } from "../common";
 import $ from "jquery";
+import { useSelector } from "react-redux";
 
 function QuestionTableBody({ rows, setIsEdit, dispatch, page = null }) {
     function lookupQuestionLevel(level) {
@@ -17,15 +23,22 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, page = null }) {
     }
 
     if (page !== null) {
-        rows = rows.slice(page * 10, (page + 1) * 10);
+        rows = rows.slice((page - 1) * 10, page * 10);
     }
 
     const cellCss = "py-2 px-3 text-black";
 
+    const { excelAdd } = useSelector(questionState);
+
     return (
         <tbody>
             {rows.map(row => (
-                <tr className={tailwindCss.tr} key={row.id}>
+                <tr
+                    className={`${tailwindCss.tr} ${
+                        !row.status && "bg-gray-200 hover:bg-gray-200"
+                    }`}
+                    key={row.id}
+                >
                     <td className='p-4 w-4'>
                         <div className='flex items-center'>
                             <input
@@ -68,11 +81,16 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, page = null }) {
                     >
                         {row.answerD}
                     </td>
-                    <td className={cellCss}>{lookupQuestionLevel(row.level)}</td>
                     <td className={cellCss}>
-                        {row.teacher.firstName} {row.teacher.lastName}
+                        {!excelAdd ? lookupQuestionLevel(row.level) : row.level}
                     </td>
-                    <td className={cellCss}>{row.subject.name}</td>
+                    <td className={cellCss}>{!excelAdd ? row.subject.name : row.subjectName}</td>
+                    {!excelAdd && (
+                        <td className={cellCss}>
+                            {row.teacher.firstName} {row.teacher.lastName}
+                        </td>
+                    )}
+
                     <td class='py-2 px-3 flex items-center'>
                         <MyButton
                             type='edit'
@@ -84,11 +102,38 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, page = null }) {
                         />
                         <div className='mx-3'>
                             <MyButton
-                                type='disable'
+                                type='delete'
                                 onClick={() => {
                                     dispatch(deleteQuestion(row.id));
                                 }}
                             />
+                        </div>
+                        <div className='mx-3'>
+                            {row.status ? (
+                                <MyButton
+                                    type='disable'
+                                    onClick={() => {
+                                        dispatch(
+                                            enableOrDisableQuestion({
+                                                id: row.id,
+                                                action: "disable",
+                                            })
+                                        );
+                                    }}
+                                />
+                            ) : (
+                                <MyButton
+                                    type='enable'
+                                    onClick={() => {
+                                        dispatch(
+                                            enableOrDisableQuestion({
+                                                id: row.id,
+                                                action: "enable",
+                                            })
+                                        );
+                                    }}
+                                />
+                            )}
                         </div>
                     </td>
                 </tr>

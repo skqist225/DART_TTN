@@ -29,6 +29,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -137,7 +138,7 @@ public class QuestionRestController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<StandardJSONResponse<Question>> saveQuestion(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @ModelAttribute PostCreateQuestionDTO postCreateQuestionDTO, @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) throws IOException {
+    public ResponseEntity<StandardJSONResponse<String>> saveQuestion(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @ModelAttribute PostCreateQuestionDTO postCreateQuestionDTO, @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) throws IOException {
         arrayNode = objectMapper.createArrayNode();
         User teacher = userDetailsImpl.getUser();
         Question savedQuestion = null;
@@ -164,14 +165,14 @@ public class QuestionRestController {
         }
 
         if (arrayNode.size() > 0) {
-            return new BadResponse<Question>(arrayNode.toString()).response();
+            return new BadResponse<String>(arrayNode.toString()).response();
         } else {
             if (questionService.isContentDuplicated(id, content, isEdit)) {
                 addError("content", "Nội dung câu hỏi đã tồn tại");
             }
 
             if (arrayNode.size() > 0) {
-                return new BadResponse<Question>(arrayNode.toString()).response();
+                return new BadResponse<String>(arrayNode.toString()).response();
             }
         }
 
@@ -196,7 +197,7 @@ public class QuestionRestController {
 
             }catch(NotFoundException exception) {
                 addError("id", exception.getMessage());
-                return new BadResponse<Question>(arrayNode.toString()).response();
+                return new BadResponse<String>(arrayNode.toString()).response();
             }
         } else {
             savedQuestion = questionService.save(Question.build(postCreateQuestionDTO,
@@ -210,17 +211,18 @@ public class QuestionRestController {
             ProcessImage.uploadImage(devUploadDir, prodUploadDir, staticPath, postCreateQuestionDTO.getImage(), environment);
         }
 
-        return new OkResponse<>(savedQuestion).response();
+        return new OkResponse<>("Thêm hoặc sửa câu hỏi thành công").response();
     }
 
     @PostMapping("save/multiple")
-    public ResponseEntity<StandardJSONResponse<QuestionsDTO>> saveMultipleQuestions(
-            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
-            @RequestBody PostCreateQuestionDTO postCreateQuestionDTO) throws IOException {
+    public ResponseEntity<StandardJSONResponse<String>> saveMultipleQuestions(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody PostCreateQuestionDTO postCreateQuestionDTO) throws IOException {
         arrayNode = objectMapper.createArrayNode();
         User teacher = userDetailsImpl.getUser();
 
         List<ReadQuestionExcelDTO> questions = postCreateQuestionDTO.getQuestions();
+
+        int i = 0;
+        int totalQuestions = questions.size();
 
         for (ReadQuestionExcelDTO question : questions) {
             String content = question.getContent();
@@ -231,8 +233,19 @@ public class QuestionRestController {
             String finalAnswer = question.getFinalAnswer();
             String subjectName = question.getSubjectName();
             Integer chapter = question.getChapter();
-
             String levelStr = question.getLevel();
+
+            Question qst = null;
+            try {
+                qst = questionService.findByContent(question.getContent());
+            } catch (NotFoundException e) {
+            }
+            if (Objects.isNull(content) || Objects.nonNull(qst)) {
+                continue;
+            }
+
+            i++;
+
             Level level = Level.EASY;
             if (Objects.equals(levelStr, "Khó")) {
                 level = Level.HARD;
@@ -244,29 +257,25 @@ public class QuestionRestController {
             try {
                 subject = subjectService.findByName(subjectName);
             } catch (NotFoundException e) {
-                String subjectId = "";
+                StringBuilder subjectId = new StringBuilder();
                 for (String s : subjectName.split(" ")) {
-                    subjectId += s.charAt(0);
+                    subjectId.append(s.charAt(0));
                 }
 
-                subject = subjectService.save(new Subject(subjectId.toUpperCase(), subjectName));
+                subject = subjectService.save(new Subject(subjectId.toString().toUpperCase(), subjectName));
             }
 
-            questionService.save(new Question(content, answerA, answerB, answerC, answerD,
-                    finalAnswer, level, chapter, null, subject, teacher));
+            questionService.save(new Question(content, answerA, answerB, answerC, answerD, finalAnswer, level, chapter, null, subject, teacher));
         }
 
-        QuestionsDTO<Question> questionsDTO = new QuestionsDTO<Question>();
-        Map<String, String> filters = new HashMap<>();
-        filters.put("page", "0");
+        String responseMessage = "";
+        if (i == 0) {
+            responseMessage = "Tất cả câu hỏi đã được thêm từ trước";
+        } else {
+            responseMessage = String.format("%d/%d câu hỏi đã được thêm vào thành công", i, totalQuestions);
+        }
 
-        Page<Question> questionPage = questionService.findAllQuestions(filters);
-
-        questionsDTO.setQuestions(questionPage.getContent());
-        questionsDTO.setTotalElements(questionPage.getTotalElements());
-        questionsDTO.setTotalPages(questionPage.getTotalPages());
-
-        return new OkResponse<QuestionsDTO>(questionsDTO).response();
+        return new OkResponse<>(responseMessage).response();
     }
 
     @PostMapping("excel/read")
@@ -295,6 +304,17 @@ public class QuestionRestController {
         try {
             return new OkResponse<>(questionService.deleteById(id)).response();
         } catch (ConstrainstViolationException ex) {
+            return new BadResponse<String>(ex.getMessage()).response();
+        }
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<StandardJSONResponse<String>> enableOrDisable(@PathVariable("id") Integer id, @RequestParam(name = "action") String action) {
+        try {
+            String message = questionService.enableOrDisable(id, action);
+
+            return new OkResponse<>(message).response();
+        } catch (NotFoundException ex) {
             return new BadResponse<String>(ex.getMessage()).response();
         }
     }

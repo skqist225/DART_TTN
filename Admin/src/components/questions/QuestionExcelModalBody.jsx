@@ -44,11 +44,6 @@ const columns = [
         sortable: true,
     },
     {
-        name: "Đáp án",
-        sortField: "finalAnswer",
-        sortable: true,
-    },
-    {
         name: "Mức độ",
         sortField: "level",
         sortable: true,
@@ -61,7 +56,7 @@ const columns = [
 ];
 
 function QuestionExcelModalBody() {
-    const [page, setPage] = useState(0);
+    const [page, setPage] = useState(1);
 
     const dispatch = useDispatch();
     const { questionsExcel, totalExcelElements, totalExcelPages } = useSelector(questionState);
