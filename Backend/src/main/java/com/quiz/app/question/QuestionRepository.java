@@ -1,5 +1,6 @@
 package com.quiz.app.question;
 
+import com.quiz.entity.Level;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
 import org.springframework.data.jpa.repository.Query;
@@ -17,4 +18,7 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
     public Question findByContent(String content);
 
     public List<Question> findBySubject(Subject subject);
+
+    public List<Question> findByChapterAndLevelAndSubject(int chapter,
+                                                          Level level, Subject subject);
 }

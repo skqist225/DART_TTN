@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.question.dto.GetCriteriaQuestionsDTO;
 import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import com.quiz.app.question.dto.QuestionsDTO;
 import com.quiz.app.question.dto.ReadQuestionExcelDTO;
@@ -19,6 +20,7 @@ import com.quiz.entity.Level;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
 import com.quiz.entity.User;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
@@ -72,19 +74,30 @@ public class QuestionRestController {
         arrayNode.add(node);
     }
 
+    @GetMapping("load")
+    public ResponseEntity<StandardJSONResponse<List<GetCriteriaQuestionsDTO>>> loadCriteriaQuestions(
+            @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
+            @RequestParam(name = "criteria", required = false, defaultValue = "") String criteria) {
+        if (!StringUtils.isEmpty(subjectId) && Objects.nonNull(criteria)) {
+            return new OkResponse<>(questionService.findAll(subjectId, criteria)).response();
+        }
+
+        return null;
+    }
+
     @GetMapping("")
-    public ResponseEntity<StandardJSONResponse<QuestionsDTO<Question>>> fetchAllSubjects(
+    public ResponseEntity<StandardJSONResponse<QuestionsDTO<Question>>> fetchAllQuestions(
             @RequestParam("page") String page,
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
-            @RequestParam(name = "subject", required = false, defaultValue = "id") String subjectId
+            @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId
     ) {
         QuestionsDTO<Question> questionsDTO = new QuestionsDTO<>();
 
         if (page.equals("0")) {
             List<Question> questions = null;
-            if (Objects.nonNull(subjectId)) {
+            if (!StringUtils.isEmpty(subjectId)) {
                 questions = questionService.findAll(subjectId);
             } else {
                 questions = questionService.findAll();

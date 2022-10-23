@@ -2,7 +2,10 @@ package com.quiz.app.question;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.question.dto.GetCriteriaDTO;
+import com.quiz.app.question.dto.GetCriteriaQuestionsDTO;
 import com.quiz.app.subject.SubjectService;
+import com.quiz.entity.Level;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
 import org.apache.commons.lang.StringUtils;
@@ -23,9 +26,12 @@ import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
+import java.util.Set;
 
 
 @Service
@@ -153,6 +159,63 @@ public class QuestionService {
         try {
             subject = subjectService.findById(subjectId);
             return questionRepository.findBySubject(subject);
+        } catch (NotFoundException e) {
+            return null;
+        }
+    }
+
+    public List<GetCriteriaQuestionsDTO> findAll(String subjectId, String criteria) {
+        Subject subject = null;
+
+        List<GetCriteriaQuestionsDTO> getCriteriaQuestionsDTOS = new ArrayList<>();
+
+        try {
+            String[] criteriaStrArr = criteria.split(";");
+
+            subject = subjectService.findById(subjectId);
+
+            for (String criteriaEl : criteriaStrArr) {
+                int chapter = Integer.parseInt(criteriaEl.split(",")[0]);
+                String levelStr = criteriaEl.split(",")[1];
+                int numberOfQuestions = Integer.parseInt(criteriaEl.split(",")[2]);
+
+                GetCriteriaDTO getCriteriaDTO = new GetCriteriaDTO(chapter, levelStr, numberOfQuestions);
+                Set<Question> questions = new HashSet<>();
+
+                Level level = Level.EASY;
+                if (Objects.equals(levelStr, "HARD")) {
+                    level = Level.HARD;
+                } else if (Objects.equals(levelStr, "MEDIUM")) {
+                    level = Level.MEDIUM;
+                }
+
+                List<Question> qsts =
+                        questionRepository.findByChapterAndLevelAndSubject(chapter, level,
+                                subject);
+
+                if (qsts.size() > numberOfQuestions) {
+
+                    for (int j = 0; j < numberOfQuestions; j++) {
+                        Random rand = new Random();
+                        Question question = qsts.get(rand.nextInt(qsts.size()));
+
+                        while (questions.contains(question)) {
+                            question = qsts.get(rand.nextInt(qsts.size()));
+                        }
+
+                        questions.add(question);
+                    }
+
+                    getCriteriaQuestionsDTOS.add(new GetCriteriaQuestionsDTO(getCriteriaDTO,
+                            questions, 0));
+
+                } else {
+                    getCriteriaQuestionsDTOS.add(new GetCriteriaQuestionsDTO(getCriteriaDTO,
+                            new HashSet<>(qsts), numberOfQuestions - qsts.size()));
+                }
+            }
+
+            return getCriteriaQuestionsDTOS;
         } catch (NotFoundException e) {
             return null;
         }

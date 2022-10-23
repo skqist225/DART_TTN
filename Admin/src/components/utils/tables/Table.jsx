@@ -28,6 +28,7 @@ function Table({
     handleSortChange,
     handleAddSelectedQuestionFromExcelFile,
     fetchDataByPageNumber,
+    addTest,
 }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
@@ -127,6 +128,7 @@ function Table({
                 buttonLabel={isEdit ? `Chỉnh sửa` : `Thêm`}
                 setIsEdit={setIsEdit}
                 handleAddSelectedQuestionFromExcelFile={handleAddSelectedQuestionFromExcelFile}
+                addTest={addTest}
             />
         </div>
     );

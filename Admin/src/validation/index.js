@@ -9,7 +9,7 @@ export const subjectSchema = yup
 
 export const testSchema = yup
     .object({
-        name: yup.string().required("Tên bộ đề không được để trống"),
+        // name: yup.string().required("Tên bộ đề không được để trống"),
         testSubjectId: yup.string().required("Môn học không được để trống"),
     })
     .required();

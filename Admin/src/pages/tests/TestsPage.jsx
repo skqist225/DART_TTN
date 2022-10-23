@@ -15,6 +15,7 @@ import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
+import { fetchAllQuestions } from "../../features/questionSlice";
 
 const columns = [
     {
@@ -34,19 +35,30 @@ function TestsPage() {
     const [isEdit, setIsEdit] = useState(false);
 
     const {
+        control,
         register,
         setValue,
         handleSubmit,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(testSchema),
+        defaultValues: {
+            criteria: [],
+        },
     });
 
     const onSubmit = data => {
+        console.log(data);
         if (isEdit) {
             dispatch(editTest(data));
         } else {
-            dispatch(addTest(data));
+            dispatch(
+                fetchAllQuestions({
+                    page: 0,
+                    subject: data.testSubjectId,
+                    criteria: data.criteria,
+                })
+            );
         }
     };
 
@@ -147,10 +159,12 @@ function TestsPage() {
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
+                            control={control}
                         />
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
+                    addTest={addTest}
                 />
             }
         />
