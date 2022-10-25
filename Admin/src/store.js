@@ -28,7 +28,7 @@ const store = configureStore({
     preloadedState: {
         user: {
             loading: true,
-            user: null,
+            user: localUser,
             users: [],
             totalElements: 0,
             totalPages: 0,

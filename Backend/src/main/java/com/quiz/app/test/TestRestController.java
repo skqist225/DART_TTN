@@ -5,15 +5,22 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.question.dto.GetCriteriaDTO;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
+import com.quiz.app.security.UserDetailsImpl;
+import com.quiz.app.subject.SubjectService;
 import com.quiz.app.test.dto.PostCreateTestDTO;
 import com.quiz.app.test.dto.TestsDTO;
+import com.quiz.entity.Question;
+import com.quiz.entity.Subject;
 import com.quiz.entity.Test;
+import com.quiz.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,6 +34,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 
 
 @RestController
@@ -34,6 +42,9 @@ import java.util.Objects;
 public class TestRestController {
     @Autowired
     private TestService testService;
+
+    @Autowired
+    private SubjectService subjectService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -81,28 +92,40 @@ public class TestRestController {
 
     @PostMapping("save")
     public ResponseEntity<StandardJSONResponse<Test>> saveSubject(
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
             @RequestBody PostCreateTestDTO postCreateTestDTO,
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
     ) {
         arrayNode = objectMapper.createArrayNode();
-        Test savedSubject = null;
+        Test savedTest = null;
 
         Integer id = postCreateTestDTO.getId();
         String name = postCreateTestDTO.getName();
+        String subjectId = postCreateTestDTO.getSubjectId();
+        Set<Question> questions = postCreateTestDTO.getQuestions();
+        User teacher = userDetailsImpl.getUser();
 
-        if (Objects.isNull(id)) {
-            addError("id", "Mã môn học không được để trống");
+        if (isEdit && Objects.isNull(id)) {
+            addError("id", "Mã bộ đề không được để trống");
         }
 
         if (Objects.isNull(name)) {
-            addError("name", "Tên môn học không được để trống");
+            addError("name", "Tên bộ đề không được để trống");
+        }
+
+        if (Objects.isNull(subjectId)) {
+            addError("subjectId", "Môn học không được để trống");
+        }
+
+        if (questions.size() == 0) {
+            addError("questions", "Danh sách câu hỏi không được để trống");
         }
 
         if (arrayNode.size() > 0) {
             return new BadResponse<Test>(arrayNode.toString()).response();
         } else {
-            if (testService.isNameDuplicated(id, name, isEdit)) {
-                addError("name", "Tên môn học đã tồn tại");
+            if (testService.isNameDuplicated(null, name, isEdit)) {
+                addError("name", "Tên bộ đề đã tồn tại");
             }
 
             if (arrayNode.size() > 0) {
@@ -115,15 +138,21 @@ public class TestRestController {
                 Test test = testService.findById(id);
                 test.setName(name);
 
-                savedSubject = testService.save(test);
+                savedTest = testService.save(test);
             } catch (NotFoundException exception) {
                 return new BadResponse<Test>(exception.getMessage()).response();
             }
         } else {
-            savedSubject = testService.save(Test.build(postCreateTestDTO));
+            try {
+                Subject subject = subjectService.findById(subjectId);
+                savedTest = testService.save(Test.build(postCreateTestDTO, subject, teacher));
+            } catch (NotFoundException e) {
+                throw new RuntimeException(e);
+            }
+
         }
 
-        return new OkResponse<>(savedSubject).response();
+        return new OkResponse<>(savedTest).response();
     }
 
     @DeleteMapping("{id}/delete")

@@ -69,27 +69,12 @@ public class TestService {
     }
 
     public boolean isNameDuplicated(Integer id, String name, boolean isEdit) {
-        Test subject = testRepository.findByName(name);
+        Test test = testRepository.findByName(name);
 
         if (isEdit) {
-            return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
+            return Objects.nonNull(test) && !Objects.equals(test.getId(), id);
         } else {
-            return Objects.nonNull(subject);
-        }
-    }
-
-    public boolean isIdDuplicated(Integer id, boolean isEdit) {
-        Test subject = null;
-        try {
-            subject = findById(id);
-
-            if (isEdit) {
-                return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
-            } else {
-                return Objects.nonNull(subject);
-            }
-        } catch (NotFoundException e) {
-            return false;
+            return Objects.nonNull(test);
         }
     }
 

@@ -91,14 +91,19 @@ public class QuestionRestController {
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
-            @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId
+            @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
+            @RequestParam(name = "numberOfQuestions", required = false, defaultValue = "") Integer numberOfQuestions
     ) {
         QuestionsDTO<Question> questionsDTO = new QuestionsDTO<>();
-
         if (page.equals("0")) {
             List<Question> questions = null;
             if (!StringUtils.isEmpty(subjectId)) {
-                questions = questionService.findAll(subjectId);
+                if (numberOfQuestions > 0) {
+                    System.out.println("here");
+                    questions = questionService.findAll(subjectId, numberOfQuestions);
+                } else {
+                    questions = questionService.findAll(subjectId);
+                }
             } else {
                 questions = questionService.findAll();
             }

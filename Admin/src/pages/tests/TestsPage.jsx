@@ -14,8 +14,8 @@ import { testSchema } from "../../validation";
 import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
-import { fetchAllQuestions } from "../../features/questionSlice";
+import { fetchAllSubjects } from "../../features/subjectSlice";
+import { fetchAllQuestions, loadQuestionsByCriteria } from "../../features/questionSlice";
 
 const columns = [
     {
@@ -48,17 +48,30 @@ function TestsPage() {
     });
 
     const onSubmit = data => {
-        console.log(data);
         if (isEdit) {
             dispatch(editTest(data));
         } else {
-            dispatch(
-                fetchAllQuestions({
-                    page: 0,
-                    subject: data.testSubjectId,
-                    criteria: data.criteria,
-                })
-            );
+            if (data.criteria.length === 0) {
+                if (!data.numberOfQuestions) {
+                    callToast("error", "Vui lòng điền số lượng câu hỏi");
+                    return;
+                } else {
+                    dispatch(
+                        fetchAllQuestions({
+                            page: 0,
+                            subject: data.testSubjectId,
+                            numberOfQuestions: data.numberOfQuestions,
+                        })
+                    );
+                }
+            } else {
+                dispatch(
+                    loadQuestionsByCriteria({
+                        subject: data.testSubjectId,
+                        criteria: data.criteria,
+                    })
+                );
+            }
         }
     };
 

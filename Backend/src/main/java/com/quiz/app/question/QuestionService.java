@@ -164,6 +164,10 @@ public class QuestionService {
         }
     }
 
+    public List<Question> findAll(String subjectId, Integer numberOfQuestions) {
+        return questionRepository.findBySubject(subjectId, numberOfQuestions);
+    }
+
     public List<GetCriteriaQuestionsDTO> findAll(String subjectId, String criteria) {
         Subject subject = null;
 

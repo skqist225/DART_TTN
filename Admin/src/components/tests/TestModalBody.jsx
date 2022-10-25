@@ -2,7 +2,8 @@ import React, { useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { questionState } from "../../features/questionSlice";
-import { clearErrorField, setEditedsubject, subjectState } from "../../features/subjectSlice";
+import { clearErrorField, subjectState } from "../../features/subjectSlice";
+import { setEditedTest } from "../../features/testSlice";
 import { tailwindCss } from "../../tailwind";
 import QuestionTableBody from "../questions/QuestionTableBody";
 import TableHeader from "../utils/tables/TableHeader";
@@ -14,32 +15,32 @@ const columns = [
     {
         name: "STT",
         sortField: "id",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Nội dung",
         sortField: "content",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Đáp án",
         sortField: "finalAnswer",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Chương",
         sortField: "chapter",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Mức độ",
         sortField: "level",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Giảng viên",
         sortField: "teacher",
-        sortable: true,
+        // sortable: true,
     },
 ];
 
@@ -66,14 +67,14 @@ function TestModalBody({ errors, register, dispatch, setValue, control }) {
     const [page, setPage] = useState(1);
     const { editedTest, errorObject } = useSelector(subjectState);
     const { subjects } = useSelector(subjectState);
-    const { questions, totalElements, totalPages } = useSelector(questionState);
+    const { questions, totalPages, totalElements } = useSelector(questionState);
 
     const onKeyDown = ({ target: { name } }) => {
         if (errorObject) {
             dispatch(clearErrorField(name));
         }
         if (editedTest) {
-            dispatch(setEditedsubject(null));
+            dispatch(setEditedTest(null));
         }
     };
 
@@ -83,8 +84,8 @@ function TestModalBody({ errors, register, dispatch, setValue, control }) {
     }
 
     const { fields, append, prepend, remove, swap, move, insert } = useFieldArray({
-        control, // control props comes from useForm (optional: if you are using FormContext)
-        name: "criteria", // unique name for your Field Array
+        control,
+        name: "criteria",
     });
 
     return (
@@ -99,11 +100,11 @@ function TestModalBody({ errors, register, dispatch, setValue, control }) {
                                 (errorObject && errorObject.name)
                             }
                             register={register}
-                            name='name'
+                            name='testName'
                             onKeyDown={onKeyDown}
                         />
                     </div>
-                    <div className='my-3 w-full'>
+                    <div className='my-3 w-full mr-5'>
                         <Select
                             label='Môn học *'
                             labelClassName={tailwindCss.label}
@@ -113,6 +114,14 @@ function TestModalBody({ errors, register, dispatch, setValue, control }) {
                             name='testSubjectId'
                             options={subjects.map(s => ({ title: s.name, value: s.id }))}
                             setValue={setValue}
+                        />
+                    </div>
+                    <div className='my-3 w-full'>
+                        <Input
+                            label='Số lượng câu hỏi'
+                            register={register}
+                            name='numberOfQuestions'
+                            onKeyDown={onKeyDown}
                         />
                     </div>
                 </div>
@@ -175,7 +184,12 @@ function TestModalBody({ errors, register, dispatch, setValue, control }) {
                     <div>
                         <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
                             <TableHeader columns={columns} />
-                            <QuestionTableBody rows={questions} page={page} addTest />
+                            <QuestionTableBody
+                                rows={questions}
+                                page={page}
+                                addTest
+                                dispatch={dispatch}
+                            />
                         </table>
                         <TablePagination
                             totalElements={totalElements}

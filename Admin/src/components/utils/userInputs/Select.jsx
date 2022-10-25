@@ -41,9 +41,6 @@ function Select({
                 name={name}
                 onChange={e => {
                     onChange(e);
-                    if (propName === "testSubjectId") {
-                        // dispatch(fetchAllQuestions({ page: 0, subject: e.target.value }));
-                    }
                 }}
                 onBlur={onBlur}
                 ref={ref}

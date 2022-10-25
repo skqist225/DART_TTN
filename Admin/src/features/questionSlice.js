@@ -5,7 +5,14 @@ import api from "../axios";
 export const fetchAllQuestions = createAsyncThunk(
     "question/fetchAllQuestions",
     async (
-        { page = 1, query = "", sortField = "id", sortDir = "asc", subject = "", criteria = [] },
+        {
+            page = 1,
+            query = "",
+            sortField = "id",
+            sortDir = "asc",
+            subject = "",
+            numberOfQuestions = 0,
+        },
         { dispatch, rejectWithValue }
     ) => {
         try {
@@ -33,22 +40,39 @@ export const fetchAllQuestions = createAsyncThunk(
 
             dispatch(setFilterObject(filterArray));
 
+            const {
+                data: { questions, totalElements, totalPages },
+            } = await api.get(
+                `/questions?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&numberOfQuestions=${numberOfQuestions}`
+            );
+
+            return { questions, totalElements, totalPages };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
+export const loadQuestionsByCriteria = createAsyncThunk(
+    "question/loadQuestionsByCriteria",
+    async ({ subject = "", criteria = [], numberOfQuestions = 0 }, { rejectWithValue }) => {
+        try {
+            let request = `/questions/load?subject=${subject}`;
+
             if (criteria.length > 0) {
                 criteria = criteria.map(
                     ({ chapter, level, numberOfQuestions }) =>
                         `${chapter},${level},${numberOfQuestions}`
                 );
+
+                request += `&criteria=${criteria.join(";")}`;
+            } else {
+                request += `&numberOfQuestions=${numberOfQuestions}`;
             }
 
-            const {
-                data: { questions, totalElements, totalPages },
-            } = await api.get(
-                `/questions?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&criteria=${criteria.join(
-                    ";"
-                )}`
-            );
+            const { data } = await api.get(request);
 
-            return { questions, totalElements, totalPages };
+            return { data };
         } catch ({ data: { error } }) {
             return rejectWithValue(error);
         }
@@ -197,6 +221,7 @@ const initialState = {
     enableOrDisableQuestion: {
         successMessage: null,
     },
+    loadedQuestions: [],
 };
 
 const questionSlice = createSlice({
@@ -237,6 +262,21 @@ const questionSlice = createSlice({
         setExcelAdd(state, { payload }) {
             state.excelAdd = payload;
         },
+        resetLoadedQuestions(state, _) {
+            state.loadedQuestions = [];
+        },
+        disableOrEnableLoadedQuestions(state, { payload }) {
+            state.questions = state.questions.map(question => {
+                if (question.id === payload) {
+                    return {
+                        ...question,
+                        status: !question.status,
+                    };
+                }
+
+                return question;
+            });
+        },
     },
     extraReducers: builder => {
         builder
@@ -247,6 +287,22 @@ const questionSlice = createSlice({
                 state.totalPages = payload.totalPages;
             })
             .addCase(fetchAllQuestions.rejected, (state, { payload }) => {})
+
+            .addCase(loadQuestionsByCriteria.pending, (state, { payload }) => {})
+            .addCase(loadQuestionsByCriteria.fulfilled, (state, { payload }) => {
+                const loadedQuestions = payload.data;
+
+                let i = 0;
+                state.questions = loadedQuestions
+                    .map(({ questions }) => {
+                        i++;
+                        return questions;
+                    })
+                    .flat();
+                state.totalElements = i;
+                state.totalPages = i / 10;
+            })
+            .addCase(loadQuestionsByCriteria.rejected, (state, { payload }) => {})
 
             .addCase(readExcelFile.pending, (state, { payload }) => {
                 state.loading = true;
@@ -348,6 +404,8 @@ export const {
         setFilterObject,
         setEditedQuestion,
         setExcelAdd,
+        resetLoadedQuestions,
+        disableOrEnableLoadedQuestions,
     },
 } = questionSlice;
 

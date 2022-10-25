@@ -1,6 +1,7 @@
 import React from "react";
 import {
     deleteQuestion,
+    disableOrEnableLoadedQuestions,
     enableOrDisableQuestion,
     questionState,
     setEditedQuestion,
@@ -161,16 +162,16 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = 
                             <div className='mx-3'>
                                 {row.status ? (
                                     <MyButton
-                                        type='disable'
+                                        type='delete'
                                         onClick={() => {
-                                            //
+                                            dispatch(disableOrEnableLoadedQuestions(row.id));
                                         }}
                                     />
                                 ) : (
                                     <MyButton
                                         type='enable'
                                         onClick={() => {
-                                            //
+                                            dispatch(disableOrEnableLoadedQuestions(row.id));
                                         }}
                                     />
                                 )}

@@ -108,6 +108,7 @@ function MyButton(props) {
                 props.disabled && buttonDisableClassName
             }`}
             {...props}
+            type='button'
         >
             {type === "add" && (
                 <svg className='w-4 h-4 fill-current opacity-50 shrink-0' viewBox='0 0 16 16'>

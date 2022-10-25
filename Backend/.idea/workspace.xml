@@ -5,19 +5,20 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/dto/GetCriteriaDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/dto/GetCriteriaQuestionsDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dataSources.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/components/tests/TestModalBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/tests/TestModalBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/Table.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/Table.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TableModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TableModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/userInputs/Select.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/userInputs/Select.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/features/questionSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/questionSlice.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/pages/tests/TestsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/tests/TestsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/validation/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/validation/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/sqldialects.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/sqldialects.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRepository.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRestController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/dto/PostCreateTestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/dto/PostCreateTestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Test.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -77,6 +78,11 @@
     "ruby.rails.projectView.checked": "true",
     "settings.editor.selected.configurable": "preferences.sourceCode.Java",
     "spring.configuration.checksum": "c94958ada0c81bb4e847abe659379e76"
+  },
+  "keyToStringList": {
+    "DatabaseDriversLRU": [
+      "mysql"
+    ]
   }
 }]]></component>
   <component name="ReactorSettings">
@@ -142,7 +148,8 @@
       <workItem from="1666276859288" duration="2668000" />
       <workItem from="1666411028853" duration="4445000" />
       <workItem from="1666420651290" duration="9440000" />
-      <workItem from="1666494835837" duration="15131000" />
+      <workItem from="1666494835837" duration="15414000" />
+      <workItem from="1666703156003" duration="3880000" />
     </task>
     <servers />
   </component>
