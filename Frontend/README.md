@@ -1,1 +1,0 @@
-nvm install v14.0.0

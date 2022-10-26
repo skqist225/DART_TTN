@@ -1,9 +1,0 @@
-.room--status {
-    height: calc(90% / 3);
-    align-items: flex-start;
-    margin-bottom: 20px;
-}
-
-.room--status > div:first-child {
-    margin-right: 16px;
-}

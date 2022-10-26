@@ -33,14 +33,16 @@ public class Test extends BaseEntity {
     @Column(nullable = false, unique = true)
     private String name;
 
+    private String image;
+
+    private int numberOfTimes;
+
     @Builder.Default
     @JsonIgnore
     @ManyToMany
     @JoinTable(name = "tests_questions", joinColumns = @JoinColumn(name = "test_id"),
             inverseJoinColumns = @JoinColumn(name = "question_id"))
     private Set<Question> questions = new HashSet<>();
-
-    private int numberOfTimes;
 
     @ManyToOne
     private Subject subject;
