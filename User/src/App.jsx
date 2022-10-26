@@ -2,18 +2,7 @@ import React, { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
 import "./css/style.scss";
 import "./charts/ChartjsConfig";
-
-import Dashboard from "./pages/Dashboard";
-import {
-    AddQuestionPage,
-    ClassesPage,
-    QuestionsPage,
-    SubjectsPage,
-    UserHome,
-    UsersPage,
-} from "./pages";
-import LoginPage from "./pages/auth/LoginPage";
-import TestsPage from "./pages/tests/TestsPage";
+import { HomePage, LoginPage } from "./pages";
 
 function App() {
     const location = useLocation();
@@ -27,30 +16,9 @@ function App() {
     return (
         <>
             <Routes>
-                <Route exact path='/' element={<Dashboard />} />
+                <Route exact path='/' element={<HomePage />} />
                 <Route path='/auth'>
                     <Route path='login' element={<LoginPage />} />
-                </Route>
-
-                <Route path='/subjects'>
-                    <Route path='' element={<SubjectsPage />} />
-                </Route>
-
-                <Route path='/questions'>
-                    <Route path='' element={<QuestionsPage />} />
-                </Route>
-
-                <Route path='/tests'>
-                    <Route path='' element={<TestsPage />} />
-                </Route>
-
-                <Route path='/users'>
-                    <Route path='' element={<UsersPage />} />
-                    <Route path='usersUI' element={<UserHome />} />
-                </Route>
-
-                <Route path='/classes'>
-                    <Route path='' element={<ClassesPage />} />
                 </Route>
             </Routes>
         </>

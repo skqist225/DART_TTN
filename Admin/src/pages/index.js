@@ -8,7 +8,6 @@ export { default as SubjectsPage } from "./subjects/SubjectsPage.jsx";
 //Users
 export { default as UsersPage } from "./users/UsersPage";
 export { default as EditUserPage } from "./users/EditUserPage";
-export { default as UserHome } from "./users/usersUI/UserHome";
 
 // Classes
 export { default as ClassesPage } from "./classes/ClassesPage";
