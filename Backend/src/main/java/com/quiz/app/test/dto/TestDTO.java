@@ -16,6 +16,7 @@ import java.util.Set;
 @NoArgsConstructor
 @Builder
 public class TestDTO {
+    private Integer id;
     private String name;
     private String image;
     private String teacherName;
@@ -27,6 +28,7 @@ public class TestDTO {
 
     public static TestDTO build(Test test, boolean includeQuestions) {
         TestDTO testDTO = TestDTO.builder()
+                .id(test.getId())
                 .name(test.getName())
                 .image(test.getImage())
                 .teacherName(test.getTeacher().getFullName())

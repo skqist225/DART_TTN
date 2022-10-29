@@ -2,7 +2,7 @@ import React from "react";
 import { Route, Routes } from "react-router-dom";
 import "./css/style.scss";
 import "./charts/ChartjsConfig";
-import { HomePage, LoginPage, TestsPage } from "./pages";
+import { HomePage, LoginPage, TakeTestPage, TestsPage } from "./pages";
 
 function App() {
     return (
@@ -13,7 +13,11 @@ function App() {
                     <Route path='login' element={<LoginPage />} />
                 </Route>
                 <Route exact path='/tests'>
-                    <Route path=':id' element={<TestsPage />} />
+                    <Route path=':subjectId' element={<TestsPage />} />
+                </Route>
+
+                <Route exact path='/take-test'>
+                    <Route path=':testId' element={<TakeTestPage />} />
                 </Route>
             </Routes>
         </>

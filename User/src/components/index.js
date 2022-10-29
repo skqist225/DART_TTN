@@ -11,7 +11,6 @@ export { default as Form } from "./utils/forms/Form";
 // export { default as ModalForm } from "./utils/forms/ModalForm";
 
 //tables
-export { default as Table } from "./utils/tables/Table";
 
 // date pickers
 export { default as DatePicker } from "./utils/datePicker/DatePicker";

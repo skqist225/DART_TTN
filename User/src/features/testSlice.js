@@ -1,88 +1,11 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../axios";
 
-export const fetchAllTests = createAsyncThunk(
-    "test/fetchAllTests",
-    async (
-        { page = 1, query = "", sortField = "id", sortDir = "asc" },
-        { dispatch, rejectWithValue }
-    ) => {
-        try {
-            const filterArray = [];
-
-            filterArray.push({
-                field: "query",
-                value: query,
-            });
-
-            filterArray.push({
-                field: "page",
-                value: page,
-            });
-
-            filterArray.push({
-                field: "sortField",
-                value: sortField,
-            });
-
-            filterArray.push({
-                field: "sortDir",
-                value: sortDir,
-            });
-
-            dispatch(setFilterObject(filterArray));
-
-            const {
-                data: { tests, totalElements, totalPages },
-            } = await api.get(
-                `/tests?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}`
-            );
-
-            return { tests, totalElements, totalPages };
-        } catch ({ data: { error } }) {
-            return rejectWithValue(error);
-        }
-    }
-);
-
 export const findTest = createAsyncThunk(
     "test/findTest",
-    async ({ subjectId }, { rejectWithValue }) => {
+    async ({ testId }, { rejectWithValue }) => {
         try {
-            const { data } = await api.get(`/tests/${subjectId}`);
-
-            return { data };
-        } catch ({ data: { error } }) {
-            return rejectWithValue(error);
-        }
-    }
-);
-
-export const addTest = createAsyncThunk("test/addTest", async (postData, { rejectWithValue }) => {
-    try {
-        const { data } = await api.post(`/tests/save`, postData);
-
-        return { data };
-    } catch ({ data: { error } }) {
-        return rejectWithValue(error);
-    }
-});
-
-export const editTest = createAsyncThunk("test/editTest", async (postData, { rejectWithValue }) => {
-    try {
-        const { data } = await api.post(`/tests/save?isEdit=true`, postData);
-
-        return { data };
-    } catch ({ data: { error } }) {
-        return rejectWithValue(error);
-    }
-});
-
-export const deleteTest = createAsyncThunk(
-    "test/deleteTest",
-    async (subjectId, { rejectWithValue }) => {
-        try {
-            const { data } = await api.delete(`/tests/${subjectId}/delete`);
+            const { data } = await api.get(`/tests/${testId}`);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -94,6 +17,7 @@ export const deleteTest = createAsyncThunk(
 const initialState = {
     loading: true,
     tests: [],
+    test: {},
     totalElements: 0,
     totalPages: 0,
     editedsubject: null,
@@ -102,17 +26,6 @@ const initialState = {
         query: "",
         sortField: "id",
         sortDir: "asc",
-    },
-    errorObject: null,
-    addTest: {
-        successMessage: null,
-    },
-    editTest: {
-        successMessage: null,
-    },
-    deleteTest: {
-        successMessage: null,
-        errorMessage: null,
     },
 };
 
@@ -152,88 +65,12 @@ const testSlice = createSlice({
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllTests.pending, (state, { payload }) => {})
-            .addCase(fetchAllTests.fulfilled, (state, { payload }) => {
-                state.tests = payload.tests;
-                state.totalElements = payload.totalElements;
-                state.totalPages = payload.totalPages;
-            })
-            .addCase(fetchAllTests.rejected, (state, { payload }) => {})
 
             .addCase(findTest.pending, (state, { payload }) => {})
             .addCase(findTest.fulfilled, (state, { payload }) => {
-                // state.test = payload.data;
+                state.test = payload.data;
             })
-            .addCase(findTest.rejected, (state, { payload }) => {})
-
-            .addCase(addTest.pending, (state, _) => {
-                state.addTest.successMessage = null;
-                state.errorObject = null;
-            })
-            .addCase(addTest.fulfilled, (state, { payload }) => {
-                if (payload) {
-                    state.addTest.successMessage = "Thêm môn học thành công";
-                }
-            })
-            .addCase(addTest.rejected, (state, { payload }) => {
-                if (payload) {
-                    const errors = JSON.parse(payload);
-                    errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
-                    });
-                }
-            })
-
-            .addCase(editTest.pending, (state, _) => {
-                state.editTest.successMessage = null;
-                state.errorObject = null;
-            })
-            .addCase(editTest.fulfilled, (state, { payload }) => {
-                if (payload) {
-                    state.editTest.successMessage = "Chỉnh sửa môn học thành công";
-                }
-            })
-            .addCase(editTest.rejected, (state, { payload }) => {
-                if (payload) {
-                    const errors = JSON.parse(payload);
-                    errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
-                    });
-                }
-            })
-
-            .addCase(deleteTest.pending, (state, _) => {
-                state.deleteTest.successMessage = null;
-                state.deleteTest.errorMessage = null;
-            })
-            .addCase(deleteTest.fulfilled, (state, { payload }) => {
-                state.deleteTest.successMessage = payload.data;
-            })
-            .addCase(deleteTest.rejected, (state, { payload }) => {
-                state.deleteTest.errorMessage = payload;
-            });
+            .addCase(findTest.rejected, (state, { payload }) => {});
     },
 });
 

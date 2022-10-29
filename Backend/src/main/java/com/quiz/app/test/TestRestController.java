@@ -12,6 +12,7 @@ import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.app.test.dto.PostCreateTestDTO;
+import com.quiz.app.test.dto.TestDTO;
 import com.quiz.app.test.dto.TestsDTO;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
@@ -153,6 +154,15 @@ public class TestRestController {
         }
 
         return new OkResponse<>(savedTest).response();
+    }
+
+    @GetMapping("{id}")
+    public ResponseEntity<StandardJSONResponse<TestDTO>> findTest(@PathVariable("id") Integer id) {
+        try {
+            return new OkResponse<>(TestDTO.build(testService.findById(id), true)).response();
+        } catch (NotFoundException ex) {
+            return new BadResponse<TestDTO>(ex.getMessage()).response();
+        }
     }
 
     @DeleteMapping("{id}/delete")

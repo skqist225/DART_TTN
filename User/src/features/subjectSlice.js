@@ -69,7 +69,7 @@ export const deleteSubject = createAsyncThunk(
 const initialState = {
     loading: true,
     subjects: [],
-    subject: null,
+    subject: {},
     totalElements: 0,
     totalPages: 0,
     editedsubject: null,
