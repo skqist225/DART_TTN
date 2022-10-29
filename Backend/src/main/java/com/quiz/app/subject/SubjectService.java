@@ -2,6 +2,7 @@ package com.quiz.app.subject;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.subject.dto.SubjectDTO;
 import com.quiz.entity.Subject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,6 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 
 @Service
@@ -99,6 +102,12 @@ public class SubjectService {
 
     public List<Subject> findAll() {
         return (List<Subject>) subjectRepository.findAll();
+    }
+
+    public List<SubjectDTO> findAllSubjects() {
+        return StreamSupport.stream(subjectRepository.findAll().spliterator(), false)
+                .collect(Collectors.toList()).stream().map(SubjectDTO::build)
+                .collect(Collectors.toList());
     }
 
     public Page<Subject> findAllSubjects(Map<String, String> filters) {

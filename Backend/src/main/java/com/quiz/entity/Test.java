@@ -35,7 +35,13 @@ public class Test extends BaseEntity {
 
     private String image;
 
-    private int numberOfTimes;
+    private int numberOfTested;
+
+    private int numberOfViews;
+
+    private int time;
+
+    private int numberOfCurrentTesting;
 
     @Builder.Default
     @JsonIgnore

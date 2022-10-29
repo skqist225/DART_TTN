@@ -5,14 +5,30 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/8eb1329c-4e86-4d19-90dd-68137fefe01f.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/8eb1329c-4e86-4d19-90dd-68137fefe01f.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/bb6770c1-a022-4d48-bb58-18c196fe1146.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/bb6770c1-a022-4d48-bb58-18c196fe1146/storage_v2/_src_/schema/information_schema.FNRwLQ.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/bb6770c1-a022-4d48-bb58-18c196fe1146/storage_v2/_src_/schema/mysql.osA4Bg.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/bb6770c1-a022-4d48-bb58-18c196fe1146/storage_v2/_src_/schema/performance_schema.kIw0nw.meta" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/bb6770c1-a022-4d48-bb58-18c196fe1146/storage_v2/_src_/schema/sys.zb4BAA.meta" beforeDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/dto/SubjectDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/dto/TestDTO.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Backend2/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Subject.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Subject.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Test.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../User/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../User/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../User/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/public/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../User/public/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../User/src/App.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/src/components/classes/ClassModalBody.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/src/components/classes/ClassTableBody.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/src/components/common/BookingStatus.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/src/components/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../User/src/components/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/src/components/utils/frames/Frame.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/src/components/utils/tables/TableModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../User/src/components/utils/tables/TableModal.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/src/features/subjectSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../User/src/features/subjectSlice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/src/pages/HomePage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../User/src/pages/HomePage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../User/src/pages/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../User/src/pages/index.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -145,6 +161,7 @@
       <workItem from="1666494835837" duration="15414000" />
       <workItem from="1666703156003" duration="4263000" />
       <workItem from="1666793797261" duration="1640000" />
+      <workItem from="1667018720207" duration="3942000" />
     </task>
     <servers />
   </component>

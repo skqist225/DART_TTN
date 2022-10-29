@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { questionState, resetLoadedQuestions, setExcelAdd } from "../../../features/questionSlice";
 import { useDispatch } from "react-redux";
 import { addTest } from "../../../features/testSlice";
-import { callToast } from "../../../helpers";
+import callToast from "../../../helpers/call_toast";
 
 function TableModal({
     modalId,

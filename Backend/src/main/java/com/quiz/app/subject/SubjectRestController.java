@@ -9,6 +9,7 @@ import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.subject.dto.PostCreateSubjectDTO;
+import com.quiz.app.subject.dto.SubjectDTO;
 import com.quiz.app.subject.dto.SubjectsDTO;
 import com.quiz.entity.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,14 +70,29 @@ public class SubjectRestController {
             subjectsDTO.setTotalPages(0);
 
         } else {
-            Page<Subject> subjectsPage =  subjectService.findAllSubjects(filters);
+            Page<Subject> subjectsPage = subjectService.findAllSubjects(filters);
 
             subjectsDTO.setSubjects(subjectsPage.getContent());
             subjectsDTO.setTotalElements(subjectsPage.getTotalElements());
             subjectsDTO.setTotalPages(subjectsPage.getTotalPages());
         }
-        
+
         return new OkResponse<>(subjectsDTO).response();
+    }
+
+    @GetMapping("brief")
+    public ResponseEntity<StandardJSONResponse<List<SubjectDTO>>> fetchAllSubjects() {
+        return new OkResponse<>(subjectService.findAllSubjects()).response();
+    }
+
+    @GetMapping("{subjectId}")
+    public ResponseEntity<StandardJSONResponse<SubjectDTO>> fetchSubject(@PathVariable(name =
+            "subjectId") String subjectId) {
+        try {
+            return new OkResponse<>(SubjectDTO.build(subjectService.findById(subjectId))).response();
+        } catch (NotFoundException e) {
+            return new BadResponse<SubjectDTO>(e.getMessage()).response();
+        }
     }
 
     @PostMapping("save")

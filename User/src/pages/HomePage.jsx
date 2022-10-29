@@ -1,13 +1,25 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Banner from "../images/banner-1.png";
-import $ from "jquery";
 import CalendarIcon from "../images/icons8-calendar-48.png";
+import { FloatingIntro, SubjectSummary, TestSummary } from "../components";
+import { Splide, SplideSlide } from "@splidejs/react-splide";
+import "@splidejs/react-splide/css/sea-green";
+import { useDispatch } from "react-redux";
+import { fetchAllSubjectsBrief, subjectState } from "../features/subjectSlice";
+import { useSelector } from "react-redux";
 
 function HomePage() {
+    const dispatch = useDispatch();
+    const { subjects } = useSelector(subjectState);
+
+    useEffect(() => {
+        dispatch(fetchAllSubjectsBrief());
+    }, []);
+
     return (
         <div>
-            <div className='max-w-7xl m-auto	'>
-                <div>
+            <div className='max-w-7xl m-auto '>
+                <div className='pb-12'>
                     <div
                         style={{
                             background: `#f7f8f9 url(${Banner}) no-repeat`,
@@ -77,44 +89,47 @@ function HomePage() {
                             </div>
                         </div>
                         <div className='w-full flex items-center absolute justify-evenly -bottom-10'>
-                            <div className='w-96 h-24 bg-white rounded-lg py-4 px-2.5 border-slate-300 border-2 border-solid'>
-                                <div className='flex items-center'>
-                                    <div>
-                                        <div
-                                            className='w-12	h-12 flex items-center justify-center rounded-full mr-2.5'
-                                            style={{
-                                                background: "rgba(255, 87, 34, 0.11)",
-                                                border: "1px dashed",
-                                                color: "#ff5722",
-                                            }}
-                                        >
-                                            <img
-                                                src={CalendarIcon}
-                                                alt=''
-                                                width='20px'
-                                                height='20px'
-                                            />
-                                        </div>
-                                    </div>
-
-                                    <div>
-                                        <h3
-                                            style={{ color: "#37455f " }}
-                                            className='text-lg font-semibold'
-                                        >
-                                            5000+ Bài Thi
-                                        </h3>
-                                        <p style={{ color: "#3c4852 " }} className='text-sm'>
-                                            Hơn 5000 bài thi với đầy đủ đáp án kèm lời giải chi tiết
-                                            đi kèm .
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
-                            <div className='w-96 h-24 bg-red-200 rounded-lg	py-4 px-2.5	'>2</div>
-                            <div className='w-96 h-24 bg-red-200 rounded-lg	py-4 px-2.5	'>3</div>
+                            <FloatingIntro Icon={CalendarIcon} />
+                            <FloatingIntro Icon={CalendarIcon} />
+                            <FloatingIntro Icon={CalendarIcon} />
                         </div>
                     </div>
+                </div>
+                <div className='pt-12 col-flex items-center'>
+                    <div>
+                        Danh Sách Bài Đang <span>Thi Nhiều</span>
+                    </div>
+                    <p>
+                        Cùng tham gia làm bài thi để củng cố kiến thức cũng như được vinh danh trên
+                        bảng xếp hạng của chúng tôi
+                    </p>
+                </div>
+                <div className='pb-12'>
+                    <Splide aria-label='My Favorite Images' options={{ perPage: 3 }}>
+                        <SplideSlide>
+                            <TestSummary />
+                        </SplideSlide>
+                        <SplideSlide>
+                            <TestSummary />
+                        </SplideSlide>
+                        <SplideSlide>
+                            <TestSummary />
+                        </SplideSlide>
+                        <SplideSlide>
+                            <img src={CalendarIcon} alt='Image 2' />
+                        </SplideSlide>
+                        <SplideSlide>
+                            <img src={CalendarIcon} alt='Image 2' />
+                        </SplideSlide>
+                        <SplideSlide>
+                            <img src={CalendarIcon} alt='Image 2' />
+                        </SplideSlide>
+                    </Splide>
+                </div>
+                <div className='grid grid-cols-3 gap-3'>
+                    {subjects.map(subject => (
+                        <SubjectSummary key={subject.id} subject={subject} />
+                    ))}
                 </div>
             </div>
         </div>

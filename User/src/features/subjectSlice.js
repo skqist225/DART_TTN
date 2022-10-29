@@ -1,44 +1,13 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../axios";
 
-export const fetchAllSubjects = createAsyncThunk(
-    "subject/fetchAllSubjects",
-    async (
-        { page = 1, query = "", sortField = "id", sortDir = "asc" },
-        { dispatch, rejectWithValue }
-    ) => {
+export const fetchAllSubjectsBrief = createAsyncThunk(
+    "subject/fetchAllSubjectsBrief",
+    async (_, { rejectWithValue }) => {
         try {
-            const filterArray = [];
+            const { data } = await api.get(`/subjects/brief`);
 
-            filterArray.push({
-                field: "query",
-                value: query,
-            });
-
-            filterArray.push({
-                field: "page",
-                value: page,
-            });
-
-            filterArray.push({
-                field: "sortField",
-                value: sortField,
-            });
-
-            filterArray.push({
-                field: "sortDir",
-                value: sortDir,
-            });
-
-            dispatch(setFilterObject(filterArray));
-
-            const {
-                data: { subjects, totalElements, totalPages },
-            } = await api.get(
-                `/subjects?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}`
-            );
-
-            return { subjects, totalElements, totalPages };
+            return { data };
         } catch ({ data: { error } }) {
             return rejectWithValue(error);
         }
@@ -100,6 +69,7 @@ export const deleteSubject = createAsyncThunk(
 const initialState = {
     loading: true,
     subjects: [],
+    subject: null,
     totalElements: 0,
     totalPages: 0,
     editedsubject: null,
@@ -158,77 +128,17 @@ const subjectSlice = createSlice({
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllSubjects.pending, (state, { payload }) => {})
-            .addCase(fetchAllSubjects.fulfilled, (state, { payload }) => {
-                state.subjects = payload.subjects;
-                state.totalElements = payload.totalElements;
-                state.totalPages = payload.totalPages;
+            .addCase(fetchAllSubjectsBrief.pending, (state, { payload }) => {})
+            .addCase(fetchAllSubjectsBrief.fulfilled, (state, { payload }) => {
+                state.subjects = payload.data;
             })
-            .addCase(fetchAllSubjects.rejected, (state, { payload }) => {})
+            .addCase(fetchAllSubjectsBrief.rejected, (state, { payload }) => {})
 
             .addCase(findSubject.pending, (state, { payload }) => {})
             .addCase(findSubject.fulfilled, (state, { payload }) => {
-                // state.subject = payload.data;
+                state.subject = payload.data;
             })
             .addCase(findSubject.rejected, (state, { payload }) => {})
-
-            .addCase(addSubject.pending, (state, _) => {
-                state.addSubject.successMessage = null;
-                state.errorObject = null;
-            })
-            .addCase(addSubject.fulfilled, (state, { payload }) => {
-                if (payload) {
-                    state.addSubject.successMessage = "Thêm môn học thành công";
-                }
-            })
-            .addCase(addSubject.rejected, (state, { payload }) => {
-                if (payload) {
-                    const errors = JSON.parse(payload);
-                    errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
-                    });
-                }
-            })
-
-            .addCase(editSubject.pending, (state, _) => {
-                state.editSubject.successMessage = null;
-                state.errorObject = null;
-            })
-            .addCase(editSubject.fulfilled, (state, { payload }) => {
-                if (payload) {
-                    state.editSubject.successMessage = "Chỉnh sửa môn học thành công";
-                }
-            })
-            .addCase(editSubject.rejected, (state, { payload }) => {
-                if (payload) {
-                    const errors = JSON.parse(payload);
-                    errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
-                    });
-                }
-            })
 
             .addCase(deleteSubject.pending, (state, _) => {
                 state.deleteSubject.successMessage = null;

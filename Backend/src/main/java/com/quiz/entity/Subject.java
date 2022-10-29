@@ -31,10 +31,12 @@ public class Subject {
 	@Column(nullable = false, unique = true)
 	private String name;
 
+	private String image;
+
 	@JsonIgnore
 	@Builder.Default
 	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
-	private List<Test> topics = new ArrayList<>();
+	private List<Test> tests = new ArrayList<>();
 
 	@JsonIgnore
 	@Builder.Default
