@@ -295,7 +295,8 @@ public class QuestionRestController {
                 subject = subjectService.save(new Subject(subjectId.toString().toUpperCase(), subjectName));
             }
 
-            questionService.save(new Question(content, answerA, answerB, answerC, answerD, finalAnswer, level, chapter, null, subject, teacher));
+            questionService.save(new Question(content, answerA, answerB, answerC, answerD,
+                    finalAnswer, level, chapter, null, null, subject, teacher));
         }
 
         String responseMessage = "";

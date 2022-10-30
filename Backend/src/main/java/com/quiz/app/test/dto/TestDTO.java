@@ -24,6 +24,8 @@ public class TestDTO {
     private int numberOfViews;
     private int time;
     private int numberOfQuestions;
+    private int numberOfRightAnswer;
+    private float mark;
     private Set<Question> questions;
 
     public static TestDTO build(Test test, boolean includeQuestions) {
@@ -36,6 +38,8 @@ public class TestDTO {
                 .numberOfViews(test.getNumberOfViews())
                 .time(test.getTime())
                 .numberOfQuestions(test.getQuestions().size())
+                .numberOfRightAnswer(test.getNumberOfRightAnswer())
+                .mark(test.getMark())
                 .build();
 
         if (includeQuestions) {

@@ -17,6 +17,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -58,6 +59,13 @@ public class Test extends BaseEntity {
 
     @OneToMany(mappedBy = "subject", cascade = CascadeType.PERSIST)
     private List<Criteria> criteria;
+
+    @Transient
+    private int numberOfRightAnswer;
+
+    @Transient
+    private float mark;
+
 
     public void addQuestion(Question question) {
         this.questions.add(question);

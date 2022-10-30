@@ -5,14 +5,36 @@ import Countdown from "react-countdown";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
-import { findTest, testState } from "../features/testSlice";
+import { findTest, handIn, testState } from "../features/testSlice";
+import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
+import { Doughnut } from "react-chartjs-2";
 import $ from "jquery";
 import "./css/taketest.css";
+
+const renderer = ({ hours, minutes, seconds, completed }) => {
+    if (completed) {
+        // Render a completed state
+        // return <Completionist />;
+    } else {
+        // Render a countdown
+        return (
+            <span>
+                {hours}:{minutes}:{seconds}
+            </span>
+        );
+    }
+};
+
+ChartJS.register(ArcElement, Tooltip, Legend);
+
+const now = Date.now();
 
 function TakeTestPage() {
     const [questions, setQuestions] = useState([]);
     const [activeIndex, setActiveIndex] = useState(1);
     const [answer, setAnswer] = useState(new Map());
+    const [resultMode, setResultMode] = useState(false);
+
     const { testId } = useParams();
 
     const dispatch = useDispatch();
@@ -20,7 +42,7 @@ function TakeTestPage() {
 
     useEffect(() => {
         dispatch(findTest({ testId }));
-    }, []);
+    }, [testId]);
 
     useEffect(() => {
         if (test.questions && test.questions.length) {
@@ -28,21 +50,33 @@ function TakeTestPage() {
         }
     }, [test.questions]);
 
-    const renderer = ({ hours, minutes, seconds, completed }) => {
-        if (completed) {
-            // Render a completed state
-            // return <Completionist />;
-        } else {
-            // Render a countdown
-            return (
-                <span>
-                    {hours}:{minutes}:{seconds}
-                </span>
-            );
+    useEffect(() => {
+        if (questions && questions.length) {
+            questions.forEach(question => {
+                if (answer.has(question.id)) {
+                    $(`#question-${question.id}-answer${answer.get(question.id)}`).prop(
+                        "checked",
+                        "true"
+                    );
+                }
+            });
         }
-    };
+    }, [questions]);
 
-    console.log(answer);
+    const data = {
+        labels: ["Sai", "Đúng"],
+        datasets: [
+            {
+                label: "# of Votes",
+                data: [
+                    (test.questions && test.questions.length) || 0 - test.numberOfRightAnswer || 0,
+                    test.numberOfRightAnswer || 0,
+                ],
+                backgroundColor: ["rgb(255, 114, 114)", "rgb(0, 196, 140)"],
+                borderWidth: 1,
+            },
+        ],
+    };
 
     return (
         <div>
@@ -54,13 +88,22 @@ function TakeTestPage() {
                             <div className='pb-4'>
                                 <div className='flex items-center justify-between'>
                                     <div className='text-xl font-bold text-slate-800'>
-                                        Danh sách câu hỏi
+                                        {!resultMode ? "Danh sách câu hỏi" : "Kết quả bài thi"}
                                     </div>
-                                    <Countdown
-                                        date={Date.now() + test.time * 60 * 1000}
-                                        className='text-xl'
-                                        renderer={renderer}
-                                    />
+                                    {!resultMode ? (
+                                        <Countdown
+                                            date={now + test.time * 60 * 1000}
+                                            className='text-xl'
+                                            renderer={renderer}
+                                        />
+                                    ) : (
+                                        <>
+                                            <span style={{ color: "#00C48C" }}>
+                                                {test.numberOfRightAnswer}
+                                            </span>
+                                            /14 đáp án đúng
+                                        </>
+                                    )}
                                 </div>
                                 <Divider />
                                 <div>
@@ -68,67 +111,102 @@ function TakeTestPage() {
                                         <div className='flex items-center'>
                                             <div
                                                 className='w-4 h-4 rounded-full mr-1'
-                                                style={{ backgroundColor: "#f9d2bb" }}
+                                                style={{
+                                                    backgroundColor: `${
+                                                        !resultMode ? "#f9d2bb" : "#00C48C"
+                                                    }`,
+                                                }}
                                             ></div>
-                                            <span className='unread'>Chưa xem</span>
+                                            <span className='answered'>
+                                                {!resultMode ? "Đã trả lời" : "Trả lời đúng"}
+                                            </span>
                                         </div>
                                         <div className='flex items-center'>
                                             <div
                                                 className='w-4 h-4 rounded-full mr-1'
-                                                style={{ backgroundColor: "#f9d2bb" }}
+                                                style={{
+                                                    backgroundColor: `${
+                                                        !resultMode ? "#DEE5EF" : "#ff7272"
+                                                    }`,
+                                                }}
                                             ></div>
-                                            <span className='answered'>Đã trả lời</span>
-                                        </div>
-                                        <div className='flex items-center'>
-                                            <div
-                                                className='w-4 h-4 rounded-full mr-1'
-                                                style={{ backgroundColor: "#DEE5EF" }}
-                                            ></div>
-                                            <span className='notanswer'>Chưa trả lời</span>
+                                            <span className='notanswer'>
+                                                {!resultMode ? "Chưa trả lời" : "Trả lời sai"}
+                                            </span>
                                         </div>
                                     </div>
                                     <div className='text-xs'>bấm vào ô để xem câu hỏi</div>
                                 </div>
                                 <Divider />
                             </div>
-                            <div className='grid grid-cols-4 gap-2 '>
-                                {test.questions.map((question, index) => (
-                                    <div
-                                        id={`question-${question.id}-answer`}
-                                        className='w-10 h-10 text-center rounded-sm cursor-pointer text-base font-semibold flex items-center justify-center'
-                                        style={{ color: "#67758D", backgroundColor: "#F6F9FC" }}
-                                        key={index + 1}
-                                        onClick={() => {
-                                            let divResult = 0;
-                                            let actIndex = 0;
+                            <div className='grid grid-cols-3 gap-2 '>
+                                {test.questions.map((question, index) => {
+                                    let additionalClass = "";
+                                    if (resultMode) {
+                                        if (question.selectedAnswer === question.finalAnswer) {
+                                            additionalClass = "right";
+                                        } else {
+                                            additionalClass = "wrong";
+                                        }
+                                    }
+                                    return (
+                                        <div
+                                            id={`question-${question.id}-answer`}
+                                            className={`w-10 h-10 text-center rounded-sm cursor-pointer text-base font-semibold flex items-center justify-center question-answer ${additionalClass}`}
+                                            style={{
+                                                color: "#67758D",
+                                                backgroundColor: "rgb(222, 229, 239)",
+                                            }}
+                                            key={index + 1}
+                                            onClick={() => {
+                                                if (resultMode) {
+                                                    return;
+                                                }
 
-                                            if ((index + 1) % 3 === 1) {
-                                                divResult = Math.round((index + 1) / 3);
-                                                actIndex = index + 1;
-                                            } else if ((index + 1) % 3 === 2) {
-                                                divResult = Math.round(index / 3);
-                                                actIndex = index;
-                                            } else if ((index + 1) % 3 === 0) {
-                                                divResult = Math.round((index - 1) / 3);
-                                                actIndex = index - 1;
-                                            }
+                                                let divResult = 0;
+                                                let actIndex = 0;
 
-                                            setQuestions(
-                                                test.questions.slice(
+                                                if ((index + 1) % 3 === 1) {
+                                                    divResult = Math.round((index + 1) / 3);
+                                                    actIndex = index + 1;
+                                                } else if ((index + 1) % 3 === 2) {
+                                                    divResult = Math.round(index / 3);
+                                                    actIndex = index;
+                                                } else if ((index + 1) % 3 === 0) {
+                                                    divResult = Math.round((index - 1) / 3);
+                                                    actIndex = index - 1;
+                                                }
+
+                                                const qsts = test.questions.slice(
                                                     divResult * 3,
                                                     divResult * 3 + 3
-                                                )
-                                            );
-                                            setActiveIndex(actIndex);
-                                        }}
-                                    >
-                                        {index + 1}
-                                    </div>
-                                ))}
+                                                );
+
+                                                setQuestions(qsts);
+                                                setActiveIndex(actIndex);
+
+                                                $(".question-answer").each(function () {
+                                                    $(this).removeClass("border");
+                                                });
+                                                $(`#question-${question.id}-answer`).addClass(
+                                                    "border"
+                                                );
+                                            }}
+                                        >
+                                            {index + 1}
+                                        </div>
+                                    );
+                                })}
                             </div>
                         </div>
-                        <div className='flex-1 w-60 bg-white rounded-md  p-4'>
-                            {questions.length &&
+
+                        <div
+                            className={`flex-1 w-60 bg-white rounded-md p-4 ${
+                                resultMode && "col-flex items-center justify-center"
+                            }`}
+                        >
+                            {!resultMode ? (
+                                questions.length &&
                                 questions.map((question, index) => (
                                     <div key={question.id}>
                                         <p className='text-base pb-4'>
@@ -182,7 +260,7 @@ function TakeTestPage() {
                                                 A. {question.answerA}
                                             </label>
                                         </div>
-                                        <div className='flex items-center mb-4 '>
+                                        <div className='flex items-center mb-4'>
                                             <input
                                                 id={`question-${question.id}-answerB`}
                                                 type='radio'
@@ -318,7 +396,40 @@ function TakeTestPage() {
                                             </label>
                                         </div>
                                     </div>
-                                ))}
+                                ))
+                            ) : (
+                                <div
+                                    style={{
+                                        maxWidth: "350px",
+                                        maxHeight: "350px",
+                                    }}
+                                    className='mb-5 '
+                                >
+                                    <Doughnut data={data} />
+                                </div>
+                            )}
+                            <Divider />
+                            <div className='mt-3'>
+                                <button
+                                    type='button'
+                                    class='text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2'
+                                    onClick={() => {
+                                        if (!resultMode) {
+                                            dispatch(
+                                                handIn({
+                                                    testId: test.id,
+                                                    answers: answer,
+                                                })
+                                            );
+                                            setResultMode(true);
+                                        } else {
+                                            window.location.href = `/tests/TRR`;
+                                        }
+                                    }}
+                                >
+                                    {!resultMode ? "Nộp bài" : "Làm bài thi khác"}
+                                </button>
+                            </div>
                         </div>
                     </div>
                 )}

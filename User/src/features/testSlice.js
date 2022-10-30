@@ -14,6 +14,24 @@ export const findTest = createAsyncThunk(
     }
 );
 
+export const handIn = createAsyncThunk(
+    "test/handIn",
+    async ({ testId, answers }, { rejectWithValue }) => {
+        try {
+            const ans = [];
+            for (let [key, value] of answers) {
+                ans.push({ id: key, answer: value });
+            }
+
+            const { data } = await api.post(`/tests/${testId}/handIn`, ans);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 const initialState = {
     loading: true,
     tests: [],
@@ -65,12 +83,17 @@ const testSlice = createSlice({
     },
     extraReducers: builder => {
         builder
-
             .addCase(findTest.pending, (state, { payload }) => {})
             .addCase(findTest.fulfilled, (state, { payload }) => {
                 state.test = payload.data;
             })
-            .addCase(findTest.rejected, (state, { payload }) => {});
+            .addCase(findTest.rejected, (state, { payload }) => {})
+
+            .addCase(handIn.pending, (state, { payload }) => {})
+            .addCase(handIn.fulfilled, (state, { payload }) => {
+                state.test = payload.data;
+            })
+            .addCase(handIn.rejected, (state, { payload }) => {});
     },
 });
 

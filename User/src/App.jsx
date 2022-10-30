@@ -1,7 +1,6 @@
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import "./css/style.scss";
-import "./charts/ChartjsConfig";
 import { HomePage, LoginPage, TakeTestPage, TestsPage } from "./pages";
 
 function App() {

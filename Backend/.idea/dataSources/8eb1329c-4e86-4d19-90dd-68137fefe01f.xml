@@ -1405,7 +1405,7 @@ test_id</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="365" parent="305" name="id">
-      <AutoIncrement>34</AutoIncrement>
+      <AutoIncrement>33</AutoIncrement>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1569,7 +1569,7 @@ user_id</ColNames>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
     <column id="399" parent="307" name="id">
-      <AutoIncrement>4</AutoIncrement>
+      <AutoIncrement>3</AutoIncrement>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
@@ -1626,7 +1626,7 @@ user_id</ColNames>
       <UnderlyingIndexName>UK_aodt3utnw0lsov4k9ta88dbpr</UnderlyingIndexName>
     </key>
     <column id="411" parent="309" name="id">
-      <AutoIncrement>1</AutoIncrement>
+      <AutoIncrement>3</AutoIncrement>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>

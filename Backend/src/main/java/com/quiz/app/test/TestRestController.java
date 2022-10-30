@@ -5,12 +5,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.app.question.dto.GetCriteriaDTO;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
+import com.quiz.app.test.dto.HandInDTO;
 import com.quiz.app.test.dto.PostCreateTestDTO;
 import com.quiz.app.test.dto.TestDTO;
 import com.quiz.app.test.dto.TestsDTO;
@@ -160,6 +160,35 @@ public class TestRestController {
     public ResponseEntity<StandardJSONResponse<TestDTO>> findTest(@PathVariable("id") Integer id) {
         try {
             return new OkResponse<>(TestDTO.build(testService.findById(id), true)).response();
+        } catch (NotFoundException ex) {
+            return new BadResponse<TestDTO>(ex.getMessage()).response();
+        }
+    }
+
+    @PostMapping("{id}/handIn")
+    public ResponseEntity<StandardJSONResponse<TestDTO>> handIn(@PathVariable("id") Integer id,
+                                                                @RequestBody List<HandInDTO> answers) {
+        try {
+            int numberOfRightAnswer = 0;
+            float mark = 0;
+            Test test = testService.findById(id);
+
+            for (Question question : test.getQuestions()) {
+                for (HandInDTO answer : answers) {
+                    if (answer.getId().equals(question.getId())) {
+                        if (question.getFinalAnswer().equals(answer.getAnswer())) {
+                            numberOfRightAnswer++;
+                        }
+                        question.setSelectedAnswer(answer.getAnswer());
+                    }
+                }
+            }
+
+            mark = (float) numberOfRightAnswer / test.getQuestions().size() * 10;
+            test.setNumberOfRightAnswer(numberOfRightAnswer);
+            test.setMark(Math.round(mark));
+
+            return new OkResponse<>(TestDTO.build(test, true)).response();
         } catch (NotFoundException ex) {
             return new BadResponse<TestDTO>(ex.getMessage()).response();
         }
