@@ -44,23 +44,21 @@ public class Question extends BaseEntity {
 	@Column(nullable = false)
 	private Level level;
 
-	private Integer chapter;
-
 	private String image;
 
 	@Transient
 	private String selectedAnswer;
 
 	@ManyToOne
-	@JoinColumn(name = "subject_id", nullable = false)
-	private Subject subject;
+	@JoinColumn(name = "chapter_id", nullable = false)
+	private Chapter chapter;
 
 	@ManyToOne
 	@JoinColumn(nullable = false)
 	private User teacher;
 
 	public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,
-								 Subject subject) {
+								 Chapter chapter) {
 		Question question = Question.builder()
 				.content(postCreateQuestionDTO.getContent())
 				.answerA(postCreateQuestionDTO.getAnswerA())
@@ -69,7 +67,7 @@ public class Question extends BaseEntity {
 				.answerD(postCreateQuestionDTO.getAnswerD())
 				.finalAnswer(postCreateQuestionDTO.getFinalAnswer())
 				.level(postCreateQuestionDTO.getLevel())
-				.subject(subject)
+				.chapter(chapter)
 				.teacher(teacher)
 				.build();
 

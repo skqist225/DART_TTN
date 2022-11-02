@@ -1,5 +1,6 @@
 package com.quiz.entity;
 
+import com.quiz.app.chapter.dto.PostCreateChapterDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -11,29 +12,24 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Builder
 @Entity
-@Table(name = "criteria")
-public class Criteria {
+@Getter
+@Setter
+@Table(name = "chapters")
+public class Chapter {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne
-    @JoinColumn(name = "chapter_id", nullable = false)
-    private Chapter chapter;
-
     @Column(nullable = false)
-    private Level level;
+    private String name;
 
-    @Column(nullable = false)
-    private int numberOfQuestions;
+    public static Chapter build(PostCreateChapterDTO postCreateChapterDTO) {
+        return Chapter.builder().name(postCreateChapterDTO.getName()).build();
+    }
 }

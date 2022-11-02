@@ -190,11 +190,11 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                             <SidebarElement pathname={pathname} name='classes' title='Lớp học' />
 
-                            <SidebarElement
+                            {/* <SidebarElement
                                 pathname={pathname}
                                 name='users/usersUI'
                                 title='Giao diện người dùng'
-                            />
+                            /> */}
                         </ul>
                     </div>
                 </div>

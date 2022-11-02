@@ -1,8 +1,8 @@
-package com.quiz.app.subject;
+package com.quiz.app.chapter;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.entity.Subject;
+import com.quiz.entity.Chapter;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -25,85 +25,79 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.StreamSupport;
 
 
 @Service
-public class SubjectService {
-    private final String DELETE_SUCCESSFULLY = "Xóa môn học thành công";
-    private final String DELETE_FORBIDDEN = "Không thể xóa môn học vì ràng buộc dữ liệu";
-
-    private final Integer MAX_SUBJECTS_PER_PAGE = 20;
+public class ChapterService {
 
     @Autowired
-    SubjectRepository subjectRepository;
+    ChapterRepository chapterRepository;
 
     @Autowired
     private EntityManager entityManager;
 
-    public Subject save(Subject subject) {
-        return subjectRepository.save(subject);
+    public Chapter save(Chapter chapter) {
+        return chapterRepository.save(chapter);
     }
 
-    public String deleteById(String id) throws ConstrainstViolationException {
+    public String deleteById(Integer id) throws ConstrainstViolationException {
         try {
-            subjectRepository.deleteById(id);
-            return DELETE_SUCCESSFULLY;
+            chapterRepository.deleteById(id);
+            return "Xóa chương thành công";
         } catch (Exception ex) {
-            throw new ConstrainstViolationException(DELETE_FORBIDDEN);
+            throw new ConstrainstViolationException("Không thể xóa chương vì ràng buộc dữ liệu");
         }
     }
 
-    public Subject findById(String id) throws NotFoundException {
-        Optional<Subject> subject = subjectRepository.findById(id);
-        if (subject.isPresent()) {
-            return subject.get();
+    public Chapter findById(Integer id) throws NotFoundException {
+        Optional<Chapter> chapter = chapterRepository.findById(id);
+        if (chapter.isPresent()) {
+            return chapter.get();
         }
 
         throw new NotFoundException("Không tìm thấy môn học với mã " + id);
     }
 
-    public Subject findByName(String name) throws NotFoundException {
-        Subject subject = subjectRepository.findByName(name);
+    public Chapter findByName(String name) throws NotFoundException {
+        Chapter chapter = chapterRepository.findByName(name);
 
-        if (Objects.nonNull(subject)) {
-            return subject;
+        if (Objects.nonNull(chapter)) {
+            return chapter;
         }
 
         throw new NotFoundException("Không tìm thấy môn học với tên " + name);
     }
 
-    public boolean isNameDuplicated(String id, String name, boolean isEdit) {
-        Subject subject = subjectRepository.findByName(name);
+    public boolean isNameDuplicated(Integer id, String name, boolean isEdit) {
+        Chapter chapter = chapterRepository.findByName(name);
 
         if (isEdit) {
-            return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
+            return Objects.nonNull(chapter) && !Objects.equals(chapter.getId(), id);
         } else {
-            return Objects.nonNull(subject);
+            return Objects.nonNull(chapter);
         }
     }
 
-    public boolean isIdDuplicated(String id, boolean isEdit) {
-        Subject subject = null;
+    public boolean isIdDuplicated(Integer id, boolean isEdit) {
+        Chapter chapter = null;
         try {
-            subject = findById(id);
+            chapter = findById(id);
 
             if (isEdit) {
-                return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
+                return Objects.nonNull(chapter) && !Objects.equals(chapter.getId(), id);
             } else {
-                return Objects.nonNull(subject);
+                return Objects.nonNull(chapter);
             }
         } catch (NotFoundException e) {
             return false;
         }
     }
 
-    public List<Subject> findAll() {
-        return (List<Subject>) subjectRepository.findAll();
+    public List<Chapter> findAll() {
+        return (List<Chapter>) chapterRepository.findAll();
     }
 
-    public Page<Subject> findAllSubjects(Map<String, String> filters) {
+    public Page<Chapter> findAllSubjects(Map<String, String> filters) {
         int page = Integer.parseInt(filters.get("page"));
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
@@ -111,11 +105,12 @@ public class SubjectService {
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+        Integer MAX_SUBJECTS_PER_PAGE = 20;
         Pageable pageable = PageRequest.of(page - 1, MAX_SUBJECTS_PER_PAGE, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Subject> criteriaQuery = criteriaBuilder.createQuery(Subject.class);
-        Root<Subject> root = criteriaQuery.from(Subject.class);
+        CriteriaQuery<Chapter> criteriaQuery = criteriaBuilder.createQuery(Chapter.class);
+        Root<Chapter> root = criteriaQuery.from(Chapter.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -132,7 +127,7 @@ public class SubjectService {
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
         criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
 
-        TypedQuery<Subject> typedQuery = entityManager.createQuery(criteriaQuery);
+        TypedQuery<Chapter> typedQuery = entityManager.createQuery(criteriaQuery);
 
         int totalRows = typedQuery.getResultList().size();
         typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());

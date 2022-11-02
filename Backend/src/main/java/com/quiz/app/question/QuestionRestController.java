@@ -216,7 +216,7 @@ public class QuestionRestController {
                 question.setAnswerD(answerD);
                 question.setFinalAnswer(finalAnswer);
                 question.setLevel(level);
-                question.setSubject(subject);
+//                question.setChapter(subject);
                 question.setTeacher(teacher);
 
                 if (postCreateQuestionDTO.getImage() != null) {
