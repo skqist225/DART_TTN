@@ -11,3 +11,6 @@ export { default as EditUserPage } from "./users/EditUserPage";
 
 // Classes
 export { default as ClassesPage } from "./classes/ClassesPage";
+
+// Classes
+export { default as ChaptersPage } from "./chapters/ChaptersPage";

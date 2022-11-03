@@ -12,4 +12,5 @@ import lombok.Setter;
 public class PostCreateChapterDTO {
     private Integer id;
     private String name;
+    private String subjectId;
 }

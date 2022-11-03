@@ -3,14 +3,16 @@ package com.quiz.app.chapter;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.quiz.app.chapter.dto.PostCreateChapterDTO;
 import com.quiz.app.chapter.dto.ChaptersDTO;
+import com.quiz.app.chapter.dto.PostCreateChapterDTO;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
+import com.quiz.app.subject.SubjectService;
 import com.quiz.entity.Chapter;
+import com.quiz.entity.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -23,10 +25,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -34,6 +38,9 @@ import java.util.Objects;
 public class ChapterRestController {
     @Autowired
     private ChapterService chapterService;
+
+    @Autowired
+    private SubjectService subjectService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -64,7 +71,8 @@ public class ChapterRestController {
         if(page.equals("0")) {
             List<Chapter> chapters = chapterService.findAll();
 
-            chaptersDTO.setChapters(chapters);
+            chaptersDTO.setChapters(chapters.stream().sorted(Comparator.comparing(Chapter::getName))
+                    .collect(Collectors.toList()));
             chaptersDTO.setTotalElements(chapters.size());
             chaptersDTO.setTotalPages(0);
 
@@ -85,28 +93,32 @@ public class ChapterRestController {
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
     ) {
         arrayNode = objectMapper.createArrayNode();
-        Chapter savedSubject = null;
+        Chapter savedChapter = null;
+        Subject subject = null;
 
         Integer id = postCreateChapterDTO.getId();
         String name = postCreateChapterDTO.getName();
-
-        if (Objects.isNull(id)) {
-            addError("id", "Mã môn học không được để trống");
-        }
+        String subjectId = postCreateChapterDTO.getSubjectId();
 
         if (Objects.isNull(name)) {
-            addError("name", "Tên môn học không được để trống");
+            addError("name", "Tên chương không được để trống");
+        }
+
+        if (Objects.isNull(subjectId)) {
+            addError("subjectId", "Môn học không được để trống");
         }
 
         if (arrayNode.size() > 0) {
             return new BadResponse<Chapter>(arrayNode.toString()).response();
         } else {
-            if (chapterService.isIdDuplicated(id, isEdit)) {
-                addError("id","Mã môn học đã tồn tại" );
+            if (chapterService.isNameDuplicated(id, name, isEdit)) {
+                addError("name", "Tên chương đã tồn tại");
             }
 
-            if (chapterService.isNameDuplicated(id, name, isEdit)) {
-                addError("name","Tên môn học đã tồn tại" );
+            try {
+                subject = subjectService.findById(subjectId);
+            } catch (NotFoundException exception) {
+                return new BadResponse<Chapter>(exception.getMessage()).response();
             }
 
             if (arrayNode.size() > 0) {
@@ -116,19 +128,19 @@ public class ChapterRestController {
 
         if (isEdit) {
             try {
-                Chapter subject = chapterService.findById(id);
-                subject.setId(id);
-                subject.setName(name);
+                Chapter chapter = chapterService.findById(id);
+                chapter.setName(name);
+                chapter.setSubject(subject);
 
-                savedSubject = chapterService.save(subject);
+                savedChapter = chapterService.save(chapter);
             } catch (NotFoundException exception) {
                 return new BadResponse<Chapter>(exception.getMessage()).response();
             }
         } else {
-            savedSubject = chapterService.save(Chapter.build(postCreateChapterDTO));
+            savedChapter = chapterService.save(Chapter.build(name, subject));
         }
 
-        return new OkResponse<>(savedSubject).response();
+        return new OkResponse<>(savedChapter).response();
     }
 
     @DeleteMapping("{id}/delete")

@@ -40,7 +40,7 @@ function Input({
                     {...register(name)}
                     onKeyDown={onKeyDown}
                     readOnly={readOnly}
-                    autocomplete={type === "password" ? "new-password" : "off"}
+                    autoComplete={type === "password" ? "new-password" : "off"}
                 />
             </div>
             {error && <ErrorMessage message={error} />}

@@ -55,7 +55,7 @@ function Select({
                     </option>
                 ))}
             </select>
-            {error && <ErrorMessage message={error.message} />}
+            {error && <ErrorMessage message={error} />}
         </>
     );
 }

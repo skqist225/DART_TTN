@@ -40,7 +40,7 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = 
                     }`}
                     key={row.id}
                 >
-                    <td className='p-4 w-4'>
+                    {/* <td className='p-4 w-4'>
                         <div className='flex items-center'>
                             <input
                                 id='checkbox-table-search-1'
@@ -51,7 +51,7 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = 
                                 checkbox
                             </label>
                         </div>
-                    </td>
+                    </td> */}
                     <td className='py-2 px-3 whitespace-nowrap dark:text-white'>{row.id}</td>
                     <td className={cellCss}>{row.content}</td>
                     {!addTest ? (
@@ -110,10 +110,9 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = 
                             {row.teacher.firstName} {row.teacher.lastName}
                         </td>
                     )}
-                    <td class='py-2 px-3 flex items-center'>
+                    <td class='py-2 px-3 flex items-center justify-center'>
                         {!addTest ? (
                             <>
-                                {" "}
                                 <MyButton
                                     type='edit'
                                     onClick={() => {
@@ -122,14 +121,18 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = 
                                         dispatch(setEditedQuestion(row));
                                     }}
                                 />
-                                <div className='mx-3'>
-                                    <MyButton
-                                        type='delete'
-                                        onClick={() => {
-                                            dispatch(deleteQuestion(row.id));
-                                        }}
-                                    />
-                                </div>
+                                {!excelAdd && (
+                                    <>
+                                        <div className='mx-3'>
+                                            <MyButton
+                                                type='delete'
+                                                onClick={() => {
+                                                    dispatch(deleteQuestion(row.id));
+                                                }}
+                                            />
+                                        </div>
+                                    </>
+                                )}
                                 <div className='mx-3'>
                                     {row.status ? (
                                         <MyButton

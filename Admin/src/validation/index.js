@@ -23,8 +23,7 @@ export const questionSchema = yup
         answerD: yup.string().required("Đáp án D không được để  trống"),
         finalAnswer: yup.string().required("Đáp án không được để  trống"),
         level: yup.string().required("Mức độ không được để  trống"),
-        chapter: yup.string().required("Chương không được để  trống"),
-        subjectId: yup.string().required("Môn học không được để  trống"),
+        chapterId: yup.number().required("Chương không được để  trống"),
     })
     .required();
 
@@ -67,5 +66,12 @@ export const classSchema = yup
     .object({
         id: yup.string().required("Mã lớp không được để trống"),
         name: yup.string().required("Tên lớp không được để trống"),
+    })
+    .required();
+
+export const chapterSchema = yup
+    .object({
+        name: yup.string().required("Tên chương không được để trống"),
+        subjectId: yup.string().required("Môn học không được để  trống"),
     })
     .required();

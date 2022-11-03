@@ -82,7 +82,8 @@ public class SubjectRestController {
 
     @GetMapping("brief")
     public ResponseEntity<StandardJSONResponse<List<SubjectDTO>>> fetchAllSubjects() {
-        return new OkResponse<>(subjectService.findAllSubjects()).response();
+//        return new OkResponse<>(subjectService.findAllSubjects()).response();
+        return null;
     }
 
     @GetMapping("{subjectId}")

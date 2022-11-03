@@ -17,6 +17,7 @@ import {
     setExcelAdd,
 } from "../../features/questionSlice";
 import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
+import { fetchAllChapters } from "../../features/chapterSlice";
 
 const columns = [
     {
@@ -105,7 +106,6 @@ function QuestionsPage() {
         totalElements,
         totalPages,
         filterObject,
-        excelAdd,
         addQuestion: { successMessage },
         editQuestion: { successMessage: eqSuccessMessage },
         deleteQuestion: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
@@ -184,12 +184,7 @@ function QuestionsPage() {
                 page: 1,
             })
         );
-
-        dispatch(
-            fetchAllSubjects({
-                page: 0,
-            })
-        );
+        dispatch(fetchAllChapters({ page: 0 }));
     }, []);
 
     const handleAddSelectedQuestionFromExcelFile = () => {
@@ -235,7 +230,6 @@ function QuestionsPage() {
                             rows={questions}
                             setIsEdit={setIsEdit}
                             dispatch={dispatch}
-                            excelAdd={excelAdd}
                         />
                     }
                     modalId='questionModal'
@@ -249,9 +243,7 @@ function QuestionsPage() {
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
-                            subjects={subjects.map(({ id, name }) => ({ title: name, value: id }))}
                             setImage={setImage}
-                            excelAdd={excelAdd}
                         />
                     }
                     isEdit={isEdit}

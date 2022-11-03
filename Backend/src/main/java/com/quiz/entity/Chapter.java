@@ -12,6 +12,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @AllArgsConstructor
@@ -26,10 +27,17 @@ public class Chapter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
+    @Column(nullable = false, unique = true)
     private String name;
 
-    public static Chapter build(PostCreateChapterDTO postCreateChapterDTO) {
-        return Chapter.builder().name(postCreateChapterDTO.getName()).build();
+    @ManyToOne
+    private Subject subject;
+
+    public static Chapter build(PostCreateChapterDTO postCreateChapterDTO, Subject subject) {
+        return Chapter.builder().name(postCreateChapterDTO.getName()).subject(subject).build();
+    }
+
+    public static Chapter build(String name, Subject subject) {
+        return Chapter.builder().name(name).subject(subject).build();
     }
 }

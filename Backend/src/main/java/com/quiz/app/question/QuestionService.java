@@ -1,5 +1,6 @@
 package com.quiz.app.question;
 
+import com.quiz.app.chapter.ChapterService;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.question.dto.GetCriteriaDTO;
@@ -45,6 +46,9 @@ public class QuestionService {
 
     @Autowired
     SubjectService subjectService;
+
+    @Autowired
+    ChapterService chapterService;
 
     @Autowired
     private EntityManager entityManager;
@@ -158,7 +162,7 @@ public class QuestionService {
         Subject subject = null;
         try {
             subject = subjectService.findById(subjectId);
-            return questionRepository.findBySubject(subject);
+            return questionRepository.findByChapterIn(subject.getChapters());
         } catch (NotFoundException e) {
             return null;
         }
@@ -194,8 +198,8 @@ public class QuestionService {
                 }
 
                 List<Question> qsts =
-                        questionRepository.findByChapterAndLevelAndSubject(chapter, level,
-                                subject);
+                        questionRepository.findByChapterAndLevel(chapterService.findById(chapter), level
+                        );
 
                 if (qsts.size() > numberOfQuestions) {
 

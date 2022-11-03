@@ -4,7 +4,7 @@ import "./css/style.scss";
 import "./charts/ChartjsConfig";
 
 import Dashboard from "./pages/Dashboard";
-import { ClassesPage, QuestionsPage, SubjectsPage, UsersPage } from "./pages";
+import { ChaptersPage, ClassesPage, QuestionsPage, SubjectsPage, UsersPage } from "./pages";
 import LoginPage from "./pages/auth/LoginPage";
 import TestsPage from "./pages/tests/TestsPage";
 
@@ -23,6 +23,10 @@ function App() {
                 <Route exact path='/' element={<Dashboard />} />
                 <Route path='/auth'>
                     <Route path='login' element={<LoginPage />} />
+                </Route>
+
+                <Route path='/chapters'>
+                    <Route path='' element={<ChaptersPage />} />
                 </Route>
 
                 <Route path='/subjects'>

@@ -1,6 +1,7 @@
 package com.quiz.app.question.dto;
 
 
+import com.quiz.entity.Chapter;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,6 +20,7 @@ public class ReadQuestionExcelDTO {
     private String answerD;
     private String finalAnswer;
     private String level;
-    private int chapter;
+    private String chapterName;
     private String subjectName;
+    private boolean status;
 }

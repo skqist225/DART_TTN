@@ -8,16 +8,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -57,8 +56,12 @@ public class Test extends BaseEntity {
     @ManyToOne
     private User teacher;
 
-    @OneToMany(mappedBy = "subject", cascade = CascadeType.PERSIST)
-    private List<Criteria> criteria;
+    @Builder.Default
+    @JsonIgnore
+    @ManyToMany
+    @JoinTable(name = "tests_criteria", joinColumns = @JoinColumn(name = "test_id"),
+            inverseJoinColumns = @JoinColumn(name = "criteria_id"))
+    private List<Criteria> criteria = new ArrayList<>();
 
     @Transient
     private int numberOfRightAnswer;

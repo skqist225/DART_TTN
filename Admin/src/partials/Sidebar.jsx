@@ -184,6 +184,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                             <SidebarElement pathname={pathname} name='tests' title='Bộ đề' />
 
+                            <SidebarElement pathname={pathname} name='chapters' title='Chương' />
+
                             <SidebarElement pathname={pathname} name='subjects' title='Môn học' />
 
                             <SidebarElement pathname={pathname} name='users' title='Người dùng' />

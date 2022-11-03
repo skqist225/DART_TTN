@@ -13,6 +13,7 @@ import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
 import {
     authSlice,
+    chapterSlice,
     classSlice,
     questionSlice,
     subjectSlice,
@@ -27,6 +28,7 @@ const rootReducer = combineReducers({
     user: userSlice,
     class: classSlice,
     test: testSlice,
+    chapter: chapterSlice,
 });
 
 const persistConfig = {

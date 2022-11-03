@@ -8,12 +8,10 @@ import $ from "jquery";
 import { CloseIcon } from "../../images";
 import { QuestionExcelModalBody } from "..";
 import { Input } from "..";
+import { subjectState } from "../../features/subjectSlice";
+import { chapterState } from "../../features/chapterSlice";
 
 const finalAnswerOptions = [
-    {
-        value: "",
-        title: "Chọn đáp án",
-    },
     {
         value: "A",
         title: "A",
@@ -34,10 +32,6 @@ const finalAnswerOptions = [
 
 const levelOptions = [
     {
-        value: "",
-        title: "Chọn mức độ",
-    },
-    {
         value: "EASY",
         title: "Dễ",
     },
@@ -51,8 +45,9 @@ const levelOptions = [
     },
 ];
 
-function QuestionModalBody({ errors, register, dispatch, setValue, subjects, setImage, excelAdd }) {
-    const { editedQuestion, errorObject } = useSelector(questionState);
+function QuestionModalBody({ errors, register, dispatch, setValue, setImage }) {
+    const { editedQuestion, errorObject, excelAdd } = useSelector(questionState);
+    const { chapters } = useSelector(chapterState);
 
     const onKeyDown = ({ target: { name } }) => {
         if (errorObject) {
@@ -73,7 +68,6 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
         setValue("finalAnswer", editedQuestion.finalAnswer);
         setValue("level", editedQuestion.level);
         setValue("chapter", editedQuestion.chapter);
-        setValue("subjectId", editedQuestion.subject.id);
     }
 
     const previewImage = event => {
@@ -174,6 +168,7 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
                                     register={register}
                                     name='finalAnswer'
                                     options={finalAnswerOptions}
+                                    setValue={setValue}
                                 />
                             </div>
 
@@ -186,33 +181,25 @@ function QuestionModalBody({ errors, register, dispatch, setValue, subjects, set
                                     register={register}
                                     name='level'
                                     options={levelOptions}
+                                    setValue={setValue}
                                 />
                             </div>
                         </div>
 
                         <div className='flex items-center w-full'>
-                            <div className='my-3 w-full mr-5'>
-                                <Input
-                                    label='Chương *'
-                                    error={
-                                        (errors.chapter && errors.chapter.message) ||
-                                        (errorObject && errorObject.chapter)
-                                    }
-                                    register={register}
-                                    name='chapter'
-                                    onKeyDown={onKeyDown}
-                                />
-                            </div>
-
                             <div className='my-3 w-full'>
                                 <Select
-                                    label='Môn học *'
+                                    label='Chương *'
                                     labelClassName={tailwindCss.label}
                                     selectClassName={tailwindCss.select}
-                                    error={errors.subjectId && errors.subjectId.message}
+                                    error={errors.chapterId && errors.chapterId.message}
                                     register={register}
-                                    name='subjectId'
-                                    options={subjects}
+                                    name='chapterId'
+                                    options={chapters.map(chapter => ({
+                                        title: chapter.name,
+                                        value: chapter.id,
+                                    }))}
+                                    setValue={setValue}
                                 />
                             </div>
                         </div>

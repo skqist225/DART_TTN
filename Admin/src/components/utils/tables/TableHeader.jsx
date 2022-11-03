@@ -28,7 +28,7 @@ function TableHeader({ columns, handleSortChange }) {
     return (
         <thead className={tailwindCss.thead}>
             <tr>
-                <th scope='col' className='p-4'>
+                {/* <th scope='col' className='p-4'>
                     <div className='flex items-center'>
                         <input
                             id='checkbox-all-search'
@@ -46,9 +46,9 @@ function TableHeader({ columns, handleSortChange }) {
                             checkbox
                         </label>
                     </div>
-                </th>
+                </th> */}
                 {columns.map(({ name, sortField, sortable }) => (
-                    <th scope='col' className='py-2 px-3'>
+                    <th scope='col' className='py-2 px-3' key={name}>
                         {!sortable ? (
                             name
                         ) : (

@@ -39,3 +39,7 @@ export { default as ClassTableBody } from "./classes/ClassTableBody";
 //tests
 export { default as TestModalBody } from "./tests/TestModalBody";
 export { default as TestTableBody } from "./tests/TestTableBody";
+
+//chapters
+export { default as ChapterModalBody } from "./chapters/ChapterModalBody";
+export { default as ChapterTableBody } from "./chapters/ChapterTableBody";

@@ -41,7 +41,7 @@ public class Subject {
 	@JsonIgnore
 	@Builder.Default
 	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
-	private List<Question> questions = new ArrayList<>();
+	private List<Chapter> chapters = new ArrayList<>();
 
 	public Subject(String id, String name) {
 		this.id = id;

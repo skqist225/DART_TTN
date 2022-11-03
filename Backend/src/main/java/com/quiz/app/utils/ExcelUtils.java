@@ -30,8 +30,6 @@ public class ExcelUtils {
     }
 
     public void readQuestionFromFile(List<ReadQuestionExcelDTO> questions) throws NotFoundException {
-        System.out.println(sheet.getLastRowNum());
-
         for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
             Row row = sheet.getRow(i);
             ReadQuestionExcelDTO question = new ReadQuestionExcelDTO();
@@ -70,8 +68,9 @@ public class ExcelUtils {
 
             question.setFinalAnswer(row.getCell(5).getStringCellValue());
             question.setLevel(row.getCell(6).getStringCellValue());
-            question.setChapter((int) row.getCell(7).getNumericCellValue());
+            question.setChapterName(row.getCell(7).getStringCellValue());
             question.setSubjectName(row.getCell(8).getStringCellValue());
+            question.setStatus(true);
 
             questions.add(question);
         }

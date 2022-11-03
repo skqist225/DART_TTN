@@ -3,6 +3,7 @@ package com.quiz.app.question;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.quiz.app.chapter.ChapterService;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.question.dto.GetCriteriaQuestionsDTO;
@@ -16,6 +17,7 @@ import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.app.utils.ExcelUtils;
 import com.quiz.app.utils.ProcessImage;
+import com.quiz.entity.Chapter;
 import com.quiz.entity.Level;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
@@ -62,6 +64,9 @@ public class QuestionRestController {
 
     @Autowired
     private SubjectService subjectService;
+
+    @Autowired
+    private ChapterService chapterService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -230,8 +235,8 @@ public class QuestionRestController {
                 return new BadResponse<String>(arrayNode.toString()).response();
             }
         } else {
-            savedQuestion = questionService.save(Question.build(postCreateQuestionDTO,
-                    userDetailsImpl.getUser(), subject));
+//            savedQuestion = questionService.save(Question.build(postCreateQuestionDTO,
+//                    userDetailsImpl.getUser(), subject));
         }
 
         if (postCreateQuestionDTO.getImage() != null) {
@@ -262,7 +267,7 @@ public class QuestionRestController {
             String answerD = question.getAnswerD();
             String finalAnswer = question.getFinalAnswer();
             String subjectName = question.getSubjectName();
-            Integer chapter = question.getChapter();
+            String chapterName = question.getChapterName();
             String levelStr = question.getLevel();
 
             Question qst = null;
@@ -295,8 +300,15 @@ public class QuestionRestController {
                 subject = subjectService.save(new Subject(subjectId.toString().toUpperCase(), subjectName));
             }
 
-            questionService.save(new Question(content, answerA, answerB, answerC, answerD,
-                    finalAnswer, level, chapter, null, null, subject, teacher));
+            Chapter chapter = null;
+            try {
+                chapter = chapterService.findByName(chapterName);
+            } catch (NotFoundException e) {
+                chapter =
+                        chapterService.save(Chapter.build(chapterName, subject));
+            }
+
+            questionService.save(Question.build(postCreateQuestionDTO, teacher, chapter));
         }
 
         String responseMessage = "";
