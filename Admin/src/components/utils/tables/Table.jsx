@@ -89,7 +89,7 @@ function Table({
                                 >
                                     Thêm {modalLabel}
                                 </li>
-                                <li className='flex items-center align-middle'>
+                                <li>
                                     <button
                                         type='button'
                                         className={tailwindCss.lightButton}

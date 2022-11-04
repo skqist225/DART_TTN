@@ -21,9 +21,6 @@ export const questionSchema = yup
         answerB: yup.string().required("Đáp án B không được để  trống"),
         answerC: yup.string().required("Đáp án C không được để  trống"),
         answerD: yup.string().required("Đáp án D không được để  trống"),
-        finalAnswer: yup.string().required("Đáp án không được để  trống"),
-        level: yup.string().required("Mức độ không được để  trống"),
-        chapterId: yup.number().required("Chương không được để  trống"),
     })
     .required();
 

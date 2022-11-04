@@ -10,6 +10,7 @@ import { QuestionExcelModalBody } from "..";
 import { Input } from "..";
 import { subjectState } from "../../features/subjectSlice";
 import { chapterState } from "../../features/chapterSlice";
+import { lookupQuestionLevel } from "./QuestionTableBody";
 
 const finalAnswerOptions = [
     {
@@ -32,15 +33,15 @@ const finalAnswerOptions = [
 
 const levelOptions = [
     {
-        value: "EASY",
+        value: "Dễ",
         title: "Dễ",
     },
     {
-        value: "MEDIUM",
+        value: "Trung bình",
         title: "Trung bình",
     },
     {
-        value: "HARD",
+        value: "Khó",
         title: "Khó",
     },
 ];
@@ -65,9 +66,6 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage }) {
         setValue("answerB", editedQuestion.answerB);
         setValue("answerC", editedQuestion.answerC);
         setValue("answerD", editedQuestion.answerD);
-        setValue("finalAnswer", editedQuestion.finalAnswer);
-        setValue("level", editedQuestion.level);
-        setValue("chapter", editedQuestion.chapter);
     }
 
     const previewImage = event => {
@@ -137,7 +135,7 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage }) {
                             <div className='flex'>
                                 <div className='flex-1 mr-5'>
                                     <TextArea
-                                        label='B *'
+                                        label='C *'
                                         labelClassName={tailwindCss.label}
                                         textAreaClassName={tailwindCss.textArea}
                                         error={errors.answerC && errors.answerC.message}
@@ -164,11 +162,11 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage }) {
                                     label='Đáp án *'
                                     labelClassName={tailwindCss.label}
                                     selectClassName={tailwindCss.select}
-                                    error={errors.finalAnswer && errors.finalAnswer.message}
                                     register={register}
                                     name='finalAnswer'
                                     options={finalAnswerOptions}
                                     setValue={setValue}
+                                    defaultValue={editedQuestion && editedQuestion.finalAnswer}
                                 />
                             </div>
 
@@ -177,11 +175,13 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage }) {
                                     label='Mức độ *'
                                     labelClassName={tailwindCss.label}
                                     selectClassName={tailwindCss.select}
-                                    error={errors.level && errors.level.message}
                                     register={register}
                                     name='level'
                                     options={levelOptions}
                                     setValue={setValue}
+                                    defaultValue={
+                                        editedQuestion && lookupQuestionLevel(editedQuestion.level)
+                                    }
                                 />
                             </div>
                         </div>
@@ -192,7 +192,6 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage }) {
                                     label='Chương *'
                                     labelClassName={tailwindCss.label}
                                     selectClassName={tailwindCss.select}
-                                    error={errors.chapterId && errors.chapterId.message}
                                     register={register}
                                     name='chapterId'
                                     options={chapters.map(chapter => ({
@@ -200,6 +199,7 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage }) {
                                         value: chapter.id,
                                     }))}
                                     setValue={setValue}
+                                    defaultValue={editedQuestion && editedQuestion.chapter.id}
                                 />
                             </div>
                         </div>

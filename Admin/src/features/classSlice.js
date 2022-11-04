@@ -204,7 +204,7 @@ const classSlice = createSlice({
             })
             .addCase(addClass.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.addClass.successMessage = "Thêm môn học thành công";
+                    state.addClass.successMessage = "Thêm lớp thành công";
                 }
             })
             .addCase(addClass.rejected, (state, { payload }) => {
@@ -233,7 +233,7 @@ const classSlice = createSlice({
             })
             .addCase(editClass.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.editClass.successMessage = "Chỉnh sửa môn học thành công";
+                    state.editClass.successMessage = "Chỉnh sửa lớp thành công";
                 }
             })
             .addCase(editClass.rejected, (state, { payload }) => {

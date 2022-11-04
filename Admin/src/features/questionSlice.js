@@ -1,5 +1,4 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import { data } from "jquery";
 import api from "../axios";
 
 export const fetchAllQuestions = createAsyncThunk(
@@ -159,14 +158,9 @@ export const readExcelFile = createAsyncThunk(
 
 export const addMultipleQuestions = createAsyncThunk(
     "question/addMultipleQuestions",
-    async (questionsExcel, { rejectWithValue }) => {
+    async ({ questions }, { rejectWithValue }) => {
         try {
-            const formData = new FormData();
-            formData.set("questions", questionsExcel);
-
-            const { data } = await api.post(`/questions/save/multiple`, {
-                questions: questionsExcel,
-            });
+            const { data } = await api.post(`/questions/save/multiple`, questions);
 
             return { data };
         } catch ({ data: { error } }) {

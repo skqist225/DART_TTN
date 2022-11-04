@@ -21,10 +21,11 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
     @Query
     public List<Question> findByChapterIn(List<Chapter> subject);
 
-    @Query(value = "SELECT * FROM questions as q WHERE q.subject_id = :subject ORDER BY RAND()" +
+    @Query(value = "SELECT * FROM questions as q WHERE q.chapter_id IN (:chapters) ORDER BY RAND" +
+            "()" +
             "LIMIT :numberOfQuestions",
             nativeQuery = true)
-    public List<Question> findBySubject(String subject, Integer numberOfQuestions);
+    public List<Question> findBySubject(List<Integer> chapters, Integer numberOfQuestions);
 
     public List<Question> findByChapterAndLevel(Chapter chapter,
                                                 Level level);

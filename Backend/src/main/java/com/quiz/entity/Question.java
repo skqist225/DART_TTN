@@ -13,6 +13,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.Objects;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -59,6 +60,13 @@ public class Question extends BaseEntity {
 
 	public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,
 								 Chapter chapter) {
+		Level level = Level.EASY;
+		if (Objects.equals(postCreateQuestionDTO.getLevel(), "Khó")) {
+			level = Level.HARD;
+		} else if (Objects.equals(postCreateQuestionDTO.getLevel(), "Trung bình")) {
+			level = Level.MEDIUM;
+		}
+
 		Question question = Question.builder()
 				.content(postCreateQuestionDTO.getContent())
 				.answerA(postCreateQuestionDTO.getAnswerA())
@@ -66,7 +74,7 @@ public class Question extends BaseEntity {
 				.answerC(postCreateQuestionDTO.getAnswerC())
 				.answerD(postCreateQuestionDTO.getAnswerD())
 				.finalAnswer(postCreateQuestionDTO.getFinalAnswer())
-				.level(postCreateQuestionDTO.getLevel())
+				.level(level)
 				.chapter(chapter)
 				.teacher(teacher)
 				.build();

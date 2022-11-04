@@ -81,10 +81,9 @@ public class QuestionRestController {
 
     @GetMapping("load")
     public ResponseEntity<StandardJSONResponse<List<GetCriteriaQuestionsDTO>>> loadCriteriaQuestions(
-            @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
             @RequestParam(name = "criteria", required = false, defaultValue = "") String criteria) {
-        if (!StringUtils.isEmpty(subjectId) && Objects.nonNull(criteria)) {
-            return new OkResponse<>(questionService.findAll(subjectId, criteria)).response();
+        if (Objects.nonNull(criteria)) {
+            return new OkResponse<>(questionService.findQuestionsByCriteria(criteria)).response();
         }
 
         return null;
@@ -104,7 +103,6 @@ public class QuestionRestController {
             List<Question> questions = null;
             if (!StringUtils.isEmpty(subjectId)) {
                 if (numberOfQuestions > 0) {
-                    System.out.println("here");
                     questions = questionService.findAll(subjectId, numberOfQuestions);
                 } else {
                     questions = questionService.findAll(subjectId);
@@ -132,8 +130,8 @@ public class QuestionRestController {
     }
 
     public void catchQuestionInputException(String content, String answerA, String answerB, String answerC,
-                                            String answerD, String finalAnswer, Level level,
-                                            Integer chapter, String subjectId
+                                            String answerD, String finalAnswer, String level,
+                                            Integer chapterId
     ) {
         if (Objects.isNull(content)) {
             addError("content", "Nội dung câu hỏi không được để trống");
@@ -163,21 +161,21 @@ public class QuestionRestController {
             addError("level", "Mức độ không được để trống");
         }
 
-        if (Objects.isNull(chapter)) {
-            addError("chapter", "Chương không được để trống");
-        }
-
-        if (Objects.isNull(subjectId)) {
-            addError("subjectId", "Môn học không được để trống");
+        if (Objects.isNull(chapterId)) {
+            addError("chapterId", "Chương không được để trống");
         }
     }
 
     @PostMapping("save")
-    public ResponseEntity<StandardJSONResponse<String>> saveQuestion(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @ModelAttribute PostCreateQuestionDTO postCreateQuestionDTO, @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) throws IOException {
+    public ResponseEntity<StandardJSONResponse<String>> saveQuestion(
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+            @ModelAttribute PostCreateQuestionDTO postCreateQuestionDTO,
+            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit)
+            throws IOException {
         arrayNode = objectMapper.createArrayNode();
         User teacher = userDetailsImpl.getUser();
         Question savedQuestion = null;
-        Subject subject = null;
+        Chapter chapter = null;
 
         Integer id = postCreateQuestionDTO.getId();
         String content = postCreateQuestionDTO.getContent();
@@ -186,17 +184,16 @@ public class QuestionRestController {
         String answerC = postCreateQuestionDTO.getAnswerC();
         String answerD = postCreateQuestionDTO.getAnswerD();
         String finalAnswer = postCreateQuestionDTO.getFinalAnswer();
-        String subjectId = postCreateQuestionDTO.getSubjectId();
-        Level level = postCreateQuestionDTO.getLevel();
-        Integer chapter = postCreateQuestionDTO.getChapter();
+        String levelStr = postCreateQuestionDTO.getLevel();
+        Integer chapterId = postCreateQuestionDTO.getChapterId();
 
         catchQuestionInputException(content, answerA, answerB, answerC, answerD, finalAnswer,
-                level, chapter, subjectId);
+                levelStr, chapterId);
 
         try {
-            subject = subjectService.findById(subjectId);
+            chapter = chapterService.findById(chapterId);
         } catch (NotFoundException e) {
-            addError("subject", "Môn học không được để trống");
+            addError("chapter", e.getMessage());
         }
 
         if (arrayNode.size() > 0) {
@@ -220,8 +217,16 @@ public class QuestionRestController {
                 question.setAnswerC(answerC);
                 question.setAnswerD(answerD);
                 question.setFinalAnswer(finalAnswer);
+
+                Level level = Level.EASY;
+                if (Objects.equals(levelStr, "Khó")) {
+                    level = Level.HARD;
+                } else if (Objects.equals(levelStr, "Trung bình")) {
+                    level = Level.MEDIUM;
+                }
+
                 question.setLevel(level);
-//                question.setChapter(subject);
+                question.setChapter(chapter);
                 question.setTeacher(teacher);
 
                 if (postCreateQuestionDTO.getImage() != null) {
@@ -235,8 +240,8 @@ public class QuestionRestController {
                 return new BadResponse<String>(arrayNode.toString()).response();
             }
         } else {
-//            savedQuestion = questionService.save(Question.build(postCreateQuestionDTO,
-//                    userDetailsImpl.getUser(), subject));
+            savedQuestion = questionService.save(Question.build(postCreateQuestionDTO,
+                    userDetailsImpl.getUser(), chapter));
         }
 
         if (postCreateQuestionDTO.getImage() != null) {
@@ -250,43 +255,26 @@ public class QuestionRestController {
     }
 
     @PostMapping("save/multiple")
-    public ResponseEntity<StandardJSONResponse<String>> saveMultipleQuestions(@AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody PostCreateQuestionDTO postCreateQuestionDTO) throws IOException {
+    public ResponseEntity<StandardJSONResponse<String>> saveMultipleQuestions(
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+            @RequestBody List<PostCreateQuestionDTO> questions) throws IOException {
         arrayNode = objectMapper.createArrayNode();
         User teacher = userDetailsImpl.getUser();
-
-        List<ReadQuestionExcelDTO> questions = postCreateQuestionDTO.getQuestions();
 
         int i = 0;
         int totalQuestions = questions.size();
 
-        for (ReadQuestionExcelDTO question : questions) {
+        for (PostCreateQuestionDTO question : questions) {
             String content = question.getContent();
-            String answerA = question.getAnswerA();
-            String answerB = question.getAnswerB();
-            String answerC = question.getAnswerC();
-            String answerD = question.getAnswerD();
-            String finalAnswer = question.getFinalAnswer();
             String subjectName = question.getSubjectName();
             String chapterName = question.getChapterName();
-            String levelStr = question.getLevel();
 
-            Question qst = null;
-            try {
-                qst = questionService.findByContent(question.getContent());
-            } catch (NotFoundException e) {
-            }
-            if (Objects.isNull(content) || Objects.nonNull(qst)) {
+            if (StringUtils.isEmpty(content) || questionService.isContentDuplicated(null, content,
+                    false)) {
                 continue;
             }
 
             i++;
-
-            Level level = Level.EASY;
-            if (Objects.equals(levelStr, "Khó")) {
-                level = Level.HARD;
-            } else if (Objects.equals(levelStr, "Trung bình")) {
-                level = Level.MEDIUM;
-            }
 
             Subject subject = null;
             try {
@@ -308,7 +296,7 @@ public class QuestionRestController {
                         chapterService.save(Chapter.build(chapterName, subject));
             }
 
-            questionService.save(Question.build(postCreateQuestionDTO, teacher, chapter));
+            questionService.save(Question.build(question, teacher, chapter));
         }
 
         String responseMessage = "";

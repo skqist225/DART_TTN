@@ -16,7 +16,6 @@ import {
     addMultipleQuestions,
     setExcelAdd,
 } from "../../features/questionSlice";
-import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
 import { fetchAllChapters } from "../../features/chapterSlice";
 
 const columns = [
@@ -113,8 +112,6 @@ function QuestionsPage() {
         enableOrDisableQuestion: { successMessage: eodqSuccessMessage },
     } = useSelector(questionState);
 
-    const { subjects } = useSelector(subjectState);
-
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
             fetchAllQuestions({
@@ -188,7 +185,7 @@ function QuestionsPage() {
     }, []);
 
     const handleAddSelectedQuestionFromExcelFile = () => {
-        dispatch(addMultipleQuestions(questionsExcel));
+        dispatch(addMultipleQuestions({ questions: questionsExcel }));
     };
 
     useEffect(() => {

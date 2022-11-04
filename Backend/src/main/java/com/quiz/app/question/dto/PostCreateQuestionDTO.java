@@ -21,9 +21,9 @@ public class PostCreateQuestionDTO {
     private String answerC;
     private String answerD;
     private String finalAnswer;
-    private Level level;
-    private String subjectId;
-    private Integer chapter;
+    private String subjectName;
+    private String chapterName;
+    private String level;
+    private Integer chapterId;
     private MultipartFile image;
-    private List<ReadQuestionExcelDTO> questions;
 }

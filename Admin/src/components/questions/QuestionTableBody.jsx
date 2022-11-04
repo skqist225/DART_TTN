@@ -11,18 +11,18 @@ import { MyButton } from "../common";
 import $ from "jquery";
 import { useSelector } from "react-redux";
 
-function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = null }) {
-    function lookupQuestionLevel(level) {
-        switch (level) {
-            case "HARD":
-                return "Khó";
-            case "MEDIUM":
-                return "Trung bình";
-            case "EASY":
-                return "Dễ";
-        }
+export function lookupQuestionLevel(level) {
+    switch (level) {
+        case "HARD":
+            return "Khó";
+        case "MEDIUM":
+            return "Trung bình";
+        case "EASY":
+            return "Dễ";
     }
+}
 
+function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = null }) {
     if (page !== null) {
         rows = rows.slice((page - 1) * 10, page * 10);
     }
@@ -102,7 +102,7 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = 
                     </td>
                     {!addTest && (
                         <td className={cellCss}>
-                            {!excelAdd ? row.subject.name : row.subjectName}
+                            {!excelAdd ? row.chapter.subject.name : row.subjectName}
                         </td>
                     )}
                     {!excelAdd && (
@@ -110,7 +110,7 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = 
                             {row.teacher.firstName} {row.teacher.lastName}
                         </td>
                     )}
-                    <td class='py-2 px-3 flex items-center justify-center'>
+                    <td className='py-2 px-3 flex items-center justify-center'>
                         {!addTest ? (
                             <>
                                 <MyButton

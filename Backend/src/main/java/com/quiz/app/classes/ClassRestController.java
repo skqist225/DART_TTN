@@ -140,21 +140,4 @@ public class ClassRestController {
             return new BadResponse<String>(ex.getMessage()).response();
         }
     }
-
-//    @PutMapping("{id}")
-//    public ResponseEntity<StandardJSONResponse<String>> enableOrDisable(@PathVariable("id") String id,@RequestParam(name = "action") String action) {
-//        try {
-//
-//
-//            if(action.equals("enable")) {
-//                classService.enableClass();
-//            } else  {
-//
-//            }
-//            return new OkResponse<>(classService.deleteById(id)).response();
-//        } catch (ConstrainstViolationException ex) {
-//            return new BadResponse<String>(ex.getMessage()).response();
-//        }
-//    }
-
 }

@@ -6,6 +6,7 @@ import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.question.dto.GetCriteriaDTO;
 import com.quiz.app.question.dto.GetCriteriaQuestionsDTO;
 import com.quiz.app.subject.SubjectService;
+import com.quiz.entity.Chapter;
 import com.quiz.entity.Level;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
@@ -33,6 +34,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -169,18 +171,21 @@ public class QuestionService {
     }
 
     public List<Question> findAll(String subjectId, Integer numberOfQuestions) {
-        return questionRepository.findBySubject(subjectId, numberOfQuestions);
+        try {
+            Subject subject = subjectService.findById(subjectId);
+            List<Integer> chapters =
+                    subject.getChapters().stream().map(Chapter::getId).collect(Collectors.toList());
+            return questionRepository.findBySubject(chapters, numberOfQuestions);
+        } catch (NotFoundException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    public List<GetCriteriaQuestionsDTO> findAll(String subjectId, String criteria) {
-        Subject subject = null;
-
+    public List<GetCriteriaQuestionsDTO> findQuestionsByCriteria(String criteria) {
         List<GetCriteriaQuestionsDTO> getCriteriaQuestionsDTOS = new ArrayList<>();
 
         try {
             String[] criteriaStrArr = criteria.split(";");
-
-            subject = subjectService.findById(subjectId);
 
             for (String criteriaEl : criteriaStrArr) {
                 int chapter = Integer.parseInt(criteriaEl.split(",")[0]);

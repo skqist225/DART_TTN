@@ -25,7 +25,6 @@ function Select({
     }
 
     const { onChange, onBlur, name, ref } = register(propName);
-    const dispatch = useDispatch();
 
     return (
         <>
