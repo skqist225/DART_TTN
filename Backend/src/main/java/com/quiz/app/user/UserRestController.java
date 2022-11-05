@@ -101,7 +101,7 @@ public class UserRestController {
             }
             case "sex": {
                 String newSex = updateData.get("sex");
-                Sex sex = newSex.equals("MALE") ? Sex.MALE : newSex.equals("FEMALE") ? Sex.FEMALE : Sex.OTHER;
+                Sex sex = newSex.equals("MALE") ? Sex.MALE : Sex.FEMALE;
                 currentUser.setSex(sex);
                 savedUser = userService.saveUser(currentUser);
                 break;
@@ -111,7 +111,7 @@ public class UserRestController {
                     return new BadResponse<User>("Gender is required").response();
                 }
                 String newSex = updateData.get("gender");
-                Sex sex = newSex.equals("MALE") ? Sex.MALE : newSex.equals("FEMALE") ? Sex.FEMALE : Sex.OTHER;
+                Sex sex = newSex.equals("MALE") ? Sex.MALE : Sex.FEMALE;
                 currentUser.setSex(sex);
                 savedUser = userService.saveUser(currentUser);
                 break;

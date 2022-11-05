@@ -23,15 +23,23 @@ import java.util.List;
 @Setter
 @Builder
 @Entity
-@Table(name = "subjects")
+@Table(name = "MONHOC")
 public class Subject {
 	@Id
+	@Column(name = "MAMH", columnDefinition = "NCHAR(10)")
 	private String id;
 
-	@Column(nullable = false, unique = true)
+	@Column(name = "TENMH", columnDefinition = "NVARCHAR(50)", nullable = false, unique = true)
 	private String name;
 
+	@Column(name = "HINHANH")
 	private String image;
+
+	@Column(name = "SOTIET_LT", columnDefinition = "SMALLINT", nullable = false)
+	private int numberOfTheoreticalPeriods;
+
+	@Column(name = "SOTIET_TH", columnDefinition = "SMALLINT", nullable = false)
+	private int numberOfPracticePeriods;
 
 	@JsonIgnore
 	@Builder.Default

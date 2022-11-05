@@ -8,7 +8,8 @@ export const fetchAllQuestions = createAsyncThunk(
             page = 1,
             query = "",
             sortField = "id",
-            sortDir = "asc",
+            sortDir = "desc",
+            level = "",
             subject = "",
             numberOfQuestions = 0,
         },
@@ -37,12 +38,22 @@ export const fetchAllQuestions = createAsyncThunk(
                 value: sortDir,
             });
 
+            filterArray.push({
+                field: "level",
+                value: level,
+            });
+
+            filterArray.push({
+                field: "subject",
+                value: subject,
+            });
+
             dispatch(setFilterObject(filterArray));
 
             const {
                 data: { questions, totalElements, totalPages },
             } = await api.get(
-                `/questions?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&numberOfQuestions=${numberOfQuestions}`
+                `/questions?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&level=${level}&subject=${subject}&numberOfQuestions=${numberOfQuestions}`
             );
 
             return { questions, totalElements, totalPages };
@@ -195,7 +206,7 @@ const initialState = {
         page: 1,
         query: "",
         sortField: "id",
-        sortDir: "asc",
+        sortDir: "desc",
     },
     errorObject: null,
     addQuestion: {
@@ -216,6 +227,7 @@ const initialState = {
         successMessage: null,
     },
     loadedQuestions: [],
+    resetFilter: false,
 };
 
 const questionSlice = createSlice({
@@ -270,6 +282,9 @@ const questionSlice = createSlice({
 
                 return question;
             });
+        },
+        setResetFilter(state, { payload }) {
+            state.resetFilter = payload;
         },
     },
     extraReducers: builder => {
@@ -400,6 +415,7 @@ export const {
         setExcelAdd,
         resetLoadedQuestions,
         disableOrEnableLoadedQuestions,
+        setResetFilter,
     },
 } = questionSlice;
 

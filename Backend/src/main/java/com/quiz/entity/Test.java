@@ -16,9 +16,7 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @AllArgsConstructor
@@ -27,41 +25,41 @@ import java.util.Set;
 @Setter
 @Builder
 @Entity
-@Table(name = "tests")
+@Table(name = "BODE")
 public class Test extends BaseEntity {
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "TENBODE", nullable = false, unique = true)
     private String name;
 
+    @Column(name = "HINHANH")
     private String image;
 
+    @Column(name = "SOLANTHI")
     private int numberOfTested;
 
+    @Column(name = "SOLANXEM")
     private int numberOfViews;
 
+    @Column(name = "THOIGIANLAMBAI", columnDefinition = "SMALLINT", nullable = false)
     private int time;
 
+    @Column(name = "SONGUOIDANGTHI")
     private int numberOfCurrentTesting;
 
     @Builder.Default
     @JsonIgnore
     @ManyToMany
-    @JoinTable(name = "tests_questions", joinColumns = @JoinColumn(name = "test_id"),
-            inverseJoinColumns = @JoinColumn(name = "question_id"))
+    @JoinTable(name = "BODE_CAUHOI", joinColumns = @JoinColumn(name = "MABODE"),
+            inverseJoinColumns = @JoinColumn(name = "MACAUHOI"))
     private Set<Question> questions = new HashSet<>();
 
     @ManyToOne
+    @JoinColumn(name = "MAMH")
     private Subject subject;
 
     @ManyToOne
+    @JoinColumn(name = "MAGV")
     private User teacher;
-
-    @Builder.Default
-    @JsonIgnore
-    @ManyToMany
-    @JoinTable(name = "tests_criteria", joinColumns = @JoinColumn(name = "test_id"),
-            inverseJoinColumns = @JoinColumn(name = "criteria_id"))
-    private List<Criteria> criteria = new ArrayList<>();
 
     @Transient
     private int numberOfRightAnswer;
@@ -69,6 +67,8 @@ public class Test extends BaseEntity {
     @Transient
     private float mark;
 
+    @Column(name = "DADUOCSUDUNG")
+    private boolean isUsed;
 
     public void addQuestion(Question question) {
         this.questions.add(question);

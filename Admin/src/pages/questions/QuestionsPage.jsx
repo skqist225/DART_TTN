@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { Frame, QuestionModalBody, QuestionTableBody, Table } from "../../components";
 import $ from "jquery";
 import { questionSchema } from "../../validation";
@@ -17,6 +16,7 @@ import {
     setExcelAdd,
 } from "../../features/questionSlice";
 import { fetchAllChapters } from "../../features/chapterSlice";
+import { fetchAllSubjects } from "../../features/subjectSlice";
 
 const columns = [
     {
@@ -64,12 +64,31 @@ const columns = [
         sortField: "teacher",
         sortable: true,
     },
+    {
+        name: "Thao tác",
+        sortable: false,
+    },
 ];
 
 function QuestionsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [image, setImage] = useState(null);
+    const dispatch = useDispatch();
+
+    const {
+        questions,
+        questionsExcel,
+        errorObject,
+        totalElements,
+        totalPages,
+        filterObject,
+        addQuestion: { successMessage },
+        editQuestion: { successMessage: eqSuccessMessage },
+        deleteQuestion: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
+        addMultipleQuestions: { successMessage: amqSuccessMessage },
+        enableOrDisableQuestion: { successMessage: eodqSuccessMessage },
+    } = useSelector(questionState);
 
     const {
         register,
@@ -79,6 +98,17 @@ function QuestionsPage() {
     } = useForm({
         resolver: yupResolver(questionSchema),
     });
+
+    useEffect(() => {
+        if (!isEdit) {
+            setValue("id", "");
+            setValue("content", "");
+            setValue("answerA", "");
+            setValue("answerB", "");
+            setValue("answerC", "");
+            setValue("answerD", "");
+        }
+    }, [isEdit]);
 
     const onSubmit = data => {
         const formData = new FormData();
@@ -98,19 +128,15 @@ function QuestionsPage() {
         }
     };
 
-    const {
-        questions,
-        questionsExcel,
-        errorObject,
-        totalElements,
-        totalPages,
-        filterObject,
-        addQuestion: { successMessage },
-        editQuestion: { successMessage: eqSuccessMessage },
-        deleteQuestion: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
-        addMultipleQuestions: { successMessage: amqSuccessMessage },
-        enableOrDisableQuestion: { successMessage: eodqSuccessMessage },
-    } = useSelector(questionState);
+    useEffect(() => {
+        dispatch(
+            fetchAllQuestions({
+                page: 1,
+            })
+        );
+        dispatch(fetchAllChapters({ page: 0 }));
+        dispatch(fetchAllSubjects({ page: 0 }));
+    }, []);
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
@@ -142,6 +168,7 @@ function QuestionsPage() {
             callToast("success", successMessage);
             $("#questionForm")[0].reset();
             dispatch(fetchAllQuestions(filterObject));
+            $("#questionModal").css("display", "none");
             setImage(null);
         }
     }, [successMessage]);
@@ -174,16 +201,6 @@ function QuestionsPage() {
         }
     }, [errorObject]);
 
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(
-            fetchAllQuestions({
-                page: 1,
-            })
-        );
-        dispatch(fetchAllChapters({ page: 0 }));
-    }, []);
-
     const handleAddSelectedQuestionFromExcelFile = () => {
         dispatch(addMultipleQuestions({ questions: questionsExcel }));
     };
@@ -215,7 +232,6 @@ function QuestionsPage() {
             title={"DANH SÁCH CÂU HỎI"}
             children={
                 <Table
-                    searchPlaceHolder={"Tìm kiếm theo tên và mã câu hỏi"}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={columns}
@@ -241,6 +257,7 @@ function QuestionsPage() {
                             dispatch={dispatch}
                             setValue={setValue}
                             setImage={setImage}
+                            isEdit={isEdit}
                         />
                     }
                     isEdit={isEdit}

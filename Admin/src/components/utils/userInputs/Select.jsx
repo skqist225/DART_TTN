@@ -1,6 +1,4 @@
 import React from "react";
-import { useDispatch } from "react-redux";
-import { fetchAllQuestions } from "../../../features/questionSlice";
 import ErrorMessage from "../errors/ErrorMessage";
 
 function Select({
@@ -13,6 +11,8 @@ function Select({
     options,
     defaultValue,
     setValue,
+    onChangeHandler,
+    hiddenOption = false,
 }) {
     if (setValue) {
         if (defaultValue) {
@@ -32,7 +32,7 @@ function Select({
                 htmlFor={propName}
                 className={`${labelClassName} ${error && "text-red-700 dark:text-red-500"}`}
             >
-                {label}
+                {!hiddenOption && label}
             </label>
             <select
                 id={propName}
@@ -40,10 +40,19 @@ function Select({
                 name={name}
                 onChange={e => {
                     onChange(e);
+                    if (onChangeHandler) {
+                        onChangeHandler(e);
+                    }
                 }}
                 onBlur={onBlur}
                 ref={ref}
             >
+                {hiddenOption && (
+                    <option value='' disabled selected style={{ display: "none" }}>
+                        Chọn {label}
+                    </option>
+                )}
+
                 {options.map(({ value, title }) => (
                     <option
                         value={value}

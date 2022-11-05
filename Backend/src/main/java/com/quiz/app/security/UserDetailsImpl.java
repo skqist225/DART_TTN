@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.Set;
 
 public class UserDetailsImpl implements UserDetails {
 	private static final long serialVersionUID = 1;
@@ -25,9 +26,11 @@ public class UserDetailsImpl implements UserDetails {
 	}
 
 	public static UserDetailsImpl build(User user) {
-		Role role = user.getRole();
+		Set<Role> roles = user.getRoles();
 		List<SimpleGrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+		for (Role role : roles) {
+			authorities.add(new SimpleGrantedAuthority("ROLE_" + role.getName()));
+		}
 
 		return new UserDetailsImpl(user, authorities);
 	}

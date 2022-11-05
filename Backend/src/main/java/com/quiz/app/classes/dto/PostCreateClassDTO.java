@@ -12,4 +12,5 @@ import lombok.Setter;
 public class PostCreateClassDTO {
     private String id;
     private String name;
+    private String facultyId;
 }

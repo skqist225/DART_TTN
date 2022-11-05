@@ -3,7 +3,12 @@ import { CloseIcon } from "../../../images";
 import { tailwindCss } from "../../../tailwind";
 import $ from "jquery";
 import { useSelector } from "react-redux";
-import { questionState, resetLoadedQuestions, setExcelAdd } from "../../../features/questionSlice";
+import {
+    questionState,
+    resetLoadedQuestions,
+    setEditedQuestion,
+    setExcelAdd,
+} from "../../../features/questionSlice";
 import { useDispatch } from "react-redux";
 import { addTest } from "../../../features/testSlice";
 import { callToast } from "../../../helpers";
@@ -49,8 +54,9 @@ function TableModal({
                             data-modal-toggle={modalId}
                             onClick={() => {
                                 $("#" + modalId).css("display", "none");
-                                dispatch(setExcelAdd(false));
                                 setIsEdit(false);
+                                dispatch(setExcelAdd(false));
+                                dispatch(setEditedQuestion(null));
                                 dispatch(resetLoadedQuestions());
                             }}
                         >

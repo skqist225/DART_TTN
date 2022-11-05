@@ -122,18 +122,16 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = 
                                     }}
                                 />
                                 {!excelAdd && (
-                                    <>
-                                        <div className='mx-3'>
-                                            <MyButton
-                                                type='delete'
-                                                onClick={() => {
-                                                    dispatch(deleteQuestion(row.id));
-                                                }}
-                                            />
-                                        </div>
-                                    </>
+                                    <div className='mx-1'>
+                                        <MyButton
+                                            type='delete'
+                                            onClick={() => {
+                                                dispatch(deleteQuestion(row.id));
+                                            }}
+                                        />
+                                    </div>
                                 )}
-                                <div className='mx-3'>
+                                <div>
                                     {row.status ? (
                                         <MyButton
                                             type='disable'

@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 public class QuestionService {
     private final String DELETE_SUCCESSFULLY = "Xóa câu hỏi thành công";
     private final String DELETE_FORBIDDEN = "Không thể xóa câu hỏi này vì ràng buộc dữ liệu";
-    private final Integer MAX_QUESTIONS_PER_PAGE = 20;
+    private final Integer MAX_QUESTIONS_PER_PAGE = 10;
 
     @Autowired
     QuestionRepository questionRepository;
@@ -123,6 +123,8 @@ public class QuestionService {
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
+        String subjectId = filters.get("subjectId");
+        String levelStr = filters.get("level");
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
@@ -137,11 +139,62 @@ public class QuestionService {
         if (!StringUtils.isEmpty(searchQuery)) {
             Expression<String> id = root.get("id");
             Expression<String> content = root.get("content");
+            Expression<String> answerA = root.get("answerA");
+            Expression<String> answerB = root.get("answerB");
+            Expression<String> answerC = root.get("answerC");
+            Expression<String> answerD = root.get("answerD");
+            Expression<String> finalAnswer = root.get("finalAnswer");
+            Expression<String> chapterName = root.get("chapter").get("name");
+            Expression<String> teacherFirstName = root.get("teacher").get("firstName");
+            Expression<String> teacherLastName = root.get("teacher").get("lastName");
 
             Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, content);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, answerA);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, answerB);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, answerC);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, answerD);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, finalAnswer);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, chapterName);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, teacherFirstName);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, teacherLastName);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
+        }
+
+        if (!StringUtils.isEmpty(subjectId)) {
+            Expression<Integer> chapterId = root.get("chapter").get("id");
+
+            try {
+                Subject subject = subjectService.findById(subjectId);
+                List<Integer> chapterIds =
+                        subject.getChapters().stream().map(Chapter::getId).collect(Collectors.toList());
+
+                predicates.add(criteriaBuilder.and(chapterId.in(chapterIds)));
+            } catch (NotFoundException e) {
+            }
+        }
+        System.out.println(levelStr);
+        if (!StringUtils.isEmpty(levelStr)) {
+            System.out.println(levelStr);
+            Expression<Level> levelReal = root.get("level");
+
+            Level level = Level.EASY;
+            if (Objects.equals(levelStr, "Khó")) {
+                level = Level.HARD;
+            } else if (Objects.equals(levelStr, "Trung bình")) {
+                level = Level.MEDIUM;
+            }
+
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(levelReal, level)));
         }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));

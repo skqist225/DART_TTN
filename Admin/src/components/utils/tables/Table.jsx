@@ -7,8 +7,8 @@ import { tailwindCss } from "../../../tailwind";
 import $ from "jquery";
 import { DropDownIcon, ExcelIcon } from "../../../images";
 import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { questionState, setExcelAdd } from "../../../features/questionSlice";
+import { setEditedQuestion, setExcelAdd } from "../../../features/questionSlice";
+import QuestionsFilter from "../../questions/QuestionsFilter";
 
 function Table({
     searchPlaceHolder,
@@ -35,11 +35,14 @@ function Table({
 
     return (
         <div className='overflow-x-auto relative shadow-md sm:rounded-lg overflow-y-auto'>
-            <div className='flex items-center'>
-                <TableSearch
-                    placeHolder={searchPlaceHolder}
-                    handleQueryChange={handleQueryChange}
-                />
+            <div className='flex items-center justify-between'>
+                <div className='flex items-center'>
+                    <TableSearch
+                        placeHolder={searchPlaceHolder}
+                        handleQueryChange={handleQueryChange}
+                    />
+                    {modalLabel === "câu hỏi" && <QuestionsFilter />}
+                </div>
 
                 {!["câu hỏi"].includes(modalLabel) ? (
                     <div className='mr-5'>
@@ -85,6 +88,7 @@ function Table({
                                     onClick={() => {
                                         $("#" + modalId).css("display", "flex");
                                         setIsEdit(false);
+                                        dispatch(setEditedQuestion(null));
                                     }}
                                 >
                                     Thêm {modalLabel}

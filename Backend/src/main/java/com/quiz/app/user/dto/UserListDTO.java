@@ -1,11 +1,14 @@
 package com.quiz.app.user.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.quiz.entity.Role;
 import com.quiz.entity.User;
 
 import lombok.*;
 
 import java.time.LocalDate;
+import java.util.HashSet;
+import java.util.Set;
 
 @Getter
 @Setter
@@ -19,7 +22,7 @@ public class UserListDTO {
     private String sex;
     @JsonFormat(pattern = "dd-MM-yyyy")
     private LocalDate birthday;
-    private String role;
+    private Set<String> roles;
     private boolean emailVerified;
     private boolean phoneVerified;
     private boolean identityVerified;
@@ -27,12 +30,18 @@ public class UserListDTO {
     private boolean status;
 
     public static UserListDTO build(User user) {
+        Set<String> roles = new HashSet<>();
+
+        for(Role role : user.getRoles()) {
+            roles.add(role.getName());
+        }
+
         return UserListDTO.builder()
                 .id(user.getId())
                 .fullName(user.getFullName())
                 .avatar(user.getAvatarPath())
                 .sex(user.getSex().toString())
-                .role(user.getRole().getName())
+                .roles(roles)
                 .birthday(user.getBirthday())
                 .emailVerified(user.isEmailVerified())
                 .identityVerified(false)

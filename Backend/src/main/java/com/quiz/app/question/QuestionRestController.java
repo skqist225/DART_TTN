@@ -95,6 +95,7 @@ public class QuestionRestController {
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
+            @RequestParam(name = "level", required = false, defaultValue = "") String level,
             @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
             @RequestParam(name = "numberOfQuestions", required = false, defaultValue = "") Integer numberOfQuestions
     ) {
@@ -119,6 +120,8 @@ public class QuestionRestController {
             filters.put("query", query);
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
+            filters.put("subjectId", subjectId);
+            filters.put("level", level);
 
             Page<Question> questionPage = questionService.findAllQuestions(filters);
             questionsDTO.setQuestions(questionPage.getContent());
@@ -310,7 +313,7 @@ public class QuestionRestController {
     }
 
     @PostMapping("excel/read")
-    public ResponseEntity<StandardJSONResponse<QuestionsDTO>> readExcelFile(@RequestParam(name = "file") MultipartFile excelFile) throws IOException {
+    public ResponseEntity<StandardJSONResponse<QuestionsDTO<ReadQuestionExcelDTO>>> readExcelFile(@RequestParam(name = "file") MultipartFile excelFile) throws IOException {
         List<ReadQuestionExcelDTO> questions = new ArrayList<>();
         ExcelUtils excelUtils = new ExcelUtils((FileInputStream) excelFile.getInputStream());
 
@@ -323,12 +326,11 @@ public class QuestionRestController {
             questionsDTO.setTotalElements(questions.size());
             questionsDTO.setTotalPages((int) Math.ceil(questions.size() / 10.0));
 
-            return new OkResponse<QuestionsDTO>(questionsDTO).response();
+            return new OkResponse<>(questionsDTO).response();
         } catch (NotFoundException e) {
-            return new BadResponse<QuestionsDTO>(e.getMessage()).response();
+            return new BadResponse<QuestionsDTO<ReadQuestionExcelDTO>>(e.getMessage()).response();
         }
     }
-
 
     @DeleteMapping("{id}/delete")
     public ResponseEntity<StandardJSONResponse<String>> delete(@PathVariable("id") Integer id) {

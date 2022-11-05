@@ -34,68 +34,69 @@ import java.util.Set;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "users")
+@Table(name = "NGUOIDUNG")
 public class User {
     @Id
+    @Column(name = "MANGUOIDUNG", columnDefinition = "NCHAR(10)")
     private String id;
 
-    @Column(nullable = false, length = 48)
+    @Column(name = "TEN", columnDefinition = "NVARCHAR(50)", nullable = false)
     private String firstName;
 
-    @Column(nullable = false, length = 48)
+    @Column(name = "HO", columnDefinition = "NVARCHAR(10)", nullable = false)
     private String lastName;
 
+    @ManyToOne
+    @JoinColumn(name = "MALOP")
+    private Class cls;
+
     @Enumerated(EnumType.STRING)
-    @Column(length = 10, nullable = false)
+    @Column(name = "GIOITINH", length = 10, nullable = false)
     private Sex sex;
 
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Column(nullable = false)
+    @Column(name = "NGAYSINH", nullable = false)
     private LocalDate birthday;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "DIACHI", columnDefinition = "NVARCHAR(255)")
+    private String address;
+
+    @Column(name = "EMAIL", nullable = false, unique = true)
     private String email;
 
     @JsonIgnore
-    @Column(nullable = false, length = 255)
+    @Column(name = "MATKHAU", nullable = false, length = 255)
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @Column(columnDefinition = "TEXT", nullable = false)
-    private String address;
-
+    @Column(name = "DANGHIHOC", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean status;
 
     @JsonIgnore
+    @Column(name = "MADOIMATKHAU")
     private Integer resetPasswordCode;
 
     @JsonIgnore
+    @Column(name = "THOIHANDOIMATKHAU")
     private LocalDateTime resetPasswordExpirationTime;
 
-    @ManyToOne
-    @JoinColumn(name = "role_id")
-    private Role role;
+    @Builder.Default
+    @ManyToMany
+    @JoinTable(name = "VAITRO", joinColumns = @JoinColumn(name = "MANGUOIDUNG"),
+            inverseJoinColumns = @JoinColumn(name = "MAVAITRO"))
+    private Set<Role> roles = new HashSet<>();
 
     @Builder.Default
-    @Column(name = "email_verified", columnDefinition = "boolean default false")
+    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean emailVerified = false;
 
     @JsonIgnore
+    @Column(name = "ANHDAIDIEN")
     private String avatar;
 
     @Transient
     private String token;
-
-    @ManyToOne
-    @JoinColumn(name = "class_id")
-    private Class cls;
-
-    @Builder.Default
-    @ManyToMany
-    @JoinTable(name = "users_subjects", joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "subject_id"))
-    private Set<Subject> subjects = new HashSet<>();
 
     @Transient
     @JsonIgnore
@@ -110,14 +111,17 @@ public class User {
         Integer roleId = registerDTO.getRoleId();
         String address = registerDTO.getAddress();
 
+        Set<Role> roles = new HashSet<>();
         Role role = new Role(2);
-        if (Objects.nonNull(roleId)) {
+        roles.add(role);
+        if (Objects.nonNull(roleId) && !roleId.equals(2)) {
             role = new Role(roleId);
+            roles.add(role);
         }
 
         return User.builder().id(id).firstName(firstName).lastName(lastName)
                 .email(email).password(password).sex(sex)
-                .birthday(birthday).role(role)
+                .birthday(birthday).roles(roles)
                 .emailVerified(false)
                 .status(true)
                 .cls(cls)
@@ -140,6 +144,12 @@ public class User {
     }
 
     public boolean hasRole(String role) {
-        return role.equals(this.getRole().getName());
+        for (Role rle : roles) {
+            if (rle.getName().equals(role)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

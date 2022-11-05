@@ -76,7 +76,7 @@ public class AuthRestController {
             User user = userService.findById(loginDTO.getId());
             user.setToken(token);
 
-            if (admin.equals("true") && !user.getRole().getName().equals("Admin")) {
+            if (admin.equals("true") && !user.hasRole("Admin")) {
                 return new ForbiddenResponse<User>(
                         "Tài khoản của bạn không đủ quyền để truy cập tài nguyên này").response();
             }

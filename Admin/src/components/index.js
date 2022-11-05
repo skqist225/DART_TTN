@@ -2,6 +2,7 @@
 export { default as Select } from "./utils/userInputs/Select";
 export { default as TextArea } from "./utils/userInputs/TextArea";
 export { default as Input } from "./utils/userInputs/Input";
+export { default as FileInput } from "./utils/userInputs/FileInput";
 
 // errors
 export { default as ErrorMessage } from "./utils/errors/ErrorMessage";
@@ -20,8 +21,9 @@ export { default as Table } from "./utils/tables/Table";
 export { default as DatePicker } from "./utils/datePicker/DatePicker";
 
 //questions
-export { default as QuestionModalBody } from "./questions/QuestionModalBody";
 export { default as QuestionExcelModalBody } from "./questions/QuestionExcelModalBody";
+export { default as QuestionModalBody } from "./questions/QuestionModalBody";
+export { default as QuestionsFilter } from "./questions/QuestionsFilter";
 export { default as QuestionTableBody } from "./questions/QuestionTableBody";
 
 //subjects

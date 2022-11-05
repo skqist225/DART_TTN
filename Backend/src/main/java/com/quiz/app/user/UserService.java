@@ -4,7 +4,6 @@ import com.quiz.app.exception.UserNotFoundException;
 import com.quiz.app.exception.VerifiedUserException;
 import com.quiz.app.user.dto.CountUserByRole;
 import com.quiz.app.user.dto.UserListResponse;
-import com.quiz.entity.Role;
 import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -161,8 +160,9 @@ public class UserService {
     }
 
     public CountUserByRole countUserByRole() {
-        return new CountUserByRole(userRepository.countUserByRole(1), userRepository.countUserByRole(2),
-                userRepository.countUserByRole(3));
+        return null;
+//        return new CountUserByRole(userRepository.countUserByRole(1), userRepository.countUserByRole(2),
+//                userRepository.countUserByRole(3));
     }
 
     @Transactional
@@ -182,7 +182,7 @@ public class UserService {
             }
         } else {
             // 2 is User
-            user.setRole(new Role(2));
+//            user.setRole(new Role(2));
             encodePassword(user);
         }
 
@@ -204,3 +204,5 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
     }
 }
+
+//1 de thi ra roi la khong dung lai

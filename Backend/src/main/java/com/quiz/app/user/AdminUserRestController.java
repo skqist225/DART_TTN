@@ -141,7 +141,7 @@ public class AdminUserRestController {
 
             try {
                 Role role = roleService.findById(updateUserDTO.getRoleId());
-                user.setRole(role);
+//                user.setRole(role);
             } catch (NotFoundException e) {
                 addError("roleId", "Vai trò không tồn tại");
             }

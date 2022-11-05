@@ -21,41 +21,42 @@ import java.util.Objects;
 @Setter
 @Builder
 @Entity
-@Table(name = "questions")
+@Table(name = "CAUHOI")
 public class Question extends BaseEntity {
 
-	@Column(columnDefinition = "TEXT", nullable = false, unique = true)
+	@Column(name = "NOIDUNGCH", columnDefinition = "TEXT", nullable = false, unique = true)
 	private String content;
 
-	@Column(columnDefinition = "TEXT", nullable = false)
+	@Column(name = "DAPANA", columnDefinition = "TEXT", nullable = false)
 	private String answerA;
 
-	@Column(columnDefinition = "TEXT", nullable = false)
+	@Column(name = "DAPANB", columnDefinition = "TEXT", nullable = false)
 	private String answerB;
 
-	@Column(columnDefinition = "TEXT", nullable = false)
+	@Column(name = "DAPANC", columnDefinition = "TEXT", nullable = false)
 	private String answerC;
 
-	@Column(columnDefinition = "TEXT", nullable = false)
+	@Column(name = "DAPAND", columnDefinition = "TEXT", nullable = false)
 	private String answerD;
 
-	@Column(nullable = false)
+	@Column(name = "DAPAN", columnDefinition = "NCHAR(1)", nullable = false)
 	private String finalAnswer;
 
-	@Column(nullable = false)
+	@Column(name = "DOKHO", nullable = false)
 	private Level level;
 
+	@Column(name = "HINHANH")
 	private String image;
 
 	@Transient
 	private String selectedAnswer;
 
 	@ManyToOne
-	@JoinColumn(name = "chapter_id", nullable = false)
+	@JoinColumn(name = "MACHUONG", nullable = false)
 	private Chapter chapter;
 
 	@ManyToOne
-	@JoinColumn(nullable = false)
+	@JoinColumn(name = "MAGV", nullable = false)
 	private User teacher;
 
 	public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,

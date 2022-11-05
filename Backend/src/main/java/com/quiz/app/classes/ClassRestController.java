@@ -3,8 +3,8 @@ package com.quiz.app.classes;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.quiz.app.classes.dto.PostCreateClassDTO;
 import com.quiz.app.classes.dto.ClassesDTO;
+import com.quiz.app.classes.dto.PostCreateClassDTO;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
@@ -18,7 +18,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -90,6 +89,7 @@ public class ClassRestController {
 
         String id = postCreateClassDTO.getId();
         String name = postCreateClassDTO.getName();
+        String facultyId = postCreateClassDTO.getFacultyId();
 
         if (Objects.isNull(id)) {
             addError("id", "Mã lớp không được để trống");
@@ -99,15 +99,19 @@ public class ClassRestController {
             addError("name", "Tên lớp không được để trống");
         }
 
+        if (Objects.isNull(facultyId)) {
+            addError("facultyId", "Khoa không được để trống");
+        }
+
         if (arrayNode.size() > 0) {
             return new BadResponse<Class>(arrayNode.toString()).response();
         } else {
             if (classService.isIdDuplicated(id, isEdit)) {
-                addError("id","Mã lớp đã tồn tại" );
+                addError("id", "Mã lớp đã tồn tại");
             }
 
             if (classService.isNameDuplicated(id, name, isEdit)) {
-                addError("name","Tên lớp đã tồn tại" );
+                addError("name", "Tên lớp đã tồn tại");
             }
 
             if (arrayNode.size() > 0) {
@@ -126,7 +130,7 @@ public class ClassRestController {
                 return new BadResponse<Class>(exception.getMessage()).response();
             }
         } else {
-            savedSubject = classService.save(Class.build(postCreateClassDTO));
+            savedSubject = classService.save(Class.build(postCreateClassDTO, null));
         }
 
         return new OkResponse<>(savedSubject).response();

@@ -2,7 +2,9 @@ package com.quiz.app.user;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
+import com.quiz.entity.Role;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -19,8 +21,8 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     public Page<User> findAll(Pageable pageable);
 
-    @Query("SELECT count(*) FROM User u WHERE u.role.id = :roleId")
-    public Integer countUserByRole(Integer roleId);
+//    @Query("SELECT count(*) FROM User u WHERE u.role.id IN (:roles)")
+//    public Integer countUserByRole(Set<Role> roles);
 
     @Query("SELECT count(*) From User ")
     public Integer getNumberOfUser();

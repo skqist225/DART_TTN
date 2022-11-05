@@ -7,36 +7,52 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.IdClass;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "results")
-@IdClass(ResultId.class)
-public class Result {
-    @Id
-    @ManyToOne
-    private Test test;
+@Table(name = "KETQUA")
+public class Result extends BaseEntity {
+    @OneToOne
+    @JoinColumns({
+            @JoinColumn(name = "MALTC"),
+            @JoinColumn(name = "MASV"),
+    })
+    private Register register;
 
-    @Id
     @ManyToOne
-    private User user;
-
-    @Id
-    @ManyToOne
+    @JoinColumn(name = "MACATHI")
     private Exam exam;
 
+    @ManyToOne
+    @JoinColumn(name = "MABODE")
+    private Test test;
+
+    @Column(name = "SULUACHONHIENTAI")
     private String currentResult;
 
+    @Column(name = "SULUACHONCUOICUNG")
     private String finalResult;
 
-    private boolean status;
+    @Column(name = "DIEM")
+    private float mark;
+
+    @Column(name = "THOIGIANHOANTHANH", columnDefinition = "SMALLINT")
+    private int timeToComplete;
+
+    @Column(name = "THICHINHTHUC")
+    private boolean isOfficialExam;
+
+    @Column(name = "HOANTHANH")
+    private boolean isComplete;
 }

@@ -16,6 +16,7 @@ import com.quiz.entity.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,17 +59,15 @@ public class ChapterRestController {
             @RequestParam("page") String page,
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
-            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField
+            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
+            @RequestParam(name = "subject", required = false, defaultValue = "id") String subjectId
     ) {
-        Map<String, String> filters = new HashMap<>();
-        filters.put("page",page);
-        filters.put("query", query);
-        filters.put("sortDir", sortDir);
-        filters.put("sortField", sortField);
-
         ChaptersDTO chaptersDTO = new ChaptersDTO();
 
         if(page.equals("0")) {
+            if(!StringUtils.isEmpty(subjectId)) {
+
+            }
             List<Chapter> chapters = chapterService.findAll();
 
             chaptersDTO.setChapters(chapters.stream().sorted(Comparator.comparing(Chapter::getName))
@@ -77,6 +76,12 @@ public class ChapterRestController {
             chaptersDTO.setTotalPages(0);
 
         } else {
+            Map<String, String> filters = new HashMap<>();
+            filters.put("page", page);
+            filters.put("query", query);
+            filters.put("sortDir", sortDir);
+            filters.put("sortField", sortField);
+
             Page<Chapter> chaptersPage = chapterService.findAllSubjects(filters);
 
             chaptersDTO.setChapters(chaptersPage.getContent());

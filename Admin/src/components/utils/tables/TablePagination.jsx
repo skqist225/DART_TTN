@@ -1,23 +1,48 @@
-import React from "react";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
-import { questionState } from "../../../features/questionSlice";
+import React, { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { questionState, setResetFilter } from "../../../features/questionSlice";
 
 function TablePagination({ totalElements, totalPages, setPage, fetchDataByPageNumber }) {
-    const { excelAdd } = useSelector(questionState);
+    const dispatch = useDispatch();
+    const [currentIndex, setCurrentIndex] = useState(1);
+    const { resetFilter, excelAdd } = useSelector(questionState);
+
+    useEffect(() => {
+        if (resetFilter) {
+            setCurrentIndex(1);
+        }
+    }, [resetFilter]);
+
+    useEffect(() => {
+        if (currentIndex == 1) {
+            dispatch(setResetFilter(false));
+        }
+    }, [currentIndex]);
 
     return (
         <nav className='col-flex justify-between items-center pt-4' aria-label='Table navigation'>
             <span className='text-sm font-normal text-gray-500 dark:text-gray-400'>
-                Hiển thị <span className='font-semibold text-gray-900 dark:text-white'>1-10</span>{" "}
+                Hiển thị{" "}
+                <span className='font-semibold text-gray-900 dark:text-white'>
+                    {(currentIndex - 1) * 10 + 1}-{currentIndex * 10}
+                </span>{" "}
                 của{" "}
                 <span className='font-semibold text-gray-900 dark:text-white'>{totalElements}</span>
             </span>
             <ul className='inline-flex items-center -space-x-px'>
                 <li>
-                    <a
-                        href='#'
-                        className='block py-2 px-3 ml-0 leading-tight text-gray-500 bg-white rounded-l-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+                    <button
+                        className='rounded-l-lg py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+                        onClick={e => {
+                            if (currentIndex > 1) {
+                                if (excelAdd && setPage) {
+                                    setPage(currentIndex - 1);
+                                } else {
+                                    fetchDataByPageNumber(currentIndex - 1);
+                                }
+                                setCurrentIndex(currentIndex - 1);
+                            }
+                        }}
                     >
                         <span className='sr-only'>Previous</span>
                         <svg
@@ -33,18 +58,19 @@ function TablePagination({ totalElements, totalPages, setPage, fetchDataByPageNu
                                 clipRule='evenodd'
                             ></path>
                         </svg>
-                    </a>
+                    </button>
                 </li>
                 {Array.from({ length: totalPages }).map((page, index) => (
                     <li key={index + 1}>
                         <button
-                            className='py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+                            className='py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white '
                             onClick={e => {
                                 if (excelAdd && setPage) {
                                     setPage(index + 1);
                                 } else {
                                     fetchDataByPageNumber(index + 1);
                                 }
+                                setCurrentIndex(index + 1);
                             }}
                         >
                             {index + 1}
@@ -52,9 +78,18 @@ function TablePagination({ totalElements, totalPages, setPage, fetchDataByPageNu
                     </li>
                 ))}
                 <li>
-                    <a
-                        href='#'
-                        className='block py-2 px-3 leading-tight text-gray-500 bg-white rounded-r-lg border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+                    <button
+                        className='rounded-r-lg py-2 px-3 leading-tight text-gray-500 bg-white border border-gray-300 hover:bg-gray-100 hover:text-gray-700 dark:bg-gray-800 dark:border-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white'
+                        onClick={e => {
+                            if (currentIndex < totalPages) {
+                                if (excelAdd && setPage) {
+                                    setPage(currentIndex + 1);
+                                } else {
+                                    fetchDataByPageNumber(currentIndex + 1);
+                                }
+                                setCurrentIndex(currentIndex + 1);
+                            }
+                        }}
                     >
                         <span className='sr-only'>Next</span>
                         <svg
@@ -70,7 +105,7 @@ function TablePagination({ totalElements, totalPages, setPage, fetchDataByPageNu
                                 clipRule='evenodd'
                             ></path>
                         </svg>
-                    </a>
+                    </button>
                 </li>
             </ul>
         </nav>
