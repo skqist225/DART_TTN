@@ -1,8 +1,6 @@
 package com.quiz.app.subject;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.quiz.app.common.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
@@ -36,15 +34,10 @@ public class SubjectRestController {
     @Autowired
     private SubjectService subjectService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
+    private CommonUtils commonUtils;
 
-    private ArrayNode arrayNode;
-
-    public void addError(String fieldName, String fieldError) {
-        ObjectNode node = objectMapper.createObjectNode();
-        node.put(fieldName, fieldError);
-        arrayNode.add(node);
+    public SubjectRestController() {
+        commonUtils = new CommonUtils();
     }
 
     @GetMapping("")
@@ -101,33 +94,32 @@ public class SubjectRestController {
             @RequestBody PostCreateSubjectDTO postCreateSubjectDTO,
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
     ) {
-        arrayNode = objectMapper.createArrayNode();
         Subject savedSubject = null;
 
         String id = postCreateSubjectDTO.getId();
         String name = postCreateSubjectDTO.getName();
 
         if (Objects.isNull(id)) {
-            addError("id", "Mã môn học không được để trống");
+            commonUtils.addError("id", "Mã môn học không được để trống");
         }
 
         if (Objects.isNull(name)) {
-            addError("name", "Tên môn học không được để trống");
+            commonUtils.addError("name", "Tên môn học không được để trống");
         }
 
-        if (arrayNode.size() > 0) {
-            return new BadResponse<Subject>(arrayNode.toString()).response();
+        if (commonUtils.getArrayNode().size() > 0) {
+            return new BadResponse<Subject>(commonUtils.getArrayNode().toString()).response();
         } else {
             if (subjectService.isIdDuplicated(id, isEdit)) {
-                addError("id","Mã môn học đã tồn tại" );
+                commonUtils.addError("id", "Mã môn học đã tồn tại");
             }
 
             if (subjectService.isNameDuplicated(id, name, isEdit)) {
-                addError("name","Tên môn học đã tồn tại" );
+                commonUtils.addError("name", "Tên môn học đã tồn tại");
             }
 
-            if (arrayNode.size() > 0) {
-                return new BadResponse<Subject>(arrayNode.toString()).response();
+            if (commonUtils.getArrayNode().size() > 0) {
+                return new BadResponse<Subject>(commonUtils.getArrayNode().toString()).response();
             }
         }
 

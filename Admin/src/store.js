@@ -20,6 +20,7 @@ import {
     testSlice,
     userSlice,
 } from "./features";
+import roleSlice from "./features/roleSlice";
 
 const rootReducer = combineReducers({
     auth: authSlice,
@@ -29,6 +30,7 @@ const rootReducer = combineReducers({
     class: classSlice,
     test: testSlice,
     chapter: chapterSlice,
+    role: roleSlice,
 });
 
 const persistConfig = {

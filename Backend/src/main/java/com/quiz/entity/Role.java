@@ -1,8 +1,8 @@
 package com.quiz.entity;
 
+import com.quiz.app.role.dto.PostCreateRoleDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -32,5 +32,9 @@ public class Role {
 
 	public Role(int id) {
 		this.id = id;
+	}
+
+	public static Role build(PostCreateRoleDTO postCreateRoleDTO) {
+		return Role.builder().name(postCreateRoleDTO.getName()).build();
 	}
 }

@@ -12,6 +12,7 @@ import {
 import { useDispatch } from "react-redux";
 import { addTest } from "../../../features/testSlice";
 import { callToast } from "../../../helpers";
+import { setEditedRole } from "../../../features/roleSlice";
 
 function TableModal({
     modalId,
@@ -57,6 +58,7 @@ function TableModal({
                                 setIsEdit(false);
                                 dispatch(setExcelAdd(false));
                                 dispatch(setEditedQuestion(null));
+                                dispatch(setEditedRole(null));
                                 dispatch(resetLoadedQuestions());
                             }}
                         >

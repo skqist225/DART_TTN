@@ -30,9 +30,6 @@ public class Question extends BaseEntity {
 	@Column(name = "NOIDUNGCAUHOI", columnDefinition = "TEXT", nullable = false, unique = true)
 	private String content;
 
-	@Column(name = "DAPAN", columnDefinition = "NCHAR(1)", nullable = false)
-	private String finalAnswer;
-
 	@Column(name = "DOKHO", nullable = false)
 	private Level level;
 

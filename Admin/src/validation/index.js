@@ -72,3 +72,9 @@ export const chapterSchema = yup
         subjectId: yup.string().required("Môn học không được để  trống"),
     })
     .required();
+
+export const roleSchema = yup
+    .object({
+        name: yup.string().required("Tên vai trò được để trống"),
+    })
+    .required();

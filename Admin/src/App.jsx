@@ -4,9 +4,19 @@ import "./css/style.scss";
 import "./charts/ChartjsConfig";
 
 import Dashboard from "./pages/Dashboard";
-import { ChaptersPage, ClassesPage, QuestionsPage, SubjectsPage, UsersPage } from "./pages";
-import LoginPage from "./pages/auth/LoginPage";
-import TestsPage from "./pages/tests/TestsPage";
+import {
+    ChaptersPage,
+    ClassesPage,
+    CreditClassesPage,
+    ExamsPage,
+    FacultiesPage,
+    QuestionsPage,
+    RolesPage,
+    SubjectsPage,
+    UsersPage,
+    TestsPage,
+    LoginPage,
+} from "./pages";
 
 function App() {
     const location = useLocation();
@@ -47,6 +57,22 @@ function App() {
 
                 <Route path='/classes'>
                     <Route path='' element={<ClassesPage />} />
+                </Route>
+
+                <Route path='/faculties'>
+                    <Route path='' element={<FacultiesPage />} />
+                </Route>
+
+                <Route path='/creditClasses'>
+                    <Route path='' element={<CreditClassesPage />} />
+                </Route>
+
+                <Route path='/exams'>
+                    <Route path='' element={<ExamsPage />} />
+                </Route>
+
+                <Route path='/roles'>
+                    <Route path='' element={<RolesPage />} />
                 </Route>
             </Routes>
         </>

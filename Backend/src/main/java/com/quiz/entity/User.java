@@ -15,6 +15,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -82,7 +83,7 @@ public class User {
     private Class cls;
 
     @Builder.Default
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "NGUOIDUNG_VAITRO", joinColumns = @JoinColumn(name = "MANGUOIDUNG"),
             inverseJoinColumns = @JoinColumn(name = "MAVAITRO"))
     private Set<Role> roles = new HashSet<>();

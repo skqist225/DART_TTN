@@ -94,9 +94,13 @@ function QuestionsPage() {
         register,
         setValue,
         handleSubmit,
+        control,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(questionSchema),
+        defaultValues: {
+            answers: [],
+        },
     });
 
     useEffect(() => {
@@ -258,6 +262,7 @@ function QuestionsPage() {
                             setValue={setValue}
                             setImage={setImage}
                             isEdit={isEdit}
+                            control={control}
                         />
                     }
                     isEdit={isEdit}
