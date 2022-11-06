@@ -24,20 +24,11 @@ import java.util.Objects;
 @Table(name = "CAUHOI")
 public class Question extends BaseEntity {
 
-	@Column(name = "NOIDUNGCH", columnDefinition = "TEXT", nullable = false, unique = true)
+	@Column(name = "LOAICAUHOI")
+	private String type;
+
+	@Column(name = "NOIDUNGCAUHOI", columnDefinition = "TEXT", nullable = false, unique = true)
 	private String content;
-
-	@Column(name = "DAPANA", columnDefinition = "TEXT", nullable = false)
-	private String answerA;
-
-	@Column(name = "DAPANB", columnDefinition = "TEXT", nullable = false)
-	private String answerB;
-
-	@Column(name = "DAPANC", columnDefinition = "TEXT", nullable = false)
-	private String answerC;
-
-	@Column(name = "DAPAND", columnDefinition = "TEXT", nullable = false)
-	private String answerD;
 
 	@Column(name = "DAPAN", columnDefinition = "NCHAR(1)", nullable = false)
 	private String finalAnswer;
@@ -48,9 +39,6 @@ public class Question extends BaseEntity {
 	@Column(name = "HINHANH")
 	private String image;
 
-	@Transient
-	private String selectedAnswer;
-
 	@ManyToOne
 	@JoinColumn(name = "MACHUONG", nullable = false)
 	private Chapter chapter;
@@ -58,6 +46,9 @@ public class Question extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "MAGV", nullable = false)
 	private User teacher;
+
+	@Transient
+	private String selectedAnswer;
 
 	public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,
 								 Chapter chapter) {
@@ -70,10 +61,6 @@ public class Question extends BaseEntity {
 
 		Question question = Question.builder()
 				.content(postCreateQuestionDTO.getContent())
-				.answerA(postCreateQuestionDTO.getAnswerA())
-				.answerB(postCreateQuestionDTO.getAnswerB())
-				.answerC(postCreateQuestionDTO.getAnswerC())
-				.answerD(postCreateQuestionDTO.getAnswerD())
 				.finalAnswer(postCreateQuestionDTO.getFinalAnswer())
 				.level(level)
 				.chapter(chapter)

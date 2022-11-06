@@ -215,10 +215,6 @@ public class QuestionRestController {
             try {
                 Question question = questionService.findById(id);
                 question.setContent(content);
-                question.setAnswerA(answerA);
-                question.setAnswerB(answerB);
-                question.setAnswerC(answerC);
-                question.setAnswerD(answerD);
                 question.setFinalAnswer(finalAnswer);
 
                 Level level = Level.EASY;

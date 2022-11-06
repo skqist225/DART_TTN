@@ -16,9 +16,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -34,26 +37,23 @@ public class Exam {
 	@Column(name = "MACATHI")
 	private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name = "MALTC")
-	private CreditClass creditClass;
-
 	@DateTimeFormat(pattern = "dd-MM-yyyy")
 	@Column(name = "NGAYTHI", nullable = false)
 	private LocalDateTime examDate;
 
 	@Column(name = "THOIGIANLAMBAI", columnDefinition = "SMALLINT", nullable = false)
-	private int timeInterval;
-
-	@Column(name = "LAYDIEMCHO")
-	private String countInPoints;
+	private int time;
 
 	@Builder.Default
 	@ManyToMany
-	@JoinTable(name = "CATHI_BODE", joinColumns = @JoinColumn(name = "MACATHI"),
-			inverseJoinColumns = @JoinColumn(name = "MABODE"))
+	@JoinTable(name = "CATHI_DETHI", joinColumns = @JoinColumn(name = "MACATHI"),
+			inverseJoinColumns = @JoinColumn(name = "MADETHI"))
 	private Set<Test> tests = new HashSet<>();
 
+	@OneToMany(mappedBy = "exam")
+	private List<Register> registers;
+
 	@ManyToOne
+	@JoinColumn(name = "MAGV")
 	private User teacher;
 }

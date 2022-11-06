@@ -7,15 +7,23 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,31 +33,21 @@ import java.util.Set;
 @Setter
 @Builder
 @Entity
-@Table(name = "BODE")
-public class Test extends BaseEntity {
+@Table(name = "DETHI")
+public class Test {
 
-    @Column(name = "TENBODE", nullable = false, unique = true)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "MADETHI")
+    private Integer id;
+
+    @Column(name = "TENDETHI", nullable = false, unique = true)
     private String name;
-
-    @Column(name = "HINHANH")
-    private String image;
-
-    @Column(name = "SOLANTHI")
-    private int numberOfTested;
-
-    @Column(name = "SOLANXEM")
-    private int numberOfViews;
-
-    @Column(name = "THOIGIANLAMBAI", columnDefinition = "SMALLINT", nullable = false)
-    private int time;
-
-    @Column(name = "SONGUOIDANGTHI")
-    private int numberOfCurrentTesting;
 
     @Builder.Default
     @JsonIgnore
     @ManyToMany
-    @JoinTable(name = "BODE_CAUHOI", joinColumns = @JoinColumn(name = "MABODE"),
+    @JoinTable(name = "DETHI_CAUHOI", joinColumns = @JoinColumn(name = "MADETHI"),
             inverseJoinColumns = @JoinColumn(name = "MACAUHOI"))
     private Set<Question> questions = new HashSet<>();
 
@@ -61,14 +59,25 @@ public class Test extends BaseEntity {
     @JoinColumn(name = "MAGV")
     private User teacher;
 
+    @ManyToOne
+    @JoinColumn(name = "MACATHI")
+    private Exam exam;
+
+    @CreationTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "TAOLUC", updatable = false, nullable = false)
+    private Date createdDate;
+
+    @UpdateTimestamp
+    @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "CAPNHATLUC")
+    private Date updatedDate;
+
     @Transient
     private int numberOfRightAnswer;
 
     @Transient
     private float mark;
-
-    @Column(name = "DADUOCSUDUNG")
-    private boolean isUsed;
 
     public void addQuestion(Question question) {
         this.questions.add(question);

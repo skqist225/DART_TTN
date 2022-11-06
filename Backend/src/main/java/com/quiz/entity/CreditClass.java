@@ -13,12 +13,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+import javax.persistence.UniqueConstraint;
 
 @Getter
 @Setter
@@ -26,24 +23,25 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 @Entity
-@Table(name = "LOPTINCHI")
+@Table(name = "LOPTINCHI", uniqueConstraints =
+@UniqueConstraint(columnNames = {"NIENKHOA", "HOCKY", "MAMH", "NHOM"}))
 public class CreditClass {
     @Id
     @Column(name = "MALTC")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "NIENKHOA", columnDefinition = "NCHAR(9)", nullable = false, unique = true)
+    @Column(name = "NIENKHOA", columnDefinition = "NCHAR(9)", nullable = false)
     private String schoolYear;
 
-    @Column(name = "HOCKY", columnDefinition = "SMALLINT", nullable = false, unique = true)
+    @Column(name = "HOCKY", columnDefinition = "SMALLINT", nullable = false)
     private int semester;
 
     @ManyToOne
-    @JoinColumn(name = "MAMH", nullable = false, unique = true)
+    @JoinColumn(name = "MAMH", nullable = false)
     private Subject subject;
 
-    @Column(name = "NHOM", columnDefinition = "SMALLINT", nullable = false, unique = true)
+    @Column(name = "NHOM", columnDefinition = "SMALLINT", nullable = false)
     private int group;
 
     @Column(name = "SOSVTOITHIEU",columnDefinition = "SMALLINT", nullable = false)

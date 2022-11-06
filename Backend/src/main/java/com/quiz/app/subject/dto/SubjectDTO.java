@@ -17,12 +17,11 @@ import java.util.stream.Collectors;
 public class SubjectDTO {
     private String id;
     private String name;
-    private String image;
     private int numberOfTests;
     private List<TestDTO> tests;
 
     public static SubjectDTO build(Subject subject) {
-        return new SubjectDTO(subject.getId(), subject.getName(), subject.getImage(),
+        return new SubjectDTO(subject.getId(), subject.getName(),
                 subject.getTests().size(),
                 subject.getTests().stream()
                         .map(test -> TestDTO.build(test, false))

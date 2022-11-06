@@ -161,8 +161,9 @@ public class UserService {
 
     public CountUserByRole countUserByRole() {
         return null;
-//        return new CountUserByRole(userRepository.countUserByRole(1), userRepository.countUserByRole(2),
-//                userRepository.countUserByRole(3));
+        // return new CountUserByRole(userRepository.countUserByRole(1),
+        // userRepository.countUserByRole(2),
+        // userRepository.countUserByRole(3));
     }
 
     @Transactional
@@ -182,7 +183,7 @@ public class UserService {
             }
         } else {
             // 2 is User
-//            user.setRole(new Role(2));
+            // user.setRole(new Role(2));
             encodePassword(user);
         }
 
@@ -204,5 +205,3 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
     }
 }
-
-//1 de thi ra roi la khong dung lai

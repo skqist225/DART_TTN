@@ -11,7 +11,11 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
+import javax.persistence.JoinColumns;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToOne;
+import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 
 @Getter
@@ -33,14 +37,12 @@ public class Register {
     @JoinColumn(name = "MASV")
     private User student;
 
-    @Column(name = "DIEM_CC", columnDefinition = "check(DIEM_CC >= 0 and DIEM_CC <= 10)")
-    private int attendanceScore;
+    @ManyToOne
+    @JoinColumn(name = "MACATHI")
+    private Exam exam;
 
-    @Column(name = "DIEM_GK", columnDefinition = "check(DIEM_GK >= 0 and DIEM_GK <= 10)")
-    private float midSemesterScore;
-
-    @Column(name = "DIEM_CK", columnDefinition = "check(DIEM_CK >= 0 and DIEM_CK <= 10)")
-    private float finalSemesterScore;
+    @Column(name = "DIEM")
+    private float score;
 
     @Column(name = "HUYDANGKY")
     private boolean isRegisterCancelled;

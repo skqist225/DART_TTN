@@ -46,10 +46,6 @@ public class User {
     @Column(name = "HO", columnDefinition = "NVARCHAR(10)", nullable = false)
     private String lastName;
 
-    @ManyToOne
-    @JoinColumn(name = "MALOP")
-    private Class cls;
-
     @Enumerated(EnumType.STRING)
     @Column(name = "GIOITINH", length = 10, nullable = false)
     private Sex sex;
@@ -81,14 +77,18 @@ public class User {
     @Column(name = "THOIHANDOIMATKHAU")
     private LocalDateTime resetPasswordExpirationTime;
 
+    @ManyToOne
+    @JoinColumn(name = "MALOP")
+    private Class cls;
+
     @Builder.Default
     @ManyToMany
-    @JoinTable(name = "VAITRO", joinColumns = @JoinColumn(name = "MANGUOIDUNG"),
+    @JoinTable(name = "NGUOIDUNG_VAITRO", joinColumns = @JoinColumn(name = "MANGUOIDUNG"),
             inverseJoinColumns = @JoinColumn(name = "MAVAITRO"))
     private Set<Role> roles = new HashSet<>();
 
     @Builder.Default
-    @Column(columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "XACTHUCDIACHIEMAIL", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean emailVerified = false;
 
     @JsonIgnore
@@ -124,7 +124,6 @@ public class User {
                 .birthday(birthday).roles(roles)
                 .emailVerified(false)
                 .status(true)
-                .cls(cls)
                 .address(address)
                 .build();
     }

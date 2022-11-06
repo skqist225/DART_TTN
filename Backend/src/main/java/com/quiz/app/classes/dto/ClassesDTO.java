@@ -2,7 +2,6 @@ package com.quiz.app.classes.dto;
 
 
 import com.quiz.entity.Class;
-import com.quiz.entity.Subject;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

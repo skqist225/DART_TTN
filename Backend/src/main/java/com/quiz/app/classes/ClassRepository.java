@@ -1,7 +1,6 @@
 package com.quiz.app.classes;
 
 import com.quiz.entity.Class;
-import com.quiz.entity.Subject;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 

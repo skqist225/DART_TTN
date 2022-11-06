@@ -32,9 +32,6 @@ public class Subject {
 	@Column(name = "TENMH", columnDefinition = "NVARCHAR(50)", nullable = false, unique = true)
 	private String name;
 
-	@Column(name = "HINHANH")
-	private String image;
-
 	@Column(name = "SOTIET_LT", columnDefinition = "SMALLINT", nullable = false)
 	private int numberOfTheoreticalPeriods;
 
