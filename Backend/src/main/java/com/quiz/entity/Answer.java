@@ -30,9 +30,6 @@ public class Answer {
     @Column(name = "NOIDUNG", columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(name = "LA_DAPAN", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean isAnswer;
-
     @ManyToOne
     @JoinColumn(name = "MACAUHOI", nullable = false)
     private Question question;

@@ -33,13 +33,6 @@ public class Register {
     @JoinColumn(name = "MASV")
     private User student;
 
-    @ManyToOne
-    @JoinColumn(name = "MACATHI")
-    private Exam exam;
-
-    @Column(name = "DIEM")
-    private float score;
-
     @Column(name = "HUYDANGKY")
     private boolean isRegisterCancelled;
 }

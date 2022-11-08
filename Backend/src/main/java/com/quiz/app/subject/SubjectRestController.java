@@ -34,12 +34,6 @@ public class SubjectRestController {
     @Autowired
     private SubjectService subjectService;
 
-    private CommonUtils commonUtils;
-
-    public SubjectRestController() {
-        commonUtils = new CommonUtils();
-    }
-
     @GetMapping("")
     public ResponseEntity<StandardJSONResponse<SubjectsDTO>> fetchAllSubjects(
             @RequestParam("page") String page,
@@ -95,9 +89,12 @@ public class SubjectRestController {
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
     ) {
         Subject savedSubject = null;
+        CommonUtils commonUtils = new CommonUtils();
 
         String id = postCreateSubjectDTO.getId();
         String name = postCreateSubjectDTO.getName();
+        String numberOfTheoreticalPeriods = postCreateSubjectDTO.getNumberOfTheoreticalPeriods();
+        String numberOfPracticePeriods = postCreateSubjectDTO.getNumberOfPracticePeriods();
 
         if (Objects.isNull(id)) {
             commonUtils.addError("id", "Mã môn học không được để trống");
@@ -105,6 +102,15 @@ public class SubjectRestController {
 
         if (Objects.isNull(name)) {
             commonUtils.addError("name", "Tên môn học không được để trống");
+        }
+
+        if (Objects.isNull(numberOfTheoreticalPeriods)) {
+            commonUtils.addError("numberOfTheoreticalPeriods", "Số tiết lý thuyết không được để trống");
+        }
+
+        if (Objects.isNull(numberOfPracticePeriods)) {
+            commonUtils.addError("numberOfPracticePeriods", "Số tiết thực hành không được để " +
+                    "trống");
         }
 
         if (commonUtils.getArrayNode().size() > 0) {
@@ -118,6 +124,31 @@ public class SubjectRestController {
                 commonUtils.addError("name", "Tên môn học đã tồn tại");
             }
 
+            int numberOfTheoreticalPeriodsInt = 0, numberOfPracticePeriodsInt = 0;
+            try {
+                numberOfTheoreticalPeriodsInt = Integer.parseInt(numberOfTheoreticalPeriods);
+            } catch (final NumberFormatException e) {
+                commonUtils.addError("numberOfTheoreticalPeriods", "Số tiết lý thuyết không hợp " +
+                        "lệ");
+            }
+
+            try {
+                numberOfPracticePeriodsInt = Integer.parseInt(numberOfPracticePeriods);
+            } catch (final NumberFormatException e) {
+                commonUtils.addError("numberOfPracticePeriods", "Số tiết thực hành không hợp " +
+                        "lệ");
+            }
+
+            if (commonUtils.getArrayNode().size() > 0) {
+                return new BadResponse<Subject>(commonUtils.getArrayNode().toString()).response();
+            }
+
+            if ((numberOfPracticePeriodsInt + numberOfTheoreticalPeriodsInt) % 3 != 0) {
+                commonUtils.addError("numberOfPracticePeriods", "Số tiết lý thuyết + thực " +
+                        "hành phải là bội số của 3 "
+                );
+            }
+
             if (commonUtils.getArrayNode().size() > 0) {
                 return new BadResponse<Subject>(commonUtils.getArrayNode().toString()).response();
             }
@@ -126,8 +157,9 @@ public class SubjectRestController {
         if (isEdit) {
             try {
                 Subject subject = subjectService.findById(id);
-                subject.setId(id);
                 subject.setName(name);
+                subject.setNumberOfTheoreticalPeriods(Integer.parseInt(postCreateSubjectDTO.getNumberOfTheoreticalPeriods()));
+                subject.setNumberOfPracticePeriods(Integer.parseInt(postCreateSubjectDTO.getNumberOfPracticePeriods()));
 
                 savedSubject = subjectService.save(subject);
             } catch (NotFoundException exception) {

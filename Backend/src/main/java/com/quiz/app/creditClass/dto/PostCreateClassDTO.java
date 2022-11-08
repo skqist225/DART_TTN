@@ -1,4 +1,4 @@
-package com.quiz.app.classes.dto;
+package com.quiz.app.creditClass.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

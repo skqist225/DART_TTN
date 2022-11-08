@@ -78,10 +78,6 @@ public class User {
     @Column(name = "THOIHANDOIMATKHAU")
     private LocalDateTime resetPasswordExpirationTime;
 
-    @ManyToOne
-    @JoinColumn(name = "MALOP")
-    private Class cls;
-
     @Builder.Default
     @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "NGUOIDUNG_VAITRO", joinColumns = @JoinColumn(name = "MANGUOIDUNG"),
@@ -101,7 +97,7 @@ public class User {
 
     @Transient
     @JsonIgnore
-    public static User build(RegisterDTO registerDTO, Class cls) {
+    public static User build(RegisterDTO registerDTO) {
         String id = registerDTO.getId();
         String firstName = registerDTO.getFirstName();
         String lastName = registerDTO.getLastName();

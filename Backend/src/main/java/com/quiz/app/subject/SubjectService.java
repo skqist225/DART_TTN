@@ -83,9 +83,8 @@ public class SubjectService {
     }
 
     public boolean isIdDuplicated(String id, boolean isEdit) {
-        Subject subject = null;
         try {
-            subject = findById(id);
+            Subject subject = findById(id);
 
             if (isEdit) {
                 return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);

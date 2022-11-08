@@ -3,7 +3,7 @@ package com.quiz.app.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.quiz.app.classes.ClassService;
+import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.exception.UserNotFoundException;
 import com.quiz.app.exception.VerifiedUserException;
@@ -13,7 +13,6 @@ import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.role.RoleService;
 import com.quiz.app.user.dto.RegisterDTO;
 import com.quiz.app.user.dto.UserListResponse;
-import com.quiz.entity.Class;
 import com.quiz.entity.Role;
 import com.quiz.entity.User;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -44,7 +43,7 @@ public class AdminUserRestController {
     private RoleService roleService;
 
     @Autowired
-    private ClassService classService;
+    private CreditClassService classService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -146,12 +145,12 @@ public class AdminUserRestController {
                 addError("roleId", "Vai trò không tồn tại");
             }
 
-            try {
-                Class cls = classService.findById(updateUserDTO.getClassId());
-                user.setCls(cls);
-            } catch (NotFoundException e) {
-                addError("classId", "Lớp không tồn tại");
-            }
+//            try {
+//                Class cls = classService.findById(updateUserDTO.getClassId());
+//                user.setCls(cls);
+//            } catch (NotFoundException e) {
+//                addError("classId", "Lớp không tồn tại");
+//            }
 
             if (arrayNode.size() > 0) {
                 return new BadResponse<User>(arrayNode.toString()).response();

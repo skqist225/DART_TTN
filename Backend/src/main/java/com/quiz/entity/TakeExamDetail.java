@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
-import javax.persistence.MapsId;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
@@ -25,18 +24,20 @@ import javax.persistence.Table;
 @NoArgsConstructor
 @Builder
 @Entity
-@Table(name = "KETQUA")
-public class Result {
+@Table(name = "CHITIETTHI")
+public class TakeExamDetail {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne
+    @ManyToOne
     @JoinColumns({
-            @JoinColumn(name = "MALTC"),
-            @JoinColumn(name = "MASV"),
+            @JoinColumn(name = "MACATHI", referencedColumnName = "MACATHI"),
+            @JoinColumn(name = "MALTC", referencedColumnName = "MALTC"),
+            @JoinColumn(name = "MASV", referencedColumnName = "MASV"),
+            @JoinColumn(name = "LANTHI", referencedColumnName = "LANTHI"),
     })
-    private Register register;
+    private TakeExam takeExam;
 
     @ManyToOne
     @JoinColumn(name = "MACAUHOI")

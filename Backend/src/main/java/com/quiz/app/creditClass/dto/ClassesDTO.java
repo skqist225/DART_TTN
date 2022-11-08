@@ -1,7 +1,6 @@
-package com.quiz.app.classes.dto;
+package com.quiz.app.creditClass.dto;
 
 
-import com.quiz.entity.Class;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

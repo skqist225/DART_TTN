@@ -190,10 +190,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                             <SidebarElement pathname={pathname} name='users' title='Người dùng' />
 
-                            <SidebarElement pathname={pathname} name='classes' title='Lớp học' />
-
-                            <SidebarElement pathname={pathname} name='faculties' title='Khoa' />
-
                             <SidebarElement pathname={pathname} name='exams' title='Ca thi' />
 
                             <SidebarElement
@@ -201,6 +197,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 name='creditClasses'
                                 title='Lớp tín chỉ'
                             />
+
+                            <SidebarElement pathname={pathname} name='registers' title='Đăng ký' />
 
                             <SidebarElement pathname={pathname} name='roles' title='Vai trò' />
                         </ul>

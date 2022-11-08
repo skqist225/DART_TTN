@@ -1,10 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
+import { tailwindCss } from "../../../tailwind";
 import ErrorMessage from "../errors/ErrorMessage";
 
 function Select({
     label,
-    labelClassName,
-    selectClassName,
     error,
     register,
     name: propName,
@@ -14,15 +13,33 @@ function Select({
     onChangeHandler,
     hiddenOption = false,
 }) {
-    if (setValue) {
-        if (defaultValue) {
-            setValue(propName, defaultValue);
-        } else {
-            if (options[0] && options[0].value) {
-                setValue(propName, options[0].value);
+    useEffect(() => {
+        if (setValue) {
+            if (defaultValue) {
+                setValue(propName, defaultValue);
+            } else {
+                if (options[0] && options[0].value) {
+                    setValue(propName, options[0].value);
+                }
             }
         }
-    }
+    }, []);
+
+    useEffect(() => {
+        if (propName === "chapterId") {
+            if (setValue) {
+                if (defaultValue) {
+                    setValue(propName, defaultValue);
+                } else {
+                    if (options[0] && options[0].value) {
+                        setValue(propName, options[0].value);
+                    } else {
+                        setValue(propName, "");
+                    }
+                }
+            }
+        }
+    }, [options]);
 
     const { onChange, onBlur, name, ref } = register(propName);
 
@@ -30,15 +47,17 @@ function Select({
         <>
             <label
                 htmlFor={propName}
-                className={`${labelClassName} ${error && "text-red-700 dark:text-red-500"}`}
+                className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"}`}
             >
                 {!hiddenOption && label}
             </label>
             <select
                 id={propName}
-                className={`${selectClassName} ${error && "bg-red-50 border border-red-500"}`}
+                className={`${tailwindCss.select} ${error && "bg-red-50 border border-red-500"}`}
                 name={name}
                 onChange={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     onChange(e);
                     if (onChangeHandler) {
                         onChangeHandler(e);

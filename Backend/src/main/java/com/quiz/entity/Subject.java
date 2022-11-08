@@ -57,6 +57,8 @@ public class Subject {
 		return Subject.builder()
 				.id(postCreateSubjectDTO.getId())
 				.name(postCreateSubjectDTO.getName())
+				.numberOfPracticePeriods(Integer.parseInt(postCreateSubjectDTO.getNumberOfPracticePeriods()))
+				.numberOfTheoreticalPeriods(Integer.parseInt(postCreateSubjectDTO.getNumberOfTheoreticalPeriods()))
 				.build();
 	}
 }

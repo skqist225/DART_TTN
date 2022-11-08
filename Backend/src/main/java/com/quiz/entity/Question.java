@@ -9,26 +9,41 @@ import lombok.Setter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.List;
 import java.util.Objects;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
 @Table(name = "CAUHOI")
-public class Question extends BaseEntity {
+public class Question {
+	@Id
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	@Column(name = "MACAUHOI")
+	private Integer id;
 
 	@Column(name = "LOAICAUHOI")
 	private String type;
 
 	@Column(name = "NOIDUNGCAUHOI", columnDefinition = "TEXT", nullable = false, unique = true)
 	private String content;
+
+	@OneToMany(mappedBy = "question")
+	private List<Answer> answers;
+
+	@Column(name = "DAPAN", columnDefinition = "NCHAR(255)", nullable = false)
+	private String finalAnswer;
 
 	@Column(name = "DOKHO", nullable = false)
 	private Level level;
@@ -43,6 +58,8 @@ public class Question extends BaseEntity {
 	@ManyToOne
 	@JoinColumn(name = "MAGV", nullable = false)
 	private User teacher;
+
+	private boolean status;
 
 	@Transient
 	private String selectedAnswer;

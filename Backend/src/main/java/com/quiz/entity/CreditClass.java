@@ -1,6 +1,6 @@
 package com.quiz.entity;
 
-import com.quiz.app.classes.dto.PostCreateClassDTO;
+import com.quiz.app.creditClass.dto.PostCreateClassDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -49,10 +49,6 @@ public class CreditClass {
 
     @Column(name = "HUYLOP")
     private boolean isCancelled;
-
-    @ManyToOne
-    @JoinColumn(name = "MAKHOA", nullable = false)
-    private Faculty faculty;
 
     @ManyToOne
     @JoinColumn(name = "MAGV")

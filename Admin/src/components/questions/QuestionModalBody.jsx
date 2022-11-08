@@ -1,10 +1,10 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { clearErrorField, questionState, setEditedQuestion } from "../../features/questionSlice";
+import { clearErrorField, questionState } from "../../features/questionSlice";
 import { tailwindCss } from "../../tailwind";
-import { TextArea, Select, FileInput } from "..";
+import { TextArea, Select, FileInput, Input } from "..";
 import { QuestionExcelModalBody } from "..";
-import { chapterState } from "../../features/chapterSlice";
+import { chapterState, fetchAllChapters } from "../../features/chapterSlice";
 import { lookupQuestionLevel } from "./QuestionTableBody";
 import { subjectState } from "../../features/subjectSlice";
 import { useFieldArray } from "react-hook-form";
@@ -34,9 +34,13 @@ const types = [
         value: "Nhiều đáp án",
         title: "Nhiều đáp án",
     },
+    {
+        value: "Đáp án điền",
+        title: "Đáp án điền",
+    },
 ];
 
-function QuestionModalBody({ errors, register, dispatch, setValue, setImage, isEdit, control }) {
+function QuestionModalBody({ errors, register, dispatch, setValue, setImage, control }) {
     const { editedQuestion, errorObject, excelAdd } = useSelector(questionState);
     const { chapters } = useSelector(chapterState);
     const { subjects } = useSelector(subjectState);
@@ -47,10 +51,12 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, isE
         }
     };
 
-    if (isEdit && editedQuestion) {
-        setValue("id", editedQuestion.id);
-        setValue("content", editedQuestion.content);
-    }
+    useEffect(() => {
+        if (editedQuestion) {
+            setValue("id", editedQuestion.id);
+            setValue("content", editedQuestion.content);
+        }
+    }, [editedQuestion]);
 
     const { fields, append, remove } = useFieldArray({
         control,
@@ -58,7 +64,8 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, isE
     });
 
     const handleSubjectChange = event => {
-        console.log(event.target.value);
+        event.preventDefault();
+        dispatch(fetchAllChapters({ page: 0, subject: event.target.value }));
     };
 
     function lookupIndex(index) {
@@ -93,6 +100,17 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, isE
         return alphabet[index];
     }
 
+    const handleTypeChange = event => {
+        if (event.target.value === "Đáp án điền") {
+            $("#addAnswerButton").css("display", "none");
+            $("#typedAnswerContainer").css("display", "block");
+        } else {
+            $("#addAnswerButton").css("display", "block");
+            $("#typedAnswerContainer").css("display", "none");
+            setValue("typedAnswer", "");
+        }
+    };
+
     return (
         <div>
             {!excelAdd ? (
@@ -109,6 +127,15 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, isE
                                 }
                                 register={register}
                                 name='content'
+                                onKeyDown={onKeyDown}
+                            />
+                        </div>
+                        <div className='w-full my-5 hidden' id='typedAnswerContainer'>
+                            <Input
+                                label='Đáp án *'
+                                error={errors.typedAnswer && errors.typedAnswer.message}
+                                register={register}
+                                name='typedAnswer'
                                 onKeyDown={onKeyDown}
                             />
                         </div>
@@ -197,6 +224,7 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, isE
                         </div>
                         <div className='self-start mt-5'>
                             <button
+                                id='addAnswerButton'
                                 type='button'
                                 className={tailwindCss.greenOutlineButton}
                                 onClick={() => {
@@ -217,6 +245,7 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, isE
                                     name='type'
                                     options={types}
                                     setValue={setValue}
+                                    onChangeHandler={handleTypeChange}
                                 />
                             </div>
                             <div className='w-full'>
@@ -254,10 +283,9 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, isE
                             <div className='w-full'>
                                 <Select
                                     label='Chương *'
-                                    labelClassName={tailwindCss.label}
-                                    selectClassName={tailwindCss.select}
                                     register={register}
                                     name='chapterId'
+                                    error={errors.chapterId && errors.chapterId.message}
                                     options={chapters.map(chapter => ({
                                         title: chapter.name,
                                         value: chapter.id,

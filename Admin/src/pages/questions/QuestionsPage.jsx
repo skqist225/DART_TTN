@@ -95,6 +95,8 @@ function QuestionsPage() {
         setValue,
         handleSubmit,
         control,
+        setError,
+        clearErrors,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(questionSchema),
@@ -107,29 +109,35 @@ function QuestionsPage() {
         if (!isEdit) {
             setValue("id", "");
             setValue("content", "");
-            setValue("answerA", "");
-            setValue("answerB", "");
-            setValue("answerC", "");
-            setValue("answerD", "");
         }
     }, [isEdit]);
 
     const onSubmit = data => {
+        console.log(data);
         const formData = new FormData();
 
-        Object.entries(data).forEach(([key, value]) => {
-            formData.set(key, value);
-        });
-
-        if (image) {
-            formData.set("image", image);
+        if (data.type === "Đáp án điền" && !data.typedAnswer) {
+            console.log(true);
+            setError("typedAnswer", {
+                type: "custom",
+                message: "Đáp án điền không được để trống",
+            });
+            return;
         }
 
-        if (isEdit) {
-            dispatch(editQuestion(formData));
-        } else {
-            dispatch(addQuestion(formData));
-        }
+        // Object.entries(data).forEach(([key, value]) => {
+        //     formData.set(key, value);
+        // });
+
+        // if (image) {
+        //     formData.set("image", image);
+        // }
+
+        // if (isEdit) {
+        //     dispatch(editQuestion(formData));
+        // } else {
+        //     dispatch(addQuestion(formData));
+        // }
     };
 
     useEffect(() => {

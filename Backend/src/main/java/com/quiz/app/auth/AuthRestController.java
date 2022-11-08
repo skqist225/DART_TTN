@@ -3,9 +3,8 @@ package com.quiz.app.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.quiz.app.classes.ClassService;
+import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.email.SendEmail;
-import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.exception.UserNotFoundException;
 import com.quiz.app.jwt.JwtUtils;
 import com.quiz.app.response.StandardJSONResponse;
@@ -17,7 +16,6 @@ import com.quiz.app.user.UserService;
 import com.quiz.app.user.dto.ForgotPasswordResponse;
 import com.quiz.app.user.dto.RegisterDTO;
 import com.quiz.app.user.dto.ResetPasswordDTO;
-import com.quiz.entity.Class;
 import com.quiz.entity.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +36,6 @@ import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Random;
 
 @RestController
@@ -48,7 +45,7 @@ public class AuthRestController {
     private UserService userService;
 
     @Autowired
-    private ClassService classService;
+    private CreditClassService classService;
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -76,7 +73,7 @@ public class AuthRestController {
             User user = userService.findById(loginDTO.getId());
             user.setToken(token);
 
-            if (admin.equals("true") && !user.hasRole("Admin")) {
+            if (admin.equals("true") && !user.hasRole("Quản trị viên")) {
                 return new ForbiddenResponse<User>(
                         "Tài khoản của bạn không đủ quyền để truy cập tài nguyên này").response();
             }
@@ -113,16 +110,7 @@ public class AuthRestController {
             return new BadResponse<User>(arrays.toString()).response();
         }
 
-        try {
-            Class cls = null;
-            if (Objects.nonNull(postUser.getRoleId()) && postUser.getRoleId().equals(1)) {
-                cls = classService.findById(postUser.getClassId());
-            }
-
-            return new OkResponse<>(userService.save(User.build(postUser, cls))).response();
-        } catch (NotFoundException e) {
-            return new BadResponse<User>(e.getMessage()).response();
-        }
+        return new OkResponse<>(userService.save(User.build(postUser))).response();
     }
 
     @PostMapping("forgot-password")

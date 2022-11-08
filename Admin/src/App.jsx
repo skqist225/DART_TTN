@@ -55,12 +55,8 @@ function App() {
                     <Route path='' element={<UsersPage />} />
                 </Route>
 
-                <Route path='/classes'>
+                <Route path='/creditClasses'>
                     <Route path='' element={<ClassesPage />} />
-                </Route>
-
-                <Route path='/faculties'>
-                    <Route path='' element={<FacultiesPage />} />
                 </Route>
 
                 <Route path='/creditClasses'>

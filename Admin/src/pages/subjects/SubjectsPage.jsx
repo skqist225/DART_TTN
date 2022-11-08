@@ -15,6 +15,29 @@ import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
 
+const columns = [
+    {
+        name: "Mã môn học",
+        sortField: "id",
+        sortable: true,
+    },
+    {
+        name: "Tên môn học",
+        sortField: "name",
+        sortable: true,
+    },
+    {
+        name: "Số tiết lý thuyết",
+        sortField: "numberOfTheoreticalPeriods",
+        sortable: true,
+    },
+    {
+        name: "Số tiết thực hành",
+        sortField: "numberOfPracticePeriods",
+        sortable: true,
+    },
+];
+
 function SubjectsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -23,12 +46,39 @@ function SubjectsPage() {
         register,
         setValue,
         handleSubmit,
+        setError,
+        clearErrors,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(subjectSchema),
     });
 
     const onSubmit = data => {
+        const { numberOfTheoreticalPeriods, numberOfPracticePeriods } = data;
+
+        if ((numberOfTheoreticalPeriods + numberOfPracticePeriods) % 3 != 0) {
+            if (numberOfTheoreticalPeriods === 0 && numberOfPracticePeriods === 0) {
+                setError("numberOfPracticePeriods", {
+                    type: "custom",
+                    message: "Số tiết lý thuyết và thực hành không thể đồng thời bằng 0",
+                });
+                setError("numberOfTheoreticalPeriods", {
+                    type: "custom",
+                    message: "Số tiết lý thuyết và thực hành không thể đồng thời bằng 0",
+                });
+            } else {
+                setError("numberOfPracticePeriods", {
+                    type: "custom",
+                    message: "Tổng lý thuyết + thực hành phải là bội số của 3",
+                });
+                setError("numberOfTheoreticalPeriods", {
+                    type: "custom",
+                    message: "Tổng lý thuyết + thực hành phải là bội số của 3",
+                });
+            }
+            return;
+        }
+
         if (isEdit) {
             dispatch(editSubject(data));
         } else {
@@ -46,18 +96,12 @@ function SubjectsPage() {
         deleteSubject: { successMessage: dsSuccessMessage },
     } = useSelector(subjectState);
 
-    const columns = [
-        {
-            name: "Mã môn học",
-            sortField: "id",
-            sortable: true,
-        },
-        {
-            name: "Tên môn học",
-            sortField: "name",
-            sortable: true,
-        },
-    ];
+    useEffect(() => {
+        if (!isEdit) {
+            setValue("id", "");
+            setValue("name", "");
+        }
+    }, [isEdit]);
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
@@ -150,6 +194,7 @@ function SubjectsPage() {
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
+                            clearErrors={clearErrors}
                         />
                     }
                     isEdit={isEdit}

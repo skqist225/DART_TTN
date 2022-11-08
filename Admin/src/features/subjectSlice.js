@@ -102,7 +102,7 @@ const initialState = {
     subjects: [],
     totalElements: 0,
     totalPages: 0,
-    editedsubject: null,
+    editedSubject: null,
     filterObject: {
         page: 1,
         query: "",
@@ -152,7 +152,7 @@ const subjectSlice = createSlice({
                 });
             }
         },
-        setEditedsubject(state, { payload }) {
+        setEditedSubject(state, { payload }) {
             state.editedSubject = payload;
         },
     },
@@ -244,7 +244,7 @@ const subjectSlice = createSlice({
 });
 
 export const {
-    actions: { clearSubjectState, clearErrorField, setFilterObject, setEditedsubject },
+    actions: { clearSubjectState, clearErrorField, setFilterObject, setEditedSubject },
 } = subjectSlice;
 
 export const subjectState = state => state.subject;

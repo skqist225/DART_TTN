@@ -50,9 +50,6 @@ public class Exam {
 			inverseJoinColumns = @JoinColumn(name = "MADETHI"))
 	private Set<Test> tests = new HashSet<>();
 
-	@OneToMany(mappedBy = "exam")
-	private List<Register> registers;
-
 	@ManyToOne
 	@JoinColumn(name = "MAGV")
 	private User teacher;

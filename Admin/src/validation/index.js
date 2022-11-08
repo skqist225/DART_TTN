@@ -2,8 +2,22 @@ import * as yup from "yup";
 
 export const subjectSchema = yup
     .object({
-        id: yup.string().required("Mã môn học không được để trống"),
-        name: yup.string().required("Tên môn học không được để trống"),
+        id: yup
+            .string()
+            .required("Mã môn học không được để trống")
+            .max(10, "Mã môn học không được quá 10 ký tự"),
+        name: yup
+            .string()
+            .required("Tên môn học không được để trống.")
+            .max(50, "Tên môn học không được quá 50 ký tự."),
+        numberOfTheoreticalPeriods: yup
+            .number()
+            .typeError("Số tiết lý thuyết phải là chữ số")
+            .required("Số tiết lý thuyết không được để trống"),
+        numberOfPracticePeriods: yup
+            .number()
+            .typeError("Số tiết thực hành phải là chữ số")
+            .required("Số tiết thực hành không được để trống"),
     })
     .required();
 
@@ -17,10 +31,7 @@ export const testSchema = yup
 export const questionSchema = yup
     .object({
         content: yup.string().required("Nội dung câu hỏi không được để  trống"),
-        answerA: yup.string().required("Đáp án A không được để  trống"),
-        answerB: yup.string().required("Đáp án B không được để  trống"),
-        answerC: yup.string().required("Đáp án C không được để  trống"),
-        answerD: yup.string().required("Đáp án D không được để  trống"),
+        chapterId: yup.string().required("Chương không được để trống"),
     })
     .required();
 

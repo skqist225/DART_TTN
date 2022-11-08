@@ -3,6 +3,7 @@ package com.quiz.app.chapter;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.entity.Chapter;
+import com.quiz.entity.Subject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -47,6 +48,11 @@ public class ChapterService {
         } catch (Exception ex) {
             throw new ConstrainstViolationException("Không thể xóa chương vì ràng buộc dữ liệu");
         }
+    }
+
+    public List<Chapter> findBySubject(Subject subject) {
+        return chapterRepository.findBySubject(subject);
+
     }
 
     public Chapter findById(Integer id) throws NotFoundException {

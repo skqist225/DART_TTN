@@ -1,24 +1,30 @@
 import React from "react";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { clearErrorField, setEditedsubject, subjectState } from "../../features/subjectSlice";
+import { clearErrorField, setEditedSubject, subjectState } from "../../features/subjectSlice";
 import Input from "../utils/userInputs/Input";
 
-function SubjectModalBody({ errors, register, dispatch, setValue }) {
+function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors }) {
     const { editedSubject, errorObject } = useSelector(subjectState);
 
     const onKeyDown = ({ target: { name } }) => {
         if (errorObject) {
             dispatch(clearErrorField(name));
         }
-        if (editedSubject) {
-            dispatch(setEditedsubject(null));
+        if (name === "numberOfPracticePeriods" || name === "numberOfTheoreticalPeriods") {
+            clearErrors("numberOfPracticePeriods");
+            clearErrors("numberOfTheoreticalPeriods");
         }
     };
 
-    if (editedSubject) {
-        setValue("id", editedSubject.id);
-        setValue("name", editedSubject.name);
-    }
+    useEffect(() => {
+        if (editedSubject) {
+            setValue("id", editedSubject.id);
+            setValue("name", editedSubject.name);
+            setValue("numberOfTheoreticalPeriods", editedSubject.numberOfTheoreticalPeriods);
+            setValue("numberOfPracticePeriods", editedSubject.numberOfPracticePeriods);
+        }
+    }, [editedSubject]);
 
     return (
         <div className='mt-5'>
@@ -42,6 +48,29 @@ function SubjectModalBody({ errors, register, dispatch, setValue }) {
                         }
                         register={register}
                         name='name'
+                        onKeyDown={onKeyDown}
+                    />
+                </div>
+                <div className='w-full my-5'>
+                    <Input
+                        label='Số tiết lý thuyết *'
+                        error={
+                            errors.numberOfTheoreticalPeriods &&
+                            errors.numberOfTheoreticalPeriods.message
+                        }
+                        register={register}
+                        name='numberOfTheoreticalPeriods'
+                        onKeyDown={onKeyDown}
+                    />
+                </div>
+                <div className='w-full my-5'>
+                    <Input
+                        label='Số tiết thực hành *'
+                        error={
+                            errors.numberOfPracticePeriods && errors.numberOfPracticePeriods.message
+                        }
+                        register={register}
+                        name='numberOfPracticePeriods'
                         onKeyDown={onKeyDown}
                     />
                 </div>
