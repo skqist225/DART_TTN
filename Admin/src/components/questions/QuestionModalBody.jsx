@@ -40,7 +40,15 @@ const types = [
     },
 ];
 
-function QuestionModalBody({ errors, register, dispatch, setValue, setImage, control }) {
+function QuestionModalBody({
+    errors,
+    register,
+    dispatch,
+    setValue,
+    setImage,
+    control,
+    clearErrors,
+}) {
     const { editedQuestion, errorObject, excelAdd } = useSelector(questionState);
     const { chapters } = useSelector(chapterState);
     const { subjects } = useSelector(subjectState);
@@ -48,6 +56,9 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, con
     const onKeyDown = ({ target: { name } }) => {
         if (errorObject) {
             dispatch(clearErrorField(name));
+        }
+        if (name === "typedAnswer") {
+            clearErrors("typedAnswer");
         }
     };
 
@@ -104,6 +115,11 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, con
         if (event.target.value === "Đáp án điền") {
             $("#addAnswerButton").css("display", "none");
             $("#typedAnswerContainer").css("display", "block");
+
+            fields.forEach((_, index) => {
+                remove(index);
+            });
+            fields.length = 0;
         } else {
             $("#addAnswerButton").css("display", "block");
             $("#typedAnswerContainer").css("display", "none");
@@ -144,22 +160,21 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, con
                                 <div className='flex items-center' key={index}>
                                     <div className='flex items-center w-full'>
                                         <div className='flex-1 mr-5'>
+                                            <input
+                                                type='hidden'
+                                                {...register(`answers.${index}.name`)}
+                                                value={lookupIndex(index)}
+                                            />
                                             <TextArea
                                                 label={`${lookupIndex(index)} *`}
                                                 labelClassName={tailwindCss.label}
                                                 textAreaClassName={tailwindCss.textArea}
                                                 register={register}
-                                                name={`answers.${index}.${lookupIndex(
-                                                    index
-                                                )}.content`}
+                                                name={`answers.${index}.content`}
                                             />
                                             <input
                                                 type='hidden'
-                                                {...register(
-                                                    `answers.${index}.${lookupIndex(
-                                                        index
-                                                    )}.isAnswer`
-                                                )}
+                                                {...register(`answers.${index}.isAnswer`)}
                                             />
                                         </div>
                                         <div className='col-flex mb-1 ml-2'>
@@ -170,9 +185,7 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, con
                                                     const self = $(event.target);
                                                     if (self.hasClass("chosen")) {
                                                         setValue(
-                                                            `answers.${index}.${lookupIndex(
-                                                                index
-                                                            )}.isAnswer`,
+                                                            `answers.${index}.isAnswer`,
                                                             false
                                                         );
                                                         self.prop(
@@ -180,16 +193,29 @@ function QuestionModalBody({ errors, register, dispatch, setValue, setImage, con
                                                             tailwindCss.greenOutlineButton
                                                         );
                                                     } else {
-                                                        setValue(
-                                                            `answers.${index}.${lookupIndex(
-                                                                index
-                                                            )}.isAnswer`,
-                                                            true
-                                                        );
-                                                        self.prop(
-                                                            "className",
-                                                            tailwindCss.greenFullButton + " chosen"
-                                                        );
+                                                        if ($("#type").val() === "Một đáp án") {
+                                                            if ($(".chosen").length === 0) {
+                                                                setValue(
+                                                                    `answers.${index}.isAnswer`,
+                                                                    true
+                                                                );
+                                                                self.prop(
+                                                                    "className",
+                                                                    tailwindCss.greenFullButton +
+                                                                        " chosen"
+                                                                );
+                                                            }
+                                                        } else {
+                                                            setValue(
+                                                                `answers.${index}.isAnswer`,
+                                                                true
+                                                            );
+                                                            self.prop(
+                                                                "className",
+                                                                tailwindCss.greenFullButton +
+                                                                    " chosen"
+                                                            );
+                                                        }
                                                     }
                                                 }}
                                             >

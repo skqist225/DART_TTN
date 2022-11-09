@@ -39,7 +39,7 @@ function Select({
                 }
             }
         }
-    }, [options]);
+    }, [options[0]]);
 
     const { onChange, onBlur, name, ref } = register(propName);
 

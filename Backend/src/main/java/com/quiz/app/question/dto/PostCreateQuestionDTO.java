@@ -1,6 +1,6 @@
 package com.quiz.app.question.dto;
 
-import com.quiz.entity.Level;
+import com.quiz.app.answer.dto.AnswerDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -16,14 +16,13 @@ import java.util.List;
 public class PostCreateQuestionDTO {
     private Integer id;
     private String content;
-    private String answerA;
-    private String answerB;
-    private String answerC;
-    private String answerD;
-    private String finalAnswer;
+    private String type;
+    private String level;
+    private List<AnswerDTO> answers;
+    private String answer;
+
     private String subjectName;
     private String chapterName;
-    private String level;
     private Integer chapterId;
     private MultipartFile image;
 }

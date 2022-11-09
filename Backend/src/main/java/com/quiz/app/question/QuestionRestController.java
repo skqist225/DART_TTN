@@ -1,9 +1,9 @@
 package com.quiz.app.question;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.quiz.app.answer.AnswerService;
+import com.quiz.app.answer.dto.AnswerDTO;
 import com.quiz.app.chapter.ChapterService;
+import com.quiz.app.common.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.question.dto.GetCriteriaQuestionsDTO;
@@ -17,6 +17,7 @@ import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.app.utils.ExcelUtils;
 import com.quiz.app.utils.ProcessImage;
+import com.quiz.entity.Answer;
 import com.quiz.entity.Chapter;
 import com.quiz.entity.Level;
 import com.quiz.entity.Question;
@@ -63,21 +64,13 @@ public class QuestionRestController {
     private QuestionService questionService;
 
     @Autowired
+    private AnswerService answerService;
+
+    @Autowired
     private SubjectService subjectService;
 
     @Autowired
     private ChapterService chapterService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    private ArrayNode arrayNode;
-
-    public void addError(String fieldName, String fieldError) {
-        ObjectNode node = objectMapper.createObjectNode();
-        node.put(fieldName, fieldError);
-        arrayNode.add(node);
-    }
 
     @GetMapping("load")
     public ResponseEntity<StandardJSONResponse<List<GetCriteriaQuestionsDTO>>> loadCriteriaQuestions(
@@ -132,40 +125,39 @@ public class QuestionRestController {
         return new OkResponse<>(questionsDTO).response();
     }
 
-    public void catchQuestionInputException(String content, String answerA, String answerB, String answerC,
-                                            String answerD, String finalAnswer, String level,
+    public void catchQuestionInputException(CommonUtils commonUtils, String content, String type,
+                                            String level,
+                                            String answer,
+                                            List<AnswerDTO> answers,
                                             Integer chapterId
     ) {
-        if (Objects.isNull(content)) {
-            addError("content", "Nội dung câu hỏi không được để trống");
+        if (Objects.isNull(content) || StringUtils.isEmpty(content)) {
+            commonUtils.addError("content", "Nội dung câu hỏi không được để trống");
         }
 
-        if (Objects.isNull(answerA)) {
-            addError("A", "Đáp án A không được để trống");
+        if (Objects.isNull(type) || StringUtils.isEmpty(type)) {
+            commonUtils.addError("content", "Loại câu hỏi không được để trống");
         }
 
-        if (Objects.isNull(answerB)) {
-            addError("B", "Đáp án B không được để trống");
+        if (Objects.isNull(level) || StringUtils.isEmpty(level)) {
+            commonUtils.addError("level", "Mức độ không được để trống");
         }
 
-        if (Objects.isNull(answerC)) {
-            addError("C", "Đáp án C không được để trống");
+        if (Objects.isNull(answer) || StringUtils.isEmpty(answer)) {
+            commonUtils.addError("finalAnswer", "Đáp án không được để trống");
         }
 
-        if (Objects.isNull(answerD)) {
-            addError("D", "Đáp án D không được để trống");
-        }
-
-        if (Objects.isNull(finalAnswer)) {
-            addError("finalAnswer", "Đáp án không được để trống");
-        }
-
-        if (Objects.isNull(level)) {
-            addError("level", "Mức độ không được để trống");
+        if (!type.equals("Đáp án điền")) {
+            for (AnswerDTO ans : answers) {
+                if (Objects.isNull(ans.getContent()) || StringUtils.isEmpty(ans.getContent())) {
+                    commonUtils.addError("answers", "Không được để trống sự lựa chọn");
+                    break;
+                }
+            }
         }
 
         if (Objects.isNull(chapterId)) {
-            addError("chapterId", "Chương không được để trống");
+            commonUtils.addError("chapterId", "Chương không được để trống");
         }
     }
 
@@ -175,47 +167,45 @@ public class QuestionRestController {
             @ModelAttribute PostCreateQuestionDTO postCreateQuestionDTO,
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit)
             throws IOException {
-        arrayNode = objectMapper.createArrayNode();
+        CommonUtils commonUtils = new CommonUtils();
         User teacher = userDetailsImpl.getUser();
         Question savedQuestion = null;
         Chapter chapter = null;
 
         Integer id = postCreateQuestionDTO.getId();
         String content = postCreateQuestionDTO.getContent();
-        String answerA = postCreateQuestionDTO.getAnswerA();
-        String answerB = postCreateQuestionDTO.getAnswerB();
-        String answerC = postCreateQuestionDTO.getAnswerC();
-        String answerD = postCreateQuestionDTO.getAnswerD();
-        String finalAnswer = postCreateQuestionDTO.getFinalAnswer();
+        String type = postCreateQuestionDTO.getType();
         String levelStr = postCreateQuestionDTO.getLevel();
+        String answer = postCreateQuestionDTO.getAnswer();
+        List<AnswerDTO> answers = postCreateQuestionDTO.getAnswers();
         Integer chapterId = postCreateQuestionDTO.getChapterId();
 
-        catchQuestionInputException(content, answerA, answerB, answerC, answerD, finalAnswer,
-                levelStr, chapterId);
+        catchQuestionInputException(commonUtils, content, type, levelStr, answer, answers,
+                chapterId);
 
         try {
             chapter = chapterService.findById(chapterId);
         } catch (NotFoundException e) {
-            addError("chapter", e.getMessage());
+            commonUtils.addError("chapterId", e.getMessage());
         }
 
-        if (arrayNode.size() > 0) {
-            return new BadResponse<String>(arrayNode.toString()).response();
+        if (commonUtils.getArrayNode().size() > 0) {
+            return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
         } else {
             if (questionService.isContentDuplicated(id, content, isEdit)) {
-                addError("content", "Nội dung câu hỏi đã tồn tại");
+                commonUtils.addError("content", "Nội dung câu hỏi đã tồn tại");
             }
 
-            if (arrayNode.size() > 0) {
-                return new BadResponse<String>(arrayNode.toString()).response();
+            if (commonUtils.getArrayNode().size() > 0) {
+                return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
             }
         }
 
-        if (Objects.nonNull(id)) {
+        if (isEdit) {
             try {
                 Question question = questionService.findById(id);
                 question.setContent(content);
-                question.setFinalAnswer(finalAnswer);
+                question.setType(type);
 
                 Level level = Level.EASY;
                 if (Objects.equals(levelStr, "Khó")) {
@@ -235,12 +225,21 @@ public class QuestionRestController {
                 savedQuestion = questionService.save(question);
 
             }catch(NotFoundException exception) {
-                addError("id", exception.getMessage());
-                return new BadResponse<String>(arrayNode.toString()).response();
+                commonUtils.addError("id", exception.getMessage());
+                return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
             }
         } else {
             savedQuestion = questionService.save(Question.build(postCreateQuestionDTO,
                     userDetailsImpl.getUser(), chapter));
+
+            if (!type.equals("Đáp án điền")) {
+                List<Answer> ans = new ArrayList<>();
+                for (AnswerDTO a : answers) {
+                    ans.add(Answer.build(a.getContent(), savedQuestion, a.isAnswer()));
+                }
+
+                answerService.saveAll(ans);
+            }
         }
 
         if (postCreateQuestionDTO.getImage() != null) {
@@ -257,7 +256,7 @@ public class QuestionRestController {
     public ResponseEntity<StandardJSONResponse<String>> saveMultipleQuestions(
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
             @RequestBody List<PostCreateQuestionDTO> questions) throws IOException {
-        arrayNode = objectMapper.createArrayNode();
+        CommonUtils commonUtils = new CommonUtils();
         User teacher = userDetailsImpl.getUser();
 
         int i = 0;

@@ -42,9 +42,6 @@ public class Question {
 	@OneToMany(mappedBy = "question")
 	private List<Answer> answers;
 
-	@Column(name = "DAPAN", columnDefinition = "NCHAR(255)", nullable = false)
-	private String finalAnswer;
-
 	@Column(name = "DOKHO", nullable = false)
 	private Level level;
 
@@ -75,10 +72,11 @@ public class Question {
 
 		Question question = Question.builder()
 				.content(postCreateQuestionDTO.getContent())
-				.finalAnswer(postCreateQuestionDTO.getFinalAnswer())
+				.type(postCreateQuestionDTO.getType())
 				.level(level)
 				.chapter(chapter)
 				.teacher(teacher)
+				.status(true)
 				.build();
 
 		if (postCreateQuestionDTO.getImage() != null) {

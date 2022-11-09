@@ -30,33 +30,32 @@ const columns = [
         sortable: true,
     },
     {
-        name: "A",
-        sortField: "answerA",
+        name: "Loại",
+        sortField: "type",
         sortable: true,
     },
     {
-        name: "B",
-        sortField: "answerB",
+        name: "Đáp án",
+        sortField: "answer",
         sortable: true,
     },
     {
-        name: "C",
+        name: "Số lựa chọn",
         sortField: "answerC",
-        sortable: true,
     },
     {
-        name: "D",
-        sortField: "answerD",
-        sortable: true,
-    },
-    {
-        name: "Mức độ",
+        name: "Độ khó",
         sortField: "level",
         sortable: true,
     },
     {
+        name: "Chương",
+        sortField: "chapter",
+        sortable: true,
+    },
+    {
         name: "Môn học",
-        sortField: "teacher",
+        sortField: "subject",
         sortable: true,
     },
     {
@@ -113,31 +112,104 @@ function QuestionsPage() {
     }, [isEdit]);
 
     const onSubmit = data => {
-        console.log(data);
         const formData = new FormData();
 
-        if (data.type === "Đáp án điền" && !data.typedAnswer) {
-            console.log(true);
-            setError("typedAnswer", {
-                type: "custom",
-                message: "Đáp án điền không được để trống",
-            });
-            return;
+        if (data.type === "Đáp án điền") {
+            if (!data.typedAnswer) {
+                setError("typedAnswer", {
+                    type: "custom",
+                    message: "Đáp án điền không được để trống",
+                });
+                return;
+            }
+        } else {
+            if (["Một đáp án", "Nhiều đáp án"].includes(data.type)) {
+                if (data.answers.length === 0) {
+                    callToast("error", "Vui lòng thêm lựa chọn");
+                    return;
+                } else {
+                    if (data.answers.some(({ content }) => !content)) {
+                        const emptyAnswers = [];
+                        data.answers.forEach(({ content, name }) => {
+                            if (!content) emptyAnswers.push(name);
+                        });
+
+                        callToast(
+                            "error",
+                            `Vui lòng điền nội dung lựa chọn ${emptyAnswers.join(",")}`
+                        );
+                        return;
+                    } else if (data.answers.length === 1) {
+                        callToast("error", `Vui lòng có ít nhất 2 lựa chọn cho 1 câu hỏi`);
+                        return;
+                    } else {
+                        if (data.type === "Một đáp án") {
+                            const atLeastOneAnswer = data.answers.some(({ isAnswer }) => isAnswer);
+                            if (!atLeastOneAnswer) {
+                                callToast("error", `Vui lòng chọn ít nhất 1 đáp án cho 1 câu hỏi`);
+                                return;
+                            }
+                        }
+
+                        if (data.type === "Nhiều đáp án") {
+                            let i = 0;
+                            data.answers.forEach(({ isAnswer }) => {
+                                if (isAnswer) {
+                                    i++;
+                                }
+                            });
+
+                            if (i < 2) {
+                                callToast(
+                                    "error",
+                                    `Vui lòng chọn ít nhất 2 đáp án cho câu hỏi có nhiều đáp án`
+                                );
+                                return;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        // Object.entries(data).forEach(([key, value]) => {
-        //     formData.set(key, value);
-        // });
+        Object.entries(data).forEach(([key, value]) => {
+            if (key !== "answers" && key !== "typedAnswer" && key !== "subject") {
+                formData.set(key, value);
+            }
+        });
 
-        // if (image) {
-        //     formData.set("image", image);
-        // }
+        if (image) {
+            formData.set("image", image);
+        }
+        let answer = null;
+        switch (data.type) {
+            case "Nhiều đáp án":
+            case "Một đáp án": {
+                answer = data.answers
+                    .map(({ name, isAnswer }) => {
+                        if (isAnswer) {
+                            return name;
+                        }
+                    })
+                    .join(",");
+                break;
+            }
+            case "Đáp án điền": {
+                answer = data.typedAnswer;
+                break;
+            }
+        }
+        formData.set("answer", answer);
 
-        // if (isEdit) {
-        //     dispatch(editQuestion(formData));
-        // } else {
-        //     dispatch(addQuestion(formData));
-        // }
+        data.answers.forEach(({ name, content }) => {
+            formData.append("answers", `${name}. ${content}`);
+        });
+
+        if (isEdit) {
+            dispatch(editQuestion(formData));
+        } else {
+            dispatch(addQuestion(formData));
+        }
     };
 
     useEffect(() => {
@@ -271,6 +343,7 @@ function QuestionsPage() {
                             setImage={setImage}
                             isEdit={isEdit}
                             control={control}
+                            clearErrors={clearErrors}
                         />
                     }
                     isEdit={isEdit}

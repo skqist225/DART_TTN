@@ -28,25 +28,6 @@ function TableHeader({ columns, handleSortChange }) {
     return (
         <thead className={tailwindCss.thead}>
             <tr>
-                {/* <th scope='col' className='p-4'>
-                    <div className='flex items-center'>
-                        <input
-                            id='checkbox-all-search'
-                            type='checkbox'
-                            className={tailwindCss.checkbox}
-                            onChange={e => {
-                                if ($(e.target).prop("checked")) {
-                                    $(".checkbox-table-search-1").prop("checked", true);
-                                } else {
-                                    $(".checkbox-table-search-1").prop("checked", false);
-                                }
-                            }}
-                        />
-                        <label for='checkbox-all-search' className='sr-only'>
-                            checkbox
-                        </label>
-                    </div>
-                </th> */}
                 {columns.map(({ name, sortField, sortable }) => (
                     <th scope='col' className='py-2 px-3' key={name}>
                         {!sortable ? (

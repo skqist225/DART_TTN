@@ -1,5 +1,6 @@
 package com.quiz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +31,19 @@ public class Answer {
     @Column(name = "NOIDUNG", columnDefinition = "TEXT", nullable = false)
     private String content;
 
+    @Column(name = "LADAPAN")
+    private boolean isAnswer;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MACAUHOI", nullable = false)
     private Question question;
+
+    public static Answer build(String content, Question question, boolean isAnswer) {
+        return Answer.builder()
+                .content(content)
+                .question(question)
+                .isAnswer(isAnswer)
+                .build();
+    }
 }

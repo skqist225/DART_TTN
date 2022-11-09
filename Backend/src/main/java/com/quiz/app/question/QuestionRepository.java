@@ -12,11 +12,10 @@ import java.util.List;
 @Repository
 public interface QuestionRepository extends CrudRepository<Question, Integer> {
 
-    @Query(value = "SELECT * FROM questions where id = :id", nativeQuery = true)
+    @Query(value = "SELECT * FROM cauhoi where macauhoi = :id", nativeQuery = true)
     public Question getById(Integer id);
 
     public Question findByContent(String content);
-
 
     @Query
     public List<Question> findByChapterIn(List<Chapter> subject);
