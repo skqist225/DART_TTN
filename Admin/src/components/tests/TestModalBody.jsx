@@ -184,12 +184,12 @@ function TestModalBody({ errors, register, dispatch, setValue, control }) {
                     <div>
                         <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
                             <TableHeader columns={columns} />
-                            <QuestionTableBody
+                            {/* <QuestionTableBody
                                 rows={questions}
                                 page={page}
                                 addTest
                                 dispatch={dispatch}
-                            />
+                            /> */}
                         </table>
                         <TablePagination
                             totalElements={totalElements}
