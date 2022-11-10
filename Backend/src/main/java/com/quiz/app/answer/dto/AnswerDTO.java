@@ -10,12 +10,12 @@ import lombok.Setter;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 public class AnswerDTO {
     private Integer id;
     private String content;
-    private boolean isAnswer;
+    private String isAnswer;
 }

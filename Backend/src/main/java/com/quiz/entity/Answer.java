@@ -15,11 +15,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import java.util.Comparator;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
 @Builder
 @Entity
 @Table(name = "LUACHON")
@@ -31,7 +32,7 @@ public class Answer {
     @Column(name = "NOIDUNG", columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @Column(name = "LADAPAN")
+    @Column(name = "LADAPAN", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isAnswer;
 
     @JsonIgnore
@@ -39,11 +40,16 @@ public class Answer {
     @JoinColumn(name = "MACAUHOI", nullable = false)
     private Question question;
 
-    public static Answer build(String content, Question question, boolean isAnswer) {
+    public static Answer build(String content, Question question, String isAnswer) {
         return Answer.builder()
                 .content(content)
                 .question(question)
-                .isAnswer(isAnswer)
+                .isAnswer(isAnswer.equals("true"))
                 .build();
+    }
+
+    public Answer(String content, boolean isAnswer) {
+        this.content = content;
+        this.isAnswer = isAnswer;
     }
 }

@@ -12,7 +12,6 @@ function QuestionsFilter() {
     const dispatch = useDispatch();
     const { filterObject } = useSelector(questionState);
     const { subjects } = useSelector(subjectState);
-
     const { register, handleSubmit } = useForm();
 
     const onSubmit = data => {};
@@ -37,20 +36,17 @@ function QuestionsFilter() {
             <div className='mr-2 w-full flex items-center'>
                 <Select
                     label='mức độ'
-                    labelClassName={tailwindCss.label}
-                    selectClassName={tailwindCss.select + " " + "w-40 p-2"}
                     name='levelFilter'
                     register={register}
                     options={levelOptions}
                     onChangeHandler={handleLevelChange}
                     hiddenOption
+                    width={"w-40"}
                 />
             </div>
-            <div className='mr-2 w-full flex items-center'>
+            <div className='mr-2 w-full flex items-center justify-start'>
                 <Select
                     label='môn học'
-                    labelClassName={tailwindCss.label}
-                    selectClassName={tailwindCss.select + " " + "w-40 p-2"}
                     name='subjectFilter'
                     register={register}
                     options={subjects.map(subject => ({
@@ -59,6 +55,7 @@ function QuestionsFilter() {
                     }))}
                     onChangeHandler={handleSubjectChange}
                     hiddenOption
+                    width={"w-40"}
                 />
             </div>
             <div>

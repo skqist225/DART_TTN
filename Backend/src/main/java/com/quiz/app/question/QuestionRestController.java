@@ -143,10 +143,6 @@ public class QuestionRestController {
             commonUtils.addError("level", "Mức độ không được để trống");
         }
 
-        if (Objects.isNull(answer) || StringUtils.isEmpty(answer)) {
-            commonUtils.addError("finalAnswer", "Đáp án không được để trống");
-        }
-
         if (!type.equals("Đáp án điền")) {
             for (AnswerDTO ans : answers) {
                 if (Objects.isNull(ans.getContent()) || StringUtils.isEmpty(ans.getContent())) {
@@ -221,6 +217,42 @@ public class QuestionRestController {
                 if (postCreateQuestionDTO.getImage() != null) {
                     question.setImage(postCreateQuestionDTO.getImage().getOriginalFilename());
                 }
+                for (AnswerDTO a : answers) {
+                    if (Objects.isNull(a.getId())) {
+                        question.addAnswer(Answer.build(a.getContent(), question, a.getIsAnswer()));
+                    } else {
+                        for (Answer answer1 : question.getAnswers()) {
+                            if (a.getId().equals(answer1.getId())) {
+                                answer1.setContent(a.getContent());
+                                answer1.setAnswer(a.getIsAnswer().equals("true"));
+                                answerService.save(answer1);
+                                break;
+                            }
+                        }
+                    }
+                }
+
+                List<Answer> ans = new ArrayList<>();
+                for (Answer answer1 : question.getAnswers()) {
+                    boolean shouldDelete = true;
+
+                    for (AnswerDTO a : answers) {
+                        if (Objects.nonNull(a.getId())) {
+                            if (a.getId().equals(answer1.getId())) {
+                                shouldDelete = false;
+                                break;
+                            }
+                        }
+                    }
+
+                    if (shouldDelete) {
+                        ans.add(answer1);
+                    }
+                }
+
+                for (Answer answer1 : ans) {
+                    question.removeAnswer(answer1);
+                }
 
                 savedQuestion = questionService.save(question);
 
@@ -232,14 +264,12 @@ public class QuestionRestController {
             savedQuestion = questionService.save(Question.build(postCreateQuestionDTO,
                     userDetailsImpl.getUser(), chapter));
 
-            if (!type.equals("Đáp án điền")) {
-                List<Answer> ans = new ArrayList<>();
-                for (AnswerDTO a : answers) {
-                    ans.add(Answer.build(a.getContent(), savedQuestion, a.isAnswer()));
-                }
-
-                answerService.saveAll(ans);
+            List<Answer> ans = new ArrayList<>();
+            for (AnswerDTO a : answers) {
+                ans.add(Answer.build(a.getContent(), savedQuestion, a.getIsAnswer()));
             }
+
+            answerService.saveAll(ans);
         }
 
         if (postCreateQuestionDTO.getImage() != null) {

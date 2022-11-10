@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { clearErrorField, questionState } from "../../features/questionSlice";
 import { tailwindCss } from "../../tailwind";
@@ -53,6 +53,11 @@ function QuestionModalBody({
     const { chapters } = useSelector(chapterState);
     const { subjects } = useSelector(subjectState);
 
+    const { fields, append, remove } = useFieldArray({
+        control,
+        name: "answers",
+    });
+
     const onKeyDown = ({ target: { name } }) => {
         if (errorObject) {
             dispatch(clearErrorField(name));
@@ -66,13 +71,29 @@ function QuestionModalBody({
         if (editedQuestion) {
             setValue("id", editedQuestion.id);
             setValue("content", editedQuestion.content);
+            handleTypeChange({ target: { value: editedQuestion.type } });
+            if (editedQuestion.type === "Đáp án điền") {
+                if (editedQuestion.answers[0]) {
+                    setValue("typedAnswer", editedQuestion.answers[0].content);
+                    setValue("typedId", editedQuestion.answers[0].id);
+                }
+            } else {
+                editedQuestion.answers.forEach(({ id, content, answer }) => {
+                    append({ id, content: content.slice(3), isAnswer: answer });
+                });
+            }
+        } else {
+            setValue("id", "");
+            setValue("content", "");
+
+            console.log("called");
+            fields.forEach((_, index) => {
+                remove(index);
+            });
+            fields.length = 0;
+            setValue("answers", []);
         }
     }, [editedQuestion]);
-
-    const { fields, append, remove } = useFieldArray({
-        control,
-        name: "answers",
-    });
 
     const handleSubjectChange = event => {
         event.preventDefault();
@@ -112,10 +133,12 @@ function QuestionModalBody({
     }
 
     const handleTypeChange = event => {
+        console.log("asdas");
+
         if (event.target.value === "Đáp án điền") {
             $("#addAnswerButton").css("display", "none");
             $("#typedAnswerContainer").css("display", "block");
-
+            $("#hide-this-for-me").css("display", "none");
             fields.forEach((_, index) => {
                 remove(index);
             });
@@ -123,6 +146,7 @@ function QuestionModalBody({
         } else {
             $("#addAnswerButton").css("display", "block");
             $("#typedAnswerContainer").css("display", "none");
+            $("#hide-this-for-me").css("display", "block");
             setValue("typedAnswer", "");
         }
     };
@@ -146,6 +170,7 @@ function QuestionModalBody({
                                 onKeyDown={onKeyDown}
                             />
                         </div>
+                        <input type='hidden' {...register("typedId")} />
                         <div className='w-full my-5 hidden' id='typedAnswerContainer'>
                             <Input
                                 label='Đáp án *'
@@ -155,100 +180,116 @@ function QuestionModalBody({
                                 onKeyDown={onKeyDown}
                             />
                         </div>
-                        <div className='w-full grid grid-cols-2 gap-2 mt-5'>
-                            {fields.map((field, index) => (
-                                <div className='flex items-center' key={index}>
-                                    <div className='flex items-center w-full'>
-                                        <div className='flex-1 mr-5'>
-                                            <input
-                                                type='hidden'
-                                                {...register(`answers.${index}.name`)}
-                                                value={lookupIndex(index)}
-                                            />
-                                            <TextArea
-                                                label={`${lookupIndex(index)} *`}
-                                                labelClassName={tailwindCss.label}
-                                                textAreaClassName={tailwindCss.textArea}
-                                                register={register}
-                                                name={`answers.${index}.content`}
-                                            />
-                                            <input
-                                                type='hidden'
-                                                {...register(`answers.${index}.isAnswer`)}
-                                            />
-                                        </div>
-                                        <div className='col-flex mb-1 ml-2'>
-                                            <button
-                                                type='button'
-                                                className={tailwindCss.greenOutlineButton}
-                                                onClick={event => {
-                                                    const self = $(event.target);
-                                                    if (self.hasClass("chosen")) {
-                                                        setValue(
-                                                            `answers.${index}.isAnswer`,
-                                                            false
-                                                        );
-                                                        self.prop(
-                                                            "className",
-                                                            tailwindCss.greenOutlineButton
-                                                        );
-                                                    } else {
-                                                        if ($("#type").val() === "Một đáp án") {
-                                                            if ($(".chosen").length === 0) {
+                        {fields.length > 0 && (
+                            <div className={`w-full grid grid-cols-2 gap-2 mt-5`}>
+                                {fields.map((field, index) => {
+                                    return (
+                                        <div className='flex items-center' key={index}>
+                                            <div className='flex items-center w-full'>
+                                                <div className='flex-1 mr-5'>
+                                                    <input
+                                                        type='hidden'
+                                                        {...register(`answers.${index}.id`)}
+                                                    />
+                                                    <input
+                                                        type='hidden'
+                                                        {...register(`answers.${index}.name`)}
+                                                        value={lookupIndex(index)}
+                                                    />
+                                                    <TextArea
+                                                        label={`${lookupIndex(index)} *`}
+                                                        labelClassName={tailwindCss.label}
+                                                        textAreaClassName={tailwindCss.textArea}
+                                                        register={register}
+                                                        name={`answers.${index}.content`}
+                                                    />
+                                                    <input
+                                                        type='hidden'
+                                                        {...register(`answers.${index}.isAnswer`)}
+                                                    />
+                                                </div>
+                                                <div className='col-flex mb-1 ml-2'>
+                                                    <button
+                                                        type='button'
+                                                        className={
+                                                            field.isAnswer
+                                                                ? tailwindCss.greenFullButton +
+                                                                  " chosen"
+                                                                : tailwindCss.greenOutlineButton
+                                                        }
+                                                        onClick={event => {
+                                                            const self = $(event.target);
+                                                            if (self.hasClass("chosen")) {
                                                                 setValue(
                                                                     `answers.${index}.isAnswer`,
-                                                                    true
+                                                                    false
                                                                 );
                                                                 self.prop(
                                                                     "className",
-                                                                    tailwindCss.greenFullButton +
-                                                                        " chosen"
+                                                                    tailwindCss.greenOutlineButton
                                                                 );
+                                                            } else {
+                                                                if (
+                                                                    $("#type").val() ===
+                                                                    "Một đáp án"
+                                                                ) {
+                                                                    if ($(".chosen").length === 0) {
+                                                                        setValue(
+                                                                            `answers.${index}.isAnswer`,
+                                                                            true
+                                                                        );
+                                                                        self.prop(
+                                                                            "className",
+                                                                            tailwindCss.greenFullButton +
+                                                                                " chosen"
+                                                                        );
+                                                                    }
+                                                                } else {
+                                                                    setValue(
+                                                                        `answers.${index}.isAnswer`,
+                                                                        true
+                                                                    );
+                                                                    self.prop(
+                                                                        "className",
+                                                                        tailwindCss.greenFullButton +
+                                                                            " chosen"
+                                                                    );
+                                                                }
                                                             }
-                                                        } else {
+                                                        }}
+                                                    >
+                                                        Đáp án
+                                                    </button>
+                                                    <button
+                                                        type='button'
+                                                        className={tailwindCss.deleteOutlineButton}
+                                                        onClick={e => {
+                                                            e.preventDefault();
                                                             setValue(
-                                                                `answers.${index}.isAnswer`,
-                                                                true
+                                                                `answers.${index}.${lookupIndex(
+                                                                    index
+                                                                )}.content`,
+                                                                ""
                                                             );
-                                                            self.prop(
-                                                                "className",
-                                                                tailwindCss.greenFullButton +
-                                                                    " chosen"
+                                                            setValue(
+                                                                `answers.${index}.${lookupIndex(
+                                                                    index
+                                                                )}.isAnswer`,
+                                                                false
                                                             );
-                                                        }
-                                                    }
-                                                }}
-                                            >
-                                                Đáp án
-                                            </button>
-                                            <button
-                                                type='button'
-                                                className={tailwindCss.deleteOutlineButton}
-                                                onClick={e => {
-                                                    e.preventDefault();
-                                                    setValue(
-                                                        `answers.${index}.${lookupIndex(
-                                                            index
-                                                        )}.content`,
-                                                        ""
-                                                    );
-                                                    setValue(
-                                                        `answers.${index}.${lookupIndex(
-                                                            index
-                                                        )}.isAnswer`,
-                                                        false
-                                                    );
-                                                    remove(index);
-                                                }}
-                                            >
-                                                Xóa
-                                            </button>
+                                                            remove(index);
+                                                        }}
+                                                    >
+                                                        Xóa
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                        <div className='self-start mt-5'>
+                                    );
+                                })}
+                            </div>
+                        )}
+                        <div className='self-start mt-5' id='hide-this-for-me'>
                             <button
                                 id='addAnswerButton'
                                 type='button'
@@ -260,25 +301,21 @@ function QuestionModalBody({
                                 Thêm câu trả lời
                             </button>
                         </div>
-
                         <div className='flex items-center w-full my-3'>
                             <div className='mr-5 w-full'>
                                 <Select
                                     label='Loại câu hỏi'
-                                    labelClassName={tailwindCss.label}
-                                    selectClassName={tailwindCss.select}
                                     register={register}
                                     name='type'
                                     options={types}
                                     setValue={setValue}
                                     onChangeHandler={handleTypeChange}
+                                    defaultValue={editedQuestion && editedQuestion.type}
                                 />
                             </div>
                             <div className='w-full'>
                                 <Select
                                     label='Độ khó *'
-                                    labelClassName={tailwindCss.label}
-                                    selectClassName={tailwindCss.select}
                                     register={register}
                                     name='level'
                                     options={levelOptions}
@@ -294,8 +331,6 @@ function QuestionModalBody({
                             <div className='mr-5 w-full'>
                                 <Select
                                     label='Môn học'
-                                    labelClassName={tailwindCss.label}
-                                    selectClassName={tailwindCss.select}
                                     register={register}
                                     name='subject'
                                     options={subjects.map(subject => ({
@@ -304,6 +339,9 @@ function QuestionModalBody({
                                     }))}
                                     setValue={setValue}
                                     onChangeHandler={handleSubjectChange}
+                                    defaultValue={
+                                        editedQuestion && editedQuestion.chapter.subject.id
+                                    }
                                 />
                             </div>
                             <div className='w-full'>

@@ -52,7 +52,6 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = 
                         {!addTest ? (
                             <>
                                 <td className={cellCss}>{row.type}</td>
-                                <td className={cellCss}>{row.finalAnswer}</td>
                                 <td className={cellCss}>{row.answers && row.answers.length}</td>
                             </>
                         ) : (

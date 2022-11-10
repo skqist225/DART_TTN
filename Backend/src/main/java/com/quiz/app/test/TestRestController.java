@@ -176,9 +176,9 @@ public class TestRestController {
             for (Question question : test.getQuestions()) {
                 for (HandInDTO answer : answers) {
                     if (answer.getId().equals(question.getId())) {
-                        if (question.getFinalAnswer().equals(answer.getAnswer())) {
+//                        if (question.getFinalAnswer().equals(answer.getAnswer())) {
                             numberOfRightAnswer++;
-                        }
+//                        }
                         question.setSelectedAnswer(answer.getAnswer());
                     }
                 }

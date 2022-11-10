@@ -14,6 +14,7 @@ import {
     fetchAllQuestions,
     addMultipleQuestions,
     setExcelAdd,
+    setEditedQuestion,
 } from "../../features/questionSlice";
 import { fetchAllChapters } from "../../features/chapterSlice";
 import { fetchAllSubjects } from "../../features/subjectSlice";
@@ -32,11 +33,6 @@ const columns = [
     {
         name: "Loại",
         sortField: "type",
-        sortable: true,
-    },
-    {
-        name: "Đáp án",
-        sortField: "answer",
         sortable: true,
     },
     {
@@ -104,14 +100,8 @@ function QuestionsPage() {
         },
     });
 
-    useEffect(() => {
-        if (!isEdit) {
-            setValue("id", "");
-            setValue("content", "");
-        }
-    }, [isEdit]);
-
     const onSubmit = data => {
+        console.log(data);
         const formData = new FormData();
 
         if (data.type === "Đáp án điền") {
@@ -181,29 +171,45 @@ function QuestionsPage() {
         if (image) {
             formData.set("image", image);
         }
-        let answer = null;
-        switch (data.type) {
-            case "Nhiều đáp án":
-            case "Một đáp án": {
-                answer = data.answers
-                    .map(({ name, isAnswer }) => {
-                        if (isAnswer) {
-                            return name;
-                        }
-                    })
-                    .join(",");
-                break;
-            }
-            case "Đáp án điền": {
-                answer = data.typedAnswer;
-                break;
-            }
-        }
-        formData.set("answer", answer);
+        // let answer = null;
+        // switch (data.type) {
+        //     case "Nhiều đáp án":
+        //     case "Một đáp án": {
+        //         answer = data.answers
+        //             .map(({ name, isAnswer }) => {
+        //                 if (isAnswer) {
+        //                     return isAnswer;
+        //                 }
+        //             })
+        //             .join(",");
+        //         break;
+        //     }
+        //     case "Đáp án điền": {
+        //         answer = data.typedAnswer;
+        //         break;
+        //     }
+        // }
 
-        data.answers.forEach(({ name, content }) => {
-            formData.append("answers", `${name}. ${content}`);
-        });
+        if (data.type === "Đáp án điền") {
+            if (data.typedId) {
+                formData.append(`answers[0].id`, data.typedId);
+            }
+
+            formData.append(`answers[0].content`, data.typedAnswer);
+            formData.append(`answers[0].isAnswer`, true);
+        } else {
+            data.answers.forEach((answer, index) => {
+                if (answer.id) {
+                    formData.append(`answers[${index}].id`, answer.id);
+                }
+                formData.append(`answers[${index}].content`, `${answer.name}. ${answer.content}`);
+                if (!answer.isAnswer) {
+                    formData.append(`answers[${index}].isAnswer`, false);
+                } else {
+                    formData.append(`answers[${index}].isAnswer`, answer.isAnswer);
+                }
+            });
+        }
 
         if (isEdit) {
             dispatch(editQuestion(formData));
@@ -263,6 +269,7 @@ function QuestionsPage() {
             dispatch(fetchAllQuestions(filterObject));
             $("#questionModal").css("display", "none");
             setIsEdit(false);
+            dispatch(setEditedQuestion(null));
         }
     }, [eqSuccessMessage]);
 

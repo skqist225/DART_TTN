@@ -12,6 +12,7 @@ function Select({
     setValue,
     onChangeHandler,
     hiddenOption = false,
+    width,
 }) {
     useEffect(() => {
         if (setValue) {
@@ -23,7 +24,7 @@ function Select({
                 }
             }
         }
-    }, []);
+    }, [defaultValue]);
 
     useEffect(() => {
         if (propName === "chapterId") {
@@ -53,7 +54,9 @@ function Select({
             </label>
             <select
                 id={propName}
-                className={`${tailwindCss.select} ${error && "bg-red-50 border border-red-500"}`}
+                className={`${tailwindCss.select} ${width} ${
+                    error && "bg-red-50 border border-red-500"
+                }`}
                 name={name}
                 onChange={e => {
                     e.preventDefault();
