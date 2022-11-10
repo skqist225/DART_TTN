@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import {
-    persistStore,
     persistReducer,
     FLUSH,
     REHYDRATE,
@@ -14,23 +13,31 @@ import { combineReducers } from "redux";
 import {
     authSlice,
     chapterSlice,
-    classSlice,
+    creditClassSlice,
+    examSlice,
     questionSlice,
+    registerSlice,
+    roleSlice,
     subjectSlice,
+    takeExamDetailSlice,
+    takeExamSlice,
     testSlice,
     userSlice,
 } from "./features";
-import roleSlice from "./features/roleSlice";
 
 const rootReducer = combineReducers({
     auth: authSlice,
-    question: questionSlice,
-    subject: subjectSlice,
-    user: userSlice,
-    class: classSlice,
-    test: testSlice,
     chapter: chapterSlice,
+    creditClass: creditClassSlice,
+    exam: examSlice,
+    question: questionSlice,
+    reigster: registerSlice,
     role: roleSlice,
+    subject: subjectSlice,
+    takeExam: takeExamSlice,
+    takeExamDetail: takeExamDetailSlice,
+    test: testSlice,
+    user: userSlice,
 });
 
 const persistConfig = {

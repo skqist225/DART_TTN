@@ -70,10 +70,13 @@ export const userRegisterSchema = yup
     })
     .required();
 
-export const classSchema = yup
+export const creditClassSchema = yup
     .object({
-        id: yup.string().required("Mã lớp không được để trống"),
-        name: yup.string().required("Tên lớp không được để trống"),
+        schoolYear: yup.string().required("Niên khóa không được để trống"),
+        semester: yup.string().required("Học kỳ không được để trống"),
+        subjectId: yup.string().required("Môn học không được để trống"),
+        group: yup.string().required("Nhóm không được để trống"),
+        minimumNumberOfStudents: yup.string().required("Số SV tối thiểu không được để trống"),
     })
     .required();
 
@@ -87,5 +90,13 @@ export const chapterSchema = yup
 export const roleSchema = yup
     .object({
         name: yup.string().required("Tên vai trò được để trống"),
+    })
+    .required();
+
+
+export const examSchema = yup
+    .object({
+        examDate: yup.string().required("Ngày thi không được để trống"),
+        time: yup.number().required("Thời gian làm bài không được để trống"),
     })
     .required();

@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import SidebarElement from "./SidebarElement";
 
-import SidebarLinkGroup from "./SidebarLinkGroup";
 
 function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const location = useLocation();
@@ -182,7 +181,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
                             <SidebarElement pathname={pathname} name='questions' title='Câu hỏi' />
 
-                            <SidebarElement pathname={pathname} name='tests' title='Bộ đề' />
+                            <SidebarElement pathname={pathname} name='tests' title='Đề thi' />
 
                             <SidebarElement pathname={pathname} name='chapters' title='Chương' />
 
@@ -197,6 +196,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 name='creditClasses'
                                 title='Lớp tín chỉ'
                             />
+
+                            <SidebarElement pathname={pathname} name='takeExams' title='Thi' />
 
                             <SidebarElement pathname={pathname} name='registers' title='Đăng ký' />
 

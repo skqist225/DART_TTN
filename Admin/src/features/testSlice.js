@@ -179,18 +179,13 @@ const testSlice = createSlice({
                 if (payload) {
                     const errors = JSON.parse(payload);
                     errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
+                        const key = Object.keys(error)[0];
+                        const value = error[key];
+
+                        state.errorObject = {
+                            ...state.errorObject,
+                            [key]: value,
+                        };
                     });
                 }
             })
@@ -208,18 +203,13 @@ const testSlice = createSlice({
                 if (payload) {
                     const errors = JSON.parse(payload);
                     errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
+                        const key = Object.keys(error)[0];
+                        const value = error[key];
+
+                        state.errorObject = {
+                            ...state.errorObject,
+                            [key]: value,
+                        };
                     });
                 }
             })

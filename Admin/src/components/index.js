@@ -9,7 +9,6 @@ export { default as ErrorMessage } from "./utils/errors/ErrorMessage";
 
 // forms
 export { default as Form } from "./utils/forms/Form";
-// export { default as ModalForm } from "./utils/forms/ModalForm";
 
 // frames
 export { default as Frame } from "./utils/frames/Frame";
@@ -35,8 +34,8 @@ export { default as UserModalBody } from "./users/UserModalBody";
 export { default as UserTableBody } from "./users/UserTableBody";
 
 //classes
-export { default as ClassModalBody } from "./classes/ClassModalBody";
-export { default as ClassTableBody } from "./classes/ClassTableBody";
+export { default as CreditClassModalBody } from "./creditClasses/CreditClassModalBody";
+export { default as CreditClassTableBody } from "./creditClasses/CreditClassTableBody";
 
 //tests
 export { default as TestModalBody } from "./tests/TestModalBody";
@@ -49,3 +48,8 @@ export { default as ChapterTableBody } from "./chapters/ChapterTableBody";
 //roles
 export { default as RoleModalBody } from "./roles/RoleModalBody";
 export { default as RoleTableBody } from "./roles/RoleTableBody";
+
+//classes
+export { default as ExamModalBody } from "./exams/ExamModalBody";
+export { default as ExamTableBody } from "./exams/ExamTableBody";
+

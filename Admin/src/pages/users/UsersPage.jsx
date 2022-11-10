@@ -19,7 +19,6 @@ import { Frame, Table, UserModalBody, UserTableBody } from "../../components";
 import { userRegisterSchema, userSchema } from "../../validation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { classState, fetchAllClasses } from "../../features/classSlice";
 
 const columns = [
     {

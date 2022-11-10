@@ -1,7 +1,12 @@
 export { default as authSlice } from "./authSlice";
-export { default as classSlice } from "./classSlice";
+export { default as creditClassSlice } from "./creditClassSlice";
 export { default as questionSlice } from "./questionSlice";
 export { default as subjectSlice } from "./subjectSlice";
 export { default as userSlice } from "./userSlice";
 export { default as testSlice } from "./testSlice";
 export { default as chapterSlice } from "./chapterSlice";
+export { default as examSlice } from "./examSlice";
+export { default as roleSlice } from "./roleSlice";
+export { default as registerSlice } from "./registerSlice";
+export { default as takeExamSlice } from "./takeExamSlice";
+export { default as takeExamDetailSlice } from "./takeExamDetailSlice";

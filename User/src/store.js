@@ -1,6 +1,5 @@
 import { configureStore } from "@reduxjs/toolkit";
 import {
-    persistStore,
     persistReducer,
     FLUSH,
     REHYDRATE,
@@ -13,11 +12,12 @@ import storage from "redux-persist/lib/storage";
 import { combineReducers } from "redux";
 import {
     authSlice,
-    classSlice,
+    creditClassSlice,
     questionSlice,
     subjectSlice,
     testSlice,
     userSlice,
+    examSlice,
 } from "./features";
 
 const rootReducer = combineReducers({
@@ -25,8 +25,9 @@ const rootReducer = combineReducers({
     question: questionSlice,
     subject: subjectSlice,
     user: userSlice,
-    class: classSlice,
+    creditClass: creditClassSlice,
     test: testSlice,
+    exam: examSlice
 });
 
 const persistConfig = {

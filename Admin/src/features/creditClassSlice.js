@@ -1,8 +1,8 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import api from "../axios";
 
-export const fetchAllClasses = createAsyncThunk(
-    "class/fetchAllClasses",
+export const fetchAllCreditClasses = createAsyncThunk(
+    "creditClass/fetchAllCreditClasses",
     async (
         { page = 1, query = "", sortField = "id", sortDir = "asc" },
         { dispatch, rejectWithValue }
@@ -33,23 +33,23 @@ export const fetchAllClasses = createAsyncThunk(
             dispatch(setFilterObject(filterArray));
 
             const {
-                data: { classes, totalElements, totalPages },
+                data: { creditClasses, totalElements, totalPages },
             } = await api.get(
-                `/classes?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}`
+                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}`
             );
 
-            return { classes, totalElements, totalPages };
+            return { creditClasses, totalElements, totalPages };
         } catch ({ data: { error } }) {
             return rejectWithValue(error);
         }
     }
 );
 
-export const findClass = createAsyncThunk(
-    "class/findClass",
-    async ({ ClassId }, { rejectWithValue }) => {
+export const findCreditClass = createAsyncThunk(
+    "creditClass/findCreditClass",
+    async ({ id }, { rejectWithValue }) => {
         try {
-            const { data } = await api.get(`/classes/${ClassId}`);
+            const { data } = await api.get(`/creditClasses/${id}`);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -58,11 +58,11 @@ export const findClass = createAsyncThunk(
     }
 );
 
-export const addClass = createAsyncThunk(
-    "class/addClass",
+export const addCreditClass = createAsyncThunk(
+    "creditClass/addCreditClass",
     async (postData, { rejectWithValue }) => {
         try {
-            const { data } = await api.post(`/classes/save`, postData);
+            const { data } = await api.post(`/creditClasses/save`, postData);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -71,11 +71,11 @@ export const addClass = createAsyncThunk(
     }
 );
 
-export const editClass = createAsyncThunk(
-    "class/editClass",
+export const editCreditClass = createAsyncThunk(
+    "creditClass/editCreditClass",
     async (postData, { rejectWithValue }) => {
         try {
-            const { data } = await api.post(`/classes/save?isEdit=true`, postData);
+            const { data } = await api.post(`/creditClasses/save?isEdit=true`, postData);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -84,11 +84,11 @@ export const editClass = createAsyncThunk(
     }
 );
 
-export const deleteClass = createAsyncThunk(
-    "class/deleteClass",
+export const deleteCreditClass = createAsyncThunk(
+    "creditClass/deleteClass",
     async (id, { rejectWithValue }) => {
         try {
-            const { data } = await api.delete(`/classes/${id}/delete`);
+            const { data } = await api.delete(`/creditClasses/${id}/delete`);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -98,10 +98,10 @@ export const deleteClass = createAsyncThunk(
 );
 
 export const enableClass = createAsyncThunk(
-    "class/enableClass",
-    async (classId, { rejectWithValue }) => {
+    "creditClass/enableClass",
+    async (creditClassId, { rejectWithValue }) => {
         try {
-            const { data } = await api.delete(`/classes/${classId}/delete`);
+            const { data } = await api.delete(`/creditClasses/${creditClassId}/delete`);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -111,10 +111,10 @@ export const enableClass = createAsyncThunk(
 );
 
 export const disableClass = createAsyncThunk(
-    "class/disableClass",
-    async (classId, { rejectWithValue }) => {
+    "creditClass/disableClass",
+    async (creditClassId, { rejectWithValue }) => {
         try {
-            const { data } = await api.delete(`/classes/${classId}/delete`);
+            const { data } = await api.delete(`/creditClasses/${creditClassId}/delete`);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -125,10 +125,10 @@ export const disableClass = createAsyncThunk(
 
 const initialState = {
     loading: true,
-    classes: [],
+    creditClasses: [],
     totalElements: 0,
     totalPages: 0,
-    editedClass: null,
+    editedCreditClass: null,
     filterObject: {
         page: 1,
         query: "",
@@ -136,30 +136,30 @@ const initialState = {
         sortDir: "asc",
     },
     errorObject: null,
-    addClass: {
+    addCreditClass: {
         successMessage: null,
     },
-    editClass: {
+    editCreditClass: {
         successMessage: null,
     },
-    deleteClass: {
+    deleteCreditClass: {
         successMessage: null,
         errorMessage: null,
     },
 };
 
-const classSlice = createSlice({
-    name: "class",
+const creditClassSlice = createSlice({
+    name: "creditClass",
     initialState,
     reducers: {
         clearClassState(state) {
-            state.addClass.successMessage = null;
+            state.addCreditClass.successMessage = null;
             state.errorObject = null;
 
-            state.editClass.successMessage = null;
+            state.editCreditClass.successMessage = null;
 
-            state.deleteClass.successMessage = null;
-            state.deleteClass.errorObject = null;
+            state.deleteCreditClass.successMessage = null;
+            state.deleteCreditClass.errorObject = null;
         },
         clearErrorField(state, { payload }) {
             if (payload) {
@@ -179,91 +179,81 @@ const classSlice = createSlice({
             }
         },
         setEditedClass(state, { payload }) {
-            state.editedClass = payload;
+            state.editedCreditClass = payload;
         },
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllClasses.pending, (state, { payload }) => {})
-            .addCase(fetchAllClasses.fulfilled, (state, { payload }) => {
-                state.classes = payload.classes;
+            .addCase(fetchAllCreditClasses.pending, (state, { payload }) => {})
+            .addCase(fetchAllCreditClasses.fulfilled, (state, { payload }) => {
+                state.creditClasses = payload.creditClasses;
                 state.totalElements = payload.totalElements;
                 state.totalPages = payload.totalPages;
             })
-            .addCase(fetchAllClasses.rejected, (state, { payload }) => {})
+            .addCase(fetchAllCreditClasses.rejected, (state, { payload }) => {})
 
-            .addCase(findClass.pending, (state, { payload }) => {})
-            .addCase(findClass.fulfilled, (state, { payload }) => {
+            .addCase(findCreditClass.pending, (state, { payload }) => {})
+            .addCase(findCreditClass.fulfilled, (state, { payload }) => {
                 // state.Class = payload.data;
             })
-            .addCase(findClass.rejected, (state, { payload }) => {})
+            .addCase(findCreditClass.rejected, (state, { payload }) => {})
 
-            .addCase(addClass.pending, (state, _) => {
-                state.addClass.successMessage = null;
+            .addCase(addCreditClass.pending, (state, _) => {
+                state.addCreditClass.successMessage = null;
                 state.errorObject = null;
             })
-            .addCase(addClass.fulfilled, (state, { payload }) => {
+            .addCase(addCreditClass.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.addClass.successMessage = "Thêm lớp thành công";
+                    state.addCreditClass.successMessage = "Thêm lớp tín chỉ thành công";
                 }
             })
-            .addCase(addClass.rejected, (state, { payload }) => {
+            .addCase(addCreditClass.rejected, (state, { payload }) => {
                 if (payload) {
                     const errors = JSON.parse(payload);
                     errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
+                        const key = Object.keys(error)[0];
+                        const value = error[key];
+
+                        state.errorObject = {
+                            ...state.errorObject,
+                            [key]: value,
+                        };
                     });
                 }
             })
 
-            .addCase(editClass.pending, (state, _) => {
-                state.editClass.successMessage = null;
+            .addCase(editCreditClass.pending, (state, _) => {
+                state.editCreditClass.successMessage = null;
                 state.errorObject = null;
             })
-            .addCase(editClass.fulfilled, (state, { payload }) => {
+            .addCase(editCreditClass.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.editClass.successMessage = "Chỉnh sửa lớp thành công";
+                    state.editCreditClass.successMessage = "Chỉnh sửa lớp thành công";
                 }
             })
-            .addCase(editClass.rejected, (state, { payload }) => {
+            .addCase(editCreditClass.rejected, (state, { payload }) => {
                 if (payload) {
                     const errors = JSON.parse(payload);
                     errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
+                        const key = Object.keys(error)[0];
+                        const value = error[key];
+
+                        state.errorObject = {
+                            ...state.errorObject,
+                            [key]: value,
+                        };
                     });
                 }
             })
-            .addCase(deleteClass.fulfilled, (state, { payload }) => {
-                state.deleteClass.successMessage = payload.data;
+            .addCase(deleteCreditClass.fulfilled, (state, { payload }) => {
+                state.deleteCreditClass.successMessage = payload.data;
             });
     },
 });
 
 export const {
-    actions: { clearClassState, clearErrorField, setFilterObject, setEditedClass },
-} = classSlice;
+    actions: { clearCreditClassState, clearErrorField, setFilterObject, setEditedCreditClass },
+} = creditClassSlice;
 
-export const classState = state => state.class;
-export default classSlice.reducer;
+export const creditClassState = state => state.creditClass;
+export default creditClassSlice.reducer;

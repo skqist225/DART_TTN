@@ -9,14 +9,8 @@ export { default as SubjectsPage } from "./subjects/SubjectsPage";
 export { default as UsersPage } from "./users/UsersPage";
 export { default as EditUserPage } from "./users/EditUserPage";
 
-// Classes
-export { default as ClassesPage } from "./classes/ClassesPage";
-
 // Chapters
 export { default as ChaptersPage } from "./chapters/ChaptersPage";
-
-// Faculties
-export { default as FacultiesPage } from "./faculties/FacultiesPage";
 
 // CreditClasses
 export { default as CreditClassesPage } from "./creditClasses/CreditClassesPage";

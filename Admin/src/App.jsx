@@ -6,10 +6,8 @@ import "./charts/ChartjsConfig";
 import Dashboard from "./pages/Dashboard";
 import {
     ChaptersPage,
-    ClassesPage,
     CreditClassesPage,
     ExamsPage,
-    FacultiesPage,
     QuestionsPage,
     RolesPage,
     SubjectsPage,
@@ -53,10 +51,6 @@ function App() {
 
                 <Route path='/users'>
                     <Route path='' element={<UsersPage />} />
-                </Route>
-
-                <Route path='/creditClasses'>
-                    <Route path='' element={<ClassesPage />} />
                 </Route>
 
                 <Route path='/creditClasses'>
