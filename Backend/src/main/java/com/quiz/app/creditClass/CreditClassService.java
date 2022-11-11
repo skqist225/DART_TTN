@@ -2,6 +2,8 @@ package com.quiz.app.creditClass;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.subject.SubjectService;
+import com.quiz.entity.CreditClass;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,121 +24,102 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 
 @Service
 public class CreditClassService {
 
-//    private final Integer MAX_PER_PAGE = 10;
-//
-//    @Autowired
-//    CreditClassRepository classRepository;
-//
-//    @Autowired
-//    private EntityManager entityManager;
-//
-//    public Class save(Class cls) {
-//        return classRepository.save(cls);
-//    }
-//
-//    public String deleteById(String id) throws ConstrainstViolationException {
-//        try {
-//            classRepository.deleteById(id);
-//            String DELETE_SUCCESSFULLY = "Xóa lớp học thành công";
-//            return DELETE_SUCCESSFULLY;
-//        } catch (Exception ex) {
-//            String DELETE_FORBIDDEN = "Không thể xóa lớp học vì ràng buộc dữ liệu";
-//            throw new ConstrainstViolationException(DELETE_FORBIDDEN);
-//        }
-//    }
-//
-//    public Class findById(String id) throws NotFoundException {
-//        Optional<Class> cls = classRepository.findById(id);
-//        if (cls.isPresent()) {
-//            return cls.get();
-//        }
-//
-//        throw new NotFoundException("Không tìm thấy lớp học với mã " + id);
-//    }
-//
-//    public boolean isNameDuplicated(String id, String name, boolean isEdit) {
-//        Class subject = classRepository.findByName(name);
-//
-//        if (isEdit) {
-//            return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
-//        } else {
-//            return Objects.nonNull(subject);
-//        }
-//    }
-//
-//    public boolean isIdDuplicated(String id, boolean isEdit) {
-//        Class cls = null;
-//        try {
-//            cls = findById(id);
-//
-//            if (isEdit) {
-//                return Objects.nonNull(cls) && !Objects.equals(cls.getId(), id);
-//            } else {
-//                return Objects.nonNull(cls);
-//            }
-//        } catch (NotFoundException e) {
-//            return false;
-//        }
-//    }
-//
-//    public List<Class> findAll() {
-//        return (List<Class>) classRepository.findAll();
-//    }
-//
-//    public Page<Class> findAllSubjects(Map<String, String> filters) {
-//        int page = Integer.parseInt(filters.get("page"));
-//        String searchQuery = filters.get("query");
-//        String sortDir = filters.get("sortDir");
-//        String sortField = filters.get("sortField");
-//
-//        Sort sort = Sort.by(sortField);
-//        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-//        Pageable pageable = PageRequest.of(page - 1, MAX_PER_PAGE, sort);
-//
-//        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-//        CriteriaQuery<Class> criteriaQuery = criteriaBuilder.createQuery(Class.class);
-//        Root<Class> root = criteriaQuery.from(Class.class);
-//
-//        List<Predicate> predicates = new ArrayList<>();
-//
-//        if (!StringUtils.isEmpty(searchQuery)) {
-//            Expression<String> id = root.get("id");
-//            Expression<String> name = root.get("name");
-//
-//            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
-//            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
-//
-//            predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
-//        }
-//
-//        criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
-//        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
-//
-//        TypedQuery<Class> typedQuery = entityManager.createQuery(criteriaQuery);
-//
-//        int totalRows = typedQuery.getResultList().size();
-//        typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
-//        typedQuery.setMaxResults(pageable.getPageSize());
-//
-//        return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
-//    }
+    @Autowired
+    private CreditClassRepository creditClassRepository;
 
-//    public boolean enableClass(String classId, String action) {
-//        try {
-//            Class cls = findById(classId);
-//            if(action.equals("enable")) {
-//                cls.set
-//            }
-//        } catch (NotFoundException ex) {
-//            return false;
-//        }
-//    }
+    @Autowired
+    private SubjectService subjectService;
+
+    @Autowired
+    private EntityManager entityManager;
+
+    public CreditClass save(CreditClass cls) {
+        return creditClassRepository.save(cls);
+    }
+
+    public String deleteById(Integer id) throws ConstrainstViolationException {
+        try {
+            creditClassRepository.deleteById(id);
+            return "Xóa lớp tín chỉ thành công";
+        } catch (Exception ex) {
+            throw new ConstrainstViolationException("Không thể xóa lớp tín chỉ vì ràng buộc dữ liệu");
+        }
+    }
+
+    public CreditClass findById(Integer id) throws NotFoundException {
+        Optional<CreditClass> cls = creditClassRepository.findById(id);
+        if (cls.isPresent()) {
+            return cls.get();
+        }
+
+        throw new NotFoundException("Không tìm thấy lớp học với mã " + id);
+    }
+
+    public List<CreditClass> findAll() {
+        return (List<CreditClass>) creditClassRepository.findAll();
+    }
+
+    public boolean isUniqueKey(Integer id, String schoolYear, int semester, String subjectId, int group, boolean isEdit) {
+        try {
+            subjectService.findById(subjectId);
+        } catch (NotFoundException e) {
+    return false;
+        }
+    }
+
+    public Page<CreditClass> findAllCreditClasses(Map<String, String> filters) {
+        int page = Integer.parseInt(filters.get("page"));
+        String searchQuery = filters.get("query");
+        String sortDir = filters.get("sortDir");
+        String sortField = filters.get("sortField");
+
+        Sort sort = Sort.by(sortField);
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+
+        CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
+        CriteriaQuery<CreditClass> criteriaQuery = criteriaBuilder.createQuery(CreditClass.class);
+        Root<CreditClass> root = criteriaQuery.from(CreditClass.class);
+
+        List<Predicate> predicates = new ArrayList<>();
+
+        if (!StringUtils.isEmpty(searchQuery)) {
+            Expression<String> id = root.get("id");
+            Expression<String> name = root.get("name");
+
+            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
+
+            predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
+        }
+
+        criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
+        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
+
+        TypedQuery<CreditClass> typedQuery = entityManager.createQuery(criteriaQuery);
+
+        int totalRows = typedQuery.getResultList().size();
+        typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
+        typedQuery.setMaxResults(pageable.getPageSize());
+
+        return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
+    }
+
+    public boolean enableOrDisableCreditClass(Integer creditClassId, String action) {
+        try {
+            CreditClass cls = findById(creditClassId);
+            cls.setCancelled(!action.equals("enable"));
+
+            return true;
+        } catch (NotFoundException ex) {
+            return false;
+        }
+    }
 
 }

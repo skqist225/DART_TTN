@@ -40,10 +40,9 @@ public class Answer {
     @JoinColumn(name = "MACAUHOI", nullable = false)
     private Question question;
 
-    public static Answer build(String content, Question question, String isAnswer) {
+    public static Answer build(String content, String isAnswer) {
         return Answer.builder()
                 .content(content)
-                .question(question)
                 .isAnswer(isAnswer.equals("true"))
                 .build();
     }

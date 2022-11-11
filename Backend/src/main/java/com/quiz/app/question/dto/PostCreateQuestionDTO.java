@@ -20,7 +20,6 @@ public class PostCreateQuestionDTO {
     private String level;
     private List<AnswerDTO> answers;
     private String answer;
-
     private String subjectName;
     private String chapterName;
     private Integer chapterId;

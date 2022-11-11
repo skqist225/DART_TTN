@@ -1,6 +1,6 @@
 package com.quiz.entity;
 
-import com.quiz.app.creditClass.dto.PostCreateClassDTO;
+import com.quiz.app.creditClass.dto.PostCreateCreditClassDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -44,7 +44,7 @@ public class CreditClass {
     @Column(name = "NHOM", columnDefinition = "SMALLINT", nullable = false)
     private int group;
 
-    @Column(name = "SOSVTOITHIEU",columnDefinition = "SMALLINT", nullable = false)
+    @Column(name = "SOSVTOITHIEU", columnDefinition = "SMALLINT", nullable = false)
     private int minimumNumberOfStudents;
 
     @Column(name = "HUYLOP")
@@ -58,8 +58,15 @@ public class CreditClass {
         this.id = id;
     }
 
-    public static CreditClass build(PostCreateClassDTO postCreateClassDTO) {
+    public static CreditClass build(PostCreateCreditClassDTO postCreateCreditClassDTO, Subject subject, User teacher) {
         return CreditClass.builder()
+                .schoolYear(postCreateCreditClassDTO.getSchoolYear())
+                .semester(postCreateCreditClassDTO.getSemester())
+                .subject(subject)
+                .group(postCreateCreditClassDTO.getGroup())
+                .minimumNumberOfStudents(postCreateCreditClassDTO.getMinimumNumberOfStudents())
+                .isCancelled(false)
+                .teacher(teacher)
                 .build();
     }
 }

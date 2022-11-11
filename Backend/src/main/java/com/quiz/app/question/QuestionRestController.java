@@ -15,11 +15,11 @@ import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
+import com.quiz.app.subject.dto.PostCreateSubjectDTO;
 import com.quiz.app.utils.ExcelUtils;
 import com.quiz.app.utils.ProcessImage;
 import com.quiz.entity.Answer;
 import com.quiz.entity.Chapter;
-import com.quiz.entity.Level;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
 import com.quiz.entity.User;
@@ -48,7 +48,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-
 
 @RestController
 @RequestMapping("/api/questions")
@@ -127,7 +126,6 @@ public class QuestionRestController {
 
     public void catchQuestionInputException(CommonUtils commonUtils, String content, String type,
                                             String level,
-                                            String answer,
                                             List<AnswerDTO> answers,
                                             Integer chapterId
     ) {
@@ -143,12 +141,10 @@ public class QuestionRestController {
             commonUtils.addError("level", "Mức độ không được để trống");
         }
 
-        if (!type.equals("Đáp án điền")) {
-            for (AnswerDTO ans : answers) {
-                if (Objects.isNull(ans.getContent()) || StringUtils.isEmpty(ans.getContent())) {
-                    commonUtils.addError("answers", "Không được để trống sự lựa chọn");
-                    break;
-                }
+        for (AnswerDTO ans : answers) {
+            if (Objects.isNull(ans.getContent()) || StringUtils.isEmpty(ans.getContent())) {
+                commonUtils.addError("answers", "Không được để trống sự lựa chọn");
+                break;
             }
         }
 
@@ -172,11 +168,10 @@ public class QuestionRestController {
         String content = postCreateQuestionDTO.getContent();
         String type = postCreateQuestionDTO.getType();
         String levelStr = postCreateQuestionDTO.getLevel();
-        String answer = postCreateQuestionDTO.getAnswer();
         List<AnswerDTO> answers = postCreateQuestionDTO.getAnswers();
         Integer chapterId = postCreateQuestionDTO.getChapterId();
 
-        catchQuestionInputException(commonUtils, content, type, levelStr, answer, answers,
+        catchQuestionInputException(commonUtils, content, type, levelStr, answers,
                 chapterId);
 
         try {
@@ -202,30 +197,24 @@ public class QuestionRestController {
                 Question question = questionService.findById(id);
                 question.setContent(content);
                 question.setType(type);
-
-                Level level = Level.EASY;
-                if (Objects.equals(levelStr, "Khó")) {
-                    level = Level.HARD;
-                } else if (Objects.equals(levelStr, "Trung bình")) {
-                    level = Level.MEDIUM;
-                }
-
-                question.setLevel(level);
+                question.setLevel(Question.lookUpLevel(levelStr));
                 question.setChapter(chapter);
                 question.setTeacher(teacher);
 
                 if (postCreateQuestionDTO.getImage() != null) {
                     question.setImage(postCreateQuestionDTO.getImage().getOriginalFilename());
                 }
-                for (AnswerDTO a : answers) {
-                    if (Objects.isNull(a.getId())) {
-                        question.addAnswer(Answer.build(a.getContent(), question, a.getIsAnswer()));
+                for (AnswerDTO answerDTO : answers) {
+                    // Add new question
+                    if (Objects.isNull(answerDTO.getId())) {
+                        question.addAnswer(Answer.build(answerDTO.getContent(), answerDTO.getIsAnswer()));
                     } else {
-                        for (Answer answer1 : question.getAnswers()) {
-                            if (a.getId().equals(answer1.getId())) {
-                                answer1.setContent(a.getContent());
-                                answer1.setAnswer(a.getIsAnswer().equals("true"));
-                                answerService.save(answer1);
+                        for (Answer answer : question.getAnswers()) {
+                            // Edit existed question
+                            if (answerDTO.getId().equals(answer.getId())) {
+                                answer.setContent(answerDTO.getContent());
+                                answer.setAnswer(answerDTO.getIsAnswer().equals("true"));
+                                answerService.save(answer);
                                 break;
                             }
                         }
@@ -233,43 +222,35 @@ public class QuestionRestController {
                 }
 
                 List<Answer> ans = new ArrayList<>();
-                for (Answer answer1 : question.getAnswers()) {
+                for (Answer answer : question.getAnswers()) {
                     boolean shouldDelete = true;
 
                     for (AnswerDTO a : answers) {
                         if (Objects.nonNull(a.getId())) {
-                            if (a.getId().equals(answer1.getId())) {
+                            if (a.getId().equals(answer.getId())) {
                                 shouldDelete = false;
                                 break;
                             }
                         }
                     }
-
+                    // Remove none mentioned question
                     if (shouldDelete) {
-                        ans.add(answer1);
+                        ans.add(answer);
                     }
                 }
 
-                for (Answer answer1 : ans) {
-                    question.removeAnswer(answer1);
+                for (Answer answer : ans) {
+                    question.removeAnswer(answer);
                 }
 
                 savedQuestion = questionService.save(question);
-
-            }catch(NotFoundException exception) {
+            } catch (NotFoundException exception) {
                 commonUtils.addError("id", exception.getMessage());
                 return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
             }
         } else {
             savedQuestion = questionService.save(Question.build(postCreateQuestionDTO,
                     userDetailsImpl.getUser(), chapter));
-
-            List<Answer> ans = new ArrayList<>();
-            for (AnswerDTO a : answers) {
-                ans.add(Answer.build(a.getContent(), savedQuestion, a.getIsAnswer()));
-            }
-
-            answerService.saveAll(ans);
         }
 
         if (postCreateQuestionDTO.getImage() != null) {
@@ -285,7 +266,7 @@ public class QuestionRestController {
     @PostMapping("save/multiple")
     public ResponseEntity<StandardJSONResponse<String>> saveMultipleQuestions(
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
-            @RequestBody List<PostCreateQuestionDTO> questions) throws IOException {
+            @RequestBody List<PostCreateQuestionDTO> questions) {
         CommonUtils commonUtils = new CommonUtils();
         User teacher = userDetailsImpl.getUser();
 
@@ -297,8 +278,9 @@ public class QuestionRestController {
             String subjectName = question.getSubjectName();
             String chapterName = question.getChapterName();
 
-            if (StringUtils.isEmpty(content) || questionService.isContentDuplicated(null, content,
-                    false)) {
+            if (Objects.isNull(content) ||
+                    StringUtils.isEmpty(content) ||
+                    questionService.isContentDuplicated(null, content, false)) {
                 continue;
             }
 
@@ -313,7 +295,8 @@ public class QuestionRestController {
                     subjectId.append(s.charAt(0));
                 }
 
-                subject = subjectService.save(new Subject(subjectId.toString().toUpperCase(), subjectName));
+                subject = subjectService.save(
+                        Subject.build(new PostCreateSubjectDTO(subjectId.toString().toUpperCase(), subjectName, "15", "0")));
             }
 
             Chapter chapter = null;
@@ -345,7 +328,7 @@ public class QuestionRestController {
         try {
             excelUtils.readQuestionFromFile(questions);
 
-            QuestionsDTO<ReadQuestionExcelDTO> questionsDTO = new QuestionsDTO();
+            QuestionsDTO<ReadQuestionExcelDTO> questionsDTO = new QuestionsDTO<>();
 
             questionsDTO.setQuestions(questions);
             questionsDTO.setTotalElements(questions.size());

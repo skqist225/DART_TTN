@@ -1,6 +1,5 @@
 package com.quiz.app;
 
-import com.quiz.app.utils.ExcelUtils;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;

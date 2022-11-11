@@ -48,11 +48,6 @@ public class Subject {
 	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
 	private List<Chapter> chapters = new ArrayList<>();
 
-	public Subject(String id, String name) {
-		this.id = id;
-		this.name = name;
-	}
-
 	public static Subject build(PostCreateSubjectDTO postCreateSubjectDTO) {
 		return Subject.builder()
 				.id(postCreateSubjectDTO.getId())
