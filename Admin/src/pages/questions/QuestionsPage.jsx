@@ -293,7 +293,8 @@ function QuestionsPage() {
     }, [errorObject]);
 
     const handleAddSelectedQuestionFromExcelFile = () => {
-        dispatch(addMultipleQuestions({ questions: questionsExcel }));
+        console.log(questionsExcel);
+        // dispatch(addMultipleQuestions({ questions: questionsExcel }));
     };
 
     useEffect(() => {

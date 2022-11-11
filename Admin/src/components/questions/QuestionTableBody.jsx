@@ -55,13 +55,18 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = 
                                 <td className={cellCss}>{row.answers && row.answers.length}</td>
                             </>
                         ) : (
-                            <td className={`${cellCss}`}>{row.finalAnswer}</td>
+                            <>
+                                <td className={cellCss}>{row.type}</td>
+                                <td>{lookupQuestionLevel(row.level)}</td>
+                            </>
                         )}
                         {addTest && <td className={cellCss}>{row.chapter}</td>}
                         <td className={cellCss}>
                             {!excelAdd ? lookupQuestionLevel(row.level) : row.level}
                         </td>
-                        <td className={cellCss}>{row.chapter.name}</td>
+                        <td className={cellCss}>
+                            {!excelAdd ? row.chapter.name : row.chapterName}
+                        </td>
                         {!addTest && (
                             <td className={cellCss}>
                                 {!excelAdd ? row.chapter.subject.name : row.subjectName}

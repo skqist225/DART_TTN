@@ -1,12 +1,6 @@
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
-import {
-    clearErrorField,
-    questionState,
-    readExcelFile,
-    setEditedQuestion,
-} from "../../features/questionSlice";
-import $ from "jquery";
+import { questionState, readExcelFile } from "../../features/questionSlice";
 import TableHeader from "../utils/tables/TableHeader";
 import { useDispatch } from "react-redux";
 import QuestionTableBody from "./QuestionTableBody";
@@ -24,28 +18,18 @@ const columns = [
         sortable: true,
     },
     {
-        name: "A",
-        sortField: "answerA",
+        name: "Loại câu hỏi",
+        sortField: "type",
         sortable: true,
     },
     {
-        name: "B",
-        sortField: "answerB",
-        sortable: true,
-    },
-    {
-        name: "C",
-        sortField: "answerC",
-        sortable: true,
-    },
-    {
-        name: "D",
-        sortField: "answerD",
-        sortable: true,
-    },
-    {
-        name: "Mức độ",
+        name: "Độ khó",
         sortField: "level",
+        sortable: true,
+    },
+    {
+        name: "Chương",
+        sortField: "chapterName",
         sortable: true,
     },
     {

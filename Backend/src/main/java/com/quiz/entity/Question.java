@@ -77,7 +77,8 @@ public class Question {
     }
 
     public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,
-                                 Chapter chapter) {
+            Chapter chapter) {
+
         Question question = Question.builder()
                 .content(postCreateQuestionDTO.getContent())
                 .type(postCreateQuestionDTO.getType())

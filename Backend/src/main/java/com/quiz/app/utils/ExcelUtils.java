@@ -4,7 +4,6 @@ import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.question.dto.ReadQuestionExcelDTO;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.entity.Answer;
-import org.apache.commons.lang.StringUtils;
 import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.Row;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
@@ -38,7 +37,7 @@ public class ExcelUtils {
             Row row = sheet.getRow(i);
 
             String type = row.getCell(0).getStringCellValue();
-            if (Objects.isNull(type) || StringUtils.isEmpty(type)) {
+            if (type.equals("Kết thúc")) {
                 break;
             }
 
@@ -83,7 +82,3 @@ public class ExcelUtils {
         }
     }
 }
-
-
-
-
