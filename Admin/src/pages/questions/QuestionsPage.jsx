@@ -196,7 +196,7 @@ function QuestionsPage() {
             }
 
             formData.append(`answers[0].content`, data.typedAnswer);
-            formData.append(`answers[0].isAnswer`, true);
+            formData.append(`answers[0].isTempAnswer`, true);
         } else {
             data.answers.forEach((answer, index) => {
                 if (answer.id) {
@@ -204,9 +204,9 @@ function QuestionsPage() {
                 }
                 formData.append(`answers[${index}].content`, `${answer.name}. ${answer.content}`);
                 if (!answer.isAnswer) {
-                    formData.append(`answers[${index}].isAnswer`, false);
+                    formData.append(`answers[${index}].isTempAnswer`, false);
                 } else {
-                    formData.append(`answers[${index}].isAnswer`, answer.isAnswer);
+                    formData.append(`answers[${index}].isTempAnswer`, answer.isAnswer);
                 }
             });
         }
@@ -293,8 +293,7 @@ function QuestionsPage() {
     }, [errorObject]);
 
     const handleAddSelectedQuestionFromExcelFile = () => {
-        console.log(questionsExcel);
-        // dispatch(addMultipleQuestions({ questions: questionsExcel }));
+        dispatch(addMultipleQuestions({ questions: questionsExcel }));
     };
 
     useEffect(() => {

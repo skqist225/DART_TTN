@@ -43,7 +43,7 @@ public class TestService {
     public String deleteById(Integer id) throws ConstrainstViolationException {
         try {
             testRepository.deleteById(id);
-            return "Xóa bộ đề thành công";
+            return "Xóa đề thi thành công";
         } catch (Exception ex) {
             throw new ConstrainstViolationException("Không thể xóa bộ đề vì ràng buộc dữ liệu");
         }

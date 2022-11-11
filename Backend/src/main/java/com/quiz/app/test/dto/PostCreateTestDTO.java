@@ -18,6 +18,6 @@ public class PostCreateTestDTO {
     private Integer id;
     private String name;
     private String subjectId;
-    private Set<Question> questions;
+    private List<Question> questions;
     private List<GetCriteriaDTO> criteria;
  }

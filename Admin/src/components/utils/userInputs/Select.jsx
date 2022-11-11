@@ -15,16 +15,18 @@ function Select({
     width,
 }) {
     useEffect(() => {
-        if (setValue) {
-            if (defaultValue) {
-                setValue(propName, defaultValue);
-            } else {
-                if (options[0] && options[0].value) {
-                    setValue(propName, options[0].value);
+        if (propName !== "chapterId") {
+            if (setValue) {
+                if (defaultValue) {
+                    setValue(propName, defaultValue);
+                } else {
+                    if (options[0] && options[0].value) {
+                        setValue(propName, options[0].value);
+                    }
                 }
             }
         }
-    }, [defaultValue]);
+    }, [defaultValue, options[0]]);
 
     useEffect(() => {
         if (propName === "chapterId") {

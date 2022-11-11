@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import java.util.Comparator;
 
 @Getter
 @Setter
@@ -40,10 +39,11 @@ public class Answer {
     @JoinColumn(name = "MACAUHOI", nullable = false)
     private Question question;
 
-    public static Answer build(String content, String isAnswer) {
+    public static Answer build(String content, boolean isAnswer, Question question) {
         return Answer.builder()
                 .content(content)
-                .isAnswer(isAnswer.equals("true"))
+                .isAnswer(isAnswer)
+                .question(question)
                 .build();
     }
 

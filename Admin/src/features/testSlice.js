@@ -172,7 +172,7 @@ const testSlice = createSlice({
             })
             .addCase(addTest.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.addTest.successMessage = "Thêm môn học thành công";
+                    state.addTest.successMessage = "Thêm đề thi thành công";
                 }
             })
             .addCase(addTest.rejected, (state, { payload }) => {
@@ -196,7 +196,7 @@ const testSlice = createSlice({
             })
             .addCase(editTest.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.editTest.successMessage = "Chỉnh sửa môn học thành công";
+                    state.editTest.successMessage = "Chỉnh sửa đề thi thành công";
                 }
             })
             .addCase(editTest.rejected, (state, { payload }) => {

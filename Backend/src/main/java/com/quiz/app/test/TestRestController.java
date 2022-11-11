@@ -1,8 +1,6 @@
 package com.quiz.app.test;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.quiz.app.common.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
@@ -47,17 +45,6 @@ public class TestRestController {
     @Autowired
     private SubjectService subjectService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
-    private ArrayNode arrayNode;
-
-    public void addError(String fieldName, String fieldError) {
-        ObjectNode node = objectMapper.createObjectNode();
-        node.put(fieldName, fieldError);
-        arrayNode.add(node);
-    }
-
     @GetMapping("")
     public ResponseEntity<StandardJSONResponse<TestsDTO>> fetchAllSubjects(
             @RequestParam("page") String page,
@@ -97,40 +84,40 @@ public class TestRestController {
             @RequestBody PostCreateTestDTO postCreateTestDTO,
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
     ) {
-        arrayNode = objectMapper.createArrayNode();
+        CommonUtils commonUtils = new CommonUtils();
         Test savedTest = null;
 
         Integer id = postCreateTestDTO.getId();
         String name = postCreateTestDTO.getName();
         String subjectId = postCreateTestDTO.getSubjectId();
-        Set<Question> questions = postCreateTestDTO.getQuestions();
+        List<Question> questions = postCreateTestDTO.getQuestions();
         User teacher = userDetailsImpl.getUser();
 
         if (isEdit && Objects.isNull(id)) {
-            addError("id", "Mã bộ đề không được để trống");
+            commonUtils.addError("id", "Mã bộ đề không được để trống");
         }
 
         if (Objects.isNull(name)) {
-            addError("name", "Tên bộ đề không được để trống");
+            commonUtils.addError("name", "Tên bộ đề không được để trống");
         }
 
         if (Objects.isNull(subjectId)) {
-            addError("subjectId", "Môn học không được để trống");
+            commonUtils.addError("subjectId", "Môn học không được để trống");
         }
 
         if (questions.size() == 0) {
-            addError("questions", "Danh sách câu hỏi không được để trống");
+            commonUtils.addError("questions", "Danh sách câu hỏi không được để trống");
         }
 
-        if (arrayNode.size() > 0) {
-            return new BadResponse<Test>(arrayNode.toString()).response();
+        if (commonUtils.getArrayNode().size() > 0) {
+            return new BadResponse<Test>(commonUtils.getArrayNode().toString()).response();
         } else {
             if (testService.isNameDuplicated(null, name, isEdit)) {
-                addError("name", "Tên bộ đề đã tồn tại");
+                commonUtils.addError("name", "Tên bộ đề đã tồn tại");
             }
 
-            if (arrayNode.size() > 0) {
-                return new BadResponse<Test>(arrayNode.toString()).response();
+            if (commonUtils.getArrayNode().size() > 0) {
+                return new BadResponse<Test>(commonUtils.getArrayNode().toString()).response();
             }
         }
 

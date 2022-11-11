@@ -8,5 +8,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CreditClassRepository extends CrudRepository<CreditClass, Integer> {
 
-    public CreditClass findBySchool
 }

@@ -2,6 +2,7 @@ package com.quiz.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.quiz.app.test.dto.PostCreateTestDTO;
+import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,13 +24,14 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
+@Getter()
 @Setter
 @Builder
 @Entity
@@ -44,12 +46,14 @@ public class Test {
     @Column(name = "TENDETHI", nullable = false, unique = true)
     private String name;
 
+
+    @Getter(AccessLevel.NONE)
     @Builder.Default
     @JsonIgnore
     @ManyToMany
     @JoinTable(name = "DETHI_CAUHOI", joinColumns = @JoinColumn(name = "MADETHI"),
             inverseJoinColumns = @JoinColumn(name = "MACAUHOI"))
-    private Set<Question> questions = new HashSet<>();
+    private List<Question> questions = new ArrayList<>();
 
     @ManyToOne
     @JoinColumn(name = "MAMH")
@@ -99,5 +103,10 @@ public class Test {
                 .subject(subject)
                 .teacher(teacher)
                 .build();
+    }
+
+    public List<Question> getQuestions() {
+        this.questions.sort(Comparator.comparing(Question::getId));
+        return this.questions;
     }
 }

@@ -32,6 +32,12 @@ public class ExcelUtils {
     }
 
     public void readQuestionFromFile(List<ReadQuestionExcelDTO> questions) throws NotFoundException {
+        char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
+        List<String> alphabets = new ArrayList<>();
+        for (char c : alphabet) {
+            alphabets.add(String.valueOf(c));
+        }
+
         for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
             ReadQuestionExcelDTO question = new ReadQuestionExcelDTO();
             Row row = sheet.getRow(i);
@@ -42,7 +48,6 @@ public class ExcelUtils {
             }
 
             double numberOfChoices = row.getCell(1).getNumericCellValue();
-            question.setContent(row.getCell(2).getStringCellValue());
 
             int answerCell = (int) (3 + numberOfChoices);
             List<Answer> answers = new ArrayList<>();
@@ -50,7 +55,7 @@ public class ExcelUtils {
             List<Integer> ans = new ArrayList<>();
             if (type.equals("Một đáp án")) {
                 ans.add((int) row.getCell(answerCell).getNumericCellValue());
-            } else {
+            } else if (type.equals("Nhiều đáp án")) {
                 for (String singleAns : row.getCell(answerCell).getStringCellValue().split(",")) {
                     ans.add(Integer.parseInt(singleAns));
                 }
@@ -68,14 +73,20 @@ public class ExcelUtils {
                     isAns = true;
                 }
 
-                Answer answer = new Answer(content, isAns);
+                Answer answer = new Answer(alphabets.get(c - 3).toUpperCase() + ". " + content,
+                        type.equals("Đáp án điền") || isAns);
                 answers.add(answer);
             }
 
+            question.setId(i);
+            question.setContent(row.getCell(2).getStringCellValue());
+            question.setType(type);
             question.setAnswers(answers);
-            question.setLevel(row.getCell(answerCell + 1).getStringCellValue());
-            question.setChapterName(row.getCell(answerCell + 2).getStringCellValue());
-            question.setSubjectName(row.getCell(answerCell + 3).getStringCellValue());
+            question.setLevel(row.getCell(type.equals("Đáp án điền") ? answerCell : answerCell + 1).getStringCellValue());
+            question.setChapterName(row.getCell(type.equals("Đáp án điền") ? answerCell + 1 :
+                    answerCell + 2).getStringCellValue());
+            question.setSubjectName(row.getCell(type.equals("Đáp án điền") ? answerCell + 2 :
+                    answerCell + 3).getStringCellValue());
             question.setStatus(true);
 
             questions.add(question);

@@ -78,7 +78,6 @@ public class Question {
 
     public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,
             Chapter chapter) {
-
         Question question = Question.builder()
                 .content(postCreateQuestionDTO.getContent())
                 .type(postCreateQuestionDTO.getType())
@@ -88,9 +87,10 @@ public class Question {
                 .status(true)
                 .build();
 
-        if (postCreateQuestionDTO.getAnswers().size() > 0) {
+        if (addQuestion && postCreateQuestionDTO.getAnswers().size() > 0) {
             question.setAnswers(postCreateQuestionDTO.getAnswers().stream().map(
-                    answer -> Answer.build(answer.getContent(), answer.getIsAnswer())).collect(Collectors.toList()));
+                    answer -> Answer.build(answer.getContent(), answer.isAnswer(), question))
+                    .collect(Collectors.toList()));
         }
 
         if (postCreateQuestionDTO.getImage() != null) {

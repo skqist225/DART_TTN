@@ -32,7 +32,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -98,23 +97,14 @@ public class QuestionService {
         throw new NotFoundException("Không tìm thấy câu hỏi với mã bằng " + id);
     }
 
-    public Question findByContent(String content) throws NotFoundException {
-        Question question = questionRepository.findByContent(content);
-
-        if (Objects.nonNull(question)) {
-            return question;
-        }
-
-        throw new NotFoundException("Không tìm thấy câu hỏi với nội dung câu hỏi là " + content);
-    }
-
     public boolean isContentDuplicated(Integer id, String content, boolean isEdit) {
-        Question subject = questionRepository.findByContent(content);
-
+        System.out.println(content);
+        Question question = questionRepository.findByContent(content);
+        System.out.println(question);
         if (isEdit) {
-            return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
+            return Objects.nonNull(question) && !Objects.equals(question.getId(), id);
         } else {
-            return Objects.nonNull(subject);
+            return Objects.nonNull(question);
         }
     }
 
@@ -237,53 +227,22 @@ public class QuestionService {
     public List<GetCriteriaQuestionsDTO> findQuestionsByCriteria(String criteria) {
         List<GetCriteriaQuestionsDTO> getCriteriaQuestionsDTOS = new ArrayList<>();
 
-        try {
-            String[] criteriaStrArr = criteria.split(";");
+        String[] criteriaStrArr = criteria.split(";");
 
-            for (String criteriaEl : criteriaStrArr) {
-                int chapter = Integer.parseInt(criteriaEl.split(",")[0]);
-                String levelStr = criteriaEl.split(",")[1];
-                int numberOfQuestions = Integer.parseInt(criteriaEl.split(",")[2]);
+        for (String criteriaEl : criteriaStrArr) {
+            int chapter = Integer.parseInt(criteriaEl.split(",")[0]);
+            String levelStr = criteriaEl.split(",")[1];
+            int numberOfQuestions = Integer.parseInt(criteriaEl.split(",")[2]);
 
-                GetCriteriaDTO getCriteriaDTO = new GetCriteriaDTO(chapter, levelStr, numberOfQuestions);
-                Set<Question> questions = new HashSet<>();
+            GetCriteriaDTO getCriteriaDTO = new GetCriteriaDTO(chapter, levelStr, numberOfQuestions);
 
-                Level level = Level.EASY;
-                if (Objects.equals(levelStr, "HARD")) {
-                    level = Level.HARD;
-                } else if (Objects.equals(levelStr, "MEDIUM")) {
-                    level = Level.MEDIUM;
-                }
+            List<Question> qsts = questionRepository.findByChapterAndLevel(chapter,
+                    Question.lookUpLevel(levelStr), numberOfQuestions);
 
-                List<Question> qsts =
-                        questionRepository.findByChapterAndLevel(chapterService.findById(chapter), level
-                        );
-
-                if (qsts.size() > numberOfQuestions) {
-
-                    for (int j = 0; j < numberOfQuestions; j++) {
-                        Random rand = new Random();
-                        Question question = qsts.get(rand.nextInt(qsts.size()));
-
-                        while (questions.contains(question)) {
-                            question = qsts.get(rand.nextInt(qsts.size()));
-                        }
-
-                        questions.add(question);
-                    }
-
-                    getCriteriaQuestionsDTOS.add(new GetCriteriaQuestionsDTO(getCriteriaDTO,
-                            questions, 0));
-
-                } else {
-                    getCriteriaQuestionsDTOS.add(new GetCriteriaQuestionsDTO(getCriteriaDTO,
-                            new HashSet<>(qsts), numberOfQuestions - qsts.size()));
-                }
-            }
-
-            return getCriteriaQuestionsDTOS;
-        } catch (NotFoundException e) {
-            return null;
+            getCriteriaQuestionsDTOS.add(new GetCriteriaQuestionsDTO(getCriteriaDTO,
+                    new HashSet<>(qsts), numberOfQuestions - qsts.size()));
         }
+
+        return getCriteriaQuestionsDTOS;
     }
 }

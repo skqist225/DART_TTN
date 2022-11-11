@@ -89,7 +89,7 @@ function TableModal({
                                 }
                                 if (addTst) {
                                     if (!$("#testName").val()) {
-                                        callToast("error", "Tên bộ đề không được để trống");
+                                        callToast("error", "Tên đề thi không được để trống");
                                         return;
                                     } else {
                                         const name = $("#testName").val();

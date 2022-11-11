@@ -19,12 +19,12 @@ import { fetchAllQuestions, loadQuestionsByCriteria } from "../../features/quest
 
 const columns = [
     {
-        name: "Mã bộ đề",
+        name: "Mã đề thi",
         sortField: "id",
         sortable: true,
     },
     {
-        name: "Tên bộ đề",
+        name: "Tên đề thi",
         sortField: "name",
         sortable: true,
     },
@@ -48,6 +48,8 @@ function TestsPage() {
     });
 
     const onSubmit = data => {
+        console.log(data.criteria);
+
         if (isEdit) {
             dispatch(editTest(data));
         } else {
@@ -149,10 +151,10 @@ function TestsPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH BỘ ĐỀ"}
+            title={"DANH SÁCH ĐỀ THI"}
             children={
                 <Table
-                    searchPlaceHolder={"Tìm kiếm theo tên và mã bộ đề"}
+                    searchPlaceHolder={"Tìm kiếm theo tên và mã đề thi"}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={columns}
@@ -163,7 +165,7 @@ function TestsPage() {
                     }
                     modalId='testModal'
                     formId='testForm'
-                    modalLabel='bộ đề'
+                    modalLabel='đề thi'
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={

@@ -71,6 +71,7 @@ public class CreditClassService {
         } catch (NotFoundException e) {
     return false;
         }
+        return true;
     }
 
     public Page<CreditClass> findAllCreditClasses(Map<String, String> filters) {

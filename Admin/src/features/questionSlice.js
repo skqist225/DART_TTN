@@ -71,8 +71,8 @@ export const loadQuestionsByCriteria = createAsyncThunk(
 
             if (criteria.length > 0) {
                 criteria = criteria.map(
-                    ({ chapter, level, numberOfQuestions }) =>
-                        `${chapter},${level},${numberOfQuestions}`
+                    ({ chapterId, level, numberOfQuestions }) =>
+                        `${chapterId},${level},${numberOfQuestions}`
                 );
 
                 request += `&criteria=${criteria.join(";")}`;

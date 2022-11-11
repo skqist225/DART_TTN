@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 
 @Getter
@@ -26,7 +27,7 @@ public class TestDTO {
     private int numberOfQuestions;
     private int numberOfRightAnswer;
     private float mark;
-    private Set<Question> questions;
+    private List<Question> questions;
 
     public static TestDTO build(Test test, boolean includeQuestions) {
         TestDTO testDTO = TestDTO.builder()

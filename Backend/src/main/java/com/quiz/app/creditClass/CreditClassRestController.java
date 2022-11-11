@@ -127,21 +127,21 @@ public class CreditClassRestController {
             try {
                 CreditClass cls = creditClassService.findById(id);
                 cls.setId(id);
-                cls.setName(name);
+//                cls.setName(name);
 
-                savedSubject = creditClassService.save(cls);
+//                savedSubject = creditClassService.save(cls);
             } catch (NotFoundException exception) {
                 return new BadResponse<CreditClass>(exception.getMessage()).response();
             }
         } else {
-            savedSubject = creditClassService.save(CreditClass.build(postCreateClassDTO, null));
+//            savedSubject = creditClassService.save(CreditClass.build(postCreateClassDTO, null));
         }
 
-        return new OkResponse<>(savedSubject).response();
+        return new OkResponse<>(new CreditClass()).response();
     }
 
     @DeleteMapping("{id}/delete")
-    public ResponseEntity<StandardJSONResponse<String>> delete(@PathVariable("id") String id) {
+    public ResponseEntity<StandardJSONResponse<String>> delete(@PathVariable("id") Integer id) {
         try {
             return new OkResponse<>(creditClassService.deleteById(id)).response();
         } catch (ConstrainstViolationException ex) {

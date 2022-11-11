@@ -48,6 +48,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/api/questions")
@@ -163,14 +164,14 @@ public class QuestionRestController {
         User teacher = userDetailsImpl.getUser();
         Question savedQuestion = null;
         Chapter chapter = null;
-
         Integer id = postCreateQuestionDTO.getId();
         String content = postCreateQuestionDTO.getContent();
+
         String type = postCreateQuestionDTO.getType();
         String levelStr = postCreateQuestionDTO.getLevel();
         List<AnswerDTO> answers = postCreateQuestionDTO.getAnswers();
         Integer chapterId = postCreateQuestionDTO.getChapterId();
-
+        System.out.println(answers.get(0).isAnswer());
         catchQuestionInputException(commonUtils, content, type, levelStr, answers,
                 chapterId);
 
@@ -205,15 +206,17 @@ public class QuestionRestController {
                     question.setImage(postCreateQuestionDTO.getImage().getOriginalFilename());
                 }
                 for (AnswerDTO answerDTO : answers) {
+                    System.out.println(answerDTO.getIsTempAnswer());
                     // Add new question
                     if (Objects.isNull(answerDTO.getId())) {
-                        question.addAnswer(Answer.build(answerDTO.getContent(), answerDTO.getIsAnswer()));
+                        question.addAnswer(Answer.build(answerDTO.getContent(),
+                                answerDTO.getIsTempAnswer().equals("true"), question));
                     } else {
                         for (Answer answer : question.getAnswers()) {
                             // Edit existed question
                             if (answerDTO.getId().equals(answer.getId())) {
                                 answer.setContent(answerDTO.getContent());
-                                answer.setAnswer(answerDTO.getIsAnswer().equals("true"));
+                                answer.setAnswer(answerDTO.getIsTempAnswer().equals("true"));
                                 answerService.save(answer);
                                 break;
                             }
@@ -249,8 +252,16 @@ public class QuestionRestController {
                 return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
             }
         } else {
-            savedQuestion = questionService.save(Question.build(postCreateQuestionDTO,
-                    userDetailsImpl.getUser(), chapter));
+            Question question = Question.build(postCreateQuestionDTO,
+                    userDetailsImpl.getUser(), chapter, false);
+
+            if (postCreateQuestionDTO.getAnswers().size() > 0) {
+                question.setAnswers(postCreateQuestionDTO.getAnswers().stream().map(
+                        answer -> Answer.build(answer.getContent(),
+                                answer.getIsTempAnswer().equals("true"),
+                                question)).collect(Collectors.toList()));
+            }
+            questionService.save(question);
         }
 
         if (postCreateQuestionDTO.getImage() != null) {
@@ -274,6 +285,7 @@ public class QuestionRestController {
         int totalQuestions = questions.size();
 
         for (PostCreateQuestionDTO question : questions) {
+            System.out.println(question);
             String content = question.getContent();
             String subjectName = question.getSubjectName();
             String chapterName = question.getChapterName();
@@ -285,12 +297,13 @@ public class QuestionRestController {
             }
 
             i++;
-
+            System.out.println(i);
             Subject subject = null;
             try {
                 subject = subjectService.findByName(subjectName);
             } catch (NotFoundException e) {
                 StringBuilder subjectId = new StringBuilder();
+
                 for (String s : subjectName.split(" ")) {
                     subjectId.append(s.charAt(0));
                 }
@@ -307,7 +320,8 @@ public class QuestionRestController {
                         chapterService.save(Chapter.build(chapterName, subject));
             }
 
-            questionService.save(Question.build(question, teacher, chapter));
+            questionService.save(Question.build(question, teacher,
+                    chapter, true));
         }
 
         String responseMessage = "";
@@ -317,7 +331,7 @@ public class QuestionRestController {
             responseMessage = String.format("%d/%d câu hỏi đã được thêm vào thành công", i, totalQuestions);
         }
 
-        return new OkResponse<>(responseMessage).response();
+        return new OkResponse<>("Thêm tất cả câu hỏi thành công").response();
     }
 
     @PostMapping("excel/read")
