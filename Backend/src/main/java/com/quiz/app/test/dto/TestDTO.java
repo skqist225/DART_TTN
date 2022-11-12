@@ -35,8 +35,6 @@ public class TestDTO {
                 .name(test.getName())
                 .teacherName(test.getTeacher().getFullName())
                 .numberOfQuestions(test.getQuestions().size())
-                .numberOfRightAnswer(test.getNumberOfRightAnswer())
-                .mark(test.getMark())
                 .build();
 
         if (includeQuestions) {

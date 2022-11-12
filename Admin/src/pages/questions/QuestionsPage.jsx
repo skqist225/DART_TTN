@@ -1,6 +1,12 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Frame, QuestionModalBody, QuestionTableBody, Table } from "../../components";
+import {
+    Frame,
+    QuestionModalBody,
+    QuestionsFilter,
+    QuestionTableBody,
+    Table,
+} from "../../components";
 import $ from "jquery";
 import { questionSchema } from "../../validation";
 import { useForm } from "react-hook-form";
@@ -256,7 +262,7 @@ function QuestionsPage() {
 
     useEffect(() => {
         if (dqSuccessMessage) {
-            cleanForm(eqSuccessMessage, "delete");
+            cleanForm(dqSuccessMessage, "delete");
         }
     }, [dqSuccessMessage]);
 
@@ -295,6 +301,8 @@ function QuestionsPage() {
 
     function onCloseForm() {
         dispatch(setEditedQuestion(null));
+        setValue("answers", []);
+        clearErrors("answers");
     }
 
     return (
@@ -333,6 +341,7 @@ function QuestionsPage() {
                     handleAddSelectedQuestionFromExcelFile={handleAddSelectedQuestionFromExcelFile}
                     fetchDataByPageNumber={fetchDataByPageNumber}
                     onCloseForm={onCloseForm}
+                    Filter={QuestionsFilter}
                 />
             }
         />

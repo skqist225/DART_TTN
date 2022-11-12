@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { Frame, ChapterModalBody, ChapterTableBody, Table } from "../../components";
+import { Frame, ChapterModalBody, ChapterTableBody, Table, ChapterFilter } from "../../components";
 import {
     addChapter,
     clearChapterState,
     editChapter,
     fetchAllChapters,
     chapterState,
+    setEditedChapter,
 } from "../../features/chapterSlice";
 import $ from "jquery";
 import { useForm } from "react-hook-form";
@@ -15,24 +16,92 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { chapterSchema } from "../../validation";
 import { fetchAllSubjects } from "../../features/subjectSlice";
 
+const columns = [
+    {
+        name: "Mã chương",
+        sortField: "id",
+        sortable: true,
+    },
+    {
+        name: "Tên chương",
+        sortField: "name",
+        sortable: true,
+    },
+    {
+        name: "Môn học",
+        sortField: "chapter",
+        sortable: true,
+    },
+];
+
 function ChaptersPage() {
+    const dispatch = useDispatch();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+
+    const formId = "chapterForm";
+    const modalId = "chapterModal";
+    const modalLabel = "chương";
+
+    useEffect(() => {
+        dispatch(
+            fetchAllChapters({
+                page: 1,
+            })
+        );
+        dispatch(fetchAllSubjects({ page: 0 }));
+    }, []);
 
     const {
         register,
         setValue,
         handleSubmit,
+        control,
+        setError,
+        clearErrors,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(chapterSchema),
+        defaultValues: {
+            chapters: [],
+        },
     });
 
-    const onSubmit = data => {
+    const onSubmit = ({ subjectId, chapters }) => {
+        if (chapters.some(({ name }) => !name)) {
+            chapters.forEach(({ index, name }) => {
+                if (!name) {
+                    setError(`chapters.${index}.name`, {
+                        type: "custom",
+                        message: `Tên chương ${parseInt(index) + 1} không được để trống`,
+                    });
+                }
+            });
+            return;
+        }
+
+        const chaptersSet = new Set();
+        chapters.forEach(({ name }) => chaptersSet.add(name));
+        if (chapters.length !== chaptersSet.size) {
+            callToast("error", "Không được có 2 chương giống tên");
+            return;
+        }
+
+        chapters = chapters.map(({ id, index, name }) => {
+            let namePrefix = `Chương ${parseInt(index) + 1}:`;
+            if (!name.startsWith(namePrefix)) {
+                name = `${namePrefix} ${name}`;
+            }
+            return {
+                id,
+                name,
+            };
+        });
+
         if (isEdit) {
-            dispatch(editChapter(data));
+            dispatch(editChapter({ subjectId, chapters }));
         } else {
-            dispatch(addChapter(data));
+            dispatch(addChapter({ subjectId, chapters }));
         }
     };
 
@@ -45,24 +114,6 @@ function ChaptersPage() {
         editChapter: { successMessage: esSuccessMessage },
         deleteChapter: { successMessage: dsSuccessMessage },
     } = useSelector(chapterState);
-
-    const columns = [
-        {
-            name: "Mã chương",
-            sortField: "id",
-            sortable: true,
-        },
-        {
-            name: "Tên chương",
-            sortField: "name",
-            sortable: true,
-        },
-        {
-            name: "Môn học",
-            sortField: "chapter",
-            sortable: true,
-        },
-    ];
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
@@ -89,40 +140,44 @@ function ChaptersPage() {
         };
     }, []);
 
+    function cleanForm(successMessage, type = "normal") {
+        callToast("success", successMessage);
+        dispatch(fetchAllChapters(filterObject));
+
+        $(`#${modalId}`).css("display", "none");
+        if (type === "add") {
+            $(`#${formId}`)[0].reset();
+        }
+
+        if (type === "edit") {
+            setIsEdit(false);
+            dispatch(setEditedChapter(null));
+        }
+    }
+
     useEffect(() => {
         if (successMessage) {
-            callToast("success", successMessage);
-            $("#chapterForm")[0].reset();
-            $("#chapterModal").css("display", "none");
-            dispatch(fetchAllChapters(filterObject));
+            cleanForm(successMessage, "add");
         }
     }, [successMessage]);
 
     useEffect(() => {
         if (esSuccessMessage) {
-            callToast("success", esSuccessMessage);
-            dispatch(fetchAllChapters(filterObject));
-            $("#chapterModal").css("display", "none");
-            setIsEdit(false);
+            cleanForm(esSuccessMessage, "edit");
         }
     }, [esSuccessMessage]);
 
     useEffect(() => {
         if (dsSuccessMessage) {
-            callToast("success", dsSuccessMessage);
-            dispatch(fetchAllChapters(filterObject));
+            cleanForm(dsSuccessMessage, "delete");
         }
     }, [dsSuccessMessage]);
 
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(
-            fetchAllChapters({
-                page: 1,
-            })
-        );
-        dispatch(fetchAllSubjects({ page: 0 }));
-    }, []);
+    function onCloseForm() {
+        dispatch(setEditedChapter(null));
+        setValue("chapters", []);
+        clearErrors("chapters");
+    }
 
     return (
         <Frame
@@ -138,16 +193,10 @@ function ChaptersPage() {
                     rows={chapters}
                     totalElements={totalElements}
                     totalPages={totalPages}
-                    TableBody={
-                        <ChapterTableBody
-                            rows={chapters}
-                            setIsEdit={setIsEdit}
-                            dispatch={dispatch}
-                        />
-                    }
-                    modalId='chapterModal'
-                    formId='chapterForm'
-                    modalLabel='chương'
+                    TableBody={ChapterTableBody}
+                    modalId={modalId}
+                    formId={formId}
+                    modalLabel={modalLabel}
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={
@@ -156,10 +205,15 @@ function ChaptersPage() {
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
+                            control={control}
+                            clearErrors={clearErrors}
+                            setError={setError}
                         />
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
+                    onCloseForm={onCloseForm}
+                    Filter={ChapterFilter}
                 />
             }
         />

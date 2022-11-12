@@ -37,12 +37,31 @@ const columns = [
         sortField: "numberOfPracticePeriods",
         sortable: true,
     },
+    {
+        name: "Số chương",
+        sortField: "numberOfChapters",
+        sortable: true,
+    },
+    {
+        name: "Số bộ đề",
+        sortField: "numberOfTests",
+        sortable: true,
+    },
+    {
+        name: "Số câu hỏi",
+        sortField: "numberOfQuestions",
+        sortable: true,
+    },
 ];
 
 function SubjectsPage() {
     const dispatch = useDispatch();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+
+    const formId = "subjectForm";
+    const modalId = "subjectModal";
+    const modalLabel = "môn học";
 
     useEffect(() => {
         dispatch(
@@ -138,28 +157,36 @@ function SubjectsPage() {
         };
     }, []);
 
+    function cleanForm(successMessage, type = "normal") {
+        callToast("success", successMessage);
+        dispatch(fetchAllSubjects(filterObject));
+
+        $(`#${modalId}`).css("display", "none");
+        if (type === "add") {
+            $(`#${formId}`)[0].reset();
+        }
+
+        if (type === "edit") {
+            setIsEdit(false);
+            dispatch(setEditedSubject(null));
+        }
+    }
+
     useEffect(() => {
         if (successMessage) {
-            callToast("success", successMessage);
-            $("#subjectForm")[0].reset();
-            $("#subjectModal").css("display", "none");
-            dispatch(fetchAllSubjects(filterObject));
+            cleanForm(successMessage, "add");
         }
     }, [successMessage]);
 
     useEffect(() => {
         if (esSuccessMessage) {
-            callToast("success", esSuccessMessage);
-            dispatch(fetchAllSubjects(filterObject));
-            $("#subjectModal").css("display", "none");
-            setIsEdit(false);
+            cleanForm(esSuccessMessage, "edit");
         }
     }, [esSuccessMessage]);
 
     useEffect(() => {
         if (dsSuccessMessage) {
-            callToast("success", dsSuccessMessage);
-            dispatch(fetchAllSubjects(filterObject));
+            cleanForm(dsSuccessMessage, "delete");
         }
     }, [dsSuccessMessage]);
 
@@ -181,16 +208,10 @@ function SubjectsPage() {
                     rows={subjects}
                     totalElements={totalElements}
                     totalPages={totalPages}
-                    TableBody={
-                        <SubjectTableBody
-                            rows={subjects}
-                            setIsEdit={setIsEdit}
-                            dispatch={dispatch}
-                        />
-                    }
-                    modalId='subjectModal'
-                    formId='subjectForm'
-                    modalLabel='môn học'
+                    TableBody={SubjectTableBody}
+                    modalId={modalId}
+                    formId={formId}
+                    modalLabel={modalLabel}
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={

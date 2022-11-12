@@ -46,7 +46,6 @@ public class Test {
     @Column(name = "TENDETHI", nullable = false, unique = true)
     private String name;
 
-
     @Getter(AccessLevel.NONE)
     @Builder.Default
     @JsonIgnore
@@ -77,12 +76,6 @@ public class Test {
     @Column(name = "CAPNHATLUC")
     private Date updatedDate;
 
-    @Transient
-    private int numberOfRightAnswer;
-
-    @Transient
-    private float mark;
-
     public void addQuestion(Question question) {
         this.questions.add(question);
     }
@@ -97,16 +90,27 @@ public class Test {
 
         }
 
-        return Test.builder()
-                .name(postCreateSubjectDTO.getName())
-                .questions(postCreateSubjectDTO.getQuestions())
-                .subject(subject)
-                .teacher(teacher)
-                .build();
+        return Test.builder().name(postCreateSubjectDTO.getName()).questions(postCreateSubjectDTO.getQuestions()).subject(subject).teacher(teacher).build();
     }
 
+
+    @Transient
     public List<Question> getQuestions() {
         this.questions.sort(Comparator.comparing(Question::getId));
         return this.questions;
     }
+
+    public String getTeacherName() {
+        return String.format("%s %s", this.getTeacher().getFirstName(), this.getTeacher().getLastName());
+    }
+
+    public int getNumberOfQuestions() {
+        return this.questions.size();
+    }
+
+    public String getStatus() {
+        return this.exam == null ? "Chưa sử dụng" : "Đã được sử dụng";
+    }
+
+    public List<>
 }

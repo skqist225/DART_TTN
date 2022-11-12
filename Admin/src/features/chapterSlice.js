@@ -4,7 +4,7 @@ import api from "../axios";
 export const fetchAllChapters = createAsyncThunk(
     "chapter/fetchAllChapters",
     async (
-        { page = 1, query = "", sortField = "id", sortDir = "asc", subject = "" },
+        { page = 1, query = "", sortField = "id", sortDir = "desc", subject = "" },
         { dispatch, rejectWithValue }
     ) => {
         try {
@@ -28,6 +28,11 @@ export const fetchAllChapters = createAsyncThunk(
             filterArray.push({
                 field: "sortDir",
                 value: sortDir,
+            });
+
+            filterArray.push({
+                field: "subject",
+                value: subject,
             });
 
             dispatch(setFilterObject(filterArray));
@@ -190,18 +195,13 @@ const chapterSlice = createSlice({
                 if (payload) {
                     const errors = JSON.parse(payload);
                     errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
+                        const key = Object.keys(error)[0];
+                        const value = error[key];
+
+                        state.errorObject = {
+                            ...state.errorObject,
+                            [key]: value,
+                        };
                     });
                 }
             })
@@ -219,18 +219,13 @@ const chapterSlice = createSlice({
                 if (payload) {
                     const errors = JSON.parse(payload);
                     errors.forEach(error => {
-                        if (error.id) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                id: error.id,
-                            };
-                        }
-                        if (error.name) {
-                            state.errorObject = {
-                                ...state.errorObject,
-                                name: error.name,
-                            };
-                        }
+                        const key = Object.keys(error)[0];
+                        const value = error[key];
+
+                        state.errorObject = {
+                            ...state.errorObject,
+                            [key]: value,
+                        };
                     });
                 }
             })

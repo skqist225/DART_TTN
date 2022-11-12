@@ -3,7 +3,7 @@ import { CloseIcon } from "../../../images";
 import { tailwindCss } from "../../../tailwind";
 import $ from "jquery";
 import { useSelector } from "react-redux";
-import { questionState, resetLoadedQuestions, setExcelAdd } from "../../../features/questionSlice";
+import { questionState, setExcelAdd } from "../../../features/questionSlice";
 import { useDispatch } from "react-redux";
 import { addTest } from "../../../features/testSlice";
 import { callToast } from "../../../helpers";
@@ -52,7 +52,6 @@ function TableModal({
                                 $(`#${modalId}`).css("display", "none");
                                 setIsEdit(false);
                                 dispatch(setExcelAdd(false));
-                                dispatch(resetLoadedQuestions());
                                 if (onCloseForm) {
                                     onCloseForm();
                                 }
@@ -61,9 +60,9 @@ function TableModal({
                             <CloseIcon />
                         </button>
                     </div>
-                    <div className='p-6 space-y-6'>{ModalBody}</div>
+                    <div className='p-4 space-y-6'>{ModalBody}</div>
 
-                    <div className='flex items-center p-6 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600'>
+                    <div className='flex items-center p-4 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600'>
                         {addTst && (
                             <>
                                 <button

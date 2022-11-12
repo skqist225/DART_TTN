@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { Frame, TestModalBody, TestTableBody, Table } from "../../components";
+import { Frame, TestModalBody, TestTableBody, Table, ChapterFilter } from "../../components";
 import {
     addTest,
     clearTestState,
@@ -31,6 +31,26 @@ const columns = [
     {
         name: "Tên đề thi",
         sortField: "name",
+        sortable: true,
+    },
+    {
+        name: "Trạng thái",
+        sortField: "status",
+        sortable: true,
+    },
+    {
+        name: "Tổng số câu hỏi",
+        sortField: "numberOfQuestions",
+        sortable: true,
+    },
+    {
+        name: "Số câu hỏi theo chương và độ khó",
+        sortField: "numberOfQuestionsByChapterAndLevel",
+        sortable: true,
+    },
+    {
+        name: "Người tạo",
+        sortField: "teacher",
         sortable: true,
     },
 ];
@@ -130,7 +150,7 @@ function TestsPage() {
         };
     }, []);
 
-    function cleanForm(successMessage, type = "add") {
+    function cleanForm(successMessage, type = "normal") {
         callToast("success", successMessage);
         dispatch(fetchAllTests(filterObject));
 

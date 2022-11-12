@@ -23,13 +23,18 @@ function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors })
             setValue("name", editedSubject.name);
             setValue("numberOfTheoreticalPeriods", editedSubject.numberOfTheoreticalPeriods);
             setValue("numberOfPracticePeriods", editedSubject.numberOfPracticePeriods);
+        } else {
+            setValue("id", "");
+            setValue("name", "");
+            setValue("numberOfTheoreticalPeriods", "");
+            setValue("numberOfPracticePeriods", "");
         }
     }, [editedSubject]);
 
     return (
         <div className='mt-5'>
             <div className='col-flex items-center justify-center w-full'>
-                <div className='w-full'>
+                <div className='w-full my-5'>
                     <Input
                         label='Mã môn học *'
                         error={(errors.id && errors.id.message) || (errorObject && errorObject.id)}
@@ -51,28 +56,33 @@ function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors })
                         onKeyDown={onKeyDown}
                     />
                 </div>
-                <div className='w-full my-5'>
-                    <Input
-                        label='Số tiết lý thuyết *'
-                        error={
-                            errors.numberOfTheoreticalPeriods &&
-                            errors.numberOfTheoreticalPeriods.message
-                        }
-                        register={register}
-                        name='numberOfTheoreticalPeriods'
-                        onKeyDown={onKeyDown}
-                    />
-                </div>
-                <div className='w-full my-5'>
-                    <Input
-                        label='Số tiết thực hành *'
-                        error={
-                            errors.numberOfPracticePeriods && errors.numberOfPracticePeriods.message
-                        }
-                        register={register}
-                        name='numberOfPracticePeriods'
-                        onKeyDown={onKeyDown}
-                    />
+
+                <div className='w-full my-5 flex items-center'>
+                    <div className='w-full mr-5'>
+                        <Input
+                            label='Số tiết lý thuyết *'
+                            error={
+                                errors.numberOfTheoreticalPeriods &&
+                                errors.numberOfTheoreticalPeriods.message
+                            }
+                            register={register}
+                            name='numberOfTheoreticalPeriods'
+                            onKeyDown={onKeyDown}
+                        />
+                    </div>
+
+                    <div className='w-full'>
+                        <Input
+                            label='Số tiết thực hành *'
+                            error={
+                                errors.numberOfPracticePeriods &&
+                                errors.numberOfPracticePeriods.message
+                            }
+                            register={register}
+                            name='numberOfPracticePeriods'
+                            onKeyDown={onKeyDown}
+                        />
+                    </div>
                 </div>
             </div>
         </div>

@@ -172,8 +172,7 @@ public class TestRestController {
             }
 
             mark = (float) numberOfRightAnswer / test.getQuestions().size() * 10;
-            test.setNumberOfRightAnswer(numberOfRightAnswer);
-            test.setMark(Math.round(mark));
+
 
             return new OkResponse<>(TestDTO.build(test, true)).response();
         } catch (NotFoundException ex) {

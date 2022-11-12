@@ -47,9 +47,9 @@ export const fetchAllSubjects = createAsyncThunk(
 
 export const findSubject = createAsyncThunk(
     "subject/findSubject",
-    async ({ subjectId }, { rejectWithValue }) => {
+    async ({ id }, { rejectWithValue }) => {
         try {
-            const { data } = await api.get(`/subjects/${subjectId}`);
+            const { data } = await api.get(`/subjects/${id}`);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -100,6 +100,7 @@ export const deleteSubject = createAsyncThunk(
 const initialState = {
     loading: true,
     subjects: [],
+    subject: null,
     totalElements: 0,
     totalPages: 0,
     editedSubject: null,
@@ -173,7 +174,7 @@ const subjectSlice = createSlice({
 
             .addCase(findSubject.pending, (state, { payload }) => {})
             .addCase(findSubject.fulfilled, (state, { payload }) => {
-                // state.subject = payload.data;
+                state.subject = payload.data;
             })
             .addCase(findSubject.rejected, (state, { payload }) => {})
 

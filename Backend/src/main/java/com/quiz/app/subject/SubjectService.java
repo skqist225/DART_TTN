@@ -29,10 +29,6 @@ import java.util.Optional;
 
 @Service
 public class SubjectService {
-    private final String DELETE_SUCCESSFULLY = "Xóa môn học thành công";
-    private final String DELETE_FORBIDDEN = "Không thể xóa môn học vì ràng buộc dữ liệu";
-
-    private final Integer MAX_SUBJECTS_PER_PAGE = 20;
 
     @Autowired
     SubjectRepository subjectRepository;
@@ -47,9 +43,9 @@ public class SubjectService {
     public String deleteById(String id) throws ConstrainstViolationException {
         try {
             subjectRepository.deleteById(id);
-            return DELETE_SUCCESSFULLY;
+            return "Xóa môn học thành công";
         } catch (Exception ex) {
-            throw new ConstrainstViolationException(DELETE_FORBIDDEN);
+            throw new ConstrainstViolationException("Không thể xóa môn học vì ràng buộc dữ liệu");
         }
     }
 
@@ -108,7 +104,7 @@ public class SubjectService {
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-        Pageable pageable = PageRequest.of(page - 1, MAX_SUBJECTS_PER_PAGE, sort);
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Subject> criteriaQuery = criteriaBuilder.createQuery(Subject.class);

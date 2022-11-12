@@ -3,8 +3,11 @@ import { deleteChapter, setEditedChapter } from "../../features/chapterSlice";
 import { tailwindCss } from "../../tailwind";
 import MyButton from "../common/MyButton";
 import $ from "jquery";
+import { useDispatch } from "react-redux";
 
-function ChapterTableBody({ rows, setIsEdit, dispatch }) {
+function ChapterTableBody({ rows, setIsEdit }) {
+    const dispatch = useDispatch();
+
     return (
         <tbody>
             {rows.map(row => (
@@ -12,7 +15,7 @@ function ChapterTableBody({ rows, setIsEdit, dispatch }) {
                     <td className='py-4 px-6  whitespace-nowrap dark:text-white'>{row.id}</td>
                     <td className='py-4 px-6'>{row.name}</td>
                     <td className='py-4 px-6'>{row.subject.name}</td>
-                    <td class='py-4 px-6 flex items-center'>
+                    <td className='py-4 px-6 flex items-center'>
                         <MyButton
                             type='edit'
                             onClick={() => {

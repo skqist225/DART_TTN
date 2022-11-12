@@ -82,7 +82,6 @@ export const creditClassSchema = yup
 
 export const chapterSchema = yup
     .object({
-        name: yup.string().required("Tên chương không được để trống"),
         subjectId: yup.string().required("Môn học không được để  trống"),
     })
     .required();
@@ -92,7 +91,6 @@ export const roleSchema = yup
         name: yup.string().required("Tên vai trò được để trống"),
     })
     .required();
-
 
 export const examSchema = yup
     .object({

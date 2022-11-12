@@ -268,9 +268,6 @@ const questionSlice = createSlice({
         setExcelAdd(state, { payload }) {
             state.excelAdd = payload;
         },
-        resetLoadedQuestions(state, _) {
-            state.loadedQuestions = [];
-        },
         disableOrEnableLoadedQuestions(state, { payload }) {
             state.questions = state.questions.map(question => {
                 if (question.id === payload) {
@@ -302,10 +299,8 @@ const questionSlice = createSlice({
 
             .addCase(loadQuestionsByCriteria.pending, (state, { payload }) => {})
             .addCase(loadQuestionsByCriteria.fulfilled, (state, { payload }) => {
-                const loadedQuestions = payload.data;
-
                 let i = 0;
-                state.questions = loadedQuestions
+                state.questions = payload.data
                     .map(({ questions }) => {
                         i++;
                         return questions;
@@ -416,7 +411,6 @@ export const {
         setFilterObject,
         setEditedQuestion,
         setExcelAdd,
-        resetLoadedQuestions,
         disableOrEnableLoadedQuestions,
         setResetFilter,
         setQuestions,

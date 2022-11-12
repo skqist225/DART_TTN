@@ -31,6 +31,7 @@ function Table({
     fetchDataByPageNumber,
     addTest,
     onCloseForm,
+    Filter,
 }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
@@ -43,7 +44,7 @@ function Table({
                         placeHolder={searchPlaceHolder}
                         handleQueryChange={handleQueryChange}
                     />
-                    {modalLabel === "câu hỏi" && <QuestionsFilter />}
+                    {Filter && <Filter />}
                 </div>
 
                 {!["câu hỏi"].includes(modalLabel) ? (

@@ -21,6 +21,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -37,10 +38,16 @@ public class ChapterService {
     @Autowired
     private EntityManager entityManager;
 
+
+    public List<Chapter> saveAll(List<Chapter> chapters) {
+        return (List<Chapter>) chapterRepository.saveAll(chapters);
+    }
+
     public Chapter save(Chapter chapter) {
         return chapterRepository.save(chapter);
     }
 
+    @Transactional
     public String deleteById(Integer id) throws ConstrainstViolationException {
         try {
             chapterRepository.deleteById(id);
@@ -50,7 +57,13 @@ public class ChapterService {
         }
     }
 
+    @Transactional
+    public void updateById(Integer id, String name) {
+        chapterRepository.updateById(id, name);
+    }
+
     public List<Chapter> findBySubject(Subject subject) {
+        System.out.println();
         return chapterRepository.findBySubject(subject);
 
     }
@@ -108,6 +121,7 @@ public class ChapterService {
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
+        String subjectId = filters.get("subjectId");
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
@@ -128,6 +142,11 @@ public class ChapterService {
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
+        }
+
+        if (!StringUtils.isEmpty(subjectId)) {
+            Expression<String> subject = root.get("subject").get("id");
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(subject, subjectId)));
         }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));

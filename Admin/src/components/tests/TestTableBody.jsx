@@ -14,6 +14,9 @@ function TestTableBody({ rows, setIsEdit }) {
                 <tr className={tailwindCss.tr} key={row.id}>
                     <td className='py-4 px-6  whitespace-nowrap dark:text-white'>{row.id}</td>
                     <td className='py-4 px-6'>{row.name}</td>
+                    <td className='py-4 px-6'>{row.status}</td>
+                    <td className='py-4 px-6'>{row.numberOfQuestions}</td>
+                    <td className='py-4 px-6'>{row.teacherName}</td>
                     <td className='py-4 px-6 flex items-center'>
                         <MyButton
                             type='edit'

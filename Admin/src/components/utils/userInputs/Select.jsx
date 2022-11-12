@@ -26,7 +26,7 @@ function Select({
                 }
             }
         }
-    }, []);
+    }, [defaultValue, options[0]]);
 
     useEffect(() => {
         if (propName === "chapterId") {

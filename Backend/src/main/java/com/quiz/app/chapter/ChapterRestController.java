@@ -1,10 +1,9 @@
 package com.quiz.app.chapter;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.quiz.app.chapter.dto.ChapterDTO;
 import com.quiz.app.chapter.dto.ChaptersDTO;
 import com.quiz.app.chapter.dto.PostCreateChapterDTO;
+import com.quiz.app.common.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
@@ -44,16 +43,7 @@ public class ChapterRestController {
     @Autowired
     private SubjectService subjectService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
 
-    private ArrayNode arrayNode;
-
-    public void addError(String fieldName, String fieldError) {
-        ObjectNode node = objectMapper.createObjectNode();
-        node.put(fieldName, fieldError);
-        arrayNode.add(node);
-    }
 
     @GetMapping("")
     public ResponseEntity<StandardJSONResponse<ChaptersDTO>> fetchAllSubjects(
@@ -89,6 +79,7 @@ public class ChapterRestController {
             filters.put("query", query);
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
+            filters.put("subjectId", subjectId);
 
             Page<Chapter> chaptersPage = chapterService.findAllSubjects(filters);
 
@@ -101,59 +92,98 @@ public class ChapterRestController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<StandardJSONResponse<Chapter>> saveSubject(
+    public ResponseEntity<StandardJSONResponse<String>> saveSubject(
             @RequestBody PostCreateChapterDTO postCreateChapterDTO,
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
-    ) {
-        arrayNode = objectMapper.createArrayNode();
-        Chapter savedChapter = null;
+    ) throws NotFoundException, ConstrainstViolationException {
+        CommonUtils commonUtils = new CommonUtils();
         Subject subject = null;
 
-        Integer id = postCreateChapterDTO.getId();
-        String name = postCreateChapterDTO.getName();
         String subjectId = postCreateChapterDTO.getSubjectId();
+        List<ChapterDTO> chapterDTOS = postCreateChapterDTO.getChapters();
 
-        if (Objects.isNull(name)) {
-            addError("name", "Tên chương không được để trống");
+        if (chapterDTOS.size() > 0) {
+            for (ChapterDTO chapter : chapterDTOS) {
+                if (Objects.isNull(chapter.getName()) || StringUtils.isEmpty(chapter.getName())) {
+                    commonUtils.addError("chapters", "Không được để trống tên chương");
+                    break;
+                }
+            }
         }
 
         if (Objects.isNull(subjectId)) {
-            addError("subjectId", "Môn học không được để trống");
+            commonUtils.addError("subjectId", "Môn học không được để trống");
         }
 
-        if (arrayNode.size() > 0) {
-            return new BadResponse<Chapter>(arrayNode.toString()).response();
+        if (commonUtils.getArrayNode().size() > 0) {
+            return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
         } else {
-            if (chapterService.isNameDuplicated(id, name, isEdit)) {
-                addError("name", "Tên chương đã tồn tại");
+            if (chapterDTOS.size() > 0) {
+                int i = 1;
+                for (ChapterDTO chapter : chapterDTOS) {
+                    if (chapterService.isNameDuplicated(chapter.getId(), chapter.getName(), isEdit)) {
+                        commonUtils.addError("chapters." + (i - 1) + ".name", String.format("Tên " +
+                                "chương" +
+                                " %d đã tồn tại", i));
+                    }
+                    i++;
+                }
             }
 
             try {
                 subject = subjectService.findById(subjectId);
             } catch (NotFoundException exception) {
-                return new BadResponse<Chapter>(exception.getMessage()).response();
+                commonUtils.addError("subject", exception.getMessage());
             }
 
-            if (arrayNode.size() > 0) {
-                return new BadResponse<Chapter>(arrayNode.toString()).response();
+            if (commonUtils.getArrayNode().size() > 0) {
+                return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
             }
         }
 
         if (isEdit) {
-            try {
-                Chapter chapter = chapterService.findById(id);
-                chapter.setName(name);
-                chapter.setSubject(subject);
-
-                savedChapter = chapterService.save(chapter);
-            } catch (NotFoundException exception) {
-                return new BadResponse<Chapter>(exception.getMessage()).response();
+            List<Chapter> addedChapters = new ArrayList<>();
+            List<Chapter> removedChapters = new ArrayList<>();
+            for (ChapterDTO chapterDTO : chapterDTOS) {
+                // Add new chapter
+                if (Objects.isNull(chapterDTO.getId())) {
+                    addedChapters.add(Chapter.build(chapterDTO.getName(), subject));
+                } else {
+                    chapterService.updateById(chapterDTO.getId(), chapterDTO.getName());
+                }
             }
+
+            for (Chapter chapter : subject.getChapters()) {
+                boolean shouldDelete = true;
+
+                for (ChapterDTO a : chapterDTOS) {
+                    if (Objects.nonNull(a.getId())) {
+                        if (a.getId().equals(chapter.getId())) {
+                            shouldDelete = false;
+                            break;
+                        }
+                    }
+                }
+                // Remove none mentioned chapter
+                if (shouldDelete) {
+                    removedChapters.add(chapter);
+                }
+            }
+
+            for (Chapter chapter : removedChapters) {
+                chapterService.deleteById(chapter.getId());
+            }
+
+            chapterService.saveAll(addedChapters);
         } else {
-            savedChapter = chapterService.save(Chapter.build(name, subject));
+            List<Chapter> chapters = new ArrayList<>();
+            for (ChapterDTO chapterDTO : chapterDTOS) {
+                chapters.add(Chapter.build(chapterDTO.getName(), subject));
+            }
+            chapterService.saveAll(chapters);
         }
 
-        return new OkResponse<>(savedChapter).response();
+        return new OkResponse<>("Thêm chương thành công").response();
     }
 
     @DeleteMapping("{id}/delete")

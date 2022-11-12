@@ -118,13 +118,8 @@ function QuestionModalBody({
         } else {
             setValue("id", "");
             setValue("content", "");
-
-            console.log("called");
-            fields.forEach((_, index) => {
-                remove(index);
-            });
-            fields.length = 0;
             setValue("answers", []);
+            clearErrors("answers");
         }
     }, [editedQuestion]);
 
