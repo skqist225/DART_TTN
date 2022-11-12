@@ -16,7 +16,6 @@ import {
     setExcelAdd,
     setEditedQuestion,
 } from "../../features/questionSlice";
-import { fetchAllChapters } from "../../features/chapterSlice";
 import { fetchAllSubjects } from "../../features/subjectSlice";
 
 const columns = [
@@ -65,11 +64,30 @@ const columns = [
     },
 ];
 
+const Type = {
+    oneAnswer: "Một đáp án",
+    multipleAnswer: "Nhiều đáp án",
+    typedAnswer: "Đáp án điền",
+};
+
 function QuestionsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [image, setImage] = useState(null);
     const dispatch = useDispatch();
+
+    const formId = "questionForm";
+    const modalId = "questionModal";
+    const modalLabel = "câu hỏi";
+
+    useEffect(() => {
+        dispatch(
+            fetchAllQuestions({
+                page: 1,
+            })
+        );
+        dispatch(fetchAllSubjects({ page: 0 }));
+    }, []);
 
     const {
         questions,
@@ -101,11 +119,11 @@ function QuestionsPage() {
     });
 
     const onSubmit = data => {
-        console.log(data);
+        const { answers, type, typedAnswer, typedId } = data;
         const formData = new FormData();
 
-        if (data.type === "Đáp án điền") {
-            if (!data.typedAnswer) {
+        if (type === Type.typedAnswer) {
+            if (!typedAnswer) {
                 setError("typedAnswer", {
                     type: "custom",
                     message: "Đáp án điền không được để trống",
@@ -113,49 +131,40 @@ function QuestionsPage() {
                 return;
             }
         } else {
-            if (["Một đáp án", "Nhiều đáp án"].includes(data.type)) {
-                if (data.answers.length === 0) {
-                    callToast("error", "Vui lòng thêm lựa chọn");
+            if (answers.length === 0) {
+                callToast("warning", "Thêm lựa chọn");
+                return;
+            } else {
+                if (answers.some(({ content }) => !content)) {
+                    const emptyAnswers = [];
+                    answers.forEach(({ content, name }) => {
+                        if (!content) emptyAnswers.push(name);
+                    });
+
+                    callToast("error", `Điền nội dung cho lựa chọn ${emptyAnswers.join(",")}`);
+                    return;
+                } else if (answers.length === 1 && type === Type.oneAnswer) {
+                    callToast("error", "Một câu hỏi có ít nhất 2 lựa chọn");
                     return;
                 } else {
-                    if (data.answers.some(({ content }) => !content)) {
-                        const emptyAnswers = [];
-                        data.answers.forEach(({ content, name }) => {
-                            if (!content) emptyAnswers.push(name);
+                    if (type === Type.oneAnswer) {
+                        // One choice questions.
+                        if (!answers.some(({ isAnswer }) => isAnswer)) {
+                            callToast("error", "Chọn ít nhất 1 đáp án cho câu hỏi có một đáp án");
+                            return;
+                        }
+                    } else {
+                        // Multiple choices question.
+                        let i = 0;
+                        answers.forEach(({ isAnswer }) => {
+                            if (isAnswer) {
+                                i++;
+                            }
                         });
 
-                        callToast(
-                            "error",
-                            `Vui lòng điền nội dung lựa chọn ${emptyAnswers.join(",")}`
-                        );
-                        return;
-                    } else if (data.answers.length === 1) {
-                        callToast("error", `Vui lòng có ít nhất 2 lựa chọn cho 1 câu hỏi`);
-                        return;
-                    } else {
-                        if (data.type === "Một đáp án") {
-                            const atLeastOneAnswer = data.answers.some(({ isAnswer }) => isAnswer);
-                            if (!atLeastOneAnswer) {
-                                callToast("error", `Vui lòng chọn ít nhất 1 đáp án cho 1 câu hỏi`);
-                                return;
-                            }
-                        }
-
-                        if (data.type === "Nhiều đáp án") {
-                            let i = 0;
-                            data.answers.forEach(({ isAnswer }) => {
-                                if (isAnswer) {
-                                    i++;
-                                }
-                            });
-
-                            if (i < 2) {
-                                callToast(
-                                    "error",
-                                    `Vui lòng chọn ít nhất 2 đáp án cho câu hỏi có nhiều đáp án`
-                                );
-                                return;
-                            }
+                        if (i < 2) {
+                            callToast("error", "Chọn ít nhất 2 đáp án cho câu hỏi có nhiều đáp án");
+                            return;
                         }
                     }
                 }
@@ -171,62 +180,26 @@ function QuestionsPage() {
         if (image) {
             formData.set("image", image);
         }
-        // let answer = null;
-        // switch (data.type) {
-        //     case "Nhiều đáp án":
-        //     case "Một đáp án": {
-        //         answer = data.answers
-        //             .map(({ name, isAnswer }) => {
-        //                 if (isAnswer) {
-        //                     return isAnswer;
-        //                 }
-        //             })
-        //             .join(",");
-        //         break;
-        //     }
-        //     case "Đáp án điền": {
-        //         answer = data.typedAnswer;
-        //         break;
-        //     }
-        // }
 
-        if (data.type === "Đáp án điền") {
-            if (data.typedId) {
-                formData.append(`answers[0].id`, data.typedId);
+        if (type === Type.typedAnswer) {
+            if (typedId) {
+                formData.append(`answers[0].id`, typedId);
             }
 
-            formData.append(`answers[0].content`, data.typedAnswer);
+            formData.append(`answers[0].content`, typedAnswer);
             formData.append(`answers[0].isTempAnswer`, true);
         } else {
-            data.answers.forEach((answer, index) => {
-                if (answer.id) {
-                    formData.append(`answers[${index}].id`, answer.id);
+            answers.forEach(({ id, name, content, isAnswer }, index) => {
+                if (id) {
+                    formData.append(`answers[${index}].id`, id);
                 }
-                formData.append(`answers[${index}].content`, `${answer.name}. ${answer.content}`);
-                if (!answer.isAnswer) {
-                    formData.append(`answers[${index}].isTempAnswer`, false);
-                } else {
-                    formData.append(`answers[${index}].isTempAnswer`, answer.isAnswer);
-                }
+                formData.append(`answers[${index}].content`, `${name}. ${content}`);
+                formData.append(`answers[${index}].isTempAnswer`, isAnswer);
             });
         }
 
-        if (isEdit) {
-            dispatch(editQuestion(formData));
-        } else {
-            dispatch(addQuestion(formData));
-        }
+        dispatch(isEdit ? editQuestion(formData) : addQuestion(formData));
     };
-
-    useEffect(() => {
-        dispatch(
-            fetchAllQuestions({
-                page: 1,
-            })
-        );
-        dispatch(fetchAllChapters({ page: 0 }));
-        dispatch(fetchAllSubjects({ page: 0 }));
-    }, []);
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
@@ -253,30 +226,37 @@ function QuestionsPage() {
         };
     }, []);
 
+    function cleanForm(successMessage, type = "add") {
+        callToast("success", successMessage);
+        dispatch(fetchAllQuestions(filterObject));
+
+        $(`#${modalId}`).css("display", "none");
+        if (type === "add") {
+            $(`#${formId}`)[0].reset();
+            setImage(null);
+        }
+
+        if (type === "edit") {
+            setIsEdit(false);
+            dispatch(setEditedQuestion(null));
+        }
+    }
+
     useEffect(() => {
         if (successMessage) {
-            callToast("success", successMessage);
-            $("#questionForm")[0].reset();
-            dispatch(fetchAllQuestions(filterObject));
-            $("#questionModal").css("display", "none");
-            setImage(null);
+            cleanForm(successMessage, "add");
         }
     }, [successMessage]);
 
     useEffect(() => {
         if (eqSuccessMessage) {
-            callToast("success", eqSuccessMessage);
-            dispatch(fetchAllQuestions(filterObject));
-            $("#questionModal").css("display", "none");
-            setIsEdit(false);
-            dispatch(setEditedQuestion(null));
+            cleanForm(eqSuccessMessage, "edit");
         }
     }, [eqSuccessMessage]);
 
     useEffect(() => {
         if (dqSuccessMessage) {
-            callToast("success", dqSuccessMessage);
-            dispatch(fetchAllQuestions(filterObject));
+            cleanForm(eqSuccessMessage, "delete");
         }
     }, [dqSuccessMessage]);
 
@@ -292,29 +272,30 @@ function QuestionsPage() {
         }
     }, [errorObject]);
 
-    const handleAddSelectedQuestionFromExcelFile = () => {
-        dispatch(addMultipleQuestions({ questions: questionsExcel }));
-    };
-
     useEffect(() => {
         if (amqSuccessMessage) {
-            callToast("success", amqSuccessMessage);
-            $("#questionModal").css("display", "none");
-            dispatch(fetchAllQuestions(filterObject));
+            cleanForm(amqSuccessMessage, "normal");
             dispatch(setExcelAdd(false));
         }
     }, [amqSuccessMessage]);
 
     useEffect(() => {
         if (eodqSuccessMessage) {
-            callToast("success", eodqSuccessMessage);
-            dispatch(fetchAllQuestions(filterObject));
+            cleanForm(eodqSuccessMessage, "normal");
         }
     }, [eodqSuccessMessage]);
 
     const fetchDataByPageNumber = pageNumber => {
         dispatch(fetchAllQuestions({ ...filterObject, page: pageNumber }));
     };
+
+    const handleAddSelectedQuestionFromExcelFile = () => {
+        dispatch(addMultipleQuestions({ questions: questionsExcel }));
+    };
+
+    function onCloseForm() {
+        dispatch(setEditedQuestion(null));
+    }
 
     return (
         <Frame
@@ -329,16 +310,10 @@ function QuestionsPage() {
                     rows={questions}
                     totalElements={totalElements}
                     totalPages={totalPages}
-                    TableBody={
-                        <QuestionTableBody
-                            rows={questions}
-                            setIsEdit={setIsEdit}
-                            dispatch={dispatch}
-                        />
-                    }
-                    modalId='questionModal'
-                    formId='questionForm'
-                    modalLabel='câu hỏi'
+                    TableBody={QuestionTableBody}
+                    modalId={modalId}
+                    formId={formId}
+                    modalLabel={modalLabel}
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={
@@ -357,6 +332,7 @@ function QuestionsPage() {
                     setIsEdit={setIsEdit}
                     handleAddSelectedQuestionFromExcelFile={handleAddSelectedQuestionFromExcelFile}
                     fetchDataByPageNumber={fetchDataByPageNumber}
+                    onCloseForm={onCloseForm}
                 />
             }
         />

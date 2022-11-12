@@ -4,6 +4,7 @@ import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
+import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -77,7 +78,7 @@ public class Question {
     }
 
     public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,
-            Chapter chapter) {
+                                 Chapter chapter, boolean addQuestion) {
         Question question = Question.builder()
                 .content(postCreateQuestionDTO.getContent())
                 .type(postCreateQuestionDTO.getType())
@@ -135,8 +136,17 @@ public class Question {
         this.content = content;
     }
 
-    public Level getLevel() {
-        return level;
+    public String getLevel() {
+        String levelStr = null;
+        if (level.equals(Level.EASY)) {
+            levelStr = "Dễ";
+        } else if (level.equals(Level.MEDIUM)) {
+            levelStr = "Trung bình";
+        } else {
+            levelStr = "Khó";
+        }
+
+        return levelStr;
     }
 
     public void setLevel(Level level) {
@@ -144,7 +154,11 @@ public class Question {
     }
 
     public String getImage() {
-        return image;
+        if (Objects.nonNull(this.image) || !StringUtils.isEmpty(this.image)) {
+            return String.format("/question_images/%s/%s", this.id, this.image);
+        }
+
+        return this.image;
     }
 
     public void setImage(String image) {

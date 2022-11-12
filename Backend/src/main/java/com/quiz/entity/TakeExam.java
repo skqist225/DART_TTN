@@ -46,6 +46,9 @@ public class TakeExam {
     @OneToMany(mappedBy = "takeExam")
     private List<TakeExamDetail> takeExamDetails;
 
+    @ManyToOne
+    private Test test;
+
     @Column(name = "DIEM")
     private float score;
 }

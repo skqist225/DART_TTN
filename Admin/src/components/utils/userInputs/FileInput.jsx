@@ -1,9 +1,17 @@
-import React from "react";
+import React, { useEffect } from "react";
 import $ from "jquery";
 import { tailwindCss } from "../../../tailwind";
 import { CloseIcon } from "../../../images";
+import { getImage } from "../../../helpers";
 
-function FileInput({ setImage }) {
+function FileInput({ setImage, image }) {
+    useEffect(() => {
+        if (image) {
+            $("#imagePreview").attr("src", getImage(image));
+            setImage(image);
+        }
+    }, [image]);
+
     const previewImage = event => {
         const image = event.target.files[0];
         const fileReader = new FileReader();

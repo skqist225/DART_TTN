@@ -7,6 +7,7 @@ import {
     clearTestState,
     editTest,
     fetchAllTests,
+    setEditedTest,
     testState,
 } from "../../features/testSlice";
 import $ from "jquery";
@@ -15,7 +16,11 @@ import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { fetchAllSubjects } from "../../features/subjectSlice";
-import { fetchAllQuestions, loadQuestionsByCriteria } from "../../features/questionSlice";
+import {
+    fetchAllQuestions,
+    loadQuestionsByCriteria,
+    setQuestions,
+} from "../../features/questionSlice";
 
 const columns = [
     {
@@ -31,8 +36,23 @@ const columns = [
 ];
 
 function TestsPage() {
+    const dispatch = useDispatch();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+
+    const formId = "testForm";
+    const modalId = "testModal";
+    const modalLabel = "đề thi";
+
+    useEffect(() => {
+        dispatch(
+            fetchAllTests({
+                page: 1,
+            })
+        );
+        dispatch(fetchAllSubjects({ page: 0 }));
+        dispatch(setQuestions([]));
+    }, []);
 
     const {
         control,
@@ -47,30 +67,28 @@ function TestsPage() {
         },
     });
 
-    const onSubmit = data => {
-        console.log(data.criteria);
-
+    const onSubmit = ({ criteria, numberOfQuestions, testSubjectId: subject }) => {
         if (isEdit) {
             dispatch(editTest(data));
         } else {
-            if (data.criteria.length === 0) {
-                if (!data.numberOfQuestions) {
+            if (criteria.length === 0) {
+                if (!numberOfQuestions) {
                     callToast("error", "Vui lòng điền số lượng câu hỏi");
                     return;
                 } else {
                     dispatch(
                         fetchAllQuestions({
                             page: 0,
-                            subject: data.testSubjectId,
-                            numberOfQuestions: data.numberOfQuestions,
+                            subject,
+                            numberOfQuestions,
                         })
                     );
                 }
             } else {
                 dispatch(
                     loadQuestionsByCriteria({
-                        subject: data.testSubjectId,
-                        criteria: data.criteria,
+                        subject,
+                        criteria,
                     })
                 );
             }
@@ -112,40 +130,42 @@ function TestsPage() {
         };
     }, []);
 
+    function cleanForm(successMessage, type = "add") {
+        callToast("success", successMessage);
+        dispatch(fetchAllTests(filterObject));
+
+        $(`#${modalId}`).css("display", "none");
+        if (type === "add") {
+            $(`#${formId}`)[0].reset();
+        }
+
+        if (type === "edit") {
+            setIsEdit(false);
+            dispatch(setEditedTest(null));
+        }
+    }
+
     useEffect(() => {
         if (successMessage) {
-            callToast("success", successMessage);
-            $("#testForm")[0].reset();
-            $("#testModal").css("display", "none");
-            dispatch(fetchAllTests(filterObject));
+            cleanForm(successMessage, "add");
         }
     }, [successMessage]);
 
     useEffect(() => {
         if (esSuccessMessage) {
-            callToast("success", esSuccessMessage);
-            dispatch(fetchAllTests(filterObject));
-            $("#testModal").css("display", "none");
-            setIsEdit(false);
+            cleanForm(esSuccessMessage, "edit");
         }
     }, [esSuccessMessage]);
 
     useEffect(() => {
         if (dsSuccessMessage) {
-            callToast("success", dsSuccessMessage);
-            dispatch(fetchAllTests(filterObject));
+            cleanForm(dsSuccessMessage, "delete");
         }
     }, [dsSuccessMessage]);
 
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(
-            fetchAllTests({
-                page: 1,
-            })
-        );
-        dispatch(fetchAllSubjects({ page: 0 }));
-    }, []);
+    function onCloseForm() {
+        dispatch(setQuestions([]));
+    }
 
     return (
         <Frame
@@ -158,21 +178,19 @@ function TestsPage() {
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={columns}
+                    rows={tests}
                     totalElements={totalElements}
                     totalPages={totalPages}
-                    TableBody={
-                        <TestTableBody rows={tests} setIsEdit={setIsEdit} dispatch={dispatch} />
-                    }
-                    modalId='testModal'
-                    formId='testForm'
-                    modalLabel='đề thi'
+                    TableBody={TestTableBody}
+                    modalId={modalId}
+                    formId={formId}
+                    modalLabel={modalLabel}
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={
                         <TestModalBody
                             errors={errors}
                             register={register}
-                            dispatch={dispatch}
                             setValue={setValue}
                             control={control}
                         />
@@ -180,6 +198,7 @@ function TestsPage() {
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                     addTest={addTest}
+                    onCloseForm={onCloseForm}
                 />
             }
         />

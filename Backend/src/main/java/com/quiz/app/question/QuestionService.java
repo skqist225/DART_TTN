@@ -129,27 +129,12 @@ public class QuestionService {
         if (!StringUtils.isEmpty(searchQuery)) {
             Expression<String> id = root.get("id");
             Expression<String> content = root.get("content");
-            Expression<String> answerA = root.get("answerA");
-            Expression<String> answerB = root.get("answerB");
-            Expression<String> answerC = root.get("answerC");
-            Expression<String> answerD = root.get("answerD");
-            Expression<String> finalAnswer = root.get("finalAnswer");
             Expression<String> chapterName = root.get("chapter").get("name");
             Expression<String> teacherFirstName = root.get("teacher").get("firstName");
             Expression<String> teacherLastName = root.get("teacher").get("lastName");
 
             Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, content);
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, answerA);
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, answerB);
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, answerC);
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, answerD);
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, finalAnswer);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, chapterName);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");

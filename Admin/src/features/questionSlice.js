@@ -286,6 +286,9 @@ const questionSlice = createSlice({
         setResetFilter(state, { payload }) {
             state.resetFilter = payload;
         },
+        setQuestions(state, { payload }) {
+            state.questions = payload;
+        },
     },
     extraReducers: builder => {
         builder
@@ -416,6 +419,7 @@ export const {
         resetLoadedQuestions,
         disableOrEnableLoadedQuestions,
         setResetFilter,
+        setQuestions,
     },
 } = questionSlice;
 

@@ -5,7 +5,6 @@ import { tailwindCss } from "../../tailwind";
 import { TextArea, Select, FileInput, Input } from "..";
 import { QuestionExcelModalBody } from "..";
 import { chapterState, fetchAllChapters } from "../../features/chapterSlice";
-import { lookupQuestionLevel } from "./QuestionTableBody";
 import { subjectState } from "../../features/subjectSlice";
 import { useFieldArray } from "react-hook-form";
 import $ from "jquery";
@@ -40,6 +39,38 @@ const types = [
     },
 ];
 
+function lookupIndex(index) {
+    const alphabet = [
+        "A",
+        "B",
+        "C",
+        "D",
+        "E",
+        "F",
+        "G",
+        "H",
+        "I",
+        "J",
+        "K",
+        "L",
+        "M",
+        "N",
+        "O",
+        "P",
+        "Q",
+        "R",
+        "S",
+        "T",
+        "U",
+        "V",
+        "W",
+        "X",
+        "Y",
+        "Z",
+    ];
+    return alphabet[index];
+}
+
 function QuestionModalBody({
     errors,
     register,
@@ -71,6 +102,8 @@ function QuestionModalBody({
         if (editedQuestion) {
             setValue("id", editedQuestion.id);
             setValue("content", editedQuestion.content);
+            dispatch(fetchAllChapters({ page: 0, subject: editedQuestion.chapter.subject.id }));
+
             handleTypeChange({ target: { value: editedQuestion.type } });
             if (editedQuestion.type === "Đáp án điền") {
                 if (editedQuestion.answers[0]) {
@@ -100,41 +133,7 @@ function QuestionModalBody({
         dispatch(fetchAllChapters({ page: 0, subject: event.target.value }));
     };
 
-    function lookupIndex(index) {
-        const alphabet = [
-            "A",
-            "B",
-            "C",
-            "D",
-            "E",
-            "F",
-            "G",
-            "H",
-            "I",
-            "J",
-            "K",
-            "L",
-            "M",
-            "N",
-            "O",
-            "P",
-            "Q",
-            "R",
-            "S",
-            "T",
-            "U",
-            "V",
-            "W",
-            "X",
-            "Y",
-            "Z",
-        ];
-        return alphabet[index];
-    }
-
     const handleTypeChange = event => {
-        console.log("asdas");
-
         if (event.target.value === "Đáp án điền") {
             $("#addAnswerButton").css("display", "none");
             $("#typedAnswerContainer").css("display", "block");
@@ -304,7 +303,7 @@ function QuestionModalBody({
                         <div className='flex items-center w-full my-3'>
                             <div className='mr-5 w-full'>
                                 <Select
-                                    label='Loại câu hỏi'
+                                    label='Loại câu hỏi *'
                                     register={register}
                                     name='type'
                                     options={types}
@@ -320,9 +319,7 @@ function QuestionModalBody({
                                     name='level'
                                     options={levelOptions}
                                     setValue={setValue}
-                                    defaultValue={
-                                        editedQuestion && lookupQuestionLevel(editedQuestion.level)
-                                    }
+                                    defaultValue={editedQuestion && editedQuestion.level}
                                 />
                             </div>
                         </div>
@@ -360,7 +357,7 @@ function QuestionModalBody({
                             </div>
                         </div>
                     </div>
-                    <FileInput setImage={setImage} />
+                    <FileInput setImage={setImage} image={editedQuestion && editedQuestion.image} />
                 </div>
             ) : (
                 <QuestionExcelModalBody />

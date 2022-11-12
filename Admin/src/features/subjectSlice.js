@@ -158,13 +158,18 @@ const subjectSlice = createSlice({
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllSubjects.pending, (state, { payload }) => {})
+            .addCase(fetchAllSubjects.pending, (state, { payload }) => {
+                state.loading = true;
+            })
             .addCase(fetchAllSubjects.fulfilled, (state, { payload }) => {
                 state.subjects = payload.subjects;
                 state.totalElements = payload.totalElements;
                 state.totalPages = payload.totalPages;
+                state.loading = false;
             })
-            .addCase(fetchAllSubjects.rejected, (state, { payload }) => {})
+            .addCase(fetchAllSubjects.rejected, (state, { payload }) => {
+                state.loading = false;
+            })
 
             .addCase(findSubject.pending, (state, { payload }) => {})
             .addCase(findSubject.fulfilled, (state, { payload }) => {

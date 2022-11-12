@@ -16,6 +16,7 @@ function Table({
     modalId,
     setIsEdit,
     columns,
+    rows,
     TableBody,
     totalElements,
     totalPages,
@@ -29,6 +30,7 @@ function Table({
     handleAddSelectedQuestionFromExcelFile,
     fetchDataByPageNumber,
     addTest,
+    onCloseForm,
 }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
@@ -114,7 +116,7 @@ function Table({
 
             <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
                 <TableHeader columns={columns} handleSortChange={handleSortChange} />
-                {TableBody}
+                <TableBody rows={rows} setIsEdit={setIsEdit} />
             </table>
             <TablePagination
                 totalElements={totalElements}
@@ -133,6 +135,7 @@ function Table({
                 setIsEdit={setIsEdit}
                 handleAddSelectedQuestionFromExcelFile={handleAddSelectedQuestionFromExcelFile}
                 addTest={addTest}
+                onCloseForm={onCloseForm}
             />
         </div>
     );

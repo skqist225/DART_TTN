@@ -20,16 +20,7 @@ const sexOptions = [
     },
 ];
 
-function QuestionModalBody({
-    errors,
-    register,
-    dispatch,
-    setValue,
-    classes,
-    roles,
-    setImage,
-    isEdit,
-}) {
+function QuestionModalBody({ errors, register, dispatch, setValue, roles, setImage, isEdit }) {
     const { editedUser, errorObject } = useSelector(userState);
 
     const onKeyDown = ({ target: { name } }) => {
@@ -165,8 +156,6 @@ function QuestionModalBody({
                     <div className='flex-1'>
                         <Select
                             label='Giới tính *'
-                            labelClassName={tailwindCss.label}
-                            selectClassName={tailwindCss.select}
                             error={errors.sex && errors.sex.message}
                             register={register}
                             name='sex'
@@ -191,24 +180,10 @@ function QuestionModalBody({
                     <div className='flex-1 mr-5'>
                         <Select
                             label='Vai trò *'
-                            labelClassName={tailwindCss.label}
-                            selectClassName={tailwindCss.select}
                             error={errors.roleId && errors.roleId.message}
                             register={register}
                             name='roleId'
                             options={roles}
-                            setValue={setValue}
-                        />
-                    </div>
-                    <div className='flex-1'>
-                        <Select
-                            label='Lớp *'
-                            labelClassName={tailwindCss.label}
-                            selectClassName={tailwindCss.select}
-                            error={errors.classId && errors.classId.message}
-                            register={register}
-                            name='classId'
-                            options={classes}
                             setValue={setValue}
                         />
                     </div>

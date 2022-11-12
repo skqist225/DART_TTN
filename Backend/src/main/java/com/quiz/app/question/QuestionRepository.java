@@ -29,6 +29,7 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
 
 
     @Query(value = "SELECT * FROM cauhoi as q WHERE q.machuong = :chapterId AND q.dokho = :level " +
+            "AND q.status = 1 " +
             "ORDER" +
             " BY RAND" +
             "()" +

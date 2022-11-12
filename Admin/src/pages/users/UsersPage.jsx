@@ -95,8 +95,6 @@ const UsersPage = () => {
         deleteUser: { successMessage: duSuccessMessage },
     } = useSelector(userState);
 
-    const { classes } = useSelector(classState);
-
     const handleDisableUser = id => {
         dispatch(disableUser(id));
     };
@@ -197,7 +195,7 @@ const UsersPage = () => {
             })
         );
         dispatch(fetchAllRoles());
-        dispatch(fetchAllClasses({ page: 0 }));
+        // dispatch(fetchAllClasses({ page: 0 }));
     }, []);
 
     const onSubmit = data => {
@@ -278,10 +276,6 @@ const UsersPage = () => {
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
-                            classes={classes.map(({ id, name }) => ({
-                                title: name,
-                                value: id,
-                            }))}
                             roles={roles.map(({ id, name }) => {
                                 let role = lookupRole(name);
 

@@ -10,19 +10,10 @@ import { tailwindCss } from "../../tailwind";
 import { MyButton } from "../common";
 import $ from "jquery";
 import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
-export function lookupQuestionLevel(level) {
-    switch (level) {
-        case "HARD":
-            return "Khó";
-        case "MEDIUM":
-            return "Trung bình";
-        case "EASY":
-            return "Dễ";
-    }
-}
-
-function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = null }) {
+function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
+    const dispatch = useDispatch();
     if (page !== null) {
         rows = rows.slice((page - 1) * 10, page * 10);
     }
@@ -57,19 +48,17 @@ function QuestionTableBody({ rows, setIsEdit, dispatch, addTest = false, page = 
                         ) : (
                             <>
                                 <td className={cellCss}>{row.type}</td>
-                                <td>{lookupQuestionLevel(row.level)}</td>
+                                <td>{row.level}</td>
                             </>
                         )}
                         {addTest && <td className={cellCss}>{row.chapter.name}</td>}
                         {!addTest && (
-                            <td className={cellCss}>
-                                {!excelAdd ? lookupQuestionLevel(row.level) : row.level}
-                            </td>
-                        )}
-                        {!addTest && (
-                            <td className={cellCss}>
-                                {!excelAdd ? row.chapter.name : row.chapterName}
-                            </td>
+                            <>
+                                <td className={cellCss}>{row.level}</td>
+                                <td className={cellCss}>
+                                    {!excelAdd ? row.chapter.name : row.chapterName}
+                                </td>
+                            </>
                         )}
                         <td className={cellCss}>
                             {!excelAdd ? row.chapter.subject.name : row.subjectName}

@@ -10,6 +10,7 @@ import TablePagination from "../utils/tables/TablePagination";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
 import { QuestionTableBody } from "..";
+import { useDispatch } from "react-redux";
 
 const columns = [
     {
@@ -68,7 +69,8 @@ const levelOptions = [
     },
 ];
 
-function TestModalBody({ errors, register, dispatch, setValue, control }) {
+function TestModalBody({ errors, register, setValue, control }) {
+    const dispatch = useDispatch();
     const [page, setPage] = useState(1);
     const { editedTest, errorObject } = useSelector(subjectState);
     const { subjects } = useSelector(subjectState);

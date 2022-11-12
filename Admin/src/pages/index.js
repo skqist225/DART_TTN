@@ -1,5 +1,4 @@
 //Questions
-export { default as AddQuestionPage } from "./questions/AddQuestionPage";
 export { default as QuestionsPage } from "./questions/QuestionsPage";
 
 //Subjects

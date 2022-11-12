@@ -7,6 +7,7 @@ import {
     clearSubjectState,
     editSubject,
     fetchAllSubjects,
+    setEditedSubject,
     subjectState,
 } from "../../features/subjectSlice";
 import $ from "jquery";
@@ -39,8 +40,17 @@ const columns = [
 ];
 
 function SubjectsPage() {
+    const dispatch = useDispatch();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+
+    useEffect(() => {
+        dispatch(
+            fetchAllSubjects({
+                page: 1,
+            })
+        );
+    }, []);
 
     const {
         register,
@@ -153,14 +163,9 @@ function SubjectsPage() {
         }
     }, [dsSuccessMessage]);
 
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(
-            fetchAllSubjects({
-                page: 1,
-            })
-        );
-    }, []);
+    function onCloseForm() {
+        dispatch(setEditedSubject(null));
+    }
 
     return (
         <Frame
@@ -199,6 +204,7 @@ function SubjectsPage() {
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
+                    onCloseForm={onCloseForm}
                 />
             }
         />

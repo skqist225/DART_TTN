@@ -129,6 +129,10 @@ function RolesPage() {
         );
     }, []);
 
+    function onCloseForm() {
+        dispatch(setEditedRole(null));
+    }
+
     return (
         <Frame
             sidebarOpen={sidebarOpen}
@@ -167,6 +171,7 @@ function RolesPage() {
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
+                    onCloseForm={onCloseForm}
                 />
             }
         />

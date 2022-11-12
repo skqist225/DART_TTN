@@ -158,13 +158,18 @@ const chapterSlice = createSlice({
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllChapters.pending, (state, { payload }) => {})
+            .addCase(fetchAllChapters.pending, (state, { payload }) => {
+                state.loading = true;
+            })
             .addCase(fetchAllChapters.fulfilled, (state, { payload }) => {
                 state.chapters = payload.chapters;
                 state.totalElements = payload.totalElements;
                 state.totalPages = payload.totalPages;
+                state.loading = false;
             })
-            .addCase(fetchAllChapters.rejected, (state, { payload }) => {})
+            .addCase(fetchAllChapters.rejected, (state, { payload }) => {
+                state.loading = false;
+            })
 
             .addCase(findChapter.pending, (state, { payload }) => {})
             .addCase(findChapter.fulfilled, (state, { payload }) => {

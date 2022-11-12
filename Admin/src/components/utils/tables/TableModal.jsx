@@ -3,17 +3,10 @@ import { CloseIcon } from "../../../images";
 import { tailwindCss } from "../../../tailwind";
 import $ from "jquery";
 import { useSelector } from "react-redux";
-import {
-    questionState,
-    resetLoadedQuestions,
-    setEditedQuestion,
-    setExcelAdd,
-} from "../../../features/questionSlice";
+import { questionState, resetLoadedQuestions, setExcelAdd } from "../../../features/questionSlice";
 import { useDispatch } from "react-redux";
 import { addTest } from "../../../features/testSlice";
 import { callToast } from "../../../helpers";
-import { setEditedRole } from "../../../features/roleSlice";
-import { setEditedSubject } from "../../../features/subjectSlice";
 
 function TableModal({
     modalId,
@@ -24,6 +17,7 @@ function TableModal({
     ModalBody,
     buttonLabel,
     setIsEdit,
+    onCloseForm,
     handleAddSelectedQuestionFromExcelFile,
     addTest: addTst = false,
 }) {
@@ -55,13 +49,13 @@ function TableModal({
                             className={tailwindCss.modal.closeButton}
                             data-modal-toggle={modalId}
                             onClick={() => {
-                                $("#" + modalId).css("display", "none");
+                                $(`#${modalId}`).css("display", "none");
                                 setIsEdit(false);
                                 dispatch(setExcelAdd(false));
-                                dispatch(setEditedQuestion(null));
-                                dispatch(setEditedSubject(null));
-                                dispatch(setEditedRole(null));
                                 dispatch(resetLoadedQuestions());
+                                if (onCloseForm) {
+                                    onCloseForm();
+                                }
                             }}
                         >
                             <CloseIcon />
@@ -118,8 +112,6 @@ function TableModal({
                                                 numberOfQuestions,
                                             });
                                         }
-
-                                        console.log(criteria);
 
                                         dispatch(addTest({ name, subjectId, questions, criteria }));
                                     }
