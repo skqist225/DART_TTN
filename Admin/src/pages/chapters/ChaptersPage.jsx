@@ -28,6 +28,11 @@ const columns = [
         sortable: true,
     },
     {
+        name: "Số lượng câu hỏi",
+        sortField: "numberOfQuestions",
+        sortable: true,
+    },
+    {
         name: "Môn học",
         sortField: "chapter",
         sortable: true,

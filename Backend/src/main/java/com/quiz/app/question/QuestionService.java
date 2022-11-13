@@ -3,8 +3,6 @@ package com.quiz.app.question;
 import com.quiz.app.chapter.ChapterService;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.app.question.dto.GetCriteriaDTO;
-import com.quiz.app.question.dto.GetCriteriaQuestionsDTO;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.entity.Chapter;
 import com.quiz.entity.Level;
@@ -157,9 +155,8 @@ public class QuestionService {
             } catch (NotFoundException e) {
             }
         }
-        System.out.println(levelStr);
+
         if (!StringUtils.isEmpty(levelStr)) {
-            System.out.println(levelStr);
             Expression<Level> levelReal = root.get("level");
 
             Level level = Level.EASY;
@@ -209,9 +206,8 @@ public class QuestionService {
         }
     }
 
-    public List<GetCriteriaQuestionsDTO> findQuestionsByCriteria(String criteria) {
-        List<GetCriteriaQuestionsDTO> getCriteriaQuestionsDTOS = new ArrayList<>();
-
+    public Set<Question> findQuestionsByCriteria(String criteria) {
+        Set<Question> questions = new HashSet<>();
         String[] criteriaStrArr = criteria.split(";");
 
         for (String criteriaEl : criteriaStrArr) {
@@ -219,15 +215,10 @@ public class QuestionService {
             String levelStr = criteriaEl.split(",")[1];
             int numberOfQuestions = Integer.parseInt(criteriaEl.split(",")[2]);
 
-            GetCriteriaDTO getCriteriaDTO = new GetCriteriaDTO(chapter, levelStr, numberOfQuestions);
-
-            List<Question> qsts = questionRepository.findByChapterAndLevel(chapter,
-                    Question.lookUpLevel(levelStr), numberOfQuestions);
-
-            getCriteriaQuestionsDTOS.add(new GetCriteriaQuestionsDTO(getCriteriaDTO,
-                    new HashSet<>(qsts), numberOfQuestions - qsts.size()));
+            questions.addAll(questionRepository.findByChapterAndLevel(chapter,
+                    Question.lookUpLevel(levelStr), numberOfQuestions));
         }
 
-        return getCriteriaQuestionsDTOS;
+        return questions;
     }
 }

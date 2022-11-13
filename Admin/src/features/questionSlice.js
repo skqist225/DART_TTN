@@ -299,15 +299,9 @@ const questionSlice = createSlice({
 
             .addCase(loadQuestionsByCriteria.pending, (state, { payload }) => {})
             .addCase(loadQuestionsByCriteria.fulfilled, (state, { payload }) => {
-                let i = 0;
-                state.questions = payload.data
-                    .map(({ questions }) => {
-                        i++;
-                        return questions;
-                    })
-                    .flat();
-                state.totalElements = i;
-                state.totalPages = i / 10;
+                state.questions = payload.data;
+                state.totalElements = payload.data.length;
+                state.totalPages = payload.data.length / 10;
             })
             .addCase(loadQuestionsByCriteria.rejected, (state, { payload }) => {})
 

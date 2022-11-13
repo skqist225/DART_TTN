@@ -124,8 +124,7 @@ public class ChapterService {
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-        Integer MAX_SUBJECTS_PER_PAGE = 20;
-        Pageable pageable = PageRequest.of(page - 1, MAX_SUBJECTS_PER_PAGE, sort);
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Chapter> criteriaQuery = criteriaBuilder.createQuery(Chapter.class);

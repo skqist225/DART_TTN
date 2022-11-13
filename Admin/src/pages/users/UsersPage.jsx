@@ -7,7 +7,6 @@ import {
     disableUser,
     editUser,
     enableUser,
-    fetchAllRoles,
     fetchAllUsers,
     setErrorField,
     userState,
@@ -19,6 +18,7 @@ import { Frame, Table, UserModalBody, UserTableBody } from "../../components";
 import { userRegisterSchema, userSchema } from "../../validation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import { fetchAllRoles } from "../../features/roleSlice";
 
 const columns = [
     {
@@ -194,7 +194,7 @@ const UsersPage = () => {
                 page: 1,
             })
         );
-        dispatch(fetchAllRoles());
+        dispatch(fetchAllRoles({ page: 0 }));
         // dispatch(fetchAllClasses({ page: 0 }));
     }, []);
 
@@ -262,9 +262,7 @@ const UsersPage = () => {
                     rows={users}
                     totalElements={totalElements}
                     totalPages={totalPages}
-                    TableBody={
-                        <UserTableBody rows={users} setIsEdit={setIsEdit} dispatch={dispatch} />
-                    }
+                    TableBody={UserTableBody}
                     modalId='userModal'
                     formId='userForm'
                     modalLabel='người dùng'

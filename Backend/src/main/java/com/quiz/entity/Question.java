@@ -3,6 +3,7 @@ package com.quiz.entity;
 import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import org.apache.commons.lang.StringUtils;
 
@@ -25,6 +26,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
+@EqualsAndHashCode
 @Entity
 @Table(name = "CAUHOI")
 public class Question {

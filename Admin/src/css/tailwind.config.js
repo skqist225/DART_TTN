@@ -69,5 +69,6 @@ module.exports = {
             });
         }),
         require("flowbite/plugin"),
+        require("@tailwindcss/line-clamp"),
     ],
 };

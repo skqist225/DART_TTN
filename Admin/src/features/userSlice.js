@@ -100,19 +100,6 @@ export const editUser = createAsyncThunk("user/editUser", async (formData, { rej
     }
 });
 
-export const fetchAllRoles = createAsyncThunk(
-    "user/fetchAllRoles",
-    async (_, { rejectWithValue }) => {
-        try {
-            const { data } = await api.get(`/admin/roles`);
-
-            return { data };
-        } catch ({ data: { error } }) {
-            return rejectWithValue(error);
-        }
-    }
-);
-
 const initialState = {
     loading: true,
     user: null,
@@ -259,10 +246,6 @@ const userSlice = createSlice({
             })
             .addCase(deleteUser.rejected, (state, { payload }) => {
                 state.deleteUser.errorMessage = payload;
-            })
-
-            .addCase(fetchAllRoles.fulfilled, (state, { payload }) => {
-                state.roles = payload.data;
             })
 
             .addCase(PURGE, state => {

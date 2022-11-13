@@ -103,7 +103,15 @@ function TableModal({
                                         addTest({
                                             name,
                                             subjectId: $("#testSubjectId").val(),
-                                            questions,
+                                            questions: questions.map(question => ({
+                                                ...question,
+                                                level:
+                                                    question.level === "Dễ "
+                                                        ? "EASY"
+                                                        : question.level === "Trung bình"
+                                                        ? "MEDIUM"
+                                                        : "HARD",
+                                            })),
                                         })
                                     );
                                 }

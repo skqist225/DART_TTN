@@ -15,7 +15,7 @@ function TestTableBody({ rows, setIsEdit }) {
         <tbody>
             {rows.map(row => (
                 <tr className={tailwindCss.tr} key={row.id}>
-                    <td className='py-4 px-6  whitespace-nowrap dark:text-white'>{row.id}</td>
+                    <td className='py-4 px-6'>{row.id}</td>
                     <td className={cellCss}>{row.name}</td>
                     <td className={cellCss}>
                         {row.status === "Chưa sử dụng" ? (

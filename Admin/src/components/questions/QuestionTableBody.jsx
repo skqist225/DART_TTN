@@ -40,7 +40,19 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                         key={row.id}
                     >
                         <td className={cellCss}>{row.id}</td>
-                        <td className={cellCss} style={{ maxWidth: "250px" }}>
+                        <td
+                            className={cellCss}
+                            style={{
+                                maxWidth: "250px",
+                                display: "-webkit-box",
+                                "-webkit-line-clamp": 2,
+                                "-webkit-box-orient": "vertical",
+                                overflow: "hidden",
+                                textOverflow: "ellipsis",
+                                lineHeight: 1.625,
+                                height: "full-content",
+                            }}
+                        >
                             {row.content}
                         </td>
                         {!addTest ? (

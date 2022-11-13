@@ -62,7 +62,6 @@ public class UserService {
         Expression<String> firstName = root.get("firstName");
         Expression<String> lastName = root.get("lastName");
         Expression<String> sex = root.get("sex");
-        Expression<String> roleName = root.get("role").get("name");
         Expression<Boolean> status = root.get("status");
 
         if (!StringUtils.isEmpty(searchQuery)) {
@@ -89,9 +88,9 @@ public class UserService {
             }
         }
 
-        if (userRoles.size() > 0) {
-            predicates.add(criteriaBuilder.and(roleName.in(userRoles)));
-        }
+//        if (userRoles.size() > 0) {
+//            predicates.add(criteriaBuilder.and(roleName.in(userRoles)));
+//        }
 
         List<Boolean> statusesID = new ArrayList<>();
         if (statuses.split(",").length > 0) {

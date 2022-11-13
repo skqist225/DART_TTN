@@ -11,6 +11,7 @@ import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
 import { QuestionTableBody } from "..";
 import { useDispatch } from "react-redux";
+import { tailwindCss } from "../../tailwind";
 
 const columns = [
     {
@@ -208,6 +209,13 @@ function TestModalBody({ errors, register, setValue, control }) {
                                         <Input
                                             label='Số lượng câu hỏi *'
                                             register={register}
+                                            error={
+                                                errors.criteria &&
+                                                errors.criteria[`${index}`] &&
+                                                errors.criteria[`${index}`].numberOfQuestions &&
+                                                errors.criteria[`${index}`].numberOfQuestions
+                                                    .message
+                                            }
                                             name={`criteria.${index}.numberOfQuestions`}
                                             required
                                         />
@@ -216,7 +224,7 @@ function TestModalBody({ errors, register, setValue, control }) {
                                 <div className='mb-1 ml-2'>
                                     <button
                                         type='button'
-                                        className='text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 '
+                                        className={tailwindCss.deleteOutlineButton}
                                         onClick={() => remove(index)}
                                     >
                                         Xóa

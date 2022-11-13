@@ -41,12 +41,6 @@ public class SubjectRestController {
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField
     ) {
-        Map<String, String> filters = new HashMap<>();
-        filters.put("page",page);
-        filters.put("query", query);
-        filters.put("sortDir", sortDir);
-        filters.put("sortField", sortField);
-
         SubjectsDTO subjectsDTO = new SubjectsDTO();
 
         if(page.equals("0")) {
@@ -57,6 +51,12 @@ public class SubjectRestController {
             subjectsDTO.setTotalPages(0);
 
         } else {
+            Map<String, String> filters = new HashMap<>();
+            filters.put("page", page);
+            filters.put("query", query);
+            filters.put("sortDir", sortDir);
+            filters.put("sortField", sortField);
+
             Page<Subject> subjectsPage = subjectService.findAllSubjects(filters);
 
             subjectsDTO.setSubjects(subjectsPage.getContent());

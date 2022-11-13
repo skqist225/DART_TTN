@@ -144,16 +144,10 @@ function RolesPage() {
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={columns}
+                    rows={roles}
                     totalElements={totalElements}
                     totalPages={totalPages}
-                    TableBody={
-                        <RoleTableBody
-                            rows={roles}
-                            setIsEdit={setIsEdit}
-                            dispatch={dispatch}
-                            modalId='roleModal'
-                        />
-                    }
+                    TableBody={RoleTableBody}
                     modalId='roleModal'
                     formId='roleForm'
                     modalLabel='vai trò'

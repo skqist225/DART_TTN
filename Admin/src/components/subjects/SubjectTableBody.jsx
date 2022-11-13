@@ -4,6 +4,7 @@ import { tailwindCss } from "../../tailwind";
 import MyButton from "../../components/common/MyButton";
 import $ from "jquery";
 import { useDispatch } from "react-redux";
+import { cellCss } from "../questions/QuestionTableBody";
 
 function SubjectTableBody({ rows, setIsEdit }) {
     const dispatch = useDispatch();
@@ -11,14 +12,14 @@ function SubjectTableBody({ rows, setIsEdit }) {
         <tbody>
             {rows.map(row => (
                 <tr className={tailwindCss.tr} key={row.id}>
-                    <td className='py-4 px-6  whitespace-nowrap dark:text-white'>{row.id}</td>
-                    <td className='py-4 px-6'>{row.name}</td>
-                    <td className='py-4 px-6'>{row.numberOfTheoreticalPeriods}</td>
-                    <td className='py-4 px-6'>{row.numberOfPracticePeriods}</td>
-                    <td className='py-4 px-6'>{row.chapters.length}</td>
-                    <td className='py-4 px-6'>{row.numberOfTests}</td>
-                    <td className='py-4 px-6'>{row.numberOfQuestions}</td>
-                    <td class='py-4 px-6 flex items-center'>
+                    <td className={cellCss}>{row.id}</td>
+                    <td className={cellCss}>{row.name}</td>
+                    <td className={cellCss}>{row.numberOfTheoreticalPeriods}</td>
+                    <td className={cellCss}>{row.numberOfPracticePeriods}</td>
+                    <td className={cellCss}>{row.chapters.length}</td>
+                    <td className={cellCss}>{row.numberOfTests}</td>
+                    <td className={cellCss}>{row.numberOfQuestions}</td>
+                    <td class={`${cellCss} flex items-center`}>
                         <MyButton
                             type='edit'
                             onClick={() => {

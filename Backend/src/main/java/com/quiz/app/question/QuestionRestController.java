@@ -6,7 +6,6 @@ import com.quiz.app.chapter.ChapterService;
 import com.quiz.app.common.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.app.question.dto.GetCriteriaQuestionsDTO;
 import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import com.quiz.app.question.dto.QuestionsDTO;
 import com.quiz.app.question.dto.ReadQuestionExcelDTO;
@@ -48,6 +47,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
@@ -73,12 +73,12 @@ public class QuestionRestController {
     private ChapterService chapterService;
 
     @GetMapping("load")
-    public ResponseEntity<StandardJSONResponse<List<GetCriteriaQuestionsDTO>>> loadCriteriaQuestions(
+    public ResponseEntity<StandardJSONResponse<Set<Question>>> loadCriteriaQuestions(
             @RequestParam(name = "criteria", required = false, defaultValue = "") String criteria) {
         if (Objects.nonNull(criteria)) {
             return new OkResponse<>(questionService.findQuestionsByCriteria(criteria)).response();
         }
-
+        
         return null;
     }
 

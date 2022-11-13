@@ -4,54 +4,24 @@ import { MyButton } from "../common";
 import $ from "jquery";
 import { getImage } from "../../helpers";
 import { deleteUser, setEditedUser } from "../../features/userSlice";
+import { useDispatch } from "react-redux";
+import { cellCss } from "../questions/QuestionTableBody";
 
-function UserTableModal({ rows, setIsEdit, dispatch }) {
-    function lookupUserSex(level) {
-        switch (level) {
-            case "MALE":
-                return "Nam";
-            case "FEMALE":
-                return "Nữ";
-            case "OTHER":
-                return "Khác";
-        }
-    }
-
-    function lookupRole(role) {
-        switch (role) {
-            case "Admin":
-                return "Quản trị viên";
-            case "Student":
-                return "Sinh viên";
-            case "Teacher":
-                return "Giảng viên";
-        }
-    }
+function UserTableModal({ rows, setIsEdit }) {
+    const dispatch = useDispatch();
 
     return (
         <tbody>
             {rows.map(row => (
                 <tr className={tailwindCss.tr} key={row.id}>
-                    <td className='p-4 w-4'>
-                        <div className='flex items-center'>
-                            <input
-                                id='checkbox-table-search-1'
-                                type='checkbox'
-                                className={tailwindCss.checkbox}
-                            />
-                            <label for='checkbox-table-search-1' className='sr-only'>
-                                checkbox
-                            </label>
-                        </div>
-                    </td>
-                    <td className='py-4 px-6  whitespace-nowrap dark:text-white'>{row.id}</td>
-                    <td className='py-4 px-6'>
+                    <td className={cellCss}>{row.id}</td>
+                    <td className={cellCss}>
                         <div className='normal-flex' style={{ width: "300px" }}>
                             <img src={getImage(row.avatarPath)} className='image' />
                             <span className='listings__room-name'>{row.fullName}</span>
                         </div>
                     </td>
-                    <td className='py-4 px-6'>
+                    <td className={cellCss}>
                         <div style={{ maxWidth: "20px" }}>
                             <div className='normal-flex'>
                                 <div className='mr-10'>
@@ -84,13 +54,12 @@ function UserTableModal({ rows, setIsEdit, dispatch }) {
                             </div>
                         </div>
                     </td>
-                    <td className='py-4 px-6'>{row.birthday}</td>
-                    <td className='py-4 px-6'>{row.address}</td>
-                    <td className='py-4 px-6'>{row.email}</td>
-                    <td className='py-4 px-6'>{lookupUserSex(row.sex)}</td>
-                    <td className='py-4 px-6'>{row.class && row.cls.name}</td>
-                    <td className='py-4 px-6'>{lookupRole(row.role.name)}</td>
-                    <td class='py-4 px-6 flex items-center'>
+                    <td className={cellCss}>{row.birthday}</td>
+                    <td className={cellCss}>{row.address}</td>
+                    <td className={cellCss}>{row.email}</td>
+                    <td className={cellCss}>{row.sex}</td>
+                    {/* <td className={cellCss}>{row.role.name}</td> */}
+                    <td class={`${cellCss} flex items-center`}>
                         <MyButton
                             type='edit'
                             onClick={() => {

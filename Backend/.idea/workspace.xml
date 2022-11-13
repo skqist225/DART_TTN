@@ -5,23 +5,25 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/dto/CriteriaDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/dto/CriteriaSubDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/questions/QuestionTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/questions/QuestionTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/chapters/ChapterTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/chapters/ChapterTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/roles/RoleTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/roles/RoleTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/subjects/SubjectTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/subjects/SubjectTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/tests/TestModalBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/tests/TestModalBody.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/components/tests/TestTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/tests/TestTableBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/Table.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/Table.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/css/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/css/tailwind.config.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/users/UserTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/users/UserTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/features/userSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/userSlice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/chapters/ChaptersPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/chapters/ChaptersPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/roles/RolesPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/roles/RolesPage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/pages/tests/TestsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/tests/TestsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/tailwind/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/tailwind/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/dataSources/8eb1329c-4e86-4d19-90dd-68137fefe01f.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dataSources/8eb1329c-4e86-4d19-90dd-68137fefe01f.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/users/UsersPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/users/UsersPage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/chapter/ChapterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/chapter/ChapterService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/dto/PostCreateTestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/dto/PostCreateTestDTO.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRepository.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/user/UserService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/user/UserService.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Question.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Question.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Test.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -178,7 +180,7 @@
       <workItem from="1668145115135" duration="53000" />
       <workItem from="1668145174181" duration="3797000" />
       <workItem from="1668215078479" duration="20774000" />
-      <workItem from="1668309619489" duration="11578000" />
+      <workItem from="1668309619489" duration="15332000" />
     </task>
     <servers />
   </component>

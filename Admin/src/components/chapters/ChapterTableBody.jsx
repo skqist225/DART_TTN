@@ -4,6 +4,7 @@ import { tailwindCss } from "../../tailwind";
 import MyButton from "../common/MyButton";
 import $ from "jquery";
 import { useDispatch } from "react-redux";
+import { cellCss } from "../questions/QuestionTableBody";
 
 function ChapterTableBody({ rows, setIsEdit }) {
     const dispatch = useDispatch();
@@ -12,10 +13,10 @@ function ChapterTableBody({ rows, setIsEdit }) {
         <tbody>
             {rows.map(row => (
                 <tr className={tailwindCss.tr} key={row.id}>
-                    <td className='py-4 px-6  whitespace-nowrap dark:text-white'>{row.id}</td>
-                    <td className='py-4 px-6'>{row.name}</td>
-                    <td className='py-4 px-6'>{row.subject.name}</td>
-                    <td className='py-4 px-6 flex items-center'>
+                    <td className={cellCss}>{row.id}</td>
+                    <td className={cellCss}>{row.name}</td>
+                    <td className={cellCss}>{row.subject.name}</td>
+                    <td className={`${cellCss} flex items-center`}>
                         <MyButton
                             type='edit'
                             onClick={() => {

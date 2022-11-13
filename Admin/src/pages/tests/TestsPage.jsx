@@ -126,14 +126,12 @@ function TestsPage() {
                 }
             } else {
                 let haveError = false;
-                console.log(criteria);
                 criteria.forEach(({ chapterId, level, numberOfQuestions }, index) => {
                     if (!chapterId) {
                         setError(`criteria.${index}.chapterId`, {
                             type: "custom",
                             message: "Chương không được để trống",
                         });
-
                         haveError = true;
                     }
 
@@ -144,29 +142,25 @@ function TestsPage() {
                         });
                         haveError = true;
                     }
-                    console.log(numberOfQuestions);
+
+                    const number = parseInt(numberOfQuestions);
+                    if (isNaN(number)) {
+                        setError(`criteria.${index}.numberOfQuestions`, {
+                            type: "custom",
+                            message: "Số lượng câu hỏi phải là chữ số",
+                        });
+                        haveError = true;
+                    }
                 });
                 if (haveError) {
                     return;
                 }
-
-                //    const chapter = $(`#criteria.${i}.chapter`).val();
-                //    const level = $(`#criteria.${i}.level`).val();
-
-                //    if (!chapter) {
-                //        haveError = true;
-                //        setError(`#criteria.${i}.chapter`, {
-                //            type: "custom",
-                //            message: "",
-                //        });
-                //    }
-
-                // dispatch(
-                //     loadQuestionsByCriteria({
-                //         subject,
-                //         criteria,
-                //     })
-                // );
+                dispatch(
+                    loadQuestionsByCriteria({
+                        subject,
+                        criteria,
+                    })
+                );
             }
         }
     };
@@ -211,13 +205,16 @@ function TestsPage() {
         dispatch(fetchAllTests(filterObject));
 
         $(`#${modalId}`).css("display", "none");
+
         if (type === "add") {
             $(`#${formId}`)[0].reset();
+            dispatch(setQuestions([]));
         }
 
         if (type === "edit") {
             setIsEdit(false);
             dispatch(setEditedTest(null));
+            dispatch(setQuestions([]));
         }
     }
 

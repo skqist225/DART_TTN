@@ -35,5 +35,5 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
             "LIMIT :numberOfQuestions",
             nativeQuery = true)
     public List<Question> findByChapterAndLevel(Integer chapterId,
-                                                Level level,int numberOfQuestions);
+                                                Level level, int numberOfQuestions);
 }
