@@ -14,7 +14,7 @@ import { useDispatch } from "react-redux";
 
 const columns = [
     {
-        name: "STT",
+        name: "Mã câu hỏi",
         sortField: "id",
         // sortable: true,
     },
@@ -29,18 +29,13 @@ const columns = [
         // sortable: true,
     },
     {
-        name: "Độ khó",
-        sortField: "level",
-        // sortable: true,
-    },
-    {
         name: "Chương",
         sortField: "chapter",
         // sortable: true,
     },
     {
-        name: "Môn học",
-        sortField: "chapter",
+        name: "Độ khó",
+        sortField: "level",
         // sortable: true,
     },
     {
@@ -86,10 +81,12 @@ function TestModalBody({ errors, register, setValue, control }) {
         }
     };
 
-    if (editedTest) {
-        setValue("id", editedTest.id);
-        setValue("name", editedTest.name);
-    }
+    useEffect(() => {
+        if (editedTest) {
+            setValue("id", editedTest.id);
+            setValue("name", editedTest.name);
+        }
+    }, [editedTest]);
 
     const { fields, prepend, remove } = useFieldArray({
         control,
@@ -99,8 +96,21 @@ function TestModalBody({ errors, register, setValue, control }) {
     useEffect(() => {
         if (subjects && subjects.length) {
             dispatch(fetchAllChapters({ page: 0, subject: subjects[0].id }));
+            setValue("testName", `Đề thi ${subjects[0].name} ${new Date().getTime()}`);
         }
     }, [subjects]);
+
+    function onChangeHandler(event) {
+        dispatch(fetchAllChapters({ page: 0, subject: event.target.value }));
+        setValue(
+            "testName",
+            `Đề thi ${
+                subjects.find(({ id }) => id === event.target.value).name
+            } ${new Date().getTime()}`
+        );
+    }
+
+    console.log(errors);
 
     return (
         <div>
@@ -124,8 +134,13 @@ function TestModalBody({ errors, register, setValue, control }) {
                             error={errors.testSubjectId && errors.testSubjectId.message}
                             register={register}
                             name='testSubjectId'
-                            options={subjects.map(s => ({ title: s.name, value: s.id }))}
+                            options={subjects.map(s => ({
+                                title: `${s.name} (${s.numberOfQuestions})`,
+                                value: s.id,
+                            }))}
                             setValue={setValue}
+                            onChangeHandler={onChangeHandler}
+                            defaultValue={subjects && subjects[0] && subjects[0].id}
                         />
                     </div>
                     <div className='my-3 w-full'>
@@ -140,40 +155,68 @@ function TestModalBody({ errors, register, setValue, control }) {
                 <ul className='w-full'>
                     {fields.map((field, index) => (
                         <li className='flex items-center' key={index}>
-                            <div className='flex items-end w-full'>
-                                <div className='my-3 w-full mr-5'>
-                                    <Select
-                                        label='Chương'
-                                        register={register}
-                                        name={`criteria.${index}.chapterId`}
-                                        options={chapters.map(s => ({
-                                            title: s.name,
-                                            value: s.id,
-                                        }))}
-                                        setValue={setValue}
-                                    />
-                                </div>
-                                <div className='my-3 w-full mr-5'>
-                                    <Select
-                                        label='Mức độ *'
-                                        register={register}
-                                        name={`criteria.${index}.level`}
-                                        options={levelOptions}
-                                        required
-                                    />
-                                </div>
-                                <div className='my-3 w-full'>
-                                    <Input
-                                        label='Số lượng câu hỏi *'
-                                        register={register}
-                                        name={`criteria.${index}.numberOfQuestions`}
-                                        required
-                                    />
+                            <div
+                                className={`flex ${
+                                    errors && errors.criteria && errors.criteria.length
+                                        ? "items-center"
+                                        : "items-end"
+                                } w-full`}
+                            >
+                                <div
+                                    className={`flex ${
+                                        errors && errors.criteria && errors.criteria.length
+                                            ? "items-start"
+                                            : "items-end"
+                                    } w-full`}
+                                >
+                                    {" "}
+                                    <div className='my-3 w-full mr-5'>
+                                        <Select
+                                            label='Chương *'
+                                            register={register}
+                                            name={`criteria.${index}.chapterId`}
+                                            error={
+                                                errors.criteria &&
+                                                errors.criteria[`${index}`] &&
+                                                errors.criteria[`${index}`].chapterId &&
+                                                errors.criteria[`${index}`].chapterId.message
+                                            }
+                                            options={chapters.map(s => ({
+                                                title: s.name,
+                                                value: s.id,
+                                            }))}
+                                            setValue={setValue}
+                                            defaultValue={chapters && chapters[0] && chapters[0].id}
+                                        />
+                                    </div>
+                                    <div className='my-3 w-full mr-5'>
+                                        <Select
+                                            label='Độ khó *'
+                                            register={register}
+                                            error={
+                                                errors.criteria &&
+                                                errors.criteria[`${index}`] &&
+                                                errors.criteria[`${index}`].level &&
+                                                errors.criteria[`${index}`].level.message
+                                            }
+                                            name={`criteria.${index}.level`}
+                                            options={levelOptions}
+                                            required
+                                        />
+                                    </div>
+                                    <div className='my-3 w-full'>
+                                        <Input
+                                            label='Số lượng câu hỏi *'
+                                            register={register}
+                                            name={`criteria.${index}.numberOfQuestions`}
+                                            required
+                                        />
+                                    </div>
                                 </div>
                                 <div className='mb-1 ml-2'>
                                     <button
                                         type='button'
-                                        className='text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 '
+                                        className='text-red-700 hover:text-white border border-red-700 hover:bg-red-800 focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:hover:bg-red-600 dark:focus:ring-red-900 '
                                         onClick={() => remove(index)}
                                     >
                                         Xóa

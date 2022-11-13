@@ -16,6 +16,7 @@ import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
 import com.quiz.entity.Test;
 import com.quiz.entity.User;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -29,11 +30,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
 
 
 @RestController
@@ -50,25 +51,37 @@ public class TestRestController {
             @RequestParam("page") String page,
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
-            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField
+            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
+            @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId
     ) {
-        Map<String, String> filters = new HashMap<>();
-        filters.put("page", page);
-        filters.put("query", query);
-        filters.put("sortDir", sortDir);
-        filters.put("sortField", sortField);
-
         TestsDTO testsDTO = new TestsDTO();
 
         if (page.equals("0")) {
-            List<Test> tests = testService.findAll();
+            List<Test> tests = null;
+            if (!StringUtils.isEmpty(subjectId)) {
+                try {
+                    Subject subject = subjectService.findById(subjectId);
+                    tests = testService.findBySubject(subject);
+                } catch (NotFoundException e) {
+                    tests = new ArrayList<>();
+                }
+            } else {
+                tests = testService.findAll();
+            }
 
             testsDTO.setTests(tests);
             testsDTO.setTotalElements(tests.size());
             testsDTO.setTotalPages(0);
 
         } else {
-            Page<Test> testPage = testService.findAllSubjects(filters);
+            Map<String, String> filters = new HashMap<>();
+            filters.put("page", page);
+            filters.put("query", query);
+            filters.put("sortDir", sortDir);
+            filters.put("sortField", sortField);
+            filters.put("subjectId", subjectId);
+
+            Page<Test> testPage = testService.findAllTests(filters);
 
             testsDTO.setTests(testPage.getContent());
             testsDTO.setTotalElements(testPage.getTotalElements());
@@ -76,6 +89,28 @@ public class TestRestController {
         }
 
         return new OkResponse<>(testsDTO).response();
+    }
+
+    public void catchTestInputException(CommonUtils commonUtils, boolean isEdit, Integer id,
+                                        String name,
+                                        String subjectId,
+                                        List<Question> questions
+    ) {
+        if (isEdit && Objects.isNull(id)) {
+            commonUtils.addError("id", "Mã đề thi không được để trống");
+        }
+
+        if (Objects.isNull(name) || StringUtils.isEmpty(name)) {
+            commonUtils.addError("name", "Tên đề thi không được để trống");
+        }
+
+        if (Objects.isNull(subjectId) || StringUtils.isEmpty(subjectId)) {
+            commonUtils.addError("subjectId", "Môn học không được để trống");
+        }
+
+        if (questions.size() == 0) {
+            commonUtils.addError("questions", "Danh sách câu hỏi không được để trống");
+        }
     }
 
     @PostMapping("save")
@@ -86,6 +121,7 @@ public class TestRestController {
     ) {
         CommonUtils commonUtils = new CommonUtils();
         Test savedTest = null;
+        Subject subject = null;
 
         Integer id = postCreateTestDTO.getId();
         String name = postCreateTestDTO.getName();
@@ -93,27 +129,19 @@ public class TestRestController {
         List<Question> questions = postCreateTestDTO.getQuestions();
         User teacher = userDetailsImpl.getUser();
 
-        if (isEdit && Objects.isNull(id)) {
-            commonUtils.addError("id", "Mã bộ đề không được để trống");
-        }
-
-        if (Objects.isNull(name)) {
-            commonUtils.addError("name", "Tên bộ đề không được để trống");
-        }
-
-        if (Objects.isNull(subjectId)) {
-            commonUtils.addError("subjectId", "Môn học không được để trống");
-        }
-
-        if (questions.size() == 0) {
-            commonUtils.addError("questions", "Danh sách câu hỏi không được để trống");
-        }
+        catchTestInputException(commonUtils, isEdit, id, name, subjectId, questions);
 
         if (commonUtils.getArrayNode().size() > 0) {
             return new BadResponse<Test>(commonUtils.getArrayNode().toString()).response();
         } else {
             if (testService.isNameDuplicated(null, name, isEdit)) {
                 commonUtils.addError("name", "Tên bộ đề đã tồn tại");
+            }
+
+            try {
+                subject = subjectService.findById(subjectId);
+            } catch (NotFoundException exception) {
+                commonUtils.addError("subject", exception.getMessage());
             }
 
             if (commonUtils.getArrayNode().size() > 0) {
@@ -125,19 +153,39 @@ public class TestRestController {
             try {
                 Test test = testService.findById(id);
                 test.setName(name);
+                test.setSubject(subject);
+
+                for (Question question : questions) {
+                    // Add new question
+                    if (Objects.isNull(question.getId())) {
+                        test.addQuestion(question);
+                    }
+                }
+
+                List<Question> qsts = test.getQuestions();
+                for (Question question : qsts) {
+                    boolean shouldDelete = true;
+
+                    for (Question q : questions) {
+                        if (Objects.nonNull(q.getId())) {
+                            if (q.getId().equals(question.getId())) {
+                                shouldDelete = false;
+                                break;
+                            }
+                        }
+                    }
+                    // Remove none mentioned question
+                    if (shouldDelete) {
+                        test.removeQuestion(question);
+                    }
+                }
 
                 savedTest = testService.save(test);
             } catch (NotFoundException exception) {
                 return new BadResponse<Test>(exception.getMessage()).response();
             }
         } else {
-            try {
-                Subject subject = subjectService.findById(subjectId);
-                savedTest = testService.save(Test.build(postCreateTestDTO, subject, teacher));
-            } catch (NotFoundException e) {
-                throw new RuntimeException(e);
-            }
-
+            savedTest = testService.save(Test.build(name, questions, subject, teacher));
         }
 
         return new OkResponse<>(savedTest).response();

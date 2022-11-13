@@ -78,7 +78,7 @@ public class Question {
     }
 
     public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,
-                                 Chapter chapter, boolean addQuestion) {
+                                 Chapter chapter, boolean addAnswer) {
         Question question = Question.builder()
                 .content(postCreateQuestionDTO.getContent())
                 .type(postCreateQuestionDTO.getType())
@@ -88,7 +88,7 @@ public class Question {
                 .status(true)
                 .build();
 
-        if (addQuestion && postCreateQuestionDTO.getAnswers().size() > 0) {
+        if (addAnswer && postCreateQuestionDTO.getAnswers().size() > 0) {
             question.setAnswers(postCreateQuestionDTO.getAnswers().stream().map(
                     answer -> Answer.build(answer.getContent(), answer.isAnswer(), question))
                     .collect(Collectors.toList()));

@@ -1,6 +1,6 @@
 package com.quiz.app.test.dto;
 
-import com.quiz.entity.Question;
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -12,9 +12,7 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class PostCreateTestDTO {
-    private Integer id;
-    private String name;
-    private String subjectId;
-    private List<Question> questions;
+public class CriteriaDTO {
+    private String chapter;
+    private List<CriteriaSubDTO> levelAndNumbers;
 }

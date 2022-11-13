@@ -2,6 +2,8 @@ package com.quiz.app.test;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.entity.Chapter;
+import com.quiz.entity.Subject;
 import com.quiz.entity.Test;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +51,11 @@ public class TestService {
         }
     }
 
+    public List<Test> findBySubject(Subject subject) {
+        return testRepository.findBySubject(subject);
+
+    }
+
     public Test findById(Integer id) throws NotFoundException {
         Optional<Test> subject = testRepository.findById(id);
         if (subject.isPresent()) {
@@ -82,16 +89,16 @@ public class TestService {
         return (List<Test>) testRepository.findAll();
     }
 
-    public Page<Test> findAllSubjects(Map<String, String> filters) {
+    public Page<Test> findAllTests(Map<String, String> filters) {
         int page = Integer.parseInt(filters.get("page"));
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
+        String subjectId = filters.get("subjectId");
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-        int MAX_TESTS_PER_PAGE = 20;
-        Pageable pageable = PageRequest.of(page - 1, MAX_TESTS_PER_PAGE, sort);
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Test> criteriaQuery = criteriaBuilder.createQuery(Test.class);
@@ -107,6 +114,11 @@ public class TestService {
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
+        }
+
+        if (!StringUtils.isEmpty(subjectId)) {
+            Expression<String> subject = root.get("subject").get("id");
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(subject, subjectId)));
         }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));

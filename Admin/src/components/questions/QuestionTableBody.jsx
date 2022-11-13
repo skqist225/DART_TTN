@@ -11,14 +11,15 @@ import { MyButton } from "../common";
 import $ from "jquery";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import LevelBadge from "../utils/commons/LevelBadge";
+
+export const cellCss = "py-2 px-3 text-black";
 
 function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
     const dispatch = useDispatch();
     if (page !== null) {
         rows = rows.slice((page - 1) * 10, page * 10);
     }
-
-    const cellCss = "py-2 px-3 text-black";
 
     const { excelAdd } = useSelector(questionState);
 
@@ -38,31 +39,33 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                         }`}
                         key={row.id}
                     >
-                        <td className='py-2 px-3 whitespace-nowrap dark:text-white'>{row.id}</td>
-                        <td className={cellCss}>{row.content}</td>
+                        <td className={cellCss}>{row.id}</td>
+                        <td className={cellCss} style={{ maxWidth: "250px" }}>
+                            {row.content}
+                        </td>
                         {!addTest ? (
                             <>
                                 <td className={cellCss}>{row.type}</td>
                                 <td className={cellCss}>{row.answers && row.answers.length}</td>
+                                <td className={cellCss}>
+                                    <LevelBadge level={row.level} />
+                                </td>
+                                <td className={cellCss}>
+                                    {!excelAdd ? row.chapter.name : row.chapterName}
+                                </td>
+                                <td className={cellCss}>
+                                    {!excelAdd ? row.chapter.subject.name : row.subjectName}
+                                </td>
                             </>
                         ) : (
                             <>
                                 <td className={cellCss}>{row.type}</td>
-                                <td>{row.level}</td>
-                            </>
-                        )}
-                        {addTest && <td className={cellCss}>{row.chapter.name}</td>}
-                        {!addTest && (
-                            <>
-                                <td className={cellCss}>{row.level}</td>
-                                <td className={cellCss}>
-                                    {!excelAdd ? row.chapter.name : row.chapterName}
+                                <td className={cellCss}>{row.chapter.name}</td>
+                                <td>
+                                    <LevelBadge level={row.level} />
                                 </td>
                             </>
                         )}
-                        <td className={cellCss}>
-                            {!excelAdd ? row.chapter.subject.name : row.subjectName}
-                        </td>
                         {!excelAdd && (
                             <td className={cellCss}>
                                 {row.teacher.firstName} {row.teacher.lastName}

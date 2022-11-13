@@ -40,6 +40,7 @@ export { default as CreditClassTableBody } from "./creditClasses/CreditClassTabl
 //tests
 export { default as TestModalBody } from "./tests/TestModalBody";
 export { default as TestTableBody } from "./tests/TestTableBody";
+export { default as TestFilter } from "./tests/TestFilter";
 
 //chapters
 export { default as ChapterModalBody } from "./chapters/ChapterModalBody";

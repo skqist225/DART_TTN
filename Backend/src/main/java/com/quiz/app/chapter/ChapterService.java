@@ -63,7 +63,6 @@ public class ChapterService {
     }
 
     public List<Chapter> findBySubject(Subject subject) {
-        System.out.println();
         return chapterRepository.findBySubject(subject);
 
     }

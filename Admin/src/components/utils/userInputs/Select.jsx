@@ -11,38 +11,39 @@ function Select({
     defaultValue,
     setValue,
     onChangeHandler,
-    hiddenOption = false,
     width,
+    hiddenOption = false,
 }) {
     useEffect(() => {
-        if (propName !== "chapterId") {
-            if (setValue) {
-                if (defaultValue) {
-                    setValue(propName, defaultValue);
-                } else {
-                    if (options[0] && options[0].value) {
-                        setValue(propName, options[0].value);
-                    }
-                }
+        // if (propName !== "chapterId") {
+        if (setValue) {
+            if (defaultValue) {
+                setValue(propName, defaultValue);
             }
+            // else {
+            //     if (options[0] && options[0].value) {
+            //         setValue(propName, options[0].value);
+            //     }
+            // }
         }
-    }, [defaultValue, options[0]]);
+        // }
+    }, [defaultValue]);
 
-    useEffect(() => {
-        if (propName === "chapterId") {
-            if (setValue) {
-                if (defaultValue) {
-                    setValue(propName, defaultValue);
-                } else {
-                    if (options[0] && options[0].value) {
-                        setValue(propName, options[0].value);
-                    } else {
-                        setValue(propName, "");
-                    }
-                }
-            }
-        }
-    }, [options[0]]);
+    // useEffect(() => {
+    //     if (propName === "chapterId") {
+    //         if (setValue) {
+    //             if (defaultValue) {
+    //                 setValue(propName, defaultValue);
+    //             } else {
+    //                 if (options[0] && options[0].value) {
+    //                     setValue(propName, options[0].value);
+    //                 } else {
+    //                     setValue(propName, "");
+    //                 }
+    //             }
+    //         }
+    //     }
+    // }, [options]);
 
     const { onChange, onBlur, name, ref } = register(propName);
 

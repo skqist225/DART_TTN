@@ -1,7 +1,8 @@
 package com.quiz.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.quiz.app.test.dto.PostCreateTestDTO;
+import com.quiz.app.test.dto.CriteriaDTO;
+import com.quiz.app.test.dto.CriteriaSubDTO;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -28,6 +29,9 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -58,6 +62,7 @@ public class Test {
     @JoinColumn(name = "MAMH")
     private Subject subject;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MAGV")
     private User teacher;
@@ -84,13 +89,9 @@ public class Test {
         this.questions.remove(question);
     }
 
-    public static Test build(PostCreateTestDTO postCreateSubjectDTO, Subject subject,
+    public static Test build(String name, List<Question> questions, Subject subject,
                              User teacher) {
-        if (postCreateSubjectDTO.getCriteria().size() > 0) {
-
-        }
-
-        return Test.builder().name(postCreateSubjectDTO.getName()).questions(postCreateSubjectDTO.getQuestions()).subject(subject).teacher(teacher).build();
+        return Test.builder().name(name).questions(questions).subject(subject).teacher(teacher).build();
     }
 
 
@@ -112,5 +113,41 @@ public class Test {
         return this.exam == null ? "Chưa sử dụng" : "Đã được sử dụng";
     }
 
-    public List<>
+    public List<CriteriaDTO> getCriteria() {
+        TreeMap<String, Integer> crMap = new TreeMap<>();
+
+        for (Question question : this.questions) {
+            String mapKey = String.format("%s##%s", question.getChapter().getName(),
+                    question.getLevel());
+            if (crMap.containsKey(mapKey)) {
+                crMap.put(mapKey, crMap.get(mapKey) + 1);
+            } else {
+                crMap.put(mapKey, 1);
+            }
+        }
+
+        TreeMap<String, List<CriteriaSubDTO>> crMap2 = new TreeMap<>();
+        for (Map.Entry<String, Integer> entry : crMap.entrySet()) {
+            String chapter = entry.getKey().split("##")[0];
+            String level = entry.getKey().split("##")[1];
+            int numberOfQuestions = entry.getValue();
+
+            List<CriteriaSubDTO> criteriaSubDTOS;
+            if (crMap2.containsKey(chapter)) {
+                criteriaSubDTOS = crMap2.get(chapter);
+            } else {
+                criteriaSubDTOS = new ArrayList<>();
+            }
+            criteriaSubDTOS.add(new CriteriaSubDTO(level, numberOfQuestions));
+            crMap2.put(chapter, criteriaSubDTOS);
+        }
+
+        return crMap2.entrySet().stream().map(entry -> new CriteriaDTO(entry.getKey(),
+                entry.getValue())).collect(Collectors.toList());
+
+    }
+
+    public String getSubjectName() {
+        return this.subject.getName();
+    }
 }

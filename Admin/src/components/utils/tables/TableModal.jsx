@@ -20,6 +20,7 @@ function TableModal({
     onCloseForm,
     handleAddSelectedQuestionFromExcelFile,
     addTest: addTst = false,
+    setError,
 }) {
     const dispatch = useDispatch();
     const { excelAdd, questions } = useSelector(questionState);
@@ -81,39 +82,30 @@ function TableModal({
                                     handleAddSelectedQuestionFromExcelFile();
                                 }
                                 if (addTst) {
-                                    if (!$("#testName").val()) {
-                                        callToast("error", "Tên đề thi không được để trống");
-                                        return;
-                                    } else {
-                                        const name = $("#testName").val();
-                                        const subjectId = $("#testSubjectId").val();
+                                    const name = $("#testName").val();
+                                    if (!name) {
+                                        if (setError) {
+                                            setError("testName", {
+                                                type: "custom",
+                                                message: "Tên đề thi không được để trống",
+                                            });
+                                        }
                                         if (!questions.length) {
                                             callToast(
                                                 "error",
                                                 "Danh sách câu hỏi không được để trống"
                                             );
-                                            return;
                                         }
-                                        let criteria = [];
-
-                                        for (let i = 0; i <= 999; i++) {
-                                            const chapter = $(`#criteria.${i}.chapter`).val();
-                                            const level = $(`#criteria.${i}.level`).val();
-                                            const numberOfQuestions = $(
-                                                `#criteria.${i}.numberOfQuestions`
-                                            ).val();
-                                            if (!chapter) {
-                                                break;
-                                            }
-                                            criteria.push({
-                                                chapter,
-                                                level,
-                                                numberOfQuestions,
-                                            });
-                                        }
-
-                                        dispatch(addTest({ name, subjectId, questions, criteria }));
+                                        return;
                                     }
+
+                                    dispatch(
+                                        addTest({
+                                            name,
+                                            subjectId: $("#testSubjectId").val(),
+                                            questions,
+                                        })
+                                    );
                                 }
                             }}
                         >

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { Frame, TestModalBody, TestTableBody, Table, ChapterFilter } from "../../components";
+import { useDispatch, useSelector } from "react-redux";
+import { Frame, TestModalBody, TestTableBody, Table, TestFilter } from "../../components";
 import {
     addTest,
     clearTestState,
@@ -15,7 +14,7 @@ import { testSchema } from "../../validation";
 import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { fetchAllSubjects } from "../../features/subjectSlice";
+import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
 import {
     fetchAllQuestions,
     loadQuestionsByCriteria,
@@ -44,8 +43,12 @@ const columns = [
         sortable: true,
     },
     {
-        name: "Số câu hỏi theo chương và độ khó",
-        sortField: "numberOfQuestionsByChapterAndLevel",
+        name: "Tiêu chí",
+        sortField: "criteria",
+    },
+    {
+        name: "Môn học",
+        sortField: "subject",
         sortable: true,
     },
     {
@@ -53,12 +56,18 @@ const columns = [
         sortField: "teacher",
         sortable: true,
     },
+    {
+        name: "Thao tác",
+        sortField: "teacher",
+    },
 ];
 
 function TestsPage() {
     const dispatch = useDispatch();
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+
+    const { subjects } = useSelector(subjectState);
 
     const formId = "testForm";
     const modalId = "testModal";
@@ -79,6 +88,8 @@ function TestsPage() {
         register,
         setValue,
         handleSubmit,
+        setError,
+        clearErrors,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(testSchema),
@@ -88,14 +99,23 @@ function TestsPage() {
     });
 
     const onSubmit = ({ criteria, numberOfQuestions, testSubjectId: subject }) => {
+        console.log(subject);
+
         if (isEdit) {
             dispatch(editTest(data));
         } else {
+            // If there is no criteria
             if (criteria.length === 0) {
                 if (!numberOfQuestions) {
-                    callToast("error", "Vui lòng điền số lượng câu hỏi");
+                    callToast("warning", "Nhập số lượng câu hỏi");
                     return;
                 } else {
+                    const sb = subjects.find(({ id }) => id === subject);
+                    if (sb && numberOfQuestions > sb.numberOfQuestions) {
+                        callToast("warning", "Số lượng câu hỏi không thể lớn hơn số lượng hiện có");
+                        return;
+                    }
+
                     dispatch(
                         fetchAllQuestions({
                             page: 0,
@@ -105,12 +125,48 @@ function TestsPage() {
                     );
                 }
             } else {
-                dispatch(
-                    loadQuestionsByCriteria({
-                        subject,
-                        criteria,
-                    })
-                );
+                let haveError = false;
+                console.log(criteria);
+                criteria.forEach(({ chapterId, level, numberOfQuestions }, index) => {
+                    if (!chapterId) {
+                        setError(`criteria.${index}.chapterId`, {
+                            type: "custom",
+                            message: "Chương không được để trống",
+                        });
+
+                        haveError = true;
+                    }
+
+                    if (!level) {
+                        setError(`criteria.${index}.level`, {
+                            type: "custom",
+                            message: "Độ khó không được để trống",
+                        });
+                        haveError = true;
+                    }
+                    console.log(numberOfQuestions);
+                });
+                if (haveError) {
+                    return;
+                }
+
+                //    const chapter = $(`#criteria.${i}.chapter`).val();
+                //    const level = $(`#criteria.${i}.level`).val();
+
+                //    if (!chapter) {
+                //        haveError = true;
+                //        setError(`#criteria.${i}.chapter`, {
+                //            type: "custom",
+                //            message: "",
+                //        });
+                //    }
+
+                // dispatch(
+                //     loadQuestionsByCriteria({
+                //         subject,
+                //         criteria,
+                //     })
+                // );
             }
         }
     };
@@ -219,6 +275,8 @@ function TestsPage() {
                     setIsEdit={setIsEdit}
                     addTest={addTest}
                     onCloseForm={onCloseForm}
+                    Filter={TestFilter}
+                    setError={setError}
                 />
             }
         />
