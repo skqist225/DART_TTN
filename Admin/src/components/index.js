@@ -36,6 +36,7 @@ export { default as UserTableBody } from "./users/UserTableBody";
 //classes
 export { default as CreditClassModalBody } from "./creditClasses/CreditClassModalBody";
 export { default as CreditClassTableBody } from "./creditClasses/CreditClassTableBody";
+export { default as CreditClassFilter } from "./creditClasses/CreditClassFilter";
 
 //tests
 export { default as TestModalBody } from "./tests/TestModalBody";

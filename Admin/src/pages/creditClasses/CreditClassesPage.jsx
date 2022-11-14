@@ -1,67 +1,53 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-    Frame,
-    QuestionModalBody,
     CreditClassFilter,
-    QuestionTableBody,
+    CreditClassModalBody,
+    CreditClassTableBody,
+    Frame,
     Table,
 } from "../../components";
 import $ from "jquery";
-import { creditClassSchema, questionSchema } from "../../validation";
+import { creditClassSchema } from "../../validation";
 import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
-import {
-    addQuestion,
-    editQuestion,
-    questionState,
-    clearQuestionState,
-    fetchAllCreditClass,
-    addMultipleCreditClass,
-    setExcelAdd,
-    setEditedQuestion,
-} from "../../features/questionSlice";
 import { fetchAllSubjects } from "../../features/subjectSlice";
+import { addCreditClass, clearCreditClassState, creditClassState, editCreditClass, fetchAllCreditClasses, setEditedCreditClass } from "../../features/creditClassSlice";
 
 const columns = [
     {
-        name: "Mã câu hỏi",
+        name: "Mã LTC",
         sortField: "id",
         sortable: true,
     },
     {
-        name: "Nội dung",
+        name: "Năm học",
         sortField: "content",
         sortable: true,
     },
     {
-        name: "Loại",
+        name: "Học kỳ",
         sortField: "type",
         sortable: true,
     },
     {
-        name: "Số lựa chọn",
+        name: "Môn học",
         sortField: "answerC",
     },
     {
-        name: "Độ khó",
+        name: "Nhóm",
         sortField: "level",
         sortable: true,
     },
     {
-        name: "Chương",
+        name: "Tình trạng",
         sortField: "chapter",
         sortable: true,
     },
     {
-        name: "Môn học",
-        sortField: "subject",
-        sortable: true,
-    },
-    {
         name: "Giảng viên",
-        sortField: "teacher",
+        sortField: "subject",
         sortable: true,
     },
     {
@@ -81,7 +67,7 @@ function CreditClassesPage() {
 
     useEffect(() => {
         dispatch(
-            fetchAllCreditClass({
+            fetchAllCreditClasses({
                 page: 1,
             })
         );
@@ -95,12 +81,11 @@ function CreditClassesPage() {
         totalElements,
         totalPages,
         filterObject,
-        addQuestion: { successMessage },
-        editQuestion: { successMessage: eqSuccessMessage },
-        deleteQuestion: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
-        addMultipleCreditClass: { successMessage: amqSuccessMessage },
-        enableOrDisableQuestion: { successMessage: eodqSuccessMessage },
-    } = useSelector(questionState);
+        addCreditClass: { successMessage },
+        editCreditClass: { successMessage: eqSuccessMessage },
+        deleteCreditClass: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
+        // enableOrDisableCreditClass: { successMessage: eodqSuccessMessage },
+    } = useSelector(creditClassState);
 
     const {
         register,
@@ -115,12 +100,12 @@ function CreditClassesPage() {
     });
 
     const onSubmit = data => {
-        dispatch(isEdit ? editQuestion(formData) : addQuestion(formData));
+        dispatch(isEdit ? editCreditClass(formData) : addCreditClass(formData));
     };
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
-            fetchAllCreditClass({
+            fetchAllCreditClasses({
                 ...filterObject,
                 query,
             })
@@ -129,7 +114,7 @@ function CreditClassesPage() {
 
     const handleSortChange = (sortField, sortDir) => {
         dispatch(
-            fetchAllCreditClass({
+            fetchAllCreditClasses({
                 ...filterObject,
                 sortField,
                 sortDir,
@@ -139,23 +124,22 @@ function CreditClassesPage() {
 
     useEffect(() => {
         return () => {
-            dispatch(clearQuestionState());
+            dispatch(clearCreditClassState());
         };
     }, []);
 
     function cleanForm(successMessage, type = "add") {
         callToast("success", successMessage);
-        dispatch(fetchAllCreditClass(filterObject));
+        dispatch(fetchAllCreditClasses(filterObject));
 
         $(`#${modalId}`).css("display", "none");
         if (type === "add") {
             $(`#${formId}`)[0].reset();
-            setImage(null);
         }
 
         if (type === "edit") {
             setIsEdit(false);
-            dispatch(setEditedQuestion(null));
+            dispatch(setEditedCreditClass(null));
         }
     }
 
@@ -189,38 +173,31 @@ function CreditClassesPage() {
         }
     }, [errorObject]);
 
-    useEffect(() => {
-        if (amqSuccessMessage) {
-            cleanForm(amqSuccessMessage, "normal");
-            dispatch(setExcelAdd(false));
-        }
-    }, [amqSuccessMessage]);
-
-    useEffect(() => {
-        if (eodqSuccessMessage) {
-            cleanForm(eodqSuccessMessage, "normal");
-        }
-    }, [eodqSuccessMessage]);
+    // useEffect(() => {
+    //     if (eodqSuccessMessage) {
+    //         cleanForm(eodqSuccessMessage, "normal");
+    //     }
+    // }, [eodqSuccessMessage]);
 
     const fetchDataByPageNumber = pageNumber => {
-        dispatch(fetchAllCreditClass({ ...filterObject, page: pageNumber }));
+        dispatch(fetchAllCreditClasses({ ...filterObject, page: pageNumber }));
     };
 
-    const handleAddSelectedQuestionFromExcelFile = () => {
+    const handleAddSelectedCreditClassFromExcelFile = () => {
         dispatch(addMultipleCreditClass({ creditClasses: creditClassesExcel }));
     };
 
     function onCloseForm() {
-        dispatch(setEditedQuestion(null));
-        setValue("answers", []);
-        clearErrors("answers");
+        dispatch(setEditedCreditClass(null));
+        // setValue("answers", []);
+        // clearErrors("answers");
     }
 
     return (
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH CÂU HỎI"}
+            title={"DANH SÁCH LỚP TÍN CHỈ"}
             children={
                 <Table
                     handleQueryChange={handleQueryChange}
@@ -229,19 +206,18 @@ function CreditClassesPage() {
                     rows={creditClasses}
                     totalElements={totalElements}
                     totalPages={totalPages}
-                    TableBody={QuestionTableBody}
+                    TableBody={CreditClassTableBody}
                     modalId={modalId}
                     formId={formId}
                     modalLabel={modalLabel}
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={
-                        <QuestionModalBody
+                        <CreditClassModalBody
                             errors={errors}
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
-                            setImage={setImage}
                             isEdit={isEdit}
                             control={control}
                             clearErrors={clearErrors}
@@ -249,10 +225,9 @@ function CreditClassesPage() {
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
-                    handleAddSelectedQuestionFromExcelFile={handleAddSelectedQuestionFromExcelFile}
                     fetchDataByPageNumber={fetchDataByPageNumber}
                     onCloseForm={onCloseForm}
-                    // Filter={CreditClassFilter}
+                    Filter={CreditClassFilter}
                 />
             }
         />

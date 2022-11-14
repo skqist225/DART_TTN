@@ -4,7 +4,7 @@ import api from "../axios";
 export const fetchAllCreditClasses = createAsyncThunk(
     "creditClass/fetchAllCreditClasses",
     async (
-        { page = 1, query = "", sortField = "id", sortDir = "asc" },
+        { page = 1, query = "", sortField = "id", sortDir = "desc", subject = "" },
         { dispatch, rejectWithValue }
     ) => {
         try {
@@ -30,12 +30,17 @@ export const fetchAllCreditClasses = createAsyncThunk(
                 value: sortDir,
             });
 
+            filterArray.push({
+                field: "subject",
+                value: subject,
+            });
+
             dispatch(setFilterObject(filterArray));
 
             const {
                 data: { creditClasses, totalElements, totalPages },
             } = await api.get(
-                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}`
+                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}`
             );
 
             return { creditClasses, totalElements, totalPages };

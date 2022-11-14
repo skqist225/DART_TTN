@@ -8,7 +8,6 @@ import $ from "jquery";
 import { DropDownIcon, ExcelIcon } from "../../../images";
 import { useDispatch } from "react-redux";
 import { setEditedQuestion, setExcelAdd } from "../../../features/questionSlice";
-import QuestionsFilter from "../../questions/QuestionsFilter";
 
 function Table({
     searchPlaceHolder,
@@ -43,7 +42,7 @@ function Table({
             style={{ minHeight: "calc(100vh - 64px)" }}
         >
             <div>
-                <div className='flex items-center justify-between'>
+                <div className='flex items-center justify-between bg-white'>
                     <div className='flex items-center'>
                         <TableSearch
                             placeHolder={searchPlaceHolder}

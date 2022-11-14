@@ -6,8 +6,9 @@ import {
   creditClassState,
 } from "../../features/creditClassSlice";
 import Input from "../utils/userInputs/Input";
+import Select from "../utils/userInputs/Select";
 
-function ClassModalBody({ errors, register, dispatch, setValue }) {
+function CreditClassModalBody({ errors, register, dispatch, setValue }) {
   const { editedCreditClass, errorObject } = useSelector(creditClassState);
 
   const onKeyDown = ({ target: { name } }) => {
@@ -23,25 +24,58 @@ function ClassModalBody({ errors, register, dispatch, setValue }) {
     }
   }, [editedCreditClass]);
 
+  const handleTypeChange = () => {
+
+  }
+
   return (
     <div className="mt-5">
       <div className="col-flex items-center justify-center w-full">
-        <div className="w-full">
-          <Input
-            label="Mã Lớp *"
-            error={
-              (errors.id && errors.id.message) ||
-              (errorObject && errorObject.id)
-            }
-            register={register}
-            name="id"
-            onKeyDown={onKeyDown}
-            readOnly={editedCreditClass}
-          />
+        <div className="flex items-center w-full my-3">
+          <div className="mr-5 w-full">
+            <Select
+              label="Niên khóa *"
+              register={register}
+              name="type"
+              // options={types}
+              setValue={setValue}
+              onChangeHandler={handleTypeChange}
+            />
+          </div>
+          <div className="w-full">
+            <Select
+              label="Học kỳ *"
+              register={register}
+              name="level"
+              // options={levelOptions}
+              setValue={setValue}
+            />
+          </div>
+        </div>
+        <div className="flex items-center w-full my-3">
+          <div className="mr-5 w-full">
+            <Select
+              label="Môn học *"
+              register={register}
+              name="type"
+              // options={types}
+              setValue={setValue}
+              onChangeHandler={handleTypeChange}
+            />
+          </div>
+          <div className="w-full">
+            <Select
+              label="Nhóm *"
+              register={register}
+              name="level"
+              // options={levelOptions}
+              setValue={setValue}
+            />
+          </div>
         </div>
         <div className="w-full my-5">
           <Input
-            label="Tên lớp *"
+            label="Số SV tối thiểu *"
             error={
               (errors.name && errors.name.message) ||
               (errorObject && errorObject.name)
@@ -56,4 +90,4 @@ function ClassModalBody({ errors, register, dispatch, setValue }) {
   );
 }
 
-export default ClassModalBody;
+export default CreditClassModalBody;

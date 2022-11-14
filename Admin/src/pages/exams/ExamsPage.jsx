@@ -10,25 +10,60 @@ import {
   clearExamState,
   editExam,
   examState,
+  setEditedExam,
 } from "../../features/examSlice";
+import ExamFilter from "../../components/exams/ExamFilter";
 import $ from "jquery";
 
 const columns = [
   {
-    name: "Mã lớp",
+    name: "Mã ca thi",
     sortField: "id",
     sortable: true,
   },
   {
-    name: "Tên lớp",
+    name: "Lớp tín chỉ",
+    sortField: "examDate",
+    sortable: true,
+  },
+  {
+    name: "Ngày thi",
+    sortField: "examDate",
+    sortable: true,
+  },
+  {
+    name: "Thời gian làm bài",
+    sortField: "time",
+    sortable: true,
+  },
+  {
+    name: "Loại thi",
+    sortField: "time",
+    sortable: true,
+  },
+  {
+    name: "Người tạo",
     sortField: "name",
     sortable: true,
   },
 ];
 
 function ExamsPage() {
+  const dispatch = useDispatch();
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isEdit, setIsEdit] = useState(false);
+
+  const modalId = "examModal";
+  const formId = "examForm";
+  const modalLabel = "ca thi";
+
+  useEffect(() => {
+    dispatch(
+      fetchAllExames({
+        page: 1,
+      })
+    );
+  }, []);
 
   const {
     register,
@@ -82,80 +117,69 @@ function ExamsPage() {
     };
   }, []);
 
-  function closeForm(successMessage) {
+  function cleanForm(successMessage, type = "add") {
     callToast("success", successMessage);
-    $("#classForm")[0].reset();
-    $("#classModal").css("display", "none");
     dispatch(fetchAllExames(filterObject));
+
+    $(`#${modalId}`).css("display", "none");
+    if (type === "add") {
+      $(`#${formId}`)[0].reset();
+    }
+
+    if (type === "edit") {
+      setIsEdit(false);
+      dispatch(setEditedExam(null));
+    }
   }
 
   useEffect(() => {
     if (successMessage) {
-      closeForm(successMessage);
+      cleanForm(successMessage, "add");
     }
   }, [successMessage]);
 
   useEffect(() => {
     if (esSuccessMessage) {
-      closeForm(successMessage);
-      setIsEdit(false);
+      cleanForm(successMessage, "edit");
     }
   }, [esSuccessMessage]);
 
   useEffect(() => {
     if (dsSuccessMessage) {
-      callToast("success", dsSuccessMessage);
-      dispatch(fetchAllExames(filterObject));
+      cleanForm(successMessage, "delete");
     }
   }, [dsSuccessMessage]);
-
-  const dispatch = useDispatch();
-  useEffect(() => {
-    dispatch(
-      fetchAllExames({
-        page: 1,
-      })
-    );
-  }, []);
 
   return (
     <Frame
       sidebarOpen={sidebarOpen}
       setSidebarOpen={setSidebarOpen}
-      title={"DANH SÁCH LỚP HỌC"}
+      title={"DANH SÁCH CA THI"}
       children={
         <Table
-          searchPlaceHolder={"Tìm kiếm theo tên và mã lớp"}
+          searchPlaceHolder={"Tìm kiếm theo tên và mã ca thi"}
           handleQueryChange={handleQueryChange}
           handleSortChange={handleSortChange}
           columns={columns}
           totalElements={totalElements}
           totalPages={totalPages}
-          TableBody={
-            <ExamTableBody
-              rows={exams}
-              setIsEdit={setIsEdit}
-              dispatch={dispatch}
-              modalId="classModal"
-            />
-          }
-          modalId="classModal"
-          formId="classForm"
-          modalLabel="lớp"
+          TableBody={ExamTableBody}
+          modalId={modalId}
+          formId={formId}
+          modalLabel={modalLabel}
           handleSubmit={handleSubmit}
           onSubmit={onSubmit}
           ModalBody={
-            <>
               <ExamModalBody
                 errors={errors}
                 register={register}
                 dispatch={dispatch}
                 setValue={setValue}
               />
-            </>
           }
           isEdit={isEdit}
           setIsEdit={setIsEdit}
+          Filter={ExamFilter}
         />
       }
     />

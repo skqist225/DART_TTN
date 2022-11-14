@@ -3,8 +3,10 @@ import { tailwindCss } from "../../tailwind";
 import MyButton from "../common/MyButton";
 import $ from "jquery";
 import { deleteCreditClass, setEditedCreditClass } from "../../features/creditClassSlice";
+import { useDispatch } from "react-redux";
 
-function ExamTableBody({ rows, setIsEdit, dispatch, modalId }) {
+function ExamTableBody({ rows, setIsEdit }) {
+    const dispatch = useDispatch();
     return (
         <tbody>
             {rows.map(row => (
@@ -15,7 +17,7 @@ function ExamTableBody({ rows, setIsEdit, dispatch, modalId }) {
                         <MyButton
                             type='edit'
                             onClick={() => {
-                                $(`#${modalId}`).css("display", "flex");
+                                $(`#classModal`).css("display", "flex");
                                 setIsEdit(true);
                                 dispatch(setEditedCreditClass(row));
                             }}
