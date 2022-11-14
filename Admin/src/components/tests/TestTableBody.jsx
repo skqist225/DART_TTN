@@ -6,7 +6,7 @@ import { useDispatch } from "react-redux";
 import $ from "jquery";
 import { cellCss } from "../questions/QuestionTableBody";
 import { Badge, Button, Table, Tooltip } from "flowbite-react";
-import LevelBadge from "../utils/commons/LevelBadge";
+import LevelBadge from "../common/LevelBadge";
 
 function TestTableBody({ rows, setIsEdit }) {
     const dispatch = useDispatch();

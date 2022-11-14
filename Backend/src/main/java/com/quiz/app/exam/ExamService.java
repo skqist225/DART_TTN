@@ -1,8 +1,8 @@
-package com.quiz.app.creditClass;
+package com.quiz.app.exam;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.entity.CreditClass;
+import com.quiz.entity.Exam;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,52 +28,59 @@ import java.util.Optional;
 
 
 @Service
-public class CreditClassService {
+public class ExamService {
 
     @Autowired
-    private CreditClassRepository creditClassRepository;
+    ExamRepository examRepository;
 
     @Autowired
     private EntityManager entityManager;
 
-    public CreditClass save(CreditClass cls) {
-        return creditClassRepository.save(cls);
+    public Exam save(Exam subject) {
+        return examRepository.save(subject);
     }
 
     public String deleteById(Integer id) throws ConstrainstViolationException {
         try {
-            creditClassRepository.deleteById(id);
-            return "Xóa lớp tín chỉ thành công";
+            examRepository.deleteById(id);
+            return "Xóa môn học thành công";
         } catch (Exception ex) {
-            throw new ConstrainstViolationException("Không thể xóa lớp tín chỉ vì ràng buộc dữ liệu");
+            throw new ConstrainstViolationException("Không thể xóa môn học vì ràng buộc dữ liệu");
         }
     }
 
-    public CreditClass findById(Integer id) throws NotFoundException {
-        Optional<CreditClass> cls = creditClassRepository.findById(id);
-        if (cls.isPresent()) {
-            return cls.get();
+    public Exam findById(Integer id) throws NotFoundException {
+        Optional<Exam> subject = examRepository.findById(id);
+        if (subject.isPresent()) {
+            return subject.get();
         }
 
-        throw new NotFoundException("Không tìm thấy lớp học với mã " + id);
+        throw new NotFoundException("Không tìm thấy môn học với mã " + id);
     }
 
-    public List<CreditClass> findAll() {
-        return (List<CreditClass>) creditClassRepository.findAll();
-    }
 
-    public boolean isUniqueKey(Integer id, String schoolYear, int semester, String subjectId, int group, boolean isEdit) {
-        CreditClass creditClass = creditClassRepository.findByUniqueKey(schoolYear, semester,
-                subjectId,
-                group);
-        if (isEdit) {
-            return Objects.nonNull(creditClass) && !Objects.equals(creditClass.getId(), id);
-        } else {
-            return Objects.nonNull(creditClass);
+
+
+
+    public boolean isIdDuplicated(Integer id, boolean isEdit) {
+        try {
+            Exam subject = findById(id);
+
+            if (isEdit) {
+                return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
+            } else {
+                return Objects.nonNull(subject);
+            }
+        } catch (NotFoundException e) {
+            return false;
         }
     }
 
-    public Page<CreditClass> findAllCreditClasses(Map<String, String> filters) {
+    public List<Exam> findAll() {
+        return (List<Exam>) examRepository.findAll();
+    }
+
+    public Page<Exam> findAllSubjects(Map<String, String> filters) {
         int page = Integer.parseInt(filters.get("page"));
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
@@ -84,8 +91,8 @@ public class CreditClassService {
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<CreditClass> criteriaQuery = criteriaBuilder.createQuery(CreditClass.class);
-        Root<CreditClass> root = criteriaQuery.from(CreditClass.class);
+        CriteriaQuery<Exam> criteriaQuery = criteriaBuilder.createQuery(Exam.class);
+        Root<Exam> root = criteriaQuery.from(Exam.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -102,24 +109,13 @@ public class CreditClassService {
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
         criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
 
-        TypedQuery<CreditClass> typedQuery = entityManager.createQuery(criteriaQuery);
+        TypedQuery<Exam> typedQuery = entityManager.createQuery(criteriaQuery);
 
         int totalRows = typedQuery.getResultList().size();
         typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
         typedQuery.setMaxResults(pageable.getPageSize());
 
         return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
-    }
-
-    public boolean enableOrDisableCreditClass(Integer creditClassId, String action) {
-        try {
-            CreditClass cls = findById(creditClassId);
-            cls.setCancelled(!action.equals("enable"));
-
-            return true;
-        } catch (NotFoundException ex) {
-            return false;
-        }
     }
 
 }

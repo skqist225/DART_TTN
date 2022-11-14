@@ -1,5 +1,6 @@
 package com.quiz.entity;
 
+import com.quiz.app.register.dto.PostCreateRegisterDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -35,4 +36,9 @@ public class Register {
 
     @Column(name = "HUYDANGKY")
     private boolean isRegisterCancelled;
+
+    public static Register build(PostCreateRegisterDTO postCreateRegisterDTO) {
+        return null;
+    }
+
 }

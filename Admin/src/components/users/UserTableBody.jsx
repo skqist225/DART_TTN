@@ -1,6 +1,6 @@
 import React from "react";
 import { tailwindCss } from "../../tailwind";
-import { MyButton } from "../common";
+import { MyButton } from "..";
 import $ from "jquery";
 import { getImage } from "../../helpers";
 import { deleteUser, setEditedUser } from "../../features/userSlice";

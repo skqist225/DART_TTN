@@ -1,99 +1,72 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import {
-    CreditClassFilter,
-    CreditClassModalBody,
-    CreditClassTableBody,
     Frame,
+    RegisterFilter,
+    RegisterModalBody,
+    RegisterTableBody,
     Table,
 } from "../../components";
 import $ from "jquery";
-import { creditClassSchema } from "../../validation";
+import { questionSchema } from "../../validation";
 import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { fetchAllSubjects } from "../../features/subjectSlice";
 import {
-    addCreditClass,
-    clearCreditClassState,
-    creditClassState,
-    editCreditClass,
-    fetchAllCreditClasses,
-    setEditedCreditClass,
-} from "../../features/creditClassSlice";
-import { fetchAllUsers } from "../../features/userSlice";
+    addRegister,
+    editRegister,
+    clearRegisterState,
+    fetchAllRegisters,
+    setEditedRegister,
+    registerState,
+} from "../../features/registerSlice";
 
 const columns = [
     {
-        name: "Mã LTC",
-        sortField: "id",
+        name: "Sinh viên",
+        sortField: "fullName",
         sortable: true,
     },
     {
-        name: "Năm học",
-        sortField: "content",
-        sortable: true,
-    },
-    {
-        name: "Học kỳ",
-        sortField: "type",
-        sortable: true,
-    },
-    {
-        name: "Môn học",
-        sortField: "answerC",
-    },
-    {
-        name: "Nhóm",
-        sortField: "level",
+        name: "LTC",
+        sortField: "creditClass",
         sortable: true,
     },
     {
         name: "Tình trạng",
-        sortField: "chapter",
+        sortField: "status",
         sortable: true,
-    },
-    {
-        name: "Giảng viên",
-        sortField: "subject",
-        sortable: true,
-    },
-    {
-        name: "Thao tác",
-        sortable: false,
     },
 ];
 
-function CreditClassesPage() {
-    const dispatch = useDispatch();
+function RegistersPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+    const dispatch = useDispatch();
 
-    const formId = "creditClassForm";
-    const modalId = "creditClassModal";
-    const modalLabel = "lớp tín chỉ";
+    const formId = "registerForm";
+    const modalId = "registerModal";
+    const modalLabel = "đăng ký";
 
     useEffect(() => {
         dispatch(
-            fetchAllCreditClasses({
+            fetchAllRegisters({
                 page: 1,
             })
         );
         dispatch(fetchAllSubjects({ page: 0 }));
-        dispatch(fetchAllUsers({ page: 1, role: "Giảng viên" }));
     }, []);
 
     const {
-        creditClasses,
-        creditClassesExcel,
+        registers,
         errorObject,
         totalElements,
         totalPages,
         filterObject,
-        addCreditClass: { successMessage },
-        editCreditClass: { successMessage: eqSuccessMessage },
-        deleteCreditClass: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
-    } = useSelector(creditClassState);
+        addRegister: { successMessage },
+        editRegister: { successMessage: eqSuccessMessage },
+        deleteRegister: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
+    } = useSelector(registerState);
 
     const {
         register,
@@ -104,16 +77,19 @@ function CreditClassesPage() {
         clearErrors,
         formState: { errors },
     } = useForm({
-        resolver: yupResolver(creditClassSchema),
+        resolver: yupResolver(questionSchema),
+        defaultValues: {
+            answers: [],
+        },
     });
 
     const onSubmit = data => {
-        dispatch(isEdit ? editCreditClass(data) : addCreditClass(data));
+        dispatch(isEdit ? editRegister(formData) : addRegister(formData));
     };
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
-            fetchAllCreditClasses({
+            fetchAllRegisters({
                 ...filterObject,
                 query,
             })
@@ -122,7 +98,7 @@ function CreditClassesPage() {
 
     const handleSortChange = (sortField, sortDir) => {
         dispatch(
-            fetchAllCreditClasses({
+            fetchAllRegisters({
                 ...filterObject,
                 sortField,
                 sortDir,
@@ -132,13 +108,13 @@ function CreditClassesPage() {
 
     useEffect(() => {
         return () => {
-            dispatch(clearCreditClassState());
+            dispatch(clearRegisterState());
         };
     }, []);
 
     function cleanForm(successMessage, type = "add") {
         callToast("success", successMessage);
-        dispatch(fetchAllCreditClasses(filterObject));
+        dispatch(fetchAllRegisters(filterObject));
 
         $(`#${modalId}`).css("display", "none");
         if (type === "add") {
@@ -147,7 +123,7 @@ function CreditClassesPage() {
 
         if (type === "edit") {
             setIsEdit(false);
-            dispatch(setEditedCreditClass(null));
+            dispatch(setEditedRegister(null));
         }
     }
 
@@ -181,39 +157,59 @@ function CreditClassesPage() {
         }
     }, [errorObject]);
 
+    useEffect(() => {
+        if (amqSuccessMessage) {
+            cleanForm(amqSuccessMessage, "normal");
+            dispatch(setExcelAdd(false));
+        }
+    }, [amqSuccessMessage]);
+
+    useEffect(() => {
+        if (eodqSuccessMessage) {
+            cleanForm(eodqSuccessMessage, "normal");
+        }
+    }, [eodqSuccessMessage]);
+
     const fetchDataByPageNumber = pageNumber => {
-        dispatch(fetchAllCreditClasses({ ...filterObject, page: pageNumber }));
+        dispatch(fetchAllRegisters({ ...filterObject, page: pageNumber }));
+    };
+
+    const handleAddSelectedRegisterFromExcelFile = () => {
+        dispatch(addMultipleRegisters({ registers: registersExcel }));
     };
 
     function onCloseForm() {
-        dispatch(setEditedCreditClass(null));
+        dispatch(setEditedRegister(null));
+        setValue("answers", []);
+        clearErrors("answers");
     }
 
     return (
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH LỚP TÍN CHỈ"}
+            title={"DANH SÁCH CÂU HỎI"}
             children={
                 <Table
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={columns}
-                    rows={creditClasses}
+                    rows={registers}
                     totalElements={totalElements}
                     totalPages={totalPages}
-                    TableBody={CreditClassTableBody}
+                    TableBody={RegisterTableBody}
                     modalId={modalId}
                     formId={formId}
                     modalLabel={modalLabel}
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={
-                        <CreditClassModalBody
+                        <RegisterModalBody
                             errors={errors}
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
+                            setImage={setImage}
                             isEdit={isEdit}
                             control={control}
                             clearErrors={clearErrors}
@@ -223,11 +219,11 @@ function CreditClassesPage() {
                     setIsEdit={setIsEdit}
                     fetchDataByPageNumber={fetchDataByPageNumber}
                     onCloseForm={onCloseForm}
-                    Filter={CreditClassFilter}
+                    Filter={RegisterFilter}
                 />
             }
         />
     );
 }
 
-export default CreditClassesPage;
+export default RegistersPage;

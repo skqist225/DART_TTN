@@ -36,9 +36,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class QuestionService {
-    private final String DELETE_SUCCESSFULLY = "Xóa câu hỏi thành công";
-    private final String DELETE_FORBIDDEN = "Không thể xóa câu hỏi này vì ràng buộc dữ liệu";
-    private final Integer MAX_QUESTIONS_PER_PAGE = 10;
 
     @Autowired
     QuestionRepository questionRepository;
@@ -59,9 +56,9 @@ public class QuestionService {
     public String deleteById(Integer id) throws ConstrainstViolationException {
         try {
             questionRepository.deleteById(id);
-            return DELETE_SUCCESSFULLY;
+            return "Xóa câu hỏi thành công";
         } catch (Exception ex) {
-            throw new ConstrainstViolationException(DELETE_FORBIDDEN);
+            throw new ConstrainstViolationException( "Không thể xóa câu hỏi này vì ràng buộc dữ liệu");
         }
     }
 
@@ -96,9 +93,7 @@ public class QuestionService {
     }
 
     public boolean isContentDuplicated(Integer id, String content, boolean isEdit) {
-        System.out.println(content);
         Question question = questionRepository.findByContent(content);
-        System.out.println(question);
         if (isEdit) {
             return Objects.nonNull(question) && !Objects.equals(question.getId(), id);
         } else {
@@ -116,7 +111,7 @@ public class QuestionService {
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-        Pageable pageable = PageRequest.of(page - 1, MAX_QUESTIONS_PER_PAGE, sort);
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Question> criteriaQuery = criteriaBuilder.createQuery(Question.class);

@@ -1,6 +1,5 @@
 package com.quiz.app.creditClass;
 
-import com.quiz.app.answer.dto.AnswerDTO;
 import com.quiz.app.common.CommonUtils;
 import com.quiz.app.creditClass.dto.CreditClassesDTO;
 import com.quiz.app.creditClass.dto.PostCreateCreditClassDTO;
@@ -9,11 +8,17 @@ import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
+import com.quiz.app.security.UserDetailsImpl;
+import com.quiz.app.subject.SubjectService;
+import com.quiz.app.user.UserService;
 import com.quiz.entity.CreditClass;
+import com.quiz.entity.Subject;
+import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,10 +35,16 @@ import java.util.Objects;
 
 
 @RestController
-@RequestMapping("/api/classes")
+@RequestMapping("/api/creditClasses")
 public class CreditClassRestController {
     @Autowired
     private CreditClassService creditClassService;
+
+    @Autowired
+    private SubjectService subjectService;
+
+    @Autowired
+    private UserService userService;
 
     @GetMapping("")
     public ResponseEntity<StandardJSONResponse<CreditClassesDTO>> fetchAllSubjects(
@@ -70,7 +81,7 @@ public class CreditClassRestController {
     public void catchCreditClassInputException(CommonUtils commonUtils, String schoolYear, Integer semester,
                                                String subjectId,
                                                Integer group,
-                                               Integer minimumNumberOfStudents
+                                               Integer minimumNumberOfStudents, String teacherId
     ) {
         if (Objects.isNull(schoolYear) || StringUtils.isEmpty(schoolYear)) {
             commonUtils.addError("schoolYear", "Niên khóa không được để trống");
@@ -91,31 +102,53 @@ public class CreditClassRestController {
         if (Objects.isNull(minimumNumberOfStudents)) {
             commonUtils.addError("minimumNumberOfStudents", "Số SV tối thiểu không được để trống");
         }
+
+        if (Objects.isNull(teacherId) || StringUtils.isEmpty(teacherId)) {
+            commonUtils.addError("teacherId", "Giảng viên không được để trống");
+        }
     }
 
     @PostMapping("save")
     public ResponseEntity<StandardJSONResponse<CreditClass>> saveSubject(
-            @RequestBody PostCreateCreditClassDTO postCreateClassDTO,
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+            @RequestBody PostCreateCreditClassDTO postCreateCreditClassDTO,
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
     ) {
         CommonUtils commonUtils = new CommonUtils();
         CreditClass creditClass = null;
+        Subject subject = null;
+        User teacher = null;
 
-        Integer id = postCreateClassDTO.getId();
-        String schoolYear = postCreateClassDTO.getSchoolYear();
-        Integer semester = postCreateClassDTO.getSemester();
-        String subjectId = postCreateClassDTO.getSubjectId();
-        Integer group = postCreateClassDTO.getGroup();
-        Integer minimumNumberOfStudents = postCreateClassDTO.getMinimumNumberOfStudents();
+        Integer id = postCreateCreditClassDTO.getId();
+        String schoolYear = postCreateCreditClassDTO.getSchoolYear();
+        Integer semester = postCreateCreditClassDTO.getSemester();
+        String subjectId = postCreateCreditClassDTO.getSubjectId();
+        Integer group = postCreateCreditClassDTO.getGroup();
+        Integer minimumNumberOfStudents = postCreateCreditClassDTO.getMinimumNumberOfStudents();
+        String teacherId = postCreateCreditClassDTO.getTeacherId();
 
-        catchCreditClassInputException(commonUtils, schoolYear, semester, subjectId, group, minimumNumberOfStudents);
+        catchCreditClassInputException(commonUtils, schoolYear, semester, subjectId, group,
+                minimumNumberOfStudents, teacherId);
 
 
         if (commonUtils.getArrayNode().size() > 0) {
             return new BadResponse<CreditClass>(commonUtils.getArrayNode().toString()).response();
         } else {
             if (creditClassService.isUniqueKey(id, schoolYear, semester, subjectId, group, isEdit)) {
-                commonUtils.addError("uniqueKey", "Key tồn tại");
+                commonUtils.addError("uniqueKey", "Niên khóa + học kỳ + môn học + nhóm phải là " +
+                        "duy nhất");
+            }
+
+            try {
+                subject = subjectService.findById(subjectId);
+            } catch (NotFoundException e) {
+                commonUtils.addError("subjectId", e.getMessage());
+            }
+
+            try {
+                teacher = userService.findById(teacherId);
+            } catch (NotFoundException e) {
+                commonUtils.addError("teacherId", e.getMessage());
             }
 
             if (commonUtils.getArrayNode().size() > 0) {
@@ -125,19 +158,24 @@ public class CreditClassRestController {
 
         if (isEdit) {
             try {
-                CreditClass cls = creditClassService.findById(id);
-                cls.setId(id);
-//                cls.setName(name);
+                CreditClass creditCls = creditClassService.findById(id);
+                creditCls.setSubject(subject);
+                creditCls.setSchoolYear(schoolYear);
+                creditCls.setSemester(semester);
+                creditCls.setGroup(group);
+                creditCls.setMinimumNumberOfStudents(minimumNumberOfStudents);
+                creditCls.setTeacher(teacher);
 
-//                savedSubject = creditClassService.save(cls);
+                creditClass = creditClassService.save(creditCls);
             } catch (NotFoundException exception) {
                 return new BadResponse<CreditClass>(exception.getMessage()).response();
             }
         } else {
-//            savedSubject = creditClassService.save(CreditClass.build(postCreateClassDTO, null));
+            creditClass = creditClassService.save(CreditClass.build(postCreateCreditClassDTO,
+                    subject, teacher));
         }
 
-        return new OkResponse<>(new CreditClass()).response();
+        return new OkResponse<>(creditClass).response();
     }
 
     @DeleteMapping("{id}/delete")

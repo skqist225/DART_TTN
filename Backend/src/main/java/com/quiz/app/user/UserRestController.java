@@ -3,7 +3,7 @@ package com.quiz.app.user;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.quiz.app.exception.UserNotFoundException;
+import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
@@ -57,7 +57,7 @@ public class UserRestController {
             User user = userService.findById(id);
 
             return new OkResponse<>(user).response();
-        } catch (UserNotFoundException e) {
+        } catch (NotFoundException e) {
             return new BadResponse<User>(e.getMessage()).response();
         }
     }
@@ -76,8 +76,7 @@ public class UserRestController {
 
     @PutMapping("update-personal-info")
     public ResponseEntity<StandardJSONResponse<User>> updatePersonalInfo(
-            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody PostUpdateUserDTO postUpdateUserDTO)
-            throws IOException {
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody PostUpdateUserDTO postUpdateUserDTO) {
         User currentUser = userDetailsImpl.getUser();
 
         User savedUser = null;
@@ -133,17 +132,6 @@ public class UserRestController {
                 break;
             }
             case "address": {
-                int cityId = Integer.parseInt(updateData.get("city"));
-                String street = updateData.get("street");
-
-                // Address address = addressService.findByStreetAndCity(street, new
-                // City(cityId));
-                // if (address != null) {
-                // currentUser.setAddress(address);
-                // } else {
-                // address = new Address(new City(cityId), street);
-                // currentUser.setAddress(addressService.save(address));
-                // }
 
                 savedUser = userService.saveUser(currentUser);
                 break;

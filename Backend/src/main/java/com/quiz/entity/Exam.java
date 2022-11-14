@@ -1,5 +1,6 @@
 package com.quiz.entity;
 
+import com.quiz.app.exam.dto.PostCreateExamDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -53,4 +54,10 @@ public class Exam {
     @ManyToOne
     @JoinColumn(name = "MAGV")
     private User teacher;
+
+    public static Exam build(PostCreateExamDTO postCreateExamDTO) {
+        return Exam.builder()
+
+                .build();
+    }
 }

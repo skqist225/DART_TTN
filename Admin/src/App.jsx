@@ -14,6 +14,7 @@ import {
     UsersPage,
     TestsPage,
     LoginPage,
+    RegistersPage,
 } from "./pages";
 
 function App() {
@@ -55,6 +56,10 @@ function App() {
 
                 <Route path='/creditClasses'>
                     <Route path='' element={<CreditClassesPage />} />
+                </Route>
+
+                <Route path='/registers'>
+                    <Route path='' element={<RegistersPage />} />
                 </Route>
 
                 <Route path='/exams'>

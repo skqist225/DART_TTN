@@ -1,11 +1,11 @@
 import React from "react";
 import { tailwindCss } from "../../tailwind";
 import MyButton from "../common/MyButton";
-import $ from "jquery";
 import { deleteCreditClass, setEditedCreditClass } from "../../features/creditClassSlice";
 import { cellCss } from "../questions/QuestionTableBody";
+import $ from "jquery";
 
-function ClassTableBody({ rows, setIsEdit, dispatch, modalId }) {
+function RegisterTableBody({ rows, setIsEdit, dispatch, modalId }) {
     return (
         <tbody>
             {rows.map(row => (
@@ -41,4 +41,4 @@ function ClassTableBody({ rows, setIsEdit, dispatch, modalId }) {
     );
 }
 
-export default ClassTableBody;
+export default RegisterTableBody;

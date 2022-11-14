@@ -4,6 +4,10 @@ export { default as TextArea } from "./utils/userInputs/TextArea";
 export { default as Input } from "./utils/userInputs/Input";
 export { default as FileInput } from "./utils/userInputs/FileInput";
 
+// commons
+export { default as LevelBadge } from "./common/LevelBadge";
+export { default as MyButton } from "./common/MyButton";
+
 // errors
 export { default as ErrorMessage } from "./utils/errors/ErrorMessage";
 
@@ -55,3 +59,8 @@ export { default as RoleTableBody } from "./roles/RoleTableBody";
 //classes
 export { default as ExamModalBody } from "./exams/ExamModalBody";
 export { default as ExamTableBody } from "./exams/ExamTableBody";
+
+// registers
+export { default as RegisterModalBody } from "./registers/RegisterModalBody";
+export { default as RegisterTableBody } from "./registers/RegisterTableBody";
+export { default as RegisterFilter } from "./registers/RegisterFilter";

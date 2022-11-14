@@ -55,6 +55,15 @@ public class RoleService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy vai trò với mã " + id));
     }
 
+    public Role findByName(String name) throws NotFoundException {
+        Role role = roleRepository.findByName(name);
+        if (role == null) {
+            throw new NotFoundException("Không tìm thấy vai trò với tên " + name);
+        }
+
+        return role;
+    }
+
     public boolean isNameDuplicated(Integer id, String name, boolean isEdit) {
         Role role = roleRepository.findByName(name);
         System.out.println(isEdit);

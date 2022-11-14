@@ -12,7 +12,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UserListResponse {
+public class UsersDTO {
     private List<User> users;
     private long totalElements;
     private long totalPages;

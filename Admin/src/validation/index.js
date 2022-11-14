@@ -73,10 +73,22 @@ export const userRegisterSchema = yup
 export const creditClassSchema = yup
     .object({
         schoolYear: yup.string().required("Niên khóa không được để trống"),
-        semester: yup.string().required("Học kỳ không được để trống"),
+        semester: yup
+            .string()
+            .typeError("Học kỳ phải là chữ số")
+            .min(1, "Học kỳ ít nhất là HK1")
+            .max(4, "Học kỳ nhiều nhất là HK4")
+            .required("Học kỳ không được để trống"),
         subjectId: yup.string().required("Môn học không được để trống"),
-        group: yup.string().required("Nhóm không được để trống"),
-        minimumNumberOfStudents: yup.string().required("Số SV tối thiểu không được để trống"),
+        teacherId: yup.string().required("Giảng viên không được để trống"),
+        group: yup
+            .string()
+            .typeError("Số SV tối thiểu phải là chữ số")
+            .required("Nhóm không được để trống"),
+        minimumNumberOfStudents: yup
+            .number()
+            .typeError("Số SV tối thiểu phải là chữ số")
+            .required("Số SV tối thiểu không được để trống"),
     })
     .required();
 

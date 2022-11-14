@@ -1,32 +1,13 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import {
-    clearErrorField,
-    setEditedCreditClass,
-    creditClassState,
-} from "../../features/creditClassSlice";
+import { clearErrorField, creditClassState } from "../../features/creditClassSlice";
 import { subjectState } from "../../features/subjectSlice";
 import { userState } from "../../features/userSlice";
 import { callToast } from "../../helpers";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
 
-const schoolYears = [
-    {
-        title: "2021-2022",
-        value: "2021-2022",
-    },
-    {
-        title: "2022-2023",
-        value: "2022-2023",
-    },
-    {
-        title: "2023-2024",
-        value: "2023-2024",
-    },
-];
-
-function CreditClassModalBody({ errors, register, dispatch, setValue }) {
+function RegisterModalBody({ errors, register, dispatch, setValue }) {
     const { editedCreditClass, errorObject } = useSelector(creditClassState);
     const { subjects } = useSelector(subjectState);
     const { users } = useSelector(userState);
@@ -148,4 +129,4 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
     );
 }
 
-export default CreditClassModalBody;
+export default RegisterModalBody;

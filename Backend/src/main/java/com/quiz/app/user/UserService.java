@@ -1,9 +1,9 @@
 package com.quiz.app.user;
 
-import com.quiz.app.exception.UserNotFoundException;
+import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.exception.VerifiedUserException;
 import com.quiz.app.user.dto.CountUserByRole;
-import com.quiz.app.user.dto.UserListResponse;
+import com.quiz.app.user.dto.UsersDTO;
 import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ public class UserService {
     @Autowired
     private EntityManager entityManager;
 
-    public UserListResponse getAllUsers(Map<String, String> filters, int page) {
+    public UsersDTO findAllUsers(Map<String, String> filters, int page) {
         String searchQuery = filters.get("query");
         String roles = filters.get("roles");
         String statuses = filters.get("statuses");
@@ -118,7 +118,11 @@ public class UserService {
 
         Page<User> result = new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
 
-        return new UserListResponse(result.getContent(), result.getTotalElements(), result.getTotalPages());
+        return new UsersDTO(result.getContent(), result.getTotalElements(), result.getTotalPages());
+    }
+
+    public List<User> findByRole(Integer roleId) {
+        return userRepository.findByRole(roleId);
     }
 
     public void encodePassword(User user) {
@@ -134,9 +138,9 @@ public class UserService {
         return passwordEncoder.matches(rawPass, hashPass);
     }
 
-    public User findByEmail(String email) throws UserNotFoundException {
+    public User findByEmail(String email) throws NotFoundException {
         return userRepository.findByEmail(email)
-                .orElseThrow(() -> new UserNotFoundException("Không tìm thấy người dùng với email" +
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng với email" +
                         " " + email));
     }
 
@@ -148,7 +152,7 @@ public class UserService {
                 return Objects.nonNull(user) && !Objects.equals(user.getId(), id);
             }
             return true;
-        } catch (UserNotFoundException e) {
+        } catch (NotFoundException e) {
             return false;
         }
     }
@@ -190,7 +194,7 @@ public class UserService {
     }
 
     public String deleteById(String id)
-            throws UserNotFoundException, VerifiedUserException {
+            throws VerifiedUserException {
         try {
             userRepository.deleteById(id);
             return "Delete user successfully";
@@ -199,8 +203,8 @@ public class UserService {
         }
     }
 
-    public User findById(String id) throws UserNotFoundException {
+    public User findById(String id) throws NotFoundException {
         return userRepository.findById(id)
-                .orElseThrow(() -> new UserNotFoundException("User not found with id: " + id));
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng với mã " + id));
     }
 }

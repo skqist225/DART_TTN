@@ -1,4 +1,5 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import {
     deleteQuestion,
     disableOrEnableLoadedQuestions,
@@ -7,11 +8,8 @@ import {
     setEditedQuestion,
 } from "../../features/questionSlice";
 import { tailwindCss } from "../../tailwind";
-import { MyButton } from "../common";
+import { MyButton, LevelBadge } from "..";
 import $ from "jquery";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import LevelBadge from "../utils/commons/LevelBadge";
 
 export const cellCss = "py-2 px-3 text-black";
 

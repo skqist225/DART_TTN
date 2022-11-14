@@ -157,7 +157,7 @@ const creditClassSlice = createSlice({
     name: "creditClass",
     initialState,
     reducers: {
-        clearClassState(state) {
+        clearCreditClassState(state) {
             state.addCreditClass.successMessage = null;
             state.errorObject = null;
 
@@ -226,7 +226,6 @@ const creditClassSlice = createSlice({
                     });
                 }
             })
-
             .addCase(editCreditClass.pending, (state, _) => {
                 state.editCreditClass.successMessage = null;
                 state.errorObject = null;

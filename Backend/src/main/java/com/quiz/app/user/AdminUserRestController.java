@@ -1,21 +1,19 @@
 package com.quiz.app.user;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.quiz.app.common.CommonUtils;
 import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.app.exception.UserNotFoundException;
 import com.quiz.app.exception.VerifiedUserException;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.role.RoleService;
 import com.quiz.app.user.dto.RegisterDTO;
-import com.quiz.app.user.dto.UserListResponse;
+import com.quiz.app.user.dto.UsersDTO;
 import com.quiz.entity.Role;
 import com.quiz.entity.User;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
@@ -28,9 +26,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.time.LocalDate;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -45,36 +43,39 @@ public class AdminUserRestController {
     @Autowired
     private CreditClassService classService;
 
-    @Autowired
-    private ObjectMapper objectMapper;
-
     @Value("${env}")
     private String environment;
 
-    private ArrayNode arrayNode;
-
-    public void addError(String fieldName, String fieldError) {
-        ObjectNode node = objectMapper.createObjectNode();
-        node.put(fieldName, fieldError);
-        arrayNode.add(node);
-    }
-
     @GetMapping(value = "")
-    public ResponseEntity<StandardJSONResponse<UserListResponse>> listings(
+    public ResponseEntity<StandardJSONResponse<UsersDTO>> listings(
             @RequestParam(name = "page", defaultValue = "1") Integer page,
-            @RequestParam(name = "roles", required = false, defaultValue = "Student,Teacher," +
-                    "Admin") String roles,
+            @RequestParam(name = "roles", required = false, defaultValue = "") String roles,
+            @RequestParam(name = "role", required = false, defaultValue = "") String roleName,
             @RequestParam(name = "statuses", required = false, defaultValue = "1,0") String statuses,
-            @RequestParam(name = "query", required = false, defaultValue = "") String query) throws ParseException {
+            @RequestParam(name = "query", required = false, defaultValue = "") String query) {
+        UsersDTO usersDTO = new UsersDTO();
+        if (page == 0) {
+            if (!StringUtils.isEmpty(roleName)) {
+                Role role = null;
+                try {
+                    role = roleService.findByName(roleName);
+                    List<User> users = userService.findByRole(role.getId());
+                    usersDTO.setUsers(users);
+                    usersDTO.setTotalPages((long) Math.ceil(users.size() / 10));
+                    usersDTO.setTotalElements(users.size());
+                } catch (NotFoundException e) {
+                }
+            }
+        } else {
+            Map<String, String> filters = new HashMap<>();
+            filters.put("query", query);
+            filters.put("roles", roles);
+            filters.put("statuses", statuses);
 
-        Map<String, String> filters = new HashMap<>();
-        filters.put("query", query);
-        filters.put("roles", roles);
-        filters.put("statuses", statuses);
+            usersDTO = userService.findAllUsers(filters, page);
+        }
 
-        UserListResponse userListResponse = userService.getAllUsers(filters, page);
-
-        return new OkResponse<>(userListResponse).response();
+        return new OkResponse<>(usersDTO).response();
     }
 
     @GetMapping("users/{id}")
@@ -83,7 +84,7 @@ public class AdminUserRestController {
             User user = userService.findById(id);
 
             return new OkResponse<>(user).response();
-        } catch (UserNotFoundException e) {
+        } catch (NotFoundException e) {
             return new BadResponse<User>(e.getMessage()).response();
         }
     }
@@ -92,7 +93,7 @@ public class AdminUserRestController {
     public ResponseEntity<StandardJSONResponse<String>> deleteUser(@PathVariable(value = "userId") String userId) {
         try {
             return new OkResponse<>(userService.deleteById(userId)).response();
-        } catch (UserNotFoundException | VerifiedUserException e) {
+        } catch (VerifiedUserException e) {
             return new BadResponse<String>(e.getMessage()).response();
         }
     }
@@ -105,7 +106,7 @@ public class AdminUserRestController {
             userService.saveUser(user);
 
             return new OkResponse<>("Update User Successfully").response();
-        } catch (UserNotFoundException e) {
+        } catch (NotFoundException e) {
             return new BadResponse<String>(e.getMessage()).response();
         }
     }
@@ -116,19 +117,19 @@ public class AdminUserRestController {
         try {
             User user = userService.findById(updateUserDTO.getId());
 
-            arrayNode = objectMapper.createArrayNode();
+            CommonUtils commonUtils = new CommonUtils();
 
             if (userService.checkBirthday(LocalDate.parse(updateUserDTO.getBirthday()))) {
-                addError("birthday", "Tuổi phải lớn hơn 18");
+                commonUtils.addError("birthday", "Tuổi phải lớn hơn 18");
             }
 
             if (userService.isEmailDuplicated(updateUserDTO.getId(), updateUserDTO.getEmail(),
                     true)) {
-                addError("email", "Địa chỉ email đã được sử dụng");
+                commonUtils.addError("email", "Địa chỉ email đã được sử dụng");
             }
 
-            if (arrayNode.size() > 0) {
-                return new BadResponse<User>(arrayNode.toString()).response();
+            if (commonUtils.getArrayNode().size() > 0) {
+                return new BadResponse<User>(commonUtils.getArrayNode().toString()).response();
             }
 
             user.setFirstName(updateUserDTO.getFirstName());
@@ -142,7 +143,7 @@ public class AdminUserRestController {
                 Role role = roleService.findById(updateUserDTO.getRoleId());
 //                user.setRole(role);
             } catch (NotFoundException e) {
-                addError("roleId", "Vai trò không tồn tại");
+                commonUtils.addError("roleId", "Vai trò không tồn tại");
             }
 
 //            try {
@@ -152,8 +153,8 @@ public class AdminUserRestController {
 //                addError("classId", "Lớp không tồn tại");
 //            }
 
-            if (arrayNode.size() > 0) {
-                return new BadResponse<User>(arrayNode.toString()).response();
+            if (commonUtils.getArrayNode().size() > 0) {
+                return new BadResponse<User>(commonUtils.getArrayNode().toString()).response();
             }
 
             if (updateUserDTO.getPassword() != null) {
@@ -167,7 +168,7 @@ public class AdminUserRestController {
             }
 
             return new OkResponse<>(userService.saveUser(user)).response();
-        } catch (UserNotFoundException e) {
+        } catch (NotFoundException e) {
             return new BadResponse<User>(e.getMessage()).response();
         }
     }

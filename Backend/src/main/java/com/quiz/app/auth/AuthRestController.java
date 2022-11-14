@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.email.SendEmail;
-import com.quiz.app.exception.UserNotFoundException;
+import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.jwt.JwtUtils;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
@@ -79,7 +79,7 @@ public class AuthRestController {
             }
 
             return new OkResponse<>(user).response();
-        } catch (BadCredentialsException | UserNotFoundException e) {
+        } catch (BadCredentialsException | NotFoundException e) {
             return new BadResponse<User>(e.getMessage()).response();
         }
     }
@@ -139,7 +139,7 @@ public class AuthRestController {
                     email);
 
             return new OkResponse<>(forgotPasswordResponse).response();
-        } catch (UserNotFoundException e) {
+        } catch (NotFoundException e) {
             return new BadResponse<ForgotPasswordResponse>(e.getMessage()).response();
         }
     }
@@ -175,7 +175,7 @@ public class AuthRestController {
             userService.saveUser(user);
 
             return new OkResponse<>("Your password has been changed successfully").response();
-        } catch (UserNotFoundException e) {
+        } catch (NotFoundException e) {
             e.printStackTrace();
             return new BadResponse<String>(e.getMessage()).response();
         }

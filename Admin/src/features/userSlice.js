@@ -1,18 +1,50 @@
-import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { PURGE } from "redux-persist";
 import api from "../axios";
 
 export const fetchAllUsers = createAsyncThunk(
     "user/fetchAllUsers",
     async (
-        { page = 1, query = "", roles = "Student,Teacher,Admin", statuses = "1,0" },
-        { rejectWithValue }
+        {
+            page = 1,
+            query = "",
+            sortField = "id",
+            sortDir = "asc",
+            roles = "",
+            statuses = "1,0",
+            role = "",
+        },
+        { dispatch, rejectWithValue }
     ) => {
         try {
+            const filterArray = [];
+
+            filterArray.push({
+                field: "query",
+                value: query,
+            });
+
+            filterArray.push({
+                field: "page",
+                value: page,
+            });
+
+            filterArray.push({
+                field: "sortField",
+                value: sortField,
+            });
+
+            filterArray.push({
+                field: "sortDir",
+                value: sortDir,
+            });
+
+            dispatch(setFilterObject(filterArray));
+
             const {
                 data: { users, totalElements, totalPages },
             } = await api.get(
-                `/admin/users?page=${page}&query=${query}&roles=${roles}&statuses=${statuses}`
+                `/admin/users?page=${page}&query=${query}&sortField${sortField}&sortDir=${sortDir}&roles=${roles}&statuses=${statuses}&role=${role}`
             );
 
             return { users, totalElements, totalPages };
@@ -178,16 +210,12 @@ const userSlice = createSlice({
             .addCase(fetchAllUsers.rejected, (state, { payload }) => {})
 
             .addCase(fetchUser.pending, (state, { payload }) => {
-                state.loading = true;
-                state.user = payload.data;
+                state.user = null;
             })
             .addCase(fetchUser.fulfilled, (state, { payload }) => {
-                state.loading = false;
                 state.user = payload.data;
             })
-            .addCase(fetchUser.rejected, (state, { payload }) => {
-                state.loading = false;
-            })
+            .addCase(fetchUser.rejected, (state, { payload }) => {})
 
             .addCase(addUser.pending, (state, { payload }) => {
                 state.addUser.successMessage = null;
