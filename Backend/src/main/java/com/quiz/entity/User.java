@@ -25,7 +25,6 @@ import javax.persistence.Transient;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -105,11 +104,13 @@ public class User {
         String password = registerDTO.getPassword();
         Sex sex = lookUpSex(registerDTO.getSex());
         LocalDate birthday = LocalDate.parse(registerDTO.getBirthday());
-        Set<Integer> roles = registerDTO.getRoles();
+        Set<Integer> rolesInt = registerDTO.getRoles();
         String address = registerDTO.getAddress();
 
-        if (Objects.isNull(roles) || roles.size() == 0) {
-            roles.add(new Role());
+        Set<Role> roles = new HashSet<>();
+        roles.add(new Role("Sinh viên"));
+        for (Integer role : rolesInt) {
+            roles.add(new Role(role));
         }
 
         return User.builder().id(id).firstName(firstName).lastName(lastName)

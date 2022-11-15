@@ -16,35 +16,10 @@ function Select({
     multiple = false,
 }) {
     useEffect(() => {
-        // if (propName !== "chapterId") {
-        if (setValue) {
-            if (defaultValue) {
-                setValue(propName, defaultValue);
-            }
-            // else {
-            //     if (options[0] && options[0].value) {
-            //         setValue(propName, options[0].value);
-            //     }
-            // }
+        if (setValue && defaultValue) {
+            setValue(propName, defaultValue);
         }
-        // }
     }, [defaultValue]);
-
-    // useEffect(() => {
-    //     if (propName === "chapterId") {
-    //         if (setValue) {
-    //             if (defaultValue) {
-    //                 setValue(propName, defaultValue);
-    //             } else {
-    //                 if (options[0] && options[0].value) {
-    //                     setValue(propName, options[0].value);
-    //                 } else {
-    //                     setValue(propName, "");
-    //                 }
-    //             }
-    //         }
-    //     }
-    // }, [options]);
 
     const { onChange, onBlur, name, ref } = register(propName);
 
@@ -84,7 +59,13 @@ function Select({
                     <option
                         value={value}
                         key={value}
-                        selected={defaultValue ? value === defaultValue : null}
+                        selected={
+                            multiple && defaultValue
+                                ? defaultValue.includes(parseInt(value))
+                                : defaultValue
+                                ? value === defaultValue
+                                : null
+                        }
                     >
                         {title}
                     </option>

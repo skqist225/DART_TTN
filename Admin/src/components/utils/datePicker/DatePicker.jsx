@@ -3,7 +3,7 @@ import Datepicker from "flowbite-datepicker/Datepicker";
 import ErrorMessage from "../errors/ErrorMessage";
 import { tailwindCss } from "../../../tailwind";
 
-function DatePicker({ register, name, error,label, onKeyDown }) {
+function DatePicker({ register, name, error, label, onKeyDown }) {
     useEffect(() => {
         const datepickerEl = document.getElementById("datepickerId");
         new Datepicker(datepickerEl, {
@@ -17,7 +17,7 @@ function DatePicker({ register, name, error,label, onKeyDown }) {
     return (
         <div>
             <label className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"}`}>
-   {label}
+                {label}
             </label>
             <div className='relative'>
                 <div className='flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none'>

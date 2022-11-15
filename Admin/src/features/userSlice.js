@@ -278,6 +278,13 @@ const userSlice = createSlice({
 
             .addCase(PURGE, state => {
                 state.user = null;
+                state.addUser.successMessage = null;
+                state.errorObject = null;
+
+                state.editUser.successMessage = null;
+
+                state.deleteUser.successMessage = null;
+                state.deleteUser.errorMessage = null;
             });
     },
 });

@@ -1,5 +1,6 @@
 package com.quiz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.quiz.app.creditClass.dto.PostCreateCreditClassDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -37,6 +38,7 @@ public class CreditClass {
     @Column(name = "HOCKY", columnDefinition = "SMALLINT", nullable = false)
     private int semester;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MAMH", nullable = false)
     private Subject subject;
@@ -50,6 +52,7 @@ public class CreditClass {
     @Column(name = "HUYLOP")
     private boolean isCancelled;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MAGV")
     private User teacher;
@@ -68,5 +71,13 @@ public class CreditClass {
                 .isCancelled(false)
                 .teacher(teacher)
                 .build();
+    }
+
+    public String getSubjectId() {
+        return this.subject.getId();
+    }
+
+    public String getSubjectName() {
+        return this.subject.getName();
     }
 }

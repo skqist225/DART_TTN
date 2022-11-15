@@ -6,6 +6,7 @@ import { getImage } from "../../helpers";
 import { deleteUser, setEditedUser } from "../../features/userSlice";
 import { useDispatch } from "react-redux";
 import { cellCss } from "../questions/QuestionTableBody";
+import { Badge } from "flowbite-react";
 
 function UserTableModal({ rows, setIsEdit }) {
     const dispatch = useDispatch();
@@ -16,7 +17,7 @@ function UserTableModal({ rows, setIsEdit }) {
                 <tr className={tailwindCss.tr} key={row.id}>
                     <td className={cellCss}>{row.id}</td>
                     <td className={cellCss}>
-                        <div className='normal-flex' style={{ width: "300px" }}>
+                        <div className='normal-flex' style={{ width: "150px" }}>
                             <img src={getImage(row.avatarPath)} className='image' />
                             <span className='listings__room-name'>{row.fullName}</span>
                         </div>
@@ -58,7 +59,11 @@ function UserTableModal({ rows, setIsEdit }) {
                     <td className={cellCss}>{row.address}</td>
                     <td className={cellCss}>{row.email}</td>
                     <td className={cellCss}>{row.sex}</td>
-                    {/* <td className={cellCss}>{row.role.name}</td> */}
+                    <td className={cellCss}>
+                        {row.roles.map(role => (
+                            <Badge color='purple'>{role.name}</Badge>
+                        ))}
+                    </td>
                     <td class={`${cellCss} flex items-center`}>
                         <MyButton
                             type='edit'

@@ -8,15 +8,34 @@ import { cellCss } from "../questions/QuestionTableBody";
 import { Badge, Button, Table, Tooltip } from "flowbite-react";
 import LevelBadge from "../common/LevelBadge";
 
-function TestTableBody({ rows, setIsEdit }) {
+function TestTableBody({ rows, setIsEdit, examPage = false }) {
     const dispatch = useDispatch();
 
     return (
         <tbody>
             {rows.map(row => (
                 <tr className={tailwindCss.tr} key={row.id}>
-                    <td className='py-4 px-6'>{row.id}</td>
-                    <td className={cellCss}>{row.name}</td>
+                    {examPage && (
+                        <th scope='col' class='p-4'>
+                            <div class='flex items-center'>
+                                <input
+                                    id='checkbox-all'
+                                    type='checkbox'
+                                    class='w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
+                                />
+                                <label for='checkbox-all' class='sr-only'>
+                                    checkbox
+                                </label>
+                            </div>
+                        </th>
+                    )}
+                    <td className={cellCss}>{row.id}</td>
+                    <td
+                        className={cellCss + ` text-sm`}
+                        style={{ maxWidth: `${examPage && "150px"}` }}
+                    >
+                        {row.name}
+                    </td>
                     <td className={cellCss}>
                         {row.status === "Chưa sử dụng" ? (
                             <Badge color='indigo' size='sm'>
@@ -77,24 +96,26 @@ function TestTableBody({ rows, setIsEdit }) {
                     </td>
                     <td className={cellCss}>{row.subjectName}</td>
                     <td className={cellCss}>{row.teacherName}</td>
-                    <td className={`${cellCss} flex items-center`}>
-                        <MyButton
-                            type='edit'
-                            onClick={() => {
-                                $("#subjectModal").css("display", "flex");
-                                setIsEdit(true);
-                                dispatch(setEditedTest(row));
-                            }}
-                        />
-                        <div className='mx-3'>
+                    {!examPage && (
+                        <td className={`${cellCss} flex items-center`}>
                             <MyButton
-                                type='delete'
+                                type='edit'
                                 onClick={() => {
-                                    dispatch(deleteTest(row.id));
+                                    $("#subjectModal").css("display", "flex");
+                                    setIsEdit(true);
+                                    dispatch(setEditedTest(row));
                                 }}
                             />
-                        </div>
-                    </td>
+                            <div className='mx-3'>
+                                <MyButton
+                                    type='delete'
+                                    onClick={() => {
+                                        dispatch(deleteTest(row.id));
+                                    }}
+                                />
+                            </div>
+                        </td>
+                    )}
                 </tr>
             ))}
         </tbody>

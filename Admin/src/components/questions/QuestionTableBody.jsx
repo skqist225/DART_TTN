@@ -11,7 +11,7 @@ import { tailwindCss } from "../../tailwind";
 import { MyButton, LevelBadge } from "..";
 import $ from "jquery";
 
-export const cellCss = "py-2 px-3 text-black";
+export const cellCss = "py-2 px-3 text-black text-sm";
 
 function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
     const dispatch = useDispatch();

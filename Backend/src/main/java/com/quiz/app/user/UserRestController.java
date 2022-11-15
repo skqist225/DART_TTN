@@ -74,100 +74,6 @@ public class UserRestController {
         return new OkResponse<>(sexs).response();
     }
 
-    @PutMapping("update-personal-info")
-    public ResponseEntity<StandardJSONResponse<User>> updatePersonalInfo(
-            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl, @RequestBody PostUpdateUserDTO postUpdateUserDTO) {
-        User currentUser = userDetailsImpl.getUser();
-
-        User savedUser = null;
-        String updatedField = postUpdateUserDTO.getUpdatedField();
-        Map<String, String> updateData = postUpdateUserDTO.getUpdateData();
-
-        switch (updatedField) {
-            case "firstNameAndLastName": {
-                if (updateData.get("firstName") == null && updateData.get("lastName") == null) {
-                    return new BadResponse<User>("First name or last name is required").response();
-                }
-
-                if (updateData.get("firstName") != null) {
-                    currentUser.setFirstName(updateData.get("firstName"));
-                }
-                if (updateData.get("lastName") != null) {
-                    currentUser.setLastName(updateData.get("lastName"));
-                }
-                savedUser = userService.saveUser(currentUser);
-                break;
-            }
-            case "sex": {
-                String newSex = updateData.get("sex");
-                Sex sex = newSex.equals("MALE") ? Sex.MALE : Sex.FEMALE;
-                currentUser.setSex(sex);
-                savedUser = userService.saveUser(currentUser);
-                break;
-            }
-            case "gender": {
-                if (updateData.get("gender") == null) {
-                    return new BadResponse<User>("Gender is required").response();
-                }
-                String newSex = updateData.get("gender");
-                Sex sex = newSex.equals("MALE") ? Sex.MALE : Sex.FEMALE;
-                currentUser.setSex(sex);
-                savedUser = userService.saveUser(currentUser);
-                break;
-            }
-            case "birthday": {
-                String birthdayStr = updateData.get("birthday");
-                if (Objects.isNull(birthdayStr)) {
-                    return new BadResponse<User>("Birthday is required").response();
-                }
-
-                LocalDate birthday = LocalDate.parse(updateData.get("birthday"));
-                System.out.println(birthday);
-                if (userService.checkBirthday(birthday)) {
-                    return new BadResponse<User>("Your age must be greater than 18").response();
-                }
-
-                currentUser.setBirthday(birthday);
-                savedUser = userService.saveUser(currentUser);
-                break;
-            }
-            case "address": {
-
-                savedUser = userService.saveUser(currentUser);
-                break;
-            }
-            case "password": {
-                String oldPassword = updateData.get("oldPassword");
-                String newPassword = updateData.get("newPassword");
-
-                ArrayNode arrays = objectMapper.createArrayNode();
-
-                if (!userService.isPasswordMatch(oldPassword, currentUser.getPassword())) {
-                    ObjectNode node = objectMapper.createObjectNode();
-                    node.put("oldPassword", "Old password does not correct");
-                    arrays.add(node);
-                }
-
-                if (newPassword.length() < 8) {
-                    ObjectNode node = objectMapper.createObjectNode();
-                    node.put("newPassword", "New password length must be greater than 8 characters");
-                    arrays.add(node);
-                }
-
-                if (arrays.size() > 0) {
-                    return new BadResponse<User>(arrays.toString()).response();
-                }
-
-                currentUser.setPassword(newPassword);
-                userService.encodePassword(currentUser);
-                savedUser = userService.saveUser(currentUser);
-                break;
-            }
-        }
-
-        return new OkResponse<User>(savedUser).response();
-    }
-
     public void updateAvatar(User user, MultipartFile newAvatar, String environment)
             throws IOException {
         String devUploadDir = String.format("%s/%s/", DEV_STATIC_DIR, user.getId());
@@ -187,11 +93,5 @@ public class UserRestController {
         updateAvatar(user, newAvatar, environment);
         User savedUser = userService.saveUser(user);
         return new OkResponse<>(savedUser).response();
-    }
-
-    @GetMapping("info")
-    public ResponseEntity<StandardJSONResponse<User>> getUserInfo(
-            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl) {
-        return new OkResponse<>(userDetailsImpl.getUser()).response();
     }
 }

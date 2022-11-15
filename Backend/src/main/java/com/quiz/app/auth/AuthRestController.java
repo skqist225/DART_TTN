@@ -1,11 +1,6 @@
 package com.quiz.app.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
-import com.quiz.app.answer.dto.AnswerDTO;
 import com.quiz.app.common.CommonUtils;
-import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.email.SendEmail;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.jwt.JwtUtils;
@@ -38,10 +33,12 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -88,37 +85,66 @@ public class AuthRestController {
         return new OkResponse<>("Đăng xuất thành công").response();
     }
 
-    public void catchUserInputException(CommonUtils commonUtils, String content, String type,
-                                            String level,
-                                            List<AnswerDTO> answers,
-                                            Integer chapterId
+    public void catchUserInputException(CommonUtils commonUtils, String id,
+                                        String firstName,
+                                        String lastName,
+                                        String email,
+                                        String password,
+                                        String birthday,
+                                        String sexStr,
+                                        Set<Integer> roles
     ) {
-        if (Objects.isNull(content) || StringUtils.isEmpty(content)) {
-            commonUtils.addError("content", "Nội dung câu hỏi không được để trống");
+        if (Objects.isNull(id) || StringUtils.isEmpty(id)) {
+            commonUtils.addError("id", "Mã ND không được để trống");
+        } else if (id.length() > 10) {
+            commonUtils.addError("id", "Mã ND tối đa 10 ký tự");
         }
 
-        if (Objects.isNull(type) || StringUtils.isEmpty(type)) {
-            commonUtils.addError("content", "Loại câu hỏi không được để trống");
+        if (Objects.isNull(firstName) || StringUtils.isEmpty(firstName)) {
+            commonUtils.addError("firstName", "Tên không được để trống");
         }
 
-        if (Objects.isNull(level) || StringUtils.isEmpty(level)) {
-            commonUtils.addError("level", "Mức độ không được để trống");
+        if (Objects.isNull(lastName) || StringUtils.isEmpty(lastName)) {
+            commonUtils.addError("lastName", "Họ không được để trống");
         }
 
-        for (AnswerDTO ans : answers) {
-            if (Objects.isNull(ans.getContent()) || StringUtils.isEmpty(ans.getContent())) {
-                commonUtils.addError("answers", "Không được để trống sự lựa chọn");
-                break;
+        Pattern pattern = Pattern.compile("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,4}");
+        if (Objects.isNull(email) || StringUtils.isEmpty(email)) {
+            commonUtils.addError("email", "Email không được để trống");
+        } else {
+            Matcher mat = pattern.matcher(email);
+            if (!mat.matches()) {
+                commonUtils.addError("email", "Địa chỉ email không hợp lệ");
             }
         }
 
-        if (Objects.isNull(chapterId)) {
-            commonUtils.addError("chapterId", "Chương không được để trống");
+        if (Objects.isNull(password)) {
+            commonUtils.addError("password", "Mật khẩu không được để trống");
+        } else if (password.length() < 8) {
+            commonUtils.addError("password", "Mật khẩu ít nhất 8 ký tự");
+        }
+
+        if (Objects.isNull(birthday) || StringUtils.isEmpty(birthday)) {
+            commonUtils.addError("birthday", "Ngày sinh không được để trống");
+        }
+
+        if (Objects.isNull(sexStr) || StringUtils.isEmpty(sexStr)) {
+            commonUtils.addError("sexStr", "Giới tính không được để trống");
+        }
+
+        if (roles.size() == 0) {
+            commonUtils.addError("sexStr", "Vai trò không được để trống");
+        } else {
+            for (Integer roleId : roles) {
+
+            }
         }
     }
 
     @PostMapping("register")
-    public ResponseEntity<StandardJSONResponse<User>> registerUser(@ModelAttribute PostCreateUserDTO postCreateUserDTO
+    public ResponseEntity<StandardJSONResponse<User>> registerUser(
+            @ModelAttribute PostCreateUserDTO postCreateUserDTO,
+            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
     ) {
         CommonUtils commonUtils = new CommonUtils();
         User user = null;
@@ -126,23 +152,42 @@ public class AuthRestController {
         String id = postCreateUserDTO.getId();
         String firstName = postCreateUserDTO.getFirstName();
         String lastName = postCreateUserDTO.getLastName();
-        String address = postCreateUserDTO.getBirthday();
+        String email = postCreateUserDTO.getEmail();
+        String password = postCreateUserDTO.getPassword();
+        String birthday = postCreateUserDTO.getBirthday();
+        String address = postCreateUserDTO.getAddress();
+        String sexStr = postCreateUserDTO.getSex();
+        Set<Integer> roles = postCreateUserDTO.getRoles();
 
+        catchUserInputException(commonUtils, id, firstName, lastName, email, password, birthday, sexStr,
+                roles);
 
+        if (commonUtils.getArrayNode().size() > 0) {
+            return new BadResponse<User>(commonUtils.getArrayNode().toString()).response();
+        } else {
+            if (userService.isIdDuplicated(id)) {
+                commonUtils.addError("id", "Mã ND đã tồn tại");
+            }
 
-        if (userService.checkBirthday(LocalDate.parse(postCreateUserDTO.getBirthday()))) {
-            commonUtils.addError("birthday", "Tuổi của bạn phải lớn hơn 18");
+            if (userService.isBirthdayGreaterThanOrEqualTo18(LocalDate.parse(postCreateUserDTO.getBirthday()))) {
+                commonUtils.addError("birthday", "Tuổi của bạn phải lớn hơn 18");
+            }
+
+            if (userService.isEmailDuplicated(id, email, false)) {
+                commonUtils.addError("email", "Địa chỉ email đã được sử dụng");
+            }
         }
 
-        if (userService.isEmailDuplicated(postCreateUserDTO.getId(), postCreateUserDTO.getEmail(), false)) {
-            ObjectNode node = objectMapper.createObjectNode();
-            node.put("email", "Địa chỉ email đã được sử dụng");
-            arrays.add(node);
+        if(isEdit) {
+            try {
+                user =userService.findById(id);
+            } catch (NotFoundException e) {
+
+            }
+        }else {
+            user = userService.saveUser(User.build(postCreateUserDTO));
         }
 
-        if (arrays.size() > 0) {
-            return new BadResponse<User>(arrays.toString()).response();
-        }
 
         return new OkResponse<>(userService.save(User.build(postCreateUserDTO))).response();
     }

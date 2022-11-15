@@ -37,19 +37,23 @@ export const questionSchema = yup
 
 export const userSchema = yup
     .object({
-        id: yup.string().required("Mã người dùng"),
-        firstName: yup.string().required("Họ không được để trống"),
-        lastName: yup.string().required("Tên không được để  trống"),
-        sex: yup.string().required("Giới tính không được để  trống"),
-        birthday: yup.string().required("Ngày sinh không được để  trống"),
-        address: yup.string().required("Địa chỉ không được để  trống"),
+        id: yup.string().required("Mã người dùng").max(10, "Mã người dùng không được quá 10 ký tự"),
+        firstName: yup
+            .string()
+            .required("Tên không được để trống")
+            .max(50, "Tên không được quá 50 ký tự"),
+        lastName: yup
+            .string()
+            .required("Họ không được để  trống")
+            .max(10, "Họ không được quá 10 ký tự"),
         email: yup
             .string()
             .required("Địa chỉ email không được để  trống")
             .email("Địa chỉ email không đúng định dạng"),
         password: yup.string().min(8, "Mật khẩu ít nhất tám ký tự"),
-        roleId: yup.string().required("Vai trò không được để  trống"),
-        classId: yup.string().required("Lớp không được để  trống"),
+        birthday: yup.string().required("Ngày sinh không được để  trống"),
+        sex: yup.string().required("Giới tính không được để  trống"),
+        // roles: yup.array().length(0, "Vai trò không được để  trống"),
     })
     .required();
 

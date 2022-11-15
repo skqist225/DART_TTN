@@ -8,6 +8,7 @@ import {
     editUser,
     enableUser,
     fetchAllUsers,
+    setEditedUser,
     setErrorField,
     userState,
 } from "../../features/userSlice";
@@ -57,14 +58,12 @@ const columns = [
         sortable: true,
     },
     {
-        name: "Lớp",
-        sortField: "class",
-        sortable: true,
-    },
-    {
         name: "Vai trò",
         sortField: "role",
         sortable: true,
+    },
+    {
+        name: "Thao tác",
     },
 ];
 
@@ -74,13 +73,28 @@ const UsersPage = () => {
     const [isEdit, setIsEdit] = useState(false);
     const [image, setImage] = useState(null);
 
+    const formId = "userForm";
+    const modalId = "userModal";
+    const modalLabel = "người dùng";
+
+    useEffect(() => {
+        dispatch(
+            fetchAllUsers({
+                page: 1,
+            })
+        );
+        dispatch(fetchAllRoles({ page: 0 }));
+    }, []);
+
     const {
         register,
         setValue,
         handleSubmit,
+        setError,
+        clearErrors,
         formState: { errors },
     } = useForm({
-        resolver: yupResolver(isEdit ? userRegisterSchema : userSchema),
+        resolver: yupResolver(userSchema),
     });
 
     const {
@@ -94,6 +108,18 @@ const UsersPage = () => {
         editUser: { successMessage: euSuccessMessage },
         deleteUser: { successMessage: duSuccessMessage },
     } = useSelector(userState);
+
+    useEffect(() => {
+        if (errorObject) {
+            console.log(errorObject);
+            Object.keys(errorObject).forEach(key => {
+                setError(key, {
+                    type: "custom",
+                    message: errorObject[key],
+                });
+            });
+        }
+    }, [errorObject]);
 
     const handleDisableUser = id => {
         dispatch(disableUser(id));
@@ -125,23 +151,31 @@ const UsersPage = () => {
         };
     }, []);
 
-    function closeForm(successMessage) {
+    function cleanForm(successMessage, type = "normal") {
         callToast("success", successMessage);
-        $("#userForm")[0].reset();
-        $("#userModal").css("display", "none");
         dispatch(fetchAllUsers(filterObject));
+
+        $(`#${modalId}`).css("display", "none");
+        if (type === "add") {
+            $(`#${formId}`)[0].reset();
+            setImage(null);
+        }
+
+        if (type === "edit") {
+            setIsEdit(false);
+            dispatch(setEditedUser(null));
+        }
     }
 
     useEffect(() => {
         if (successMessage) {
-            closeForm(successMessage);
+            cleanForm(successMessage, "add");
         }
     }, [successMessage]);
 
     useEffect(() => {
         if (euSuccessMessage) {
-            closeForm(euSuccessMessage);
-            setIsEdit(false);
+            cleanForm(euSuccessMessage, "add");
         }
     }, [euSuccessMessage]);
 
@@ -188,17 +222,13 @@ const UsersPage = () => {
         );
     };
 
-    useEffect(() => {
-        dispatch(
-            fetchAllUsers({
-                page: 1,
-            })
-        );
-        dispatch(fetchAllRoles({ page: 0 }));
-        // dispatch(fetchAllClasses({ page: 0 }));
-    }, []);
-
     const onSubmit = data => {
+        if (data.roles.length === 0) {
+            setError("roles", { type: "custom", message: "Vai trò không được để trống" });
+            return;
+        }
+        console.log(data);
+
         let { birthday } = data;
         birthday = birthday.split("/");
         birthday = birthday[2] + "-" + birthday[1] + "-" + birthday[0];
@@ -248,6 +278,10 @@ const UsersPage = () => {
         }
     };
 
+    const onCloseForm = () => {
+        dispatch(setEditedUser(null));
+    };
+
     return (
         <Frame
             sidebarOpen={sidebarOpen}
@@ -263,9 +297,9 @@ const UsersPage = () => {
                     totalElements={totalElements}
                     totalPages={totalPages}
                     TableBody={UserTableBody}
-                    modalId='userModal'
-                    formId='userForm'
-                    modalLabel='người dùng'
+                    modalId={modalId}
+                    formId={formId}
+                    modalLabel={modalLabel}
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={
@@ -274,17 +308,17 @@ const UsersPage = () => {
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
-                            roles={roles.map(({ id, name }) => {
-                                let role = lookupRole(name);
-
-                                return { title: role, value: id };
-                            })}
+                            roles={roles.map(({ id, name }) => ({
+                                title: lookupRole(name),
+                                value: id,
+                            }))}
                             setImage={setImage}
                             isEdit={isEdit}
                         />
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
+                    onCloseForm={onCloseForm}
                 />
             }
         />

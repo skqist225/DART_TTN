@@ -29,12 +29,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 
 @Service
 @Transactional
 public class UserService {
-    public static final int USERS_PER_PAGE = 10;
-
     @Autowired
     private UserRepository userRepository;
 
@@ -44,13 +43,102 @@ public class UserService {
     @Autowired
     private EntityManager entityManager;
 
+    public List<User> findByRole(Integer roleId) {
+        return userRepository.findByRole(roleId);
+    }
+
+    public void encodePassword(User user) {
+        String encodedPassword = passwordEncoder.encode(user.getPassword());
+        user.setPassword(encodedPassword);
+    }
+
+    public String getEncodedPassword(String rawPassword) {
+        return passwordEncoder.encode(rawPassword);
+    }
+
+    public boolean isPasswordMatch(String rawPass, String hashPass) {
+        return passwordEncoder.matches(rawPass, hashPass);
+    }
+
+    public User findByEmail(String email) throws NotFoundException {
+        User user = userRepository.findByEmail(email);
+        if (Objects.nonNull(user)) {
+            return user;
+        }
+
+        throw new NotFoundException(String.format("Không tìm thấy người dùng với email %s", email));
+    }
+
+    public boolean isIdDuplicated(String id) {
+        return  userRepository.findById(id).isPresent();
+    }
+
+    public boolean isEmailDuplicated(String id, String email, boolean isEdit) {
+        User user = userRepository.findByEmail(email);
+        if (isEdit) {
+            return Objects.nonNull(user) && !Objects.equals(user.getId(), id);
+        } else {
+            return Objects.nonNull(user);
+        }
+    }
+
+    public boolean isBirthdayGreaterThanOrEqualTo18(LocalDate birthday) {
+        return Period.between(birthday, LocalDate.now()).getYears() < 18;
+    }
+
+    public CountUserByRole countUserByRole() {
+        return null;
+        // return new CountUserByRole(userRepository.countUserByRole(1),
+        // userRepository.countUserByRole(2),
+        // userRepository.countUserByRole(3));
+    }
+
+    @Transactional
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public User save(User user) {
+        boolean isUpdatingUser = (user.getId() != null);
+        if (isUpdatingUser) {
+            User existingUser = userRepository.findById(user.getId()).get();
+
+            if (user.getPassword().isEmpty()) {
+                user.setPassword(existingUser.getPassword());
+            } else {
+                encodePassword(user);
+            }
+        } else {
+            // 2 is User
+            // user.setRole(new Role(2));
+            encodePassword(user);
+        }
+
+        return userRepository.save(user);
+    }
+
+    public String deleteById(String id)
+            throws VerifiedUserException {
+        try {
+            userRepository.deleteById(id);
+            return "Delete user successfully";
+        } catch (Exception ex) {
+            return "Could not delete this user as constraint exception";
+        }
+    }
+
+    public User findById(String id) throws NotFoundException {
+        return userRepository.findById(id)
+                .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng với mã " + id));
+    }
+
     public UsersDTO findAllUsers(Map<String, String> filters, int page) {
         String searchQuery = filters.get("query");
         String roles = filters.get("roles");
         String statuses = filters.get("statuses");
 
         Sort sort = Sort.by("id").descending();
-        Pageable pageable = PageRequest.of(page - 1, USERS_PER_PAGE, sort);
+        Pageable pageable = PageRequest.of(page - 1, 10, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<User> criteriaQuery = criteriaBuilder.createQuery(User.class);
@@ -119,92 +207,5 @@ public class UserService {
         Page<User> result = new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
 
         return new UsersDTO(result.getContent(), result.getTotalElements(), result.getTotalPages());
-    }
-
-    public List<User> findByRole(Integer roleId) {
-        return userRepository.findByRole(roleId);
-    }
-
-    public void encodePassword(User user) {
-        String encodedPassword = passwordEncoder.encode(user.getPassword());
-        user.setPassword(encodedPassword);
-    }
-
-    public String getEncodedPassword(String rawPassword) {
-        return passwordEncoder.encode(rawPassword);
-    }
-
-    public boolean isPasswordMatch(String rawPass, String hashPass) {
-        return passwordEncoder.matches(rawPass, hashPass);
-    }
-
-    public User findByEmail(String email) throws NotFoundException {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng với email" +
-                        " " + email));
-    }
-
-    public boolean isEmailDuplicated(String id, String email, boolean isEdit) {
-        User user = null;
-        try {
-            user = findByEmail(email);
-            if (isEdit) {
-                return Objects.nonNull(user) && !Objects.equals(user.getId(), id);
-            }
-            return true;
-        } catch (NotFoundException e) {
-            return false;
-        }
-    }
-
-    public boolean checkBirthday(LocalDate birthday) {
-        int period = Period.between(birthday, LocalDate.now()).getYears();
-        return period < 18;
-    }
-
-    public CountUserByRole countUserByRole() {
-        return null;
-        // return new CountUserByRole(userRepository.countUserByRole(1),
-        // userRepository.countUserByRole(2),
-        // userRepository.countUserByRole(3));
-    }
-
-    @Transactional
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
-
-    public User save(User user) {
-        boolean isUpdatingUser = (user.getId() != null);
-        if (isUpdatingUser) {
-            // User existingUser = userRepository.findById(user.getId()).get();
-
-            if (user.getPassword().isEmpty()) {
-                // user.setPassword(existingUser.getPassword());
-            } else {
-                encodePassword(user);
-            }
-        } else {
-            // 2 is User
-            // user.setRole(new Role(2));
-            encodePassword(user);
-        }
-
-        return userRepository.save(user);
-    }
-
-    public String deleteById(String id)
-            throws VerifiedUserException {
-        try {
-            userRepository.deleteById(id);
-            return "Delete user successfully";
-        } catch (Exception ex) {
-            return "Could not delete this user as constraint exception";
-        }
-    }
-
-    public User findById(String id) throws NotFoundException {
-        return userRepository.findById(id)
-                .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng với mã " + id));
     }
 }

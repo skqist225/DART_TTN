@@ -13,7 +13,11 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, String> {
 
-    public Optional<User> findByEmail(String email);
+    @Query(value = "SELECT * FROM nguoidung WHERE nguoidung.manguoidung = :id", nativeQuery = true)
+    public Optional<User> findById(String id);
+
+    @Query(value = "SELECT * FROM nguoidung WHERE nguoidung.email = :email", nativeQuery = true)
+    public User findByEmail(String email);
 
     public Page<User> findAll(Pageable pageable);
 

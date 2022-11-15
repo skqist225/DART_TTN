@@ -77,66 +77,66 @@ public class AdminUserRestController {
         return new OkResponse<>(usersDTO).response();
     }
 
-    @PostMapping("save/multiple")
-    public ResponseEntity<StandardJSONResponse<String>> saveMultipleQuestions(
-            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
-            @org.springframework.web.bind.annotation.RequestBody List<PostCreateQuestionDTO> questions,
-            @RequestParam(name = "file") MultipartFile excelFile) {
-        CommonUtils commonUtils = new CommonUtils();
-        User teacher = userDetailsImpl.getUser();
-
-        int i = 0;
-        int totalQuestions = questions.size();
-
-        for (PostCreateQuestionDTO question : questions) {
-            System.out.println(question);
-            String content = question.getContent();
-            String subjectName = question.getSubjectName();
-            String chapterName = question.getChapterName();
-
-            if (Objects.isNull(content) ||
-                    StringUtils.isEmpty(content) ||
-                    questionService.isContentDuplicated(null, content, false)) {
-                continue;
-            }
-
-            i++;
-            System.out.println(i);
-            Subject subject = null;
-            try {
-                subject = subjectService.findByName(subjectName);
-            } catch (NotFoundException e) {
-                StringBuilder subjectId = new StringBuilder();
-
-                for (String s : subjectName.split(" ")) {
-                    subjectId.append(s.charAt(0));
-                }
-
-                subject = subjectService.save(
-                        Subject.build(new PostCreateSubjectDTO(subjectId.toString().toUpperCase(), subjectName, "15", "0")));
-            }
-
-            Chapter chapter = null;
-            try {
-                chapter = chapterService.findByName(chapterName);
-            } catch (NotFoundException e) {
-                chapter =
-                        chapterService.save(Chapter.build(chapterName, subject));
-            }
-
-            questionService.save(Question.build(question, teacher,
-                    chapter, true));
-        }
-
-        String responseMessage = "";
-        if (i == 0) {
-            responseMessage = "Tất cả câu hỏi đã được thêm từ trước";
-        } else {
-            responseMessage = String.format("%d/%d câu hỏi đã được thêm vào thành công", i, totalQuestions);
-        }
-
-        return new OkResponse<>("Thêm tất cả câu hỏi thành công").response();
-    }
+//    @PostMapping("save/multiple")
+//    public ResponseEntity<StandardJSONResponse<String>> saveMultipleQuestions(
+//            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+//            @org.springframework.web.bind.annotation.RequestBody List<PostCreateQuestionDTO> questions,
+//            @RequestParam(name = "file") MultipartFile excelFile) {
+//        CommonUtils commonUtils = new CommonUtils();
+//        User teacher = userDetailsImpl.getUser();
+//
+//        int i = 0;
+//        int totalQuestions = questions.size();
+//
+//        for (PostCreateQuestionDTO question : questions) {
+//            System.out.println(question);
+//            String content = question.getContent();
+//            String subjectName = question.getSubjectName();
+//            String chapterName = question.getChapterName();
+//
+//            if (Objects.isNull(content) ||
+//                    StringUtils.isEmpty(content) ||
+//                    questionService.isContentDuplicated(null, content, false)) {
+//                continue;
+//            }
+//
+//            i++;
+//            System.out.println(i);
+//            Subject subject = null;
+//            try {
+//                subject = subjectService.findByName(subjectName);
+//            } catch (NotFoundException e) {
+//                StringBuilder subjectId = new StringBuilder();
+//
+//                for (String s : subjectName.split(" ")) {
+//                    subjectId.append(s.charAt(0));
+//                }
+//
+//                subject = subjectService.save(
+//                        Subject.build(new PostCreateSubjectDTO(subjectId.toString().toUpperCase(), subjectName, "15", "0")));
+//            }
+//
+//            Chapter chapter = null;
+//            try {
+//                chapter = chapterService.findByName(chapterName);
+//            } catch (NotFoundException e) {
+//                chapter =
+//                        chapterService.save(Chapter.build(chapterName, subject));
+//            }
+//
+//            questionService.save(Question.build(question, teacher,
+//                    chapter, true));
+//        }
+//
+//        String responseMessage = "";
+//        if (i == 0) {
+//            responseMessage = "Tất cả câu hỏi đã được thêm từ trước";
+//        } else {
+//            responseMessage = String.format("%d/%d câu hỏi đã được thêm vào thành công", i, totalQuestions);
+//        }
+//
+//        return new OkResponse<>("Thêm tất cả câu hỏi thành công").response();
+//    }
 
     @GetMapping("users/{id}")
     public ResponseEntity<StandardJSONResponse<User>> getUser(@PathVariable(value = "id") String id) {
@@ -179,7 +179,7 @@ public class AdminUserRestController {
 
             CommonUtils commonUtils = new CommonUtils();
 
-            if (userService.checkBirthday(LocalDate.parse(updateUserDTO.getBirthday()))) {
+            if (userService.isBirthdayGreaterThanOrEqualTo18(LocalDate.parse(updateUserDTO.getBirthday()))) {
                 commonUtils.addError("birthday", "Tuổi phải lớn hơn 18");
             }
 
@@ -195,16 +195,16 @@ public class AdminUserRestController {
             user.setFirstName(updateUserDTO.getFirstName());
             user.setLastName(updateUserDTO.getLastName());
             user.setEmail(updateUserDTO.getEmail());
-            user.setSex(updateUserDTO.getSex());
+            user.setSex(User.lookUpSex(updateUserDTO.getSex()));
             user.setAddress(updateUserDTO.getAddress());
             user.setBirthday(LocalDate.parse(updateUserDTO.getBirthday()));
 
-            try {
-                Role role = roleService.findById(updateUserDTO.getRoleId());
+//            try {
+//                Role role = roleService.findById(updateUserDTO.getRoleId());
 //                user.setRole(role);
-            } catch (NotFoundException e) {
-                commonUtils.addError("roleId", "Vai trò không tồn tại");
-            }
+//            } catch (NotFoundException e) {
+//                commonUtils.addError("roleId", "Vai trò không tồn tại");
+//            }
 
 //            try {
 //                Class cls = classService.findById(updateUserDTO.getClassId());
