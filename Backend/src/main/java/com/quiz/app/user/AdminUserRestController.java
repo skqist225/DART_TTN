@@ -4,32 +4,31 @@ import com.quiz.app.common.CommonUtils;
 import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.exception.VerifiedUserException;
+import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.role.RoleService;
-import com.quiz.app.user.dto.RegisterDTO;
+import com.quiz.app.security.UserDetailsImpl;
+import com.quiz.app.subject.dto.PostCreateSubjectDTO;
+import com.quiz.app.user.dto.PostCreateUserDTO;
 import com.quiz.app.user.dto.UsersDTO;
-import com.quiz.entity.Role;
-import com.quiz.entity.User;
+import com.quiz.entity.*;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/admin/users")
@@ -78,6 +77,67 @@ public class AdminUserRestController {
         return new OkResponse<>(usersDTO).response();
     }
 
+    @PostMapping("save/multiple")
+    public ResponseEntity<StandardJSONResponse<String>> saveMultipleQuestions(
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+            @org.springframework.web.bind.annotation.RequestBody List<PostCreateQuestionDTO> questions,
+            @RequestParam(name = "file") MultipartFile excelFile) {
+        CommonUtils commonUtils = new CommonUtils();
+        User teacher = userDetailsImpl.getUser();
+
+        int i = 0;
+        int totalQuestions = questions.size();
+
+        for (PostCreateQuestionDTO question : questions) {
+            System.out.println(question);
+            String content = question.getContent();
+            String subjectName = question.getSubjectName();
+            String chapterName = question.getChapterName();
+
+            if (Objects.isNull(content) ||
+                    StringUtils.isEmpty(content) ||
+                    questionService.isContentDuplicated(null, content, false)) {
+                continue;
+            }
+
+            i++;
+            System.out.println(i);
+            Subject subject = null;
+            try {
+                subject = subjectService.findByName(subjectName);
+            } catch (NotFoundException e) {
+                StringBuilder subjectId = new StringBuilder();
+
+                for (String s : subjectName.split(" ")) {
+                    subjectId.append(s.charAt(0));
+                }
+
+                subject = subjectService.save(
+                        Subject.build(new PostCreateSubjectDTO(subjectId.toString().toUpperCase(), subjectName, "15", "0")));
+            }
+
+            Chapter chapter = null;
+            try {
+                chapter = chapterService.findByName(chapterName);
+            } catch (NotFoundException e) {
+                chapter =
+                        chapterService.save(Chapter.build(chapterName, subject));
+            }
+
+            questionService.save(Question.build(question, teacher,
+                    chapter, true));
+        }
+
+        String responseMessage = "";
+        if (i == 0) {
+            responseMessage = "Tất cả câu hỏi đã được thêm từ trước";
+        } else {
+            responseMessage = String.format("%d/%d câu hỏi đã được thêm vào thành công", i, totalQuestions);
+        }
+
+        return new OkResponse<>("Thêm tất cả câu hỏi thành công").response();
+    }
+
     @GetMapping("users/{id}")
     public ResponseEntity<StandardJSONResponse<User>> getUser(@PathVariable(value = "id") String id) {
         try {
@@ -113,7 +173,7 @@ public class AdminUserRestController {
 
     @PutMapping("update")
     public ResponseEntity<StandardJSONResponse<User>> updateUser(
-            @RequestBody RegisterDTO updateUserDTO) throws IOException {
+            @RequestBody PostCreateUserDTO updateUserDTO) throws IOException {
         try {
             User user = userService.findById(updateUserDTO.getId());
 

@@ -3,6 +3,8 @@ package com.quiz.app.auth;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.quiz.app.answer.dto.AnswerDTO;
+import com.quiz.app.common.CommonUtils;
 import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.email.SendEmail;
 import com.quiz.app.exception.NotFoundException;
@@ -14,9 +16,10 @@ import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.security.UserDetailsServiceImpl;
 import com.quiz.app.user.UserService;
 import com.quiz.app.user.dto.ForgotPasswordResponse;
-import com.quiz.app.user.dto.RegisterDTO;
+import com.quiz.app.user.dto.PostCreateUserDTO;
 import com.quiz.app.user.dto.ResetPasswordDTO;
 import com.quiz.entity.User;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -35,7 +38,9 @@ import org.springframework.web.bind.annotation.RestController;
 import javax.mail.MessagingException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Random;
 
 @RestController
@@ -43,12 +48,6 @@ import java.util.Random;
 public class AuthRestController {
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private CreditClassService classService;
-
-    @Autowired
-    private ObjectMapper objectMapper;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -89,18 +88,53 @@ public class AuthRestController {
         return new OkResponse<>("Đăng xuất thành công").response();
     }
 
-    @PostMapping("register")
-    public ResponseEntity<StandardJSONResponse<User>> registerUser(@ModelAttribute RegisterDTO postUser
+    public void catchUserInputException(CommonUtils commonUtils, String content, String type,
+                                            String level,
+                                            List<AnswerDTO> answers,
+                                            Integer chapterId
     ) {
-        ArrayNode arrays = objectMapper.createArrayNode();
-
-        if (userService.checkBirthday(LocalDate.parse(postUser.getBirthday()))) {
-            ObjectNode node = objectMapper.createObjectNode();
-            node.put("birthday", "Tuổi của bạn phải lớn hơn 18");
-            arrays.add(node);
+        if (Objects.isNull(content) || StringUtils.isEmpty(content)) {
+            commonUtils.addError("content", "Nội dung câu hỏi không được để trống");
         }
 
-        if (userService.isEmailDuplicated(postUser.getId(), postUser.getEmail(), false)) {
+        if (Objects.isNull(type) || StringUtils.isEmpty(type)) {
+            commonUtils.addError("content", "Loại câu hỏi không được để trống");
+        }
+
+        if (Objects.isNull(level) || StringUtils.isEmpty(level)) {
+            commonUtils.addError("level", "Mức độ không được để trống");
+        }
+
+        for (AnswerDTO ans : answers) {
+            if (Objects.isNull(ans.getContent()) || StringUtils.isEmpty(ans.getContent())) {
+                commonUtils.addError("answers", "Không được để trống sự lựa chọn");
+                break;
+            }
+        }
+
+        if (Objects.isNull(chapterId)) {
+            commonUtils.addError("chapterId", "Chương không được để trống");
+        }
+    }
+
+    @PostMapping("register")
+    public ResponseEntity<StandardJSONResponse<User>> registerUser(@ModelAttribute PostCreateUserDTO postCreateUserDTO
+    ) {
+        CommonUtils commonUtils = new CommonUtils();
+        User user = null;
+
+        String id = postCreateUserDTO.getId();
+        String firstName = postCreateUserDTO.getFirstName();
+        String lastName = postCreateUserDTO.getLastName();
+        String address = postCreateUserDTO.getBirthday();
+
+
+
+        if (userService.checkBirthday(LocalDate.parse(postCreateUserDTO.getBirthday()))) {
+            commonUtils.addError("birthday", "Tuổi của bạn phải lớn hơn 18");
+        }
+
+        if (userService.isEmailDuplicated(postCreateUserDTO.getId(), postCreateUserDTO.getEmail(), false)) {
             ObjectNode node = objectMapper.createObjectNode();
             node.put("email", "Địa chỉ email đã được sử dụng");
             arrays.add(node);
@@ -110,7 +144,7 @@ public class AuthRestController {
             return new BadResponse<User>(arrays.toString()).response();
         }
 
-        return new OkResponse<>(userService.save(User.build(postUser))).response();
+        return new OkResponse<>(userService.save(User.build(postCreateUserDTO))).response();
     }
 
     @PostMapping("forgot-password")

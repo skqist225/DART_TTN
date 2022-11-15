@@ -33,6 +33,10 @@ public class Role {
 	public Role(int id) {
 		this.id = id;
 	}
+	public Role(String name) {
+		this.name = name;
+	}
+
 
 	public static Role build(PostCreateRoleDTO postCreateRoleDTO) {
 		return Role.builder().name(postCreateRoleDTO.getName()).build();

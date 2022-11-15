@@ -15,6 +15,8 @@ import {
 } from "../../features/examSlice";
 import ExamFilter from "../../components/exams/ExamFilter";
 import $ from "jquery";
+import { fetchAllSubjects } from "../../features/subjectSlice";
+import { fetchAllCreditClasses } from "../../features/creditClassSlice";
 
 const columns = [
     {
@@ -64,6 +66,8 @@ function ExamsPage() {
                 page: 1,
             })
         );
+        dispatch(fetchAllSubjects({page:0}));
+        dispatch(fetchAllCreditClasses({page:0}))
     }, []);
 
     const {

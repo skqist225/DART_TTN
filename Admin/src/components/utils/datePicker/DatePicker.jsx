@@ -3,7 +3,7 @@ import Datepicker from "flowbite-datepicker/Datepicker";
 import ErrorMessage from "../errors/ErrorMessage";
 import { tailwindCss } from "../../../tailwind";
 
-function DatePicker({ register, name, error, onKeyDown }) {
+function DatePicker({ register, name, error,label, onKeyDown }) {
     useEffect(() => {
         const datepickerEl = document.getElementById("datepickerId");
         new Datepicker(datepickerEl, {
@@ -17,7 +17,7 @@ function DatePicker({ register, name, error, onKeyDown }) {
     return (
         <div>
             <label className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"}`}>
-                Ngày sinh *
+   {label}
             </label>
             <div className='relative'>
                 <div className='flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none'>
@@ -40,7 +40,7 @@ function DatePicker({ register, name, error, onKeyDown }) {
                     className={`bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full pl-10 p-2.5  dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500 ${
                         error && "text-red-700 dark:text-red-500 bg-red-50 border border-red-500"
                     }`}
-                    placeholder='Chọn ngày sinh'
+                    placeholder={`Chọn ${label.toLowerCase()}`}
                     id='datepickerId'
                     {...register(name)}
                     onKeyDown={onKeyDown}

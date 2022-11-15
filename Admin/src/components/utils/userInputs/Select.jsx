@@ -13,6 +13,7 @@ function Select({
     onChangeHandler,
     width,
     hiddenOption = false,
+    multiple = false,
 }) {
     useEffect(() => {
         // if (propName !== "chapterId") {
@@ -71,6 +72,7 @@ function Select({
                 }}
                 onBlur={onBlur}
                 ref={ref}
+                multiple={multiple}
             >
                 {hiddenOption && (
                     <option value='' disabled selected style={{ display: "none" }}>

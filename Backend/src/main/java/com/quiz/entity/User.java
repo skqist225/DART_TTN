@@ -3,7 +3,7 @@ package com.quiz.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import com.quiz.app.user.dto.RegisterDTO;
+import com.quiz.app.user.dto.PostCreateUserDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -20,12 +20,12 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 
@@ -97,23 +97,19 @@ public class User {
 
     @Transient
     @JsonIgnore
-    public static User build(RegisterDTO registerDTO) {
+    public static User build(PostCreateUserDTO registerDTO) {
         String id = registerDTO.getId();
         String firstName = registerDTO.getFirstName();
         String lastName = registerDTO.getLastName();
         String email = registerDTO.getEmail();
         String password = registerDTO.getPassword();
-        Sex sex = registerDTO.getSex();
+        Sex sex = lookUpSex(registerDTO.getSex());
         LocalDate birthday = LocalDate.parse(registerDTO.getBirthday());
-        Integer roleId = registerDTO.getRoleId();
+        Set<Integer> roles = registerDTO.getRoles();
         String address = registerDTO.getAddress();
 
-        Set<Role> roles = new HashSet<>();
-        Role role = new Role(2);
-        roles.add(role);
-        if (Objects.nonNull(roleId) && !roleId.equals(2)) {
-            role = new Role(roleId);
-            roles.add(role);
+        if (Objects.isNull(roles) || roles.size() == 0) {
+            roles.add(new Role());
         }
 
         return User.builder().id(id).firstName(firstName).lastName(lastName)
@@ -123,6 +119,16 @@ public class User {
                 .status(true)
                 .address(address)
                 .build();
+    }
+
+
+    public static Sex lookUpSex(String sexStr) {
+        Sex sex = Sex.MALE;
+        if (Objects.equals(sexStr, "Nữ")) {
+            sex = Sex.FEMALE;
+        }
+
+        return sex;
     }
 
     @Transient

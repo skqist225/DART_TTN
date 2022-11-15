@@ -1,5 +1,6 @@
 package com.quiz.app.user.dto;
 
+import com.quiz.entity.Role;
 import com.quiz.entity.Sex;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -8,21 +9,23 @@ import lombok.Setter;
 import lombok.ToString;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.util.List;
+import java.util.Set;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class RegisterDTO {
+public class PostCreateUserDTO {
     private String id;
     private String firstName;
     private String lastName;
     private String email;
     private String password;
-    private Sex sex;
+    private String sex;
     private String address;
     private String birthday;
-    private Integer roleId;
-    private String classId;
+    private Set<Integer> roles;
     private MultipartFile avatar;
 }

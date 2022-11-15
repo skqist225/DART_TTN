@@ -83,7 +83,7 @@ function RegisterModalBody({ errors, register, dispatch, setValue }) {
                     </div>
                     <div className='w-full'>
                         <Select
-                            label='Nhóm *'
+                            label='Số SV'
                             register={register}
                             name='group'
                             options={Array.from({ length: 10 }).map((_, index) => ({
