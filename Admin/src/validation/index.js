@@ -53,24 +53,26 @@ export const userSchema = yup
         password: yup.string().min(8, "Mật khẩu ít nhất tám ký tự"),
         birthday: yup.string().required("Ngày sinh không được để  trống"),
         sex: yup.string().required("Giới tính không được để  trống"),
-        // roles: yup.array().length(0, "Vai trò không được để  trống"),
     })
     .required();
 
 export const userRegisterSchema = yup
     .object({
-        id: yup.string().required("Mã người dùng"),
-        firstName: yup.string().required("Họ không được để trống"),
-        lastName: yup.string().required("Tên không được để  trống"),
-        sex: yup.string().required("Giới tính không được để  trống"),
-        birthday: yup.string().required("Ngày sinh không được để  trống"),
-        address: yup.string().required("Địa chỉ không được để  trống"),
+        id: yup.string().required("Mã người dùng").max(10, "Mã người dùng không được quá 10 ký tự"),
+        firstName: yup
+            .string()
+            .required("Tên không được để trống")
+            .max(50, "Tên không được quá 50 ký tự"),
+        lastName: yup
+            .string()
+            .required("Họ không được để  trống")
+            .max(10, "Họ không được quá 10 ký tự"),
         email: yup
             .string()
             .required("Địa chỉ email không được để  trống")
             .email("Địa chỉ email không đúng định dạng"),
-        roleId: yup.string().required("Vai trò không được để  trống"),
-        classId: yup.string().required("Lớp không được để  trống"),
+        birthday: yup.string().required("Ngày sinh không được để  trống"),
+        sex: yup.string().required("Giới tính không được để  trống"),
     })
     .required();
 
@@ -110,7 +112,15 @@ export const roleSchema = yup
 
 export const examSchema = yup
     .object({
+        creditClassId: yup.string().required("LTC không được để trống"),
         examDate: yup.string().required("Ngày thi không được để trống"),
-        time: yup.number().required("Thời gian làm bài không được để trống"),
+        time: yup
+            .number()
+            .typeError("Thời gian làm bài phải là chữ số")
+            .required("Thời gian làm bài không được để trống"),
+        numberOfStudents: yup
+            .number()
+            .typeError("Số SV thi hành phải là chữ số")
+            .required("Số  SV thi không được để trống"),
     })
     .required();

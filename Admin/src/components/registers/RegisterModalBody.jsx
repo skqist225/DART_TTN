@@ -7,9 +7,23 @@ import { callToast } from "../../helpers";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
 
+const schoolYears = [
+    {
+        title: "2021-2022",
+        value: "2021-2022",
+    },
+    {
+        title: "2022-2023",
+        value: "2022-2023",
+    },
+    {
+        title: "2023-2024",
+        value: "2023-2024",
+    },
+];
+
 function RegisterModalBody({ errors, register, dispatch, setValue }) {
     const { editedCreditClass, errorObject } = useSelector(creditClassState);
-    const { subjects } = useSelector(subjectState);
     const { users } = useSelector(userState);
 
     const onKeyDown = ({ target: { name } }) => {
@@ -67,20 +81,6 @@ function RegisterModalBody({ errors, register, dispatch, setValue }) {
                     </div>
                 </div>
                 <div className='flex items-center w-full my-3'>
-                    <div className='mr-5 w-full'>
-                        <Select
-                            label='Môn học *'
-                            register={register}
-                            name='subjectId'
-                            options={subjects.map(subject => ({
-                                title: subject.name,
-                                value: subject.id,
-                            }))}
-                            error={errors.subjectId && errors.subjectId.message}
-                            setValue={setValue}
-                            defaultValue={subjects && subjects.length && subjects[0].id}
-                        />
-                    </div>
                     <div className='w-full'>
                         <Select
                             label='Số SV'

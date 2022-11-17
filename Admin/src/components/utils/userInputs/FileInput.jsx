@@ -8,7 +8,6 @@ function FileInput({ setImage, image }) {
     useEffect(() => {
         if (image) {
             $("#imagePreview").attr("src", getImage(image));
-            setImage(image);
         }
     }, [image]);
 

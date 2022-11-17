@@ -54,7 +54,6 @@ function RegistersPage() {
                 page: 1,
             })
         );
-        dispatch(fetchAllSubjects({ page: 0 }));
     }, []);
 
     const {
@@ -157,25 +156,8 @@ function RegistersPage() {
         }
     }, [errorObject]);
 
-    useEffect(() => {
-        if (amqSuccessMessage) {
-            cleanForm(amqSuccessMessage, "normal");
-            dispatch(setExcelAdd(false));
-        }
-    }, [amqSuccessMessage]);
-
-    useEffect(() => {
-        if (eodqSuccessMessage) {
-            cleanForm(eodqSuccessMessage, "normal");
-        }
-    }, [eodqSuccessMessage]);
-
     const fetchDataByPageNumber = pageNumber => {
         dispatch(fetchAllRegisters({ ...filterObject, page: pageNumber }));
-    };
-
-    const handleAddSelectedRegisterFromExcelFile = () => {
-        dispatch(addMultipleRegisters({ registers: registersExcel }));
     };
 
     function onCloseForm() {
@@ -188,7 +170,7 @@ function RegistersPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH CÂU HỎI"}
+            title={"DANH SÁCH ĐĂNG KÝ"}
             children={
                 <Table
                     handleQueryChange={handleQueryChange}
@@ -209,7 +191,6 @@ function RegistersPage() {
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
-                            setImage={setImage}
                             isEdit={isEdit}
                             control={control}
                             clearErrors={clearErrors}

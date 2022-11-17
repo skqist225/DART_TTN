@@ -4,12 +4,9 @@ import { useEffect, useState } from "react";
 import {
     addUser,
     clearUserState,
-    disableUser,
     editUser,
-    enableUser,
     fetchAllUsers,
     setEditedUser,
-    setErrorField,
     userState,
 } from "../../features/userSlice";
 
@@ -35,7 +32,6 @@ const columns = [
     {
         name: "Trạng thái",
         sortField: "status",
-        sortable: true,
     },
     {
         name: "Ngày sinh",
@@ -94,7 +90,7 @@ const UsersPage = () => {
         clearErrors,
         formState: { errors },
     } = useForm({
-        resolver: yupResolver(userSchema),
+        resolver: yupResolver(isEdit ? userRegisterSchema : userSchema),
     });
 
     const {
@@ -107,6 +103,7 @@ const UsersPage = () => {
         addUser: { successMessage },
         editUser: { successMessage: euSuccessMessage },
         deleteUser: { successMessage: duSuccessMessage },
+        enableOrDisableUser: { successMessage: eodqSuccessMessage },
     } = useSelector(userState);
 
     useEffect(() => {
@@ -120,30 +117,6 @@ const UsersPage = () => {
             });
         }
     }, [errorObject]);
-
-    const handleDisableUser = id => {
-        dispatch(disableUser(id));
-    };
-
-    const handleEnableUser = id => {
-        dispatch(enableUser(id));
-    };
-
-    const handlePageChange = (e, pn) => {
-        dispatch(
-            fetchAllUsers({
-                page: pn + 1,
-                query: localQuery,
-                roles:
-                    getSelectedRoles().length > 0
-                        ? getSelectedRoles().join(",")
-                        : "User,Host,Admin",
-                statuses:
-                    getSelectedStatuses().length > 0 ? getSelectedStatuses().join(",") : "1,0",
-            })
-        );
-        setPage(pn);
-    };
 
     useEffect(() => {
         return () => {
@@ -205,7 +178,7 @@ const UsersPage = () => {
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
-            fetchAllQuestions({
+            fetchAllUsers({
                 ...filterObject,
                 query,
             })
@@ -213,8 +186,9 @@ const UsersPage = () => {
     };
 
     const handleSortChange = (sortField, sortDir) => {
+        console.log(sortField, sortDir);
         dispatch(
-            fetchAllQuestions({
+            fetchAllUsers({
                 ...filterObject,
                 sortField,
                 sortDir,
@@ -248,12 +222,10 @@ const UsersPage = () => {
         if (isEdit) {
             if (data.password) {
                 if (data.password.length < 8) {
-                    dispatch(
-                        setErrorField({
-                            key: "password",
-                            value: "Mật khẩu ít nhất 8 ký tự",
-                        })
-                    );
+                    setError("roles", {
+                        type: "custom",
+                        message: "Mật khẩu ít nhất 8 ký tự",
+                    });
                     return;
                 }
             }
@@ -277,6 +249,12 @@ const UsersPage = () => {
             }
         }
     };
+
+    useEffect(() => {
+        if (eodqSuccessMessage) {
+            cleanForm(eodqSuccessMessage, "normal");
+        }
+    }, [eodqSuccessMessage]);
 
     const onCloseForm = () => {
         dispatch(setEditedUser(null));

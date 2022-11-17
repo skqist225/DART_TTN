@@ -181,7 +181,7 @@ export const addMultipleQuestions = createAsyncThunk(
 );
 
 export const enableOrDisableQuestion = createAsyncThunk(
-    "question/enableQuestion",
+    "question/enableOrDisableQuestion",
     async ({ id, action }, { rejectWithValue }) => {
         try {
             const { data } = await api.put(`/questions/${id}?action=${action}`);

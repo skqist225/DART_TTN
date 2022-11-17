@@ -42,9 +42,15 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
 
     console.log(creditClasses);
 
+    useEffect(() => {
+        if (creditClasses && creditClasses.length) {
+            dispatch(fetchAllTests({ page: 0, subject: creditClasses[0].subjectId }));
+        }
+    }, [creditClasses]);
+
     const handleCreditClassChanged = ({ target: { value } }) => {
         const creditClass = creditClasses.find(({ id }) => id.toString() === value.toString());
-        dispatch(fetchAllTests({ page: 0, subjectId: creditClass.subjectId }));
+        dispatch(fetchAllTests({ page: 0, subject: creditClass.subjectId }));
     };
 
     return (
@@ -79,13 +85,13 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
                         <DatePicker
                             register={register}
                             name='examDate'
-                            error
+                            error={errors.examDate && errors.examDate.message}
                             label={"Ngày thi *"}
                         />
                     </div>
                     <div className='w-full'>
                         <Input
-                            label='Thời gian làm bài *'
+                            label='Thời gian làm bài(phút) *'
                             error={errors.time && errors.time.message}
                             register={register}
                             name='time'
@@ -93,8 +99,8 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
                         />
                     </div>
                 </div>
-                <div className='flex items-center'>
-                    <div className='w-full mt-5'>
+                <div className='flex items-center w-full mt-5'>
+                    <div className='w-full mr-5'>
                         <Select
                             label='Loại kỳ thi *'
                             register={register}
@@ -108,22 +114,17 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
                             defaultValue={examTypes && examTypes.length && examTypes[0].id}
                         />
                     </div>
-                    <div className='w-full mt-5'>
-                        <Select
-                            label='Loại kỳ thi *'
+                    <div className='w-full'>
+                        <Input
+                            label='Số  SV thi*'
+                            error={errors.time && errors.time.message}
                             register={register}
-                            name='type'
-                            options={examTypes.map(({ title, value }) => ({
-                                title,
-                                value,
-                            }))}
-                            // error={errors.testId && errors.testId.message}
-                            setValue={setValue}
-                            defaultValue={examTypes && examTypes.length && examTypes[0].id}
+                            name='numberOfStudents'
+                            onKeyDown={onKeyDown}
                         />
                     </div>
                 </div>
-                <div className='w-full mt-5'>
+                {/* <div className='w-full mt-5'>
                     <div className='flex items-center gap-2'>
                         <Checkbox id='accept' defaultChecked={true} />
                         <Label htmlFor='accept'>
@@ -136,7 +137,7 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
                             </a>
                         </Label>
                     </div>
-                </div>
+                </div> */}
             </div>
         </div>
     );

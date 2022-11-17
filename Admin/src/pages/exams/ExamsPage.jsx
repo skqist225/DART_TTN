@@ -66,8 +66,8 @@ function ExamsPage() {
                 page: 1,
             })
         );
-        dispatch(fetchAllSubjects({page:0}));
-        dispatch(fetchAllCreditClasses({page:0}))
+        dispatch(fetchAllSubjects({ page: 0 }));
+        dispatch(fetchAllCreditClasses({ page: 0 }));
     }, []);
 
     const {
@@ -80,11 +80,36 @@ function ExamsPage() {
     });
 
     const onSubmit = data => {
-        if (isEdit) {
-            dispatch(editExam(data));
-        } else {
-            dispatch(addExam(data));
+        let tests = [];
+        $(".tests-checkbox").each(function () {
+            if ($(this).prop("checked")) {
+                tests.push($(this).data("id"));
+            }
+        });
+
+        console.log(tests);
+        if (tests.length === 0) {
+            callToast("error", "Chọn bộ đề cho ca thi");
+            return;
         }
+        console.log();
+        const examDate = new Date(
+            `${data.examDate.split("/")[1]}/${data.examDate.split("/")[0]}/${
+                data.examDate.split("/")[2]
+            } 00:00:00`
+        );
+
+        if (examDate.getTime() <= new Date().getTime()) {
+            callToast("error", "Ngày thi phải lớn hơn hiện tại");
+            return;
+        }
+        // if(data.examDate)
+
+        // if (isEdit) {
+        //     dispatch(editExam(data));
+        // } else {
+        //     dispatch(addExam(data));
+        // }
     };
 
     const {

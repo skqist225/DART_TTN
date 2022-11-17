@@ -14,6 +14,8 @@ function DatePicker({ register, name, error, label, onKeyDown }) {
         });
     }, []);
 
+    console.log(error);
+
     return (
         <div>
             <label className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"}`}>

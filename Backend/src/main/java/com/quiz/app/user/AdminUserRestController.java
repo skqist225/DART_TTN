@@ -1,34 +1,29 @@
 package com.quiz.app.user;
 
-import com.quiz.app.common.CommonUtils;
-import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.exception.VerifiedUserException;
-import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.role.RoleService;
-import com.quiz.app.security.UserDetailsImpl;
-import com.quiz.app.subject.dto.PostCreateSubjectDTO;
-import com.quiz.app.user.dto.PostCreateUserDTO;
 import com.quiz.app.user.dto.UsersDTO;
-import com.quiz.entity.*;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import com.quiz.entity.Role;
+import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
-import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 
 @RestController
 @RequestMapping("/api/admin/users")
@@ -39,21 +34,21 @@ public class AdminUserRestController {
     @Autowired
     private RoleService roleService;
 
-    @Autowired
-    private CreditClassService classService;
-
     @Value("${env}")
     private String environment;
 
     @GetMapping(value = "")
     public ResponseEntity<StandardJSONResponse<UsersDTO>> listings(
-            @RequestParam(name = "page", defaultValue = "1") Integer page,
+            @RequestParam(name = "page", defaultValue = "1") String page,
+            @RequestParam(name = "query", required = false, defaultValue = "") String query,
+            @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
+            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
+            @RequestParam(name = "level", required = false, defaultValue = "") String level,
             @RequestParam(name = "roles", required = false, defaultValue = "") String roles,
             @RequestParam(name = "role", required = false, defaultValue = "") String roleName,
-            @RequestParam(name = "statuses", required = false, defaultValue = "1,0") String statuses,
-            @RequestParam(name = "query", required = false, defaultValue = "") String query) {
+            @RequestParam(name = "statuses", required = false, defaultValue = "1,0") String statuses) {
         UsersDTO usersDTO = new UsersDTO();
-        if (page == 0) {
+        if (page.equals("0")) {
             if (!StringUtils.isEmpty(roleName)) {
                 Role role = null;
                 try {
@@ -67,11 +62,14 @@ public class AdminUserRestController {
             }
         } else {
             Map<String, String> filters = new HashMap<>();
+            filters.put("page", page);
             filters.put("query", query);
+            filters.put("sortDir", sortDir);
+            filters.put("sortField", sortField);
             filters.put("roles", roles);
             filters.put("statuses", statuses);
 
-            usersDTO = userService.findAllUsers(filters, page);
+            usersDTO = userService.findAllUsers(filters);
         }
 
         return new OkResponse<>(usersDTO).response();
@@ -149,8 +147,8 @@ public class AdminUserRestController {
         }
     }
 
-    @DeleteMapping("users/{userId}")
-    public ResponseEntity<StandardJSONResponse<String>> deleteUser(@PathVariable(value = "userId") String userId) {
+    @DeleteMapping("{id}")
+    public ResponseEntity<StandardJSONResponse<String>> deleteUser(@PathVariable(value = "id") String userId) {
         try {
             return new OkResponse<>(userService.deleteById(userId)).response();
         } catch (VerifiedUserException e) {
@@ -158,78 +156,19 @@ public class AdminUserRestController {
         }
     }
 
-    @PutMapping("users/{id}/{action}")
-    public ResponseEntity<StandardJSONResponse<String>> enableOrDisable(@PathVariable(value = "id") String id,
-                                                                        @PathVariable(value = "action") String action) {
+    @PutMapping("{id}/{action}")
+    public ResponseEntity<StandardJSONResponse<String>> enableOrDisable(
+            @PathVariable(value = "id") String id,
+            @PathVariable(value = "action") String action) {
         try {
             User user = userService.findById(id);
-            userService.saveUser(user);
+            user.setStatus(action.equals("enable"));
+            userService.save(user);
 
-            return new OkResponse<>("Update User Successfully").response();
+            return new OkResponse<>(action.equals("enable") ? "Kích hoạt ND thành công" : "Hủy " +
+                    "kích hoạt ND thành công").response();
         } catch (NotFoundException e) {
             return new BadResponse<String>(e.getMessage()).response();
-        }
-    }
-
-    @PutMapping("update")
-    public ResponseEntity<StandardJSONResponse<User>> updateUser(
-            @RequestBody PostCreateUserDTO updateUserDTO) throws IOException {
-        try {
-            User user = userService.findById(updateUserDTO.getId());
-
-            CommonUtils commonUtils = new CommonUtils();
-
-            if (userService.isBirthdayGreaterThanOrEqualTo18(LocalDate.parse(updateUserDTO.getBirthday()))) {
-                commonUtils.addError("birthday", "Tuổi phải lớn hơn 18");
-            }
-
-            if (userService.isEmailDuplicated(updateUserDTO.getId(), updateUserDTO.getEmail(),
-                    true)) {
-                commonUtils.addError("email", "Địa chỉ email đã được sử dụng");
-            }
-
-            if (commonUtils.getArrayNode().size() > 0) {
-                return new BadResponse<User>(commonUtils.getArrayNode().toString()).response();
-            }
-
-            user.setFirstName(updateUserDTO.getFirstName());
-            user.setLastName(updateUserDTO.getLastName());
-            user.setEmail(updateUserDTO.getEmail());
-            user.setSex(User.lookUpSex(updateUserDTO.getSex()));
-            user.setAddress(updateUserDTO.getAddress());
-            user.setBirthday(LocalDate.parse(updateUserDTO.getBirthday()));
-
-//            try {
-//                Role role = roleService.findById(updateUserDTO.getRoleId());
-//                user.setRole(role);
-//            } catch (NotFoundException e) {
-//                commonUtils.addError("roleId", "Vai trò không tồn tại");
-//            }
-
-//            try {
-//                Class cls = classService.findById(updateUserDTO.getClassId());
-//                user.setCls(cls);
-//            } catch (NotFoundException e) {
-//                addError("classId", "Lớp không tồn tại");
-//            }
-
-            if (commonUtils.getArrayNode().size() > 0) {
-                return new BadResponse<User>(commonUtils.getArrayNode().toString()).response();
-            }
-
-            if (updateUserDTO.getPassword() != null) {
-                user.setPassword(updateUserDTO.getPassword());
-                userService.encodePassword(user);
-            }
-
-            if (updateUserDTO.getAvatar() != null) {
-                new UserRestController().updateAvatar(user, updateUserDTO.getAvatar(),
-                        environment);
-            }
-
-            return new OkResponse<>(userService.saveUser(user)).response();
-        } catch (NotFoundException e) {
-            return new BadResponse<User>(e.getMessage()).response();
         }
     }
 }

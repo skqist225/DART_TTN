@@ -1,14 +1,8 @@
 import { configureStore } from "@reduxjs/toolkit";
-import {
-    persistReducer,
-    FLUSH,
-    REHYDRATE,
-    PAUSE,
-    PERSIST,
-    PURGE,
-    REGISTER,
-} from "redux-persist";
+import { persistReducer, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from "redux-persist";
 import storage from "redux-persist/lib/storage";
+import createFilter from "redux-persist-transform-filter";
+
 import { combineReducers } from "redux";
 import {
     authSlice,
@@ -31,7 +25,7 @@ const rootReducer = combineReducers({
     creditClass: creditClassSlice,
     exam: examSlice,
     question: questionSlice,
-    reigster: registerSlice,
+    register: registerSlice,
     role: roleSlice,
     subject: subjectSlice,
     takeExam: takeExamSlice,
@@ -40,11 +34,14 @@ const rootReducer = combineReducers({
     user: userSlice,
 });
 
+const persitingReducers = createFilter(`user.user`);
+
 const persistConfig = {
     key: "root",
     version: 1,
     whitelist: ["user"],
     storage,
+    transforms: [persitingReducers],
 };
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

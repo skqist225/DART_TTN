@@ -104,24 +104,24 @@ public class User {
         String password = registerDTO.getPassword();
         Sex sex = lookUpSex(registerDTO.getSex());
         LocalDate birthday = LocalDate.parse(registerDTO.getBirthday());
-        Set<Integer> rolesInt = registerDTO.getRoles();
         String address = registerDTO.getAddress();
-
-        Set<Role> roles = new HashSet<>();
-        roles.add(new Role("Sinh viên"));
-        for (Integer role : rolesInt) {
-            roles.add(new Role(role));
-        }
 
         return User.builder().id(id).firstName(firstName).lastName(lastName)
                 .email(email).password(password).sex(sex)
-                .birthday(birthday).roles(roles)
+                .birthday(birthday)
                 .emailVerified(false)
                 .status(true)
                 .address(address)
                 .build();
     }
 
+    public void addRole(Role role) {
+        this.roles.add(role);
+    }
+
+    public void removeRole(Role role) {
+        this.roles.remove(role);
+    }
 
     public static Sex lookUpSex(String sexStr) {
         Sex sex = Sex.MALE;

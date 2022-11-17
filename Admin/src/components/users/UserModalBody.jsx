@@ -1,13 +1,12 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import Select from "../utils/userInputs/Select";
-
 import Input from "../utils/userInputs/Input";
 import { userState } from "../../features/userSlice";
 import DatePicker from "../utils/datePicker/DatePicker";
 import FileInput from "../utils/userInputs/FileInput";
-import $ from "jquery";
 import { roleState } from "../../features/roleSlice";
+import $ from "jquery";
 
 const sexOptions = [
     {
@@ -47,6 +46,8 @@ function UserModalBody({ errors, register, dispatch, setValue, setImage, isEdit 
             setValue("sex", "");
             setValue("address", "");
             setValue("roles", []);
+            setImage(null);
+            $("#imagePreview").attr("src", "");
         }
     }, [editedUser]);
 

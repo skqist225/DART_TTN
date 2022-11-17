@@ -44,7 +44,7 @@ export const fetchAllUsers = createAsyncThunk(
             const {
                 data: { users, totalElements, totalPages },
             } = await api.get(
-                `/admin/users?page=${page}&query=${query}&sortField${sortField}&sortDir=${sortDir}&roles=${roles}&statuses=${statuses}&role=${role}`
+                `/admin/users?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&roles=${roles}&statuses=${statuses}&role=${role}`
             );
 
             return { users, totalElements, totalPages };
@@ -66,7 +66,11 @@ export const fetchUser = createAsyncThunk("user/fetchUser", async (id, { rejectW
 
 export const addUser = createAsyncThunk("user/addUser", async (user, { rejectWithValue }) => {
     try {
-        const { data } = await api.post("/auth/register", user);
+        const { data } = await api.post("/auth/register", user, {
+            headers: {
+                "Content-Type": "multipart/formData",
+            },
+        });
 
         return { data };
     } catch ({ data: { error } }) {
@@ -84,32 +88,11 @@ export const deleteUser = createAsyncThunk("user/deleteUser", async (id, { rejec
     }
 });
 
-export const disableUser = createAsyncThunk(
-    "user/disableUser",
-    async (id, { dispatch, rejectWithValue }) => {
+export const enableOrDisableUser = createAsyncThunk(
+    "user/enableOrDisableUser",
+    async ({ id, action }, { rejectWithValue }) => {
         try {
-            const { data } = await api.put(`/admin/users/${id}/disable`);
-
-            if (data) {
-                dispatch(fetchAllUsers(1));
-            }
-
-            return { data };
-        } catch ({ data: { error } }) {
-            return rejectWithValue(error);
-        }
-    }
-);
-
-export const enableUser = createAsyncThunk(
-    "user/enableUser",
-    async (id, { dispatch, rejectWithValue }) => {
-        try {
-            const { data } = await api.put(`/admin/users/${id}/enable`);
-
-            if (data) {
-                dispatch(fetchAllUsers(1));
-            }
+            const { data } = await api.put(`/admin/users/${id}/${action}`);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -120,7 +103,7 @@ export const enableUser = createAsyncThunk(
 
 export const editUser = createAsyncThunk("user/editUser", async (formData, { rejectWithValue }) => {
     try {
-        const { data } = await api.put(`/admin/users/update`, formData, {
+        const { data } = await api.post(`/auth/register?isEdit=true`, formData, {
             headers: {
                 "Content-Type": "multipart/formData",
             },
@@ -154,6 +137,9 @@ const initialState = {
         errorMessage: null,
     },
     editUser: {
+        successMessage: null,
+    },
+    enableOrDisableUser: {
         successMessage: null,
     },
     roles: [],
@@ -276,6 +262,14 @@ const userSlice = createSlice({
                 state.deleteUser.errorMessage = payload;
             })
 
+            .addCase(enableOrDisableUser.pending, (state, { payload }) => {
+                state.enableOrDisableUser.successMessage = null;
+            })
+            .addCase(enableOrDisableUser.fulfilled, (state, { payload }) => {
+                state.enableOrDisableUser.successMessage = payload.data;
+            })
+            .addCase(enableOrDisableUser.rejected, (state, { payload }) => {})
+
             .addCase(PURGE, state => {
                 state.user = null;
                 state.addUser.successMessage = null;
@@ -285,6 +279,8 @@ const userSlice = createSlice({
 
                 state.deleteUser.successMessage = null;
                 state.deleteUser.errorMessage = null;
+
+                state.enableOrDisableUser.successMessage = null;
             });
     },
 });

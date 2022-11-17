@@ -12,6 +12,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -29,7 +30,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
-import java.util.Optional;
 
 @Service
 @Transactional
@@ -94,26 +94,7 @@ public class UserService {
     }
 
     @Transactional
-    public User saveUser(User user) {
-        return userRepository.save(user);
-    }
-
     public User save(User user) {
-        boolean isUpdatingUser = (user.getId() != null);
-        if (isUpdatingUser) {
-            User existingUser = userRepository.findById(user.getId()).get();
-
-            if (user.getPassword().isEmpty()) {
-                user.setPassword(existingUser.getPassword());
-            } else {
-                encodePassword(user);
-            }
-        } else {
-            // 2 is User
-            // user.setRole(new Role(2));
-            encodePassword(user);
-        }
-
         return userRepository.save(user);
     }
 
@@ -132,12 +113,20 @@ public class UserService {
                 .orElseThrow(() -> new NotFoundException("Không tìm thấy người dùng với mã " + id));
     }
 
-    public UsersDTO findAllUsers(Map<String, String> filters, int page) {
+    public UsersDTO findAllUsers(Map<String, String> filters) {
+        int page = Integer.parseInt(filters.get("page"));
         String searchQuery = filters.get("query");
+        String sortDir = filters.get("sortDir");
+        String sortField = filters.get("sortField");
         String roles = filters.get("roles");
         String statuses = filters.get("statuses");
-
-        Sort sort = Sort.by("id").descending();
+        Sort sort = null;
+        if (sortField.equals("fullName")) {
+            sort = Sort.by("lastName").by("firstName");
+        } else {
+            sort = Sort.by(sortField);
+        }
+        sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -150,6 +139,9 @@ public class UserService {
         Expression<String> firstName = root.get("firstName");
         Expression<String> lastName = root.get("lastName");
         Expression<String> sex = root.get("sex");
+        Expression<String> address = root.get("address");
+        Expression<String> email = root.get("email");
+        Expression<String> birthday = root.get("birthday");
         Expression<Boolean> status = root.get("status");
 
         if (!StringUtils.isEmpty(searchQuery)) {
@@ -159,45 +151,53 @@ public class UserService {
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, lastName);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, sex);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, address);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, email);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, birthday);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
 
-        List<String> userRoles = new ArrayList<>();
-        if (roles.split(",").length > 0) {
-            for (String role : roles.split(",")) {
-                if (Objects.equals(role, "Student")) {
-                    userRoles.add("Student");
-                } else if (Objects.equals(role, "Teacher")) {
-                    userRoles.add("Teacher");
-                } else {
-                    userRoles.add("Admin");
-                }
-            }
-        }
+//        List<String> userRoles = new ArrayList<>();
+//        if (roles.split(",").length > 0) {
+//            for (String role : roles.split(",")) {
+//                if (Objects.equals(role, "Student")) {
+//                    userRoles.add("Student");
+//                } else if (Objects.equals(role, "Teacher")) {
+//                    userRoles.add("Teacher");
+//                } else {
+//                    userRoles.add("Admin");
+//                }
+//            }
+//        }
 
 //        if (userRoles.size() > 0) {
 //            predicates.add(criteriaBuilder.and(roleName.in(userRoles)));
 //        }
 
-        List<Boolean> statusesID = new ArrayList<>();
-        if (statuses.split(",").length > 0) {
-            for (String statuss : statuses.split(",")) {
-                if (Objects.equals(statuss, "1")) {
-                    statusesID.add(true);
-                } else {
-                    statusesID.add(false);
-                }
-            }
-        }
+//        List<Boolean> statusesID = new ArrayList<>();
+//        if (statuses.split(",").length > 0) {
+//            for (String statuss : statuses.split(",")) {
+//                if (Objects.equals(statuss, "1")) {
+//                    statusesID.add(true);
+//                } else {
+//                    statusesID.add(false);
+//                }
+//            }
+//        }
 
-        if (statusesID.size() > 0) {
-            predicates.add(criteriaBuilder.and(status.in(statusesID)));
-        }
+//        if (statusesID.size() > 0) {
+//            predicates.add(criteriaBuilder.and(status.in(statusesID)));
+//        }
+//
+
 
         criteriaQuery
                 .where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])))
-                .orderBy(criteriaBuilder.desc(root.get("id")));
+                .orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
 
         TypedQuery<User> typedQuery = entityManager.createQuery(criteriaQuery);
         int totalRows = typedQuery.getResultList().size();

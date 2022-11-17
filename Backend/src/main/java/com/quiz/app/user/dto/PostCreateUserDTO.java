@@ -27,5 +27,5 @@ public class PostCreateUserDTO {
     private String address;
     private String birthday;
     private Set<Integer> roles;
-    private MultipartFile avatar;
+    private MultipartFile image;
 }
