@@ -2,11 +2,13 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import MyButton from "./MyButton";
 
-function EnableOrDisable({ status, enableOrDisable, id }) {
+function EnableOrDisable({ status, enableOrDisable, id, creditClassPage = false }) {
     const dispatch = useDispatch();
     return (
         <div>
-            {!status ? (
+            {creditClassPage ? (
+                !status
+            ) : status ? (
                 <MyButton
                     type='disable'
                     onClick={() => {

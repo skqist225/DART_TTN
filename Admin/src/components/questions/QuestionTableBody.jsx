@@ -8,6 +8,7 @@ import {
 } from "../../features/questionSlice";
 import { tailwindCss } from "../../tailwind";
 import { MyButton, LevelBadge } from "..";
+import EnableOrDisable from "../common/EnableOrDisable";
 import $ from "jquery";
 
 export const cellCss = "py-2 px-3 text-black text-sm";

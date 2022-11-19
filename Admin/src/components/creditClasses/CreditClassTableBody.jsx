@@ -40,6 +40,7 @@ function CreditClassTableBody({ rows, setIsEdit, dispatch, modalId }) {
                             status={row.status}
                             enableOrDisable={enableOrDisableCreditClass}
                             id={row.id}
+                            creditClassPage
                         />
                     </td>
                 </tr>
