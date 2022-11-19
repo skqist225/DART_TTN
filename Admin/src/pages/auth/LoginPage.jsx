@@ -11,15 +11,14 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { getImage } from "../../helpers";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { useDispatch, useSelector } from "react-redux";
 import { authState, login } from "../../features/authSlice";
 import { useNavigate } from "react-router-dom";
 import PriorityHighIcon from "@mui/icons-material/PriorityHigh";
-import { userState } from "../../features/userSlice";
 import Logo from "../../images/ttn-transparent-logo.png";
+import { persistUserState } from "../../features/persistUserSlice";
 
 const loginSchema = yup
     .object({
@@ -41,7 +40,7 @@ function LoginPage() {
         loginAction: { successMessage, errorMessage },
     } = useSelector(authState);
 
-    const { user } = useSelector(userState);
+    const { user } = useSelector(persistUserState);
 
     const {
         register,

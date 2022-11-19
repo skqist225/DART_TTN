@@ -1,10 +1,10 @@
 import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
 import api from "../axios";
-import { setUser } from "./userSlice";
+import { setUser } from "./persistUserSlice";
 
 export const login = createAsyncThunk(
     "auth/login",
-    async (loginInfo, { rejectWithValue, dispatch }) => {
+    async (loginInfo, { dispatch, rejectWithValue }) => {
         try {
             const { data } = await api.post("/auth/login?admin=true", loginInfo);
 
@@ -71,7 +71,6 @@ export const checkEmail = createAsyncThunk(
 );
 
 const initialState = {
-    user: null,
     loading: true,
     errorMessage: null,
     successMessage: "",
@@ -91,9 +90,6 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        setUser: (state, { payload }) => {
-            state.user = payload;
-        },
         clearErrorMessage(state, _) {
             state.errorMessage = null;
         },
@@ -105,7 +101,6 @@ const authSlice = createSlice({
         builder
             .addCase(register.fulfilled, (state, { payload }) => {
                 state.loading = false;
-                state.user = payload.data;
             })
             .addCase(login.pending, (state, { payload }) => {
                 state.loginAction.loading = true;
@@ -117,6 +112,7 @@ const authSlice = createSlice({
                 state.loginAction.successMessage = "Login successfully";
             })
             .addCase(login.rejected, (state, { payload }) => {
+                console.log(payload);
                 state.loginAction.loading = false;
                 state.loginAction.errorMessage = payload;
             })

@@ -7,6 +7,7 @@ export { default as FileInput } from "./utils/userInputs/FileInput";
 // commons
 export { default as LevelBadge } from "./common/LevelBadge";
 export { default as MyButton } from "./common/MyButton";
+export { default as EnableOrDisable } from "./common/EnableOrDisable";
 
 // errors
 export { default as ErrorMessage } from "./utils/errors/ErrorMessage";

@@ -80,12 +80,11 @@ function CreditClassesPage() {
             })
         );
         dispatch(fetchAllSubjects({ page: 0 }));
-        dispatch(fetchAllUsers({ page: 1, role: "Giảng viên" }));
+        dispatch(fetchAllUsers({ page: 0, role: "Giảng viên" }));
     }, []);
 
     const {
         creditClasses,
-        creditClassesExcel,
         errorObject,
         totalElements,
         totalPages,
@@ -93,6 +92,7 @@ function CreditClassesPage() {
         addCreditClass: { successMessage },
         editCreditClass: { successMessage: eqSuccessMessage },
         deleteCreditClass: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
+        enableOrDisableCreditClass: { successMessage: eodqSuccessMessage },
     } = useSelector(creditClassState);
 
     const {
@@ -174,6 +174,12 @@ function CreditClassesPage() {
             callToast("error", dqErrorMessage);
         }
     }, [dqErrorMessage]);
+
+    useEffect(() => {
+        if (eodqSuccessMessage) {
+            cleanForm(eodqSuccessMessage, "enable");
+        }
+    }, [eodqSuccessMessage]);
 
     useEffect(() => {
         if (errorObject && errorObject.id) {

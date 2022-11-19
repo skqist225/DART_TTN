@@ -2,19 +2,26 @@ import React from "react";
 import { tailwindCss } from "../../tailwind";
 import MyButton from "../common/MyButton";
 import $ from "jquery";
-import { deleteCreditClass, setEditedCreditClass } from "../../features/creditClassSlice";
+// import { deleteCreditClass } from "../../features/creditClassSlice";
 import { useDispatch } from "react-redux";
 import { cellCss } from "../questions/QuestionTableBody";
 import TableModalViewer from "../utils/tables/TableModalViewer";
 import { Badge, Table } from "flowbite-react";
+import { enableOrDisableExam, setEditedExam } from "../../features/examSlice";
+import EnableOrDisable from "../common/EnableOrDisable";
 
 function ExamTableBody({ rows, setIsEdit }) {
     const dispatch = useDispatch();
     return (
         <>
             <tbody>
-                {rows.map(row => (
-                    <tr className={tailwindCss.tr} key={row.id}>
+                {rows.map((row, index) => (
+                    <tr
+                        className={`${tailwindCss.tr} ${
+                            !row.status && "bg-gray-200 hover:bg-gray-200"
+                        }`}
+                        key={row.id}
+                    >
                         <td className={cellCss}>{row.id}</td>
                         <td className={cellCss}>{row.subjectId}</td>
                         <td className={cellCss}>{row.subjectName}</td>
@@ -30,19 +37,19 @@ function ExamTableBody({ rows, setIsEdit }) {
                         <td className={cellCss}>{row.noticePeriod}</td>
                         <td className={cellCss}>{row.time} phút</td>
                         <td className={cellCss}>{row.type}</td>
-                        <td className={cellCss}>{row.teacherName}</td>
+                        {/* <td className={cellCss}>{row.teacherName}</td> */}
                         <td className={cellCss}>{row.createdBy}</td>
                         <td className={`${cellCss} flex items-center`}>
                             <div className='mr-2'>
                                 <MyButton
                                     type='view'
                                     onClick={() => {
-                                        $(`#studentsViewer`).css("display", "flex");
+                                        $(`#studentsViewer${index}`).css("display", "flex");
                                         // setIsEdit(false);
                                     }}
                                 />
                                 <TableModalViewer
-                                    modalId='studentsViewer'
+                                    modalId={`studentsViewer${index}`}
                                     modalLabel='Danh sách sinh viên'
                                     ModalBody={
                                         <Table striped={true}>
@@ -118,18 +125,15 @@ function ExamTableBody({ rows, setIsEdit }) {
                                     onClick={() => {
                                         $(`#examModal`).css("display", "flex");
                                         setIsEdit(true);
-                                        dispatch(setEditedCreditClass(row));
+                                        dispatch(setEditedExam(row));
                                     }}
                                 />
                             </div>
-                            <div>
-                                <MyButton
-                                    type='delete'
-                                    onClick={() => {
-                                        dispatch(deleteCreditClass(row.id));
-                                    }}
-                                />
-                            </div>
+                            <EnableOrDisable
+                                status={row.status}
+                                enableOrDisable={enableOrDisableExam}
+                                id={row.id}
+                            />
                         </td>
                     </tr>
                 ))}

@@ -88,11 +88,7 @@ export const addExam = createAsyncThunk("exam/addExam", async (postData, { rejec
 
 export const editExam = createAsyncThunk("exam/editExam", async (postData, { rejectWithValue }) => {
     try {
-        const { data } = await api.post(`/exams/save?isEdit=true`, postData, {
-            headers: {
-                "Content-Type": "multipart/formData",
-            },
-        });
+        const { data } = await api.post(`/exams/save?isEdit=true`, postData);
 
         return { data };
     } catch ({ data: { error } }) {
@@ -257,7 +253,7 @@ const examSlice = createSlice({
             })
             .addCase(editExam.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.editExam.successMessage = "Chỉnh sửa câu hỏi thành công";
+                    state.editExam.successMessage = "Chỉnh sửa ca thi thành công";
                 }
             })
             .addCase(editExam.rejected, (state, { payload }) => {

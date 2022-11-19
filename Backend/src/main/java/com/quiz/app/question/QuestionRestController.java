@@ -106,7 +106,7 @@ public class QuestionRestController {
             }
             questionsDTO.setQuestions(questions);
             questionsDTO.setTotalElements(questions.size());
-            questionsDTO.setTotalPages(0);
+            questionsDTO.setTotalPages((long) Math.ceil(questions.size() / 5));
         } else {
             Map<String, String> filters = new HashMap<>();
             filters.put("page", page);

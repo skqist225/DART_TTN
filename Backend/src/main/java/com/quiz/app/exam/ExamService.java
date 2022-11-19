@@ -23,7 +23,6 @@ import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.Optional;
 
 
@@ -58,21 +57,23 @@ public class ExamService {
         throw new NotFoundException("Không tìm thấy môn học với mã " + id);
     }
 
-
-
-
-
-    public boolean isIdDuplicated(Integer id, boolean isEdit) {
+    public String enableOrDisable(Integer id, String action) throws NotFoundException {
         try {
-            Exam subject = findById(id);
-
-            if (isEdit) {
-                return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
+            Exam exam = findById(id);
+            String responseMessage = "";
+            if (action.equals("enable")) {
+                exam.setStatus(true);
+                responseMessage = "Kích họat ca thi thành công";
             } else {
-                return Objects.nonNull(subject);
+                exam.setStatus(false);
+                responseMessage = "Hủy kích họat ca thi thành công";
             }
-        } catch (NotFoundException e) {
-            return false;
+
+            examRepository.save(exam);
+
+            return responseMessage;
+        } catch (NotFoundException ex) {
+            throw new NotFoundException(ex.getMessage());
         }
     }
 
@@ -86,7 +87,15 @@ public class ExamService {
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
 
-        Sort sort = Sort.by(sortField);
+        Sort sort = null;
+//        if(sortField.equals("subjectId")) {
+//            sort = Sort.by(sortField);
+//        } else if(sortField.equals("subjectName")) {
+//            sort = Sort.by(sortField);
+//        } else {
+//            sort = Sort.by(sortField);
+//        }
+        sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
 
@@ -98,16 +107,12 @@ public class ExamService {
 
         if (!StringUtils.isEmpty(searchQuery)) {
             Expression<String> id = root.get("id");
-            Expression<String> name = root.get("name");
 
             Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
+//            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
-//        Expression<Boolean> status = root.get("status");
-//        predicates.add(criteriaBuilder.and(criteriaBuilder.equal(status,
-//                true)));
 
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));

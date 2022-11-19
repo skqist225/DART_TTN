@@ -2,6 +2,7 @@ package com.quiz.app.register;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.entity.CreditClass;
 import com.quiz.entity.Register;
 import com.quiz.entity.RegisterId;
 import org.apache.commons.lang.StringUtils;
@@ -11,14 +12,12 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import org.springframework.data.jpa.repository.query.QueryUtils;
 import org.springframework.stereotype.Service;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -60,6 +59,10 @@ public class RegisterService {
 
     public List<Register> findAll() {
         return (List<Register>) registerRepository.findAll();
+    }
+
+    public List<Register> findByCreditClass(Integer creditClassId) {
+        return registerRepository.findByMyCreditClass(creditClassId);
     }
 
     public Page<Register> findAllRegisters(Map<String, String> filters) {

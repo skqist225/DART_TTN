@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
 import java.util.List;
 
@@ -52,7 +53,7 @@ public class CreditClass {
     private int minimumNumberOfStudents;
 
     @Column(name = "HUYLOP")
-    private boolean isCancelled;
+    private boolean status;
 
     @JsonIgnore
     @ManyToOne
@@ -74,30 +75,36 @@ public class CreditClass {
                 .subject(subject)
                 .group(postCreateCreditClassDTO.getGroup())
                 .minimumNumberOfStudents(postCreateCreditClassDTO.getMinimumNumberOfStudents())
-                .isCancelled(false)
+                .status(false)
                 .teacher(teacher)
                 .build();
     }
 
+    @Transient
     public String getSubjectId() {
         return this.subject.getId();
     }
 
+    @Transient
     public String getSubjectName() {
         return this.subject.getName();
     }
 
+    @Transient
     public String getTeacherName() {
         return this.teacher.getFullName();
     }
 
+    @Transient
     public int getNumberOfActiveStudents() {
-        int i = 0;
-        for (Register register : this.registers) {
-            if (!register.isStatus()) {
-                i++;
+        return this.registers.stream().reduce(0, (subtotal, element) -> {
+            if (!element.isStatus()) {
+                return subtotal + 1;
             }
-        }
-        return i;
+            return subtotal;
+        }, Integer::sum);
     }
+
+    ;
+
 }

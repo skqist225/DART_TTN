@@ -14,6 +14,7 @@ function Select({
     width,
     hiddenOption = false,
     multiple = false,
+    readOnly = false,
 }) {
     useEffect(() => {
         if (setValue && defaultValue) {
@@ -48,6 +49,7 @@ function Select({
                 onBlur={onBlur}
                 ref={ref}
                 multiple={multiple}
+                disabled={readOnly}
             >
                 {hiddenOption && (
                     <option value='' disabled selected style={{ display: "none" }}>

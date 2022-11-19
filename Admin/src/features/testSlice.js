@@ -4,7 +4,7 @@ import api from "../axios";
 export const fetchAllTests = createAsyncThunk(
     "test/fetchAllTests",
     async (
-        { page = 1, query = "", sortField = "id", sortDir = "asc", subject = "" },
+        { page = 1, query = "", sortField = "id", sortDir = "desc", subject = "" },
         { dispatch, rejectWithValue }
     ) => {
         try {
@@ -101,7 +101,7 @@ const initialState = {
     tests: [],
     totalElements: 0,
     totalPages: 0,
-    editedsubject: null,
+    editedTest: null,
     filterObject: {
         page: 1,
         query: "",
@@ -153,6 +153,9 @@ const testSlice = createSlice({
         },
         setEditedsubject(state, { payload }) {
             state.editedTest = payload;
+        },
+        setTests(state, { payload }) {
+            state.tests = payload;
         },
     },
     extraReducers: builder => {
@@ -233,7 +236,7 @@ const testSlice = createSlice({
 });
 
 export const {
-    actions: { clearTestState, clearErrorField, setFilterObject, setEditedTest },
+    actions: { clearTestState, clearErrorField, setFilterObject, setEditedTest, setTests },
 } = testSlice;
 
 export const testState = state => state.test;

@@ -25,6 +25,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -39,7 +40,7 @@ public class Exam {
     @Column(name = "MACATHI")
     private Integer id;
 
-    @JsonFormat(pattern = "dd-MM-yyyy")
+    @JsonFormat(pattern = "dd/MM/yyyy")
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Column(name = "NGAYTHI", nullable = false)
     private LocalDate examDate;
@@ -110,5 +111,13 @@ public class Exam {
 
     public String getTeacherName() {
         return this.takeExams.get(0).getRegister().getCreditClass().getTeacherName();
+    }
+
+    public Integer getCreditClassId() {
+        return this.takeExams.get(0).getRegister().getCreditClass().getId();
+    }
+
+    public List<Integer> getTestIds() {
+        return this.getTests().stream().map(Test::getId).collect(Collectors.toList());
     }
 }

@@ -7,6 +7,8 @@ function TablePagination({ totalElements, totalPages, setPage, fetchDataByPageNu
     const [currentIndex, setCurrentIndex] = useState(1);
     const { resetFilter, excelAdd } = useSelector(questionState);
 
+    console.log(totalElements, totalPages);
+
     useEffect(() => {
         if (resetFilter) {
             setCurrentIndex(1);

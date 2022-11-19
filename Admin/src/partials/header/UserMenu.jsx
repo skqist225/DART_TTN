@@ -5,14 +5,14 @@ import Transition from "../../utils/Transition";
 import { authState } from "../../features/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { getImage } from "../../helpers";
-import { userState } from "../../features/userSlice";
 import { Button } from "@mui/material";
 import { persistor } from "../../main";
+import { persistUserState } from "../../features/persistUserSlice";
 
 function UserMenu() {
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
-    const { user } = useSelector(userState);
+    const { user } = useSelector(persistUserState);
 
     const trigger = useRef(null);
     const dropdown = useRef(null);

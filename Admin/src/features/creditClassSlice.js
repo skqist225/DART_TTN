@@ -4,7 +4,7 @@ import api from "../axios";
 export const fetchAllCreditClasses = createAsyncThunk(
     "creditClass/fetchAllCreditClasses",
     async (
-        { page = 1, query = "", sortField = "id", sortDir = "desc", subject = "" },
+        { page = 1, query = "", sortField = "id", sortDir = "desc", subject = "", active = false },
         { dispatch, rejectWithValue }
     ) => {
         try {
@@ -40,7 +40,7 @@ export const fetchAllCreditClasses = createAsyncThunk(
             const {
                 data: { creditClasses, totalElements, totalPages },
             } = await api.get(
-                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}`
+                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&active=${active}`
             );
 
             return { creditClasses, totalElements, totalPages };
@@ -102,24 +102,11 @@ export const deleteCreditClass = createAsyncThunk(
     }
 );
 
-export const enableClass = createAsyncThunk(
-    "creditClass/enableClass",
-    async (creditClassId, { rejectWithValue }) => {
+export const enableOrDisableCreditClass = createAsyncThunk(
+    "creditClass/enableOrDisableCreditClass",
+    async ({ id, action }, { rejectWithValue }) => {
         try {
-            const { data } = await api.delete(`/creditClasses/${creditClassId}/delete`);
-
-            return { data };
-        } catch ({ data: { error } }) {
-            return rejectWithValue(error);
-        }
-    }
-);
-
-export const disableClass = createAsyncThunk(
-    "creditClass/disableClass",
-    async (creditClassId, { rejectWithValue }) => {
-        try {
-            const { data } = await api.delete(`/creditClasses/${creditClassId}/delete`);
+            const { data } = await api.put(`/creditClasses/${id}?action=${action}`);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -150,6 +137,9 @@ const initialState = {
     deleteCreditClass: {
         successMessage: null,
         errorMessage: null,
+    },
+    enableOrDisableCreditClass: {
+        successMessage: null,
     },
 };
 
@@ -232,7 +222,7 @@ const creditClassSlice = createSlice({
             })
             .addCase(editCreditClass.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.editCreditClass.successMessage = "Chỉnh sửa lớp thành công";
+                    state.editCreditClass.successMessage = "Chỉnh sửa LTC thành công";
                 }
             })
             .addCase(editCreditClass.rejected, (state, { payload }) => {
@@ -251,7 +241,15 @@ const creditClassSlice = createSlice({
             })
             .addCase(deleteCreditClass.fulfilled, (state, { payload }) => {
                 state.deleteCreditClass.successMessage = payload.data;
-            });
+            })
+
+            .addCase(enableOrDisableCreditClass.pending, (state, { payload }) => {
+                state.enableOrDisableCreditClass.successMessage = null;
+            })
+            .addCase(enableOrDisableCreditClass.fulfilled, (state, { payload }) => {
+                state.enableOrDisableCreditClass.successMessage = payload.data;
+            })
+            .addCase(enableOrDisableCreditClass.rejected, (state, { payload }) => {});
     },
 });
 

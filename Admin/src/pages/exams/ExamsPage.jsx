@@ -18,6 +18,7 @@ import $ from "jquery";
 import { fetchAllSubjects } from "../../features/subjectSlice";
 import { fetchAllCreditClasses } from "../../features/creditClassSlice";
 import { setErrorField } from "../../features/userSlice";
+import { setTests } from "../../features/testSlice";
 
 const columns = [
     {
@@ -28,22 +29,22 @@ const columns = [
     {
         name: "Mã môn học",
         sortField: "subjectId",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Tên môn học",
         sortField: "subjectName",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Trạng thái",
         sortField: "taken",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Số lượng",
         sortField: "numberOfStudents",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Ngày thi",
@@ -52,7 +53,7 @@ const columns = [
     },
     {
         name: "Tiết báo danh",
-        sortField: "time",
+        sortField: "noticePeriod",
         sortable: true,
     },
     {
@@ -68,17 +69,16 @@ const columns = [
     {
         name: "Giảng viên",
         sortField: "time",
-        sortable: true,
+        // sortable: true,
     },
-    {
-        name: "Người tạo",
-        sortField: "name",
-        sortable: true,
-    },
+    // {
+    //     name: "Người tạo",
+    //     sortField: "name",
+    //     sortable: true,
+    // },
     {
         name: "Thao tác",
         sortField: "name",
-        sortable: true,
     },
 ];
 
@@ -98,7 +98,7 @@ function ExamsPage() {
             })
         );
         dispatch(fetchAllSubjects({ page: 0 }));
-        dispatch(fetchAllCreditClasses({ page: 0 }));
+        dispatch(fetchAllCreditClasses({ page: 0, active: true }));
     }, []);
 
     const {
@@ -168,6 +168,7 @@ function ExamsPage() {
         addExam: { successMessage },
         editExam: { successMessage: esSuccessMessage },
         deleteExam: { successMessage: dsSuccessMessage },
+        enableOrDisableExam: { successMessage: eodqSuccessMessage },
     } = useSelector(examState);
 
     const handleQueryChange = ({ target: { value: query } }) => {
@@ -218,15 +219,26 @@ function ExamsPage() {
 
     useEffect(() => {
         if (esSuccessMessage) {
-            cleanForm(successMessage, "edit");
+            cleanForm(esSuccessMessage, "edit");
         }
     }, [esSuccessMessage]);
 
     useEffect(() => {
         if (dsSuccessMessage) {
-            cleanForm(successMessage, "delete");
+            cleanForm(dsSuccessMessage, "delete");
         }
     }, [dsSuccessMessage]);
+
+    useEffect(() => {
+        if (eodqSuccessMessage) {
+            cleanForm(eodqSuccessMessage, "enable");
+        }
+    }, [eodqSuccessMessage]);
+
+    function onCloseForm() {
+        dispatch(setEditedExam(null));
+        dispatch(setTests([]));
+    }
 
     return (
         <Frame
@@ -258,7 +270,8 @@ function ExamsPage() {
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
-                    Filter={ExamFilter}
+                    // Filter={ExamFilter}
+                    onCloseForm={onCloseForm}
                 />
             }
         />

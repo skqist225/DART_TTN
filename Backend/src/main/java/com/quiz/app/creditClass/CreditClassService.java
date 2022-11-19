@@ -62,6 +62,10 @@ public class CreditClassService {
         return (List<CreditClass>) creditClassRepository.findAll();
     }
 
+    public List<CreditClass> findAllActiveCreditClass() {
+        return creditClassRepository.findAllActiveCreditClass();
+    }
+
     public boolean isUniqueKey(Integer id, String schoolYear, int semester, String subjectId, int group, boolean isEdit) {
         CreditClass creditClass = creditClassRepository.findByUniqueKey(schoolYear, semester,
                 subjectId,
@@ -111,14 +115,23 @@ public class CreditClassService {
         return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
     }
 
-    public boolean enableOrDisableCreditClass(Integer creditClassId, String action) {
+    public String enableOrDisable(Integer id, String action) throws NotFoundException {
         try {
-            CreditClass cls = findById(creditClassId);
-            cls.setCancelled(!action.equals("enable"));
+            CreditClass creditClass = findById(id);
+            String responseMessage = "";
+            if (action.equals("enable")) {
+                creditClass.setStatus(false);
+                responseMessage = "Kích họat LTC thành công";
+            } else {
+                creditClass.setStatus(true);
+                responseMessage = "Hủy kích họat LTC thành công";
+            }
 
-            return true;
+            creditClassRepository.save(creditClass);
+
+            return responseMessage;
         } catch (NotFoundException ex) {
-            return false;
+            throw new NotFoundException(ex.getMessage());
         }
     }
 

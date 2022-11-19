@@ -5,6 +5,7 @@ import com.quiz.app.creditClass.dto.CreditClassesDTO;
 import com.quiz.app.creditClass.dto.PostCreateCreditClassDTO;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.register.RegisterService;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
@@ -23,6 +24,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -44,6 +46,9 @@ public class CreditClassRestController {
     private SubjectService subjectService;
 
     @Autowired
+    private RegisterService registerService;
+
+    @Autowired
     private UserService userService;
 
     @GetMapping("")
@@ -51,16 +56,22 @@ public class CreditClassRestController {
             @RequestParam("page") String page,
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
-            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField
+            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
+            @RequestParam(name = "active", required = false, defaultValue = "false") boolean active
     ) {
         CreditClassesDTO creditClassesDTO = new CreditClassesDTO();
 
         if (page.equals("0")) {
-            List<CreditClass> creditClasses = creditClassService.findAll();
+            List<CreditClass> creditClasses = null;
+            if (active) {
+                creditClasses = creditClassService.findAllActiveCreditClass();
+            } else {
+                creditClasses = creditClassService.findAll();
+            }
 
             creditClassesDTO.setCreditClasses(creditClasses);
             creditClassesDTO.setTotalElements(creditClasses.size());
-            creditClassesDTO.setTotalPages(0);
+            creditClassesDTO.setTotalPages((long) Math.ceil(creditClasses.size() / 10));
         } else {
             Map<String, String> filters = new HashMap<>();
             filters.put("page", page);
@@ -109,7 +120,7 @@ public class CreditClassRestController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<StandardJSONResponse<CreditClass>> saveSubject(
+    public ResponseEntity<StandardJSONResponse<String>> saveSubject(
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
             @RequestBody PostCreateCreditClassDTO postCreateCreditClassDTO,
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
@@ -132,7 +143,7 @@ public class CreditClassRestController {
 
 
         if (commonUtils.getArrayNode().size() > 0) {
-            return new BadResponse<CreditClass>(commonUtils.getArrayNode().toString()).response();
+            return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
         } else {
             if (creditClassService.isUniqueKey(id, schoolYear, semester, subjectId, group, isEdit)) {
                 commonUtils.addError("uniqueKey", "Niên khóa + học kỳ + môn học + nhóm phải là " +
@@ -152,7 +163,7 @@ public class CreditClassRestController {
             }
 
             if (commonUtils.getArrayNode().size() > 0) {
-                return new BadResponse<CreditClass>(commonUtils.getArrayNode().toString()).response();
+                return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
             }
         }
 
@@ -168,14 +179,14 @@ public class CreditClassRestController {
 
                 creditClass = creditClassService.save(creditCls);
             } catch (NotFoundException exception) {
-                return new BadResponse<CreditClass>(exception.getMessage()).response();
+                return new BadResponse<String>(exception.getMessage()).response();
             }
         } else {
             creditClass = creditClassService.save(CreditClass.build(postCreateCreditClassDTO,
                     subject, teacher));
         }
 
-        return new OkResponse<>(creditClass).response();
+        return new OkResponse<>("Thêm lớp tín chỉ thành công").response();
     }
 
     @DeleteMapping("{id}/delete")
@@ -183,6 +194,17 @@ public class CreditClassRestController {
         try {
             return new OkResponse<>(creditClassService.deleteById(id)).response();
         } catch (ConstrainstViolationException ex) {
+            return new BadResponse<String>(ex.getMessage()).response();
+        }
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<StandardJSONResponse<String>> enableOrDisable(@PathVariable("id") Integer id, @RequestParam(name = "action") String action) {
+        try {
+            String message = creditClassService.enableOrDisable(id, action);
+
+            return new OkResponse<>(message).response();
+        } catch (NotFoundException ex) {
             return new BadResponse<String>(ex.getMessage()).response();
         }
     }

@@ -2,7 +2,6 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
     deleteQuestion,
-    disableOrEnableLoadedQuestions,
     enableOrDisableQuestion,
     questionState,
     setEditedQuestion,
@@ -102,52 +101,31 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                                             />
                                         </div>
                                     )}
-                                    <div>
-                                        {row.status ? (
-                                            <MyButton
-                                                type='disable'
-                                                onClick={() => {
-                                                    dispatch(
-                                                        enableOrDisableQuestion({
-                                                            id: row.id,
-                                                            action: "disable",
-                                                        })
-                                                    );
-                                                }}
-                                            />
-                                        ) : (
-                                            <MyButton
-                                                type='enable'
-                                                onClick={() => {
-                                                    dispatch(
-                                                        enableOrDisableQuestion({
-                                                            id: row.id,
-                                                            action: "enable",
-                                                        })
-                                                    );
-                                                }}
-                                            />
-                                        )}
-                                    </div>
+                                    <EnableOrDisable
+                                        status={row.status}
+                                        enableOrDisable={enableOrDisableQuestion}
+                                        id={row.id}
+                                    />
                                 </>
                             ) : (
-                                <div className='mx-3'>
-                                    {row.status ? (
-                                        <MyButton
-                                            type='delete'
-                                            onClick={() => {
-                                                dispatch(disableOrEnableLoadedQuestions(row.id));
-                                            }}
-                                        />
-                                    ) : (
-                                        <MyButton
-                                            type='enable'
-                                            onClick={() => {
-                                                dispatch(disableOrEnableLoadedQuestions(row.id));
-                                            }}
-                                        />
-                                    )}
-                                </div>
+                                <></>
+                                // <div className='mx-3'>
+                                //     {row.status ? (
+                                //         <MyButton
+                                //             type='delete'
+                                //             onClick={() => {
+                                //                 dispatch(disableOrEnableLoadedQuestions(row.id));
+                                //             }}
+                                //         />
+                                //     ) : (
+                                //         <MyButton
+                                //             type='enable'
+                                //             onClick={() => {
+                                //                 dispatch(disableOrEnableLoadedQuestions(row.id));
+                                //             }}
+                                //         />
+                                //     )}
+                                // </div>
                             )}
                         </td>
                     </tr>

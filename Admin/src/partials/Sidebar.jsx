@@ -2,7 +2,6 @@ import React, { useEffect, useRef, useState } from "react";
 import { NavLink, useLocation } from "react-router-dom";
 import SidebarElement from "./SidebarElement";
 
-
 function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const location = useLocation();
     const { pathname } = location;
@@ -197,7 +196,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 title='Lớp tín chỉ'
                             />
 
-                            <SidebarElement pathname={pathname} name='takeExams' title='Thi' />
+                            {/* <SidebarElement pathname={pathname} name='takeExams' title='Thi' /> */}
 
                             <SidebarElement pathname={pathname} name='registers' title='Đăng ký' />
 

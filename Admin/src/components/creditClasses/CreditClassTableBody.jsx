@@ -2,38 +2,45 @@ import React from "react";
 import { tailwindCss } from "../../tailwind";
 import MyButton from "../common/MyButton";
 import $ from "jquery";
-import { deleteCreditClass, setEditedCreditClass } from "../../features/creditClassSlice";
+import {
+    deleteCreditClass,
+    enableOrDisableCreditClass,
+    setEditedCreditClass,
+} from "../../features/creditClassSlice";
 import { cellCss } from "../questions/QuestionTableBody";
+import EnableOrDisable from "../common/EnableOrDisable";
 
-function ClassTableBody({ rows, setIsEdit, dispatch, modalId }) {
+function CreditClassTableBody({ rows, setIsEdit, dispatch, modalId }) {
     return (
         <tbody>
             {rows.map(row => (
-                <tr className={tailwindCss.tr} key={row.id}>
+                <tr
+                    className={`${tailwindCss.tr} ${row.status && "bg-gray-200 hover:bg-gray-200"}`}
+                    key={row.id}
+                >
                     <td className={cellCss}>{row.id}</td>
                     <td className={cellCss}>{row.schoolYear}</td>
                     <td className={cellCss}>{row.semester}</td>
-                    <td className={cellCss}>{row.subject.name}</td>
+                    <td className={cellCss}>{row.subjectName}</td>
                     <td className={cellCss}>{row.group}</td>
-                    <td className={cellCss}>{row.isCancelled}</td>
-                    <td className={cellCss}>{row.teacher.fullName}</td>
+                    <td className={cellCss}>{row.status}</td>
+                    <td className={cellCss}>{row.teacherName}</td>
                     <td className={cellCss + " flex items-center"}>
-                        <MyButton
-                            type='edit'
-                            onClick={() => {
-                                $(`#${modalId}`).css("display", "flex");
-                                setIsEdit(true);
-                                dispatch(setEditedCreditClass(row));
-                            }}
-                        />
-                        <div className='mx-3'>
+                        <div className='mr-2'>
                             <MyButton
-                                type='delete'
+                                type='edit'
                                 onClick={() => {
-                                    dispatch(deleteCreditClass(row.id));
+                                    $(`#${modalId}`).css("display", "flex");
+                                    setIsEdit(true);
+                                    dispatch(setEditedCreditClass(row));
                                 }}
                             />
                         </div>
+                        <EnableOrDisable
+                            status={row.status}
+                            enableOrDisable={enableOrDisableCreditClass}
+                            id={row.id}
+                        />
                     </td>
                 </tr>
             ))}
@@ -41,4 +48,4 @@ function ClassTableBody({ rows, setIsEdit, dispatch, modalId }) {
     );
 }
 
-export default ClassTableBody;
+export default CreditClassTableBody;

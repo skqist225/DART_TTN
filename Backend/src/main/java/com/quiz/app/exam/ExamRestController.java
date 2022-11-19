@@ -14,6 +14,7 @@ import com.quiz.app.takeExam.TakeExamService;
 import com.quiz.entity.CreditClass;
 import com.quiz.entity.Exam;
 import com.quiz.entity.Register;
+import com.quiz.entity.TakeExam;
 import com.quiz.entity.Test;
 import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -32,6 +34,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
@@ -176,14 +179,42 @@ public class ExamRestController {
         LocalDate tempExamDate = LocalDate.parse(examDate, formatter);
 
         if (isEdit) {
-//            try {
-//                Subject    subject = examService.findById(id);
-//                subject.setName(name);
-//
-//                savedSubject = examService.save(subject);
-//            } catch (NotFoundException exception) {
-//                return new BadResponse<Subject>(exception.getMessage()).response();
-//            }
+            try {
+                Exam exm = examService.findById(id);
+                exm.setExamDate(tempExamDate);
+                exm.setNoticePeriod(noticePeriod);
+                exm.setTime(time);
+                exm.setType(type);
+
+                for (Integer testId : tests) {
+                    // Add new test
+                    exm.addTest(new Test(testId));
+                }
+
+                List<Test> removedTests = new ArrayList<>();
+                for (Test test : exm.getTests()) {
+                    boolean shouldDelete = true;
+
+                    for (Integer a : tests) {
+                        if (a.equals(test.getId())) {
+                            shouldDelete = false;
+                            break;
+                        }
+                    }
+                    // Remove none mentioned test
+                    if (shouldDelete) {
+                        removedTests.add(test);
+                    }
+                }
+
+                for (Test test : removedTests) {
+                    exm.removeTest(test);
+                }
+
+                exam = examService.save(exm);
+            } catch (NotFoundException e) {
+                return new BadResponse<String>(e.getMessage()).response();
+            }
         } else {
             Exam tempExam = Exam.build(postCreateExamDTO);
             tempExam.setExamDate(tempExamDate);
@@ -200,6 +231,17 @@ public class ExamRestController {
                     break;
                 }
                 if (register.isStatus()) {
+                    continue;
+                }
+                boolean shouldContinue = false;
+                List<TakeExam> takeExams = takeExamService.findByRegister(register);
+                for (TakeExam takeExam : takeExams) {
+                    if (takeExam.getExam().getType().equals(type)) {
+                        shouldContinue = true;
+                        break;
+                    }
+                }
+                if (shouldContinue) {
                     continue;
                 }
                 try {
@@ -221,6 +263,17 @@ public class ExamRestController {
         try {
             return new OkResponse<>(examService.deleteById(id)).response();
         } catch (ConstrainstViolationException ex) {
+            return new BadResponse<String>(ex.getMessage()).response();
+        }
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<StandardJSONResponse<String>> enableOrDisable(@PathVariable("id") Integer id, @RequestParam(name = "action") String action) {
+        try {
+            String message = examService.enableOrDisable(id, action);
+
+            return new OkResponse<>(message).response();
+        } catch (NotFoundException ex) {
             return new BadResponse<String>(ex.getMessage()).response();
         }
     }

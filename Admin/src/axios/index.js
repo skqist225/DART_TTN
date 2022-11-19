@@ -12,7 +12,7 @@ const api = axios.create({
 
 api.interceptors.request.use(request => {
     if (localStorage.getItem("persist:root")) {
-        const { user } = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).user);
+        const { user } = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).persistUser);
 
         if (user && user.token) {
             request.headers["Authorization"] = `Bearer ${user.token}`;

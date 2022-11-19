@@ -1,15 +1,18 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { clearErrorField, creditClassState } from "../../features/creditClassSlice";
-import { setEditedExam } from "../../features/examSlice";
+import { examState, setEditedExam } from "../../features/examSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
 import TestTableBody from "../tests/TestTableBody";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
 import DatePicker from "../utils/datePicker/DatePicker";
 import { Box, Tab, Tabs, Typography } from "@mui/material";
-import { fetchAllRegisters } from "../../features/registerSlice";
+import { fetchAllRegisters, registerState } from "../../features/registerSlice";
 import $ from "jquery";
+import RegisterTableBody from "../registers/RegisterTableBody";
+import TablePagination from "../utils/tables/TablePagination";
+import TableHeader from "../utils/tables/TableHeader";
 
 const examTypes = [
     {
@@ -41,6 +44,19 @@ const noticePeriods = [
     },
 ];
 
+const columns = [
+    {
+        name: "Mã SV",
+        sortField: "fullName",
+        sortable: true,
+    },
+    {
+        name: "Họ tên",
+        sortField: "creditClass",
+        sortable: true,
+    },
+];
+
 function TabPanel(props) {
     const { children, value, index, ...other } = props;
 
@@ -69,8 +85,13 @@ function a11yProps(index) {
 }
 
 function ExamModalBody({ errors, register, dispatch, setValue }) {
-    const { editedCreditClass, errorObject, creditClasses } = useSelector(creditClassState);
+    const [type, setType] = useState("");
+    const [skipUpdateCreditClass, setSkipUpdateCreditClass] = useState(false);
+
+    const { creditClasses } = useSelector(creditClassState);
+    const { editedExam, errorObject } = useSelector(examState);
     const { tests } = useSelector(testState);
+    const { registers, totalElements, totalPages } = useSelector(registerState);
 
     const onKeyDown = ({ target: { name } }) => {
         if (errorObject) {
@@ -79,15 +100,41 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
     };
 
     useEffect(() => {
-        if (setEditedExam) {
-            // setValue("id", editedCreditClass.id);
-            // setValue("name", editedCreditClass.name);
-        } else {
-            // setValue("id", editedCreditClass.id);
-            // setValue("name", editedCreditClass.name);
-        }
-    }, [editedCreditClass]);
+        if (editedExam) {
+            console.log(editedExam);
+            setValue("id", editedExam.id);
+            setValue("creditClassId", editedExam.creditClassId);
+            dispatch(fetchAllTests({ page: 0, subject: editedExam.subjectId }));
 
+            setValue("examDate", editedExam.examDate);
+            setValue("noticePeriod", editedExam.noticePeriod);
+            setValue("time", editedExam.time);
+            setValue("numberOfStudents", editedExam.numberOfRegisters);
+            setValue("type", editedExam.type);
+        } else {
+            setValue("id", "");
+            setValue("creditClassId", "");
+            setValue("examDate", "");
+            setValue("noticePeriod", "");
+            setValue("time", "");
+            setValue("numberOfStudents", "");
+            setValue("type", "");
+
+            $(".tests-checkbox").each(function () {
+                $(this).prop("checked", false);
+            });
+        }
+    }, [editedExam]);
+
+    useEffect(() => {
+        if (tests && tests.length && editedExam) {
+            $(".tests-checkbox").each(function () {
+                if (editedExam.testIds.includes($(this).data("id"))) {
+                    $(this).prop("checked", true);
+                }
+            });
+        }
+    }, [tests]);
 
     useEffect(() => {
         if (creditClasses && creditClasses.length) {
@@ -106,9 +153,15 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
     const handleChange = (event, newValue) => {
         setTabValue(newValue);
         if (newValue === 1) {
-            console.log($("#creditClassId").val());
-            console.log($("#type").val());
-            dispatch(fetchAllRegisters({page:0,creditClassId:}));
+            dispatch(
+                fetchAllRegisters({
+                    page: 0,
+                    creditClass: $("#creditClassId").val(),
+                })
+            );
+
+            setType($("#type").val());
+            setSkipUpdateCreditClass(true);
         }
     };
 
@@ -120,7 +173,13 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
             </Tabs>
             <TabPanel value={tabValue} index={0}>
                 <div className='col-flex items-center justify-center w-full'>
-                    <div className='w-full flex items-center'>
+                    <div
+                        className={`flex w-full mt-5 ${
+                            errors.creditClassId || errors.numberOfActiveStudents
+                                ? "items-start"
+                                : "items-center"
+                        }`}
+                    >
                         <div className='w-full mr-5'>
                             <Select
                                 label='Lớp tín chỉ *'
@@ -135,9 +194,13 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
                                 error={errors.creditClassId && errors.creditClassId.message}
                                 setValue={setValue}
                                 defaultValue={
-                                    creditClasses && creditClasses.length && creditClasses[0].id
+                                    !skipUpdateCreditClass &&
+                                    creditClasses &&
+                                    creditClasses.length &&
+                                    creditClasses[0].id
                                 }
                                 onChangeHandler={handleCreditClassChanged}
+                                readOnly={editedExam && editedExam.creditClassId}
                             />
                         </div>
                         <div className='w-full'>
@@ -178,7 +241,7 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
                                 // error={errors.creditClassId && errors.creditClassId.message}
                                 setValue={setValue}
                                 defaultValue={
-                                    noticePeriods && noticePeriods.length && noticePeriods[0].value
+                                    noticePeriods && noticePeriods.length && noticePeriods[0].id
                                 }
                             />
                         </div>
@@ -206,6 +269,7 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
                                 register={register}
                                 name='numberOfStudents'
                                 onKeyDown={onKeyDown}
+                                readOnly={editedExam && editedExam.numberOfRegisters}
                             />
                         </div>
                     </div>
@@ -221,12 +285,26 @@ function ExamModalBody({ errors, register, dispatch, setValue }) {
                             // error={errors.testId && errors.testId.message}
                             setValue={setValue}
                             defaultValue={examTypes && examTypes.length && examTypes[0].id}
+                            readOnly={editedExam && editedExam.type}
                         />
                     </div>
                 </div>
             </TabPanel>
-            <TabPanel value={tabValue} index={1} style={{ paddingX: "0" }}>
-                Item One
+            <TabPanel value={tabValue} index={1}>
+                {registers && registers.length && (
+                    <>
+                        <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
+                            {/* handleSortChange={handleSortChange} */}
+                            <TableHeader columns={columns} addCheckbox />
+                            <RegisterTableBody rows={registers} type={type} addExam />
+                        </table>
+                        <TablePagination
+                            totalElements={totalElements}
+                            totalPages={totalPages}
+                            // fetchDataByPageNumber={fetchDataByPageNumber}
+                        />
+                    </>
+                )}
             </TabPanel>
         </div>
     );

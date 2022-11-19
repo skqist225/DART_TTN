@@ -3,7 +3,7 @@ import { tailwindCss } from "../../../tailwind";
 import $ from "jquery";
 import "./css/tableHeader.css";
 
-function TableHeader({ columns, handleSortChange }) {
+function TableHeader({ columns, handleSortChange, addCheckbox = false }) {
     const [sortDir, setSortDir] = useState("asc");
 
     function reverseSortDir(selectedClassName) {
@@ -28,6 +28,7 @@ function TableHeader({ columns, handleSortChange }) {
     return (
         <thead className={tailwindCss.thead}>
             <tr>
+                {addCheckbox && <th></th>}
                 {columns.map(({ name, sortField, sortable }) => (
                     <th scope='col' className='py-2 px-3' key={name}>
                         {!sortable ? (

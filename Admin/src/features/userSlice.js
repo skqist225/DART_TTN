@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { PURGE } from "redux-persist";
 import api from "../axios";
+import { setUser } from "./persistUserSlice";
 
 export const fetchAllUsers = createAsyncThunk(
     "user/fetchAllUsers",
@@ -9,7 +9,7 @@ export const fetchAllUsers = createAsyncThunk(
             page = 1,
             query = "",
             sortField = "id",
-            sortDir = "asc",
+            sortDir = "desc",
             roles = "",
             statuses = "1,0",
             role = "",
@@ -54,15 +54,22 @@ export const fetchAllUsers = createAsyncThunk(
     }
 );
 
-export const fetchUser = createAsyncThunk("user/fetchUser", async (id, { rejectWithValue }) => {
-    try {
-        const { data } = await api.get(`/admin/users/${id}`);
+export const fetchUser = createAsyncThunk(
+    "user/fetchUser",
+    async (id, { dispatch, rejectWithValue }) => {
+        try {
+            const { data } = await api.get(`/admin/users/${id}`);
 
-        return { data };
-    } catch ({ data: { error } }) {
-        return rejectWithValue(error);
+            if (data) {
+                dispatch(setUser(data));
+            }
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
     }
-});
+);
 
 export const addUser = createAsyncThunk("user/addUser", async (user, { rejectWithValue }) => {
     try {
@@ -117,7 +124,6 @@ export const editUser = createAsyncThunk("user/editUser", async (formData, { rej
 
 const initialState = {
     loading: true,
-    user: null,
     users: [],
     totalElements: 0,
     totalPages: 0,
@@ -149,9 +155,6 @@ const userSlice = createSlice({
     name: "user",
     initialState,
     reducers: {
-        setUser: (state, { payload }) => {
-            state.user = payload;
-        },
         clearUserState: (state, { payload }) => {
             state.addUser.successMessage = null;
             state.errorObject = null;
@@ -195,13 +198,13 @@ const userSlice = createSlice({
             })
             .addCase(fetchAllUsers.rejected, (state, { payload }) => {})
 
-            .addCase(fetchUser.pending, (state, { payload }) => {
-                state.user = null;
-            })
-            .addCase(fetchUser.fulfilled, (state, { payload }) => {
-                state.user = payload.data;
-            })
-            .addCase(fetchUser.rejected, (state, { payload }) => {})
+            // .addCase(fetchUser.pending, (state, { payload }) => {
+            //     state.user = null;
+            // })
+            // .addCase(fetchUser.fulfilled, (state, { payload }) => {
+            //     state.user = payload.data;
+            // })
+            // .addCase(fetchUser.rejected, (state, { payload }) => {})
 
             .addCase(addUser.pending, (state, { payload }) => {
                 state.addUser.successMessage = null;
@@ -268,31 +271,12 @@ const userSlice = createSlice({
             .addCase(enableOrDisableUser.fulfilled, (state, { payload }) => {
                 state.enableOrDisableUser.successMessage = payload.data;
             })
-            .addCase(enableOrDisableUser.rejected, (state, { payload }) => {})
-
-            .addCase(PURGE, state => {
-                state.user = null;
-                state.addUser.successMessage = null;
-                state.errorObject = null;
-
-                state.editUser.successMessage = null;
-
-                state.deleteUser.successMessage = null;
-                state.deleteUser.errorMessage = null;
-
-                state.enableOrDisableUser.successMessage = null;
-            });
+            .addCase(enableOrDisableUser.rejected, (state, { payload }) => {});
     },
 });
 
-export const {
-    setUser,
-    clearUserState,
-    clearErrorField,
-    setFilterObject,
-    setEditedUser,
-    setErrorField,
-} = userSlice.actions;
+export const { clearUserState, clearErrorField, setFilterObject, setEditedUser, setErrorField } =
+    userSlice.actions;
 
 export const userState = state => state.user;
 export default userSlice.reducer;

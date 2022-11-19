@@ -19,3 +19,16 @@ insert into dangky values(0, "N18DCCN228", 1);
 insert into dangky values(0, "N18DCCN229", 1);
 insert into dangky values(0, "N18DCCN230", 1);
 
+insert into dangky values(0, "N18DCCN220", 3);
+insert into dangky values(0, "N18DCCN221", 3);
+insert into dangky values(0, "N18DCCN222", 3);
+insert into dangky values(0, "N18DCCN223", 3);
+insert into dangky values(0, "N18DCCN224", 3);
+insert into dangky values(0, "N18DCCN225", 3);
+insert into dangky values(0, "N18DCCN226", 3);
+insert into dangky values(0, "N18DCCN227", 3);
+insert into dangky values(0, "N18DCCN228", 3);
+insert into dangky values(0, "N18DCCN229", 3);
+insert into dangky values(0, "N18DCCN230", 3);
+
+

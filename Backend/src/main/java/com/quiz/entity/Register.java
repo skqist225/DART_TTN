@@ -1,7 +1,5 @@
 package com.quiz.entity;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.quiz.app.register.dto.PostCreateRegisterDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -36,11 +34,12 @@ public class Register {
     @JoinColumn(name = "MASV")
     private User student;
 
-    @Column(name = "HUYDANGKY")
+    @Column(name = "HUYDANGKY",columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean status;
 
-    public static Register build(PostCreateRegisterDTO postCreateRegisterDTO) {
-        return null;
-    }
+    @Transient
+    private boolean belongToMidTerm = false;
 
+    @Transient
+    private boolean belongToEndOfTerm = false;
 }
