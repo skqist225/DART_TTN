@@ -1,17 +1,26 @@
 package com.quiz.app.exam;
 
 import com.quiz.app.common.CommonUtils;
+import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exam.dto.ExamsDTO;
 import com.quiz.app.exam.dto.PostCreateExamDTO;
 import com.quiz.app.exception.ConstrainstViolationException;
+import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
+import com.quiz.app.security.UserDetailsImpl;
+import com.quiz.app.takeExam.TakeExamService;
+import com.quiz.entity.CreditClass;
 import com.quiz.entity.Exam;
-import com.quiz.entity.Subject;
+import com.quiz.entity.Register;
+import com.quiz.entity.Test;
+import com.quiz.entity.User;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -21,6 +30,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -32,6 +44,12 @@ import java.util.Objects;
 public class ExamRestController {
     @Autowired
     private ExamService examService;
+
+    @Autowired
+    private CreditClassService creditClassService;
+
+    @Autowired
+    private TakeExamService takeExamService;
 
     @GetMapping("")
     public ResponseEntity<StandardJSONResponse<ExamsDTO>> fetchAllSubjects(
@@ -56,7 +74,7 @@ public class ExamRestController {
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
 
-            Page<Exam> examsPage = examService.findAllSubjects(filters);
+            Page<Exam> examsPage = examService.findAllExams(filters);
 
             subjectsDTO.setExams(examsPage.getContent());
             subjectsDTO.setTotalElements(examsPage.getTotalElements());
@@ -66,68 +84,96 @@ public class ExamRestController {
         return new OkResponse<>(subjectsDTO).response();
     }
 
-    @PostMapping("save")
-    public ResponseEntity<StandardJSONResponse<Exam>> saveSubject(
-            @RequestBody PostCreateExamDTO postCreateExamDTO,
-            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
-    ) {
-        Exam exam = null;
-        CommonUtils commonUtils = new CommonUtils();
-
-        String id = postCreateExamDTO.getId();
-        String name = postCreateExamDTO.getName();
-        String numberOfTheoreticalPeriods = postCreateExamDTO.getNumberOfTheoreticalPeriods();
-        String numberOfPracticePeriods = postCreateExamDTO.getNumberOfPracticePeriods();
-
-        if (Objects.isNull(id)) {
-            commonUtils.addError("id", "Mã môn học không được để trống");
+    public void catchExamInputException(CommonUtils commonUtils, Integer id,
+                                        Integer creditClassId, String examDate,
+                                        Integer noticePeriod,
+                                        Integer numberOfStudents, Integer time, String type,
+                                        List<Integer> tests,
+                                        boolean isEdit) {
+        if (isEdit) {
+            if (Objects.isNull(id)) {
+                commonUtils.addError("id", "Mã ca thi không được để " +
+                        "trống");
+            }
         }
 
-        if (Objects.isNull(name)) {
-            commonUtils.addError("name", "Tên môn học không được để trống");
-        }
-
-        if (Objects.isNull(numberOfTheoreticalPeriods)) {
-            commonUtils.addError("numberOfTheoreticalPeriods", "Số tiết lý thuyết không được để trống");
-        }
-
-        if (Objects.isNull(numberOfPracticePeriods)) {
-            commonUtils.addError("numberOfPracticePeriods", "Số tiết thực hành không được để " +
+        if (Objects.isNull(creditClassId)) {
+            commonUtils.addError("creditClassId", "Mã LTC không được để " +
                     "trống");
         }
 
+        if (Objects.isNull(examDate) || StringUtils.isEmpty(examDate)) {
+            commonUtils.addError("examDate", "Số tiết thực hành không được để " +
+                    "trống");
+        }
+
+        if (Objects.isNull(noticePeriod)) {
+            commonUtils.addError("noticePeriod", "Tiết báo danh không được để " +
+                    "trống");
+        }
+
+        if (Objects.isNull(numberOfStudents)) {
+            commonUtils.addError("numberOfStudents", "Số SV không được để trống "
+            );
+        }
+
+        if (Objects.isNull(time)) {
+            commonUtils.addError("time", "Thời gian thi không được để " +
+                    "trống");
+        }
+
+        if (Objects.isNull(type) || StringUtils.isEmpty(examDate)) {
+            commonUtils.addError("type", "Loại kỳ thi không được để " +
+                    "trống");
+        }
+
+        if (tests.size() == 0) {
+            commonUtils.addError("tests", "Đề thi không được để " +
+                    "trống");
+        }
+    }
+
+    @PostMapping("save")
+    public ResponseEntity<StandardJSONResponse<String>> saveExam(
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+            @RequestBody PostCreateExamDTO postCreateExamDTO,
+            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
+    ) {
+        User teacher = userDetailsImpl.getUser();
+        CommonUtils commonUtils = new CommonUtils();
+        Exam exam = null;
+        CreditClass creditClass = null;
+
+        Integer id = postCreateExamDTO.getId();
+        Integer creditClassId = postCreateExamDTO.getCreditClassId();
+        String examDate = postCreateExamDTO.getExamDate();
+        Integer numberOfStudents = postCreateExamDTO.getNumberOfStudents();
+        Integer noticePeriod = postCreateExamDTO.getNoticePeriod();
+        Integer time = postCreateExamDTO.getTime();
+        String type = postCreateExamDTO.getType();
+        List<Integer> tests = postCreateExamDTO.getTests();
+
+        catchExamInputException(commonUtils, id, creditClassId, examDate, noticePeriod,
+                numberOfStudents, time,
+                type, tests, isEdit);
+
         if (commonUtils.getArrayNode().size() > 0) {
-            return new BadResponse<Exam>(commonUtils.getArrayNode().toString()).response();
+            return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
         } else {
-            int numberOfTheoreticalPeriodsInt = 0, numberOfPracticePeriodsInt = 0;
             try {
-                numberOfTheoreticalPeriodsInt = Integer.parseInt(numberOfTheoreticalPeriods);
-            } catch (final NumberFormatException e) {
-                commonUtils.addError("numberOfTheoreticalPeriods", "Số tiết lý thuyết không hợp " +
-                        "lệ");
+                creditClass = creditClassService.findById(creditClassId);
+            } catch (NotFoundException e) {
+                commonUtils.addError("creditClassId", e.getMessage());
             }
 
-            try {
-                numberOfPracticePeriodsInt = Integer.parseInt(numberOfPracticePeriods);
-            } catch (final NumberFormatException e) {
-                commonUtils.addError("numberOfPracticePeriods", "Số tiết thực hành không hợp " +
-                        "lệ");
-            }
 
             if (commonUtils.getArrayNode().size() > 0) {
-                return new BadResponse<Exam>(commonUtils.getArrayNode().toString()).response();
-            }
-
-            if ((numberOfPracticePeriodsInt + numberOfTheoreticalPeriodsInt) % 3 != 0) {
-                commonUtils.addError("numberOfPracticePeriods", "Số tiết lý thuyết + thực " +
-                        "hành phải là bội số của 3 "
-                );
-            }
-
-            if (commonUtils.getArrayNode().size() > 0) {
-                return new BadResponse<Exam>(commonUtils.getArrayNode().toString()).response();
+                return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
             }
         }
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        LocalDate tempExamDate = LocalDate.parse(examDate, formatter);
 
         if (isEdit) {
 //            try {
@@ -139,10 +185,35 @@ public class ExamRestController {
 //                return new BadResponse<Subject>(exception.getMessage()).response();
 //            }
         } else {
-            exam = examService.save(Exam.build(postCreateExamDTO));
+            Exam tempExam = Exam.build(postCreateExamDTO);
+            tempExam.setExamDate(tempExamDate);
+            for (Integer testId : tests) {
+                tempExam.addTest(new Test(testId));
+            }
+            exam = examService.save(tempExam);
+            exam.setTeacher(teacher);
+
+            int i = 0;
+            creditClass.getRegisters().sort(Comparator.comparing(register -> register.getStudent().getFullName()));
+            for (Register register : creditClass.getRegisters()) {
+                if (i >= numberOfStudents) {
+                    break;
+                }
+                if (register.isStatus()) {
+                    continue;
+                }
+                try {
+                    takeExamService.insertIntoTakeExamTable(takeExamService.determineTryTime(register), exam.getId(),
+                            register.getCreditClass().getId(), register.getStudent().getId());
+                } catch (ConstrainstViolationException e) {
+
+                }
+
+                i++;
+            }
         }
 
-        return new OkResponse<>(exam).response();
+        return new OkResponse<>("Thêm ca thi thành công").response();
     }
 
     @DeleteMapping("{id}/delete")

@@ -1,8 +1,8 @@
-package com.quiz.app.exam;
+package com.quiz.app.takeExamDetail;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.entity.Exam;
+import com.quiz.entity.Subject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -28,29 +28,29 @@ import java.util.Optional;
 
 
 @Service
-public class ExamService {
+public class TakeExamDetailService {
 
     @Autowired
-    ExamRepository examRepository;
+    TakeExamDetailRepository subjectRepository;
 
     @Autowired
     private EntityManager entityManager;
 
-    public Exam save(Exam subject) {
-        return examRepository.save(subject);
+    public Subject save(Subject subject) {
+        return subjectRepository.save(subject);
     }
 
-    public String deleteById(Integer id) throws ConstrainstViolationException {
+    public String deleteById(String id) throws ConstrainstViolationException {
         try {
-            examRepository.deleteById(id);
+            subjectRepository.deleteById(id);
             return "Xóa môn học thành công";
         } catch (Exception ex) {
             throw new ConstrainstViolationException("Không thể xóa môn học vì ràng buộc dữ liệu");
         }
     }
 
-    public Exam findById(Integer id) throws NotFoundException {
-        Optional<Exam> subject = examRepository.findById(id);
+    public Subject findById(String id) throws NotFoundException {
+        Optional<Subject> subject = subjectRepository.findById(id);
         if (subject.isPresent()) {
             return subject.get();
         }
@@ -58,13 +58,29 @@ public class ExamService {
         throw new NotFoundException("Không tìm thấy môn học với mã " + id);
     }
 
+    public Subject findByName(String name) throws NotFoundException {
+        Subject subject = subjectRepository.findByName(name);
 
+        if (Objects.nonNull(subject)) {
+            return subject;
+        }
 
+        throw new NotFoundException("Không tìm thấy môn học với tên " + name);
+    }
 
+    public boolean isNameDuplicated(String id, String name, boolean isEdit) {
+        Subject subject = subjectRepository.findByName(name);
 
-    public boolean isIdDuplicated(Integer id, boolean isEdit) {
+        if (isEdit) {
+            return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
+        } else {
+            return Objects.nonNull(subject);
+        }
+    }
+
+    public boolean isIdDuplicated(String id, boolean isEdit) {
         try {
-            Exam subject = findById(id);
+            Subject subject = findById(id);
 
             if (isEdit) {
                 return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
@@ -76,11 +92,11 @@ public class ExamService {
         }
     }
 
-    public List<Exam> findAll() {
-        return (List<Exam>) examRepository.findAll();
+    public List<Subject> findAll() {
+        return (List<Subject>) subjectRepository.findAll();
     }
 
-    public Page<Exam> findAllExams(Map<String, String> filters) {
+    public Page<Subject> findAllSubjects(Map<String, String> filters) {
         int page = Integer.parseInt(filters.get("page"));
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
@@ -91,8 +107,8 @@ public class ExamService {
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
-        CriteriaQuery<Exam> criteriaQuery = criteriaBuilder.createQuery(Exam.class);
-        Root<Exam> root = criteriaQuery.from(Exam.class);
+        CriteriaQuery<Subject> criteriaQuery = criteriaBuilder.createQuery(Subject.class);
+        Root<Subject> root = criteriaQuery.from(Subject.class);
 
         List<Predicate> predicates = new ArrayList<>();
 
@@ -105,15 +121,11 @@ public class ExamService {
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
-//        Expression<Boolean> status = root.get("status");
-//        predicates.add(criteriaBuilder.and(criteriaBuilder.equal(status,
-//                true)));
-
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
         criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
 
-        TypedQuery<Exam> typedQuery = entityManager.createQuery(criteriaQuery);
+        TypedQuery<Subject> typedQuery = entityManager.createQuery(criteriaQuery);
 
         int totalRows = typedQuery.getResultList().size();
         typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());

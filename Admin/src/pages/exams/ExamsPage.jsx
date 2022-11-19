@@ -17,6 +17,7 @@ import ExamFilter from "../../components/exams/ExamFilter";
 import $ from "jquery";
 import { fetchAllSubjects } from "../../features/subjectSlice";
 import { fetchAllCreditClasses } from "../../features/creditClassSlice";
+import { setErrorField } from "../../features/userSlice";
 
 const columns = [
     {
@@ -25,8 +26,23 @@ const columns = [
         sortable: true,
     },
     {
-        name: "Lớp tín chỉ",
-        sortField: "examDate",
+        name: "Mã môn học",
+        sortField: "subjectId",
+        sortable: true,
+    },
+    {
+        name: "Tên môn học",
+        sortField: "subjectName",
+        sortable: true,
+    },
+    {
+        name: "Trạng thái",
+        sortField: "taken",
+        sortable: true,
+    },
+    {
+        name: "Số lượng",
+        sortField: "numberOfStudents",
         sortable: true,
     },
     {
@@ -35,17 +51,32 @@ const columns = [
         sortable: true,
     },
     {
-        name: "Thời gian làm bài",
+        name: "Tiết báo danh",
+        sortField: "time",
+        sortable: true,
+    },
+    {
+        name: "Thời gian thi",
         sortField: "time",
         sortable: true,
     },
     {
         name: "Loại thi",
+        sortField: "type",
+        sortable: true,
+    },
+    {
+        name: "Giảng viên",
         sortField: "time",
         sortable: true,
     },
     {
         name: "Người tạo",
+        sortField: "name",
+        sortable: true,
+    },
+    {
+        name: "Thao tác",
         sortField: "name",
         sortable: true,
     },
@@ -74,12 +105,27 @@ function ExamsPage() {
         register,
         setValue,
         handleSubmit,
+        setError,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(examSchema),
     });
 
     const onSubmit = data => {
+        let have;
+        if (parseInt(data.numberOfStudents) > parseInt(data.numberOfActiveStudents)) {
+            setError("numberOfStudents", {
+                type: "custom",
+                message: "Số SV thi phải ít hơn SV  đang theo học",
+            });
+        }
+        if (data.time > 120) {
+            setError("time", {
+                type: "custom",
+                message: "Thời gian làm bài phải ít hơn 120 phút",
+            });
+        }
+
         let tests = [];
         $(".tests-checkbox").each(function () {
             if ($(this).prop("checked")) {
@@ -87,29 +133,31 @@ function ExamsPage() {
             }
         });
 
-        console.log(tests);
         if (tests.length === 0) {
             callToast("error", "Chọn bộ đề cho ca thi");
             return;
         }
-        console.log();
-        const examDate = new Date(
-            `${data.examDate.split("/")[1]}/${data.examDate.split("/")[0]}/${
-                data.examDate.split("/")[2]
-            } 00:00:00`
+        let { examDate } = data;
+        const examDt = new Date(
+            `${examDate.split("/")[1]}/${examDate.split("/")[0]}/${examDate.split("/")[2]} 00:00:00`
         );
 
-        if (examDate.getTime() <= new Date().getTime()) {
+        if (examDt.getTime() <= new Date().getTime()) {
             callToast("error", "Ngày thi phải lớn hơn hiện tại");
             return;
         }
-        // if(data.examDate)
 
-        // if (isEdit) {
-        //     dispatch(editExam(data));
-        // } else {
-        //     dispatch(addExam(data));
-        // }
+        data["tests"] = tests;
+
+        examDate = examDate.split("/");
+        examDate = examDate[2] + "-" + examDate[1] + "-" + examDate[0];
+        data["examDate"] = examDate;
+
+        if (isEdit) {
+            dispatch(editExam(data));
+        } else {
+            dispatch(addExam(data));
+        }
     };
 
     const {

@@ -19,7 +19,7 @@ export { default as Frame } from "./utils/frames/Frame";
 
 //tables
 export { default as Table } from "./utils/tables/Table";
-
+export { default as TableModalViewer } from "./utils/tables/TableModalViewer";
 // date pickers
 export { default as DatePicker } from "./utils/datePicker/DatePicker";
 

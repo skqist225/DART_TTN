@@ -1,5 +1,6 @@
 package com.quiz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.quiz.app.register.dto.PostCreateRegisterDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,7 @@ import javax.persistence.IdClass;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Getter
 @Setter
@@ -35,7 +37,7 @@ public class Register {
     private User student;
 
     @Column(name = "HUYDANGKY")
-    private boolean isRegisterCancelled;
+    private boolean status;
 
     public static Register build(PostCreateRegisterDTO postCreateRegisterDTO) {
         return null;

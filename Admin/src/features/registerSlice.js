@@ -4,15 +4,7 @@ import api from "../axios";
 export const fetchAllRegisters = createAsyncThunk(
     "register/fetchAllRegisters",
     async (
-        {
-            page = 1,
-            query = "",
-            sortField = "id",
-            sortDir = "desc",
-            level = "",
-            subject = "",
-            numberOfRegisters = 0,
-        },
+        { page = 1, query = "", sortField = "id", sortDir = "desc", creditClass="" },
         { dispatch, rejectWithValue }
     ) => {
         try {
@@ -38,22 +30,12 @@ export const fetchAllRegisters = createAsyncThunk(
                 value: sortDir,
             });
 
-            filterArray.push({
-                field: "level",
-                value: level,
-            });
-
-            filterArray.push({
-                field: "subject",
-                value: subject,
-            });
-
             dispatch(setFilterObject(filterArray));
 
             const {
                 data: { registers, totalElements, totalPages },
             } = await api.get(
-                `/registers?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&level=${level}&subject=${subject}&numberOfRegisters=${numberOfRegisters}`
+                `/registers?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&creditClass=${}`
             );
 
             return { registers, totalElements, totalPages };

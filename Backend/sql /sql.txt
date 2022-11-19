@@ -6,3 +6,16 @@ echo "SET FOREIGN_KEY_CHECKS = 1;" >> ./temp.sql
 mysql -u root -p quiz < ./temp.sql
 rm -f ./temp.sql
 
+# Insert to dangky
+insert into dangky values(0, "N18DCCN220", 1);
+insert into dangky values(0, "N18DCCN221", 1);
+insert into dangky values(0, "N18DCCN222", 1);
+insert into dangky values(0, "N18DCCN223", 1);
+insert into dangky values(0, "N18DCCN224", 1);
+insert into dangky values(0, "N18DCCN225", 1);
+insert into dangky values(0, "N18DCCN226", 1);
+insert into dangky values(0, "N18DCCN227", 1);
+insert into dangky values(0, "N18DCCN228", 1);
+insert into dangky values(0, "N18DCCN229", 1);
+insert into dangky values(0, "N18DCCN230", 1);
+

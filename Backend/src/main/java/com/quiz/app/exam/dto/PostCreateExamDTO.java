@@ -5,13 +5,19 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostCreateExamDTO {
-    private String id;
-    private String name;
-    private String numberOfTheoreticalPeriods;
-    private String numberOfPracticePeriods;
+    private Integer id;
+    private Integer creditClassId;
+    private String examDate;
+    private Integer noticePeriod;
+    private Integer numberOfStudents;
+    private Integer time;
+    private String type;
+    private List<Integer> tests;
 }

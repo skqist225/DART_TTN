@@ -39,4 +39,5 @@ export const tailwindCss = {
         "mb-2 md:mb-0 text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800",
     tooltipContainer:
         "hidden absolute z-10 py-2 px-3 text-sm font-medium text-white left-0 -top-11 bg-gray-900 rounded-lg shadow-sm transition-opacity duration-300 dark:bg-gray-700",
+    tableViewerCell: "whitespace-nowrap font-medium text-gray-900 dark:text-white",
 };

@@ -23,17 +23,37 @@ import {
 
 const columns = [
     {
-        name: "Sinh viên",
+        name: "Mã SV",
         sortField: "fullName",
         sortable: true,
     },
     {
-        name: "LTC",
+        name: "Họ tên",
         sortField: "creditClass",
         sortable: true,
     },
     {
-        name: "Tình trạng",
+        name: "Mã LTC",
+        sortField: "creditClass",
+        sortable: true,
+    },
+    {
+        name: "Niên khóa",
+        sortField: "creditClass",
+        sortable: true,
+    },
+    {
+        name: "Học kỳ",
+        sortField: "creditClass",
+        sortable: true,
+    },
+    {
+        name: "Môn học",
+        sortField: "status",
+        sortable: true,
+    },
+    {
+        name: "Giảng viên",
         sortField: "status",
         sortable: true,
     },

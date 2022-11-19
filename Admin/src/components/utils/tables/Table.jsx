@@ -8,6 +8,7 @@ import $ from "jquery";
 import { DropDownIcon, ExcelIcon } from "../../../images";
 import { useDispatch } from "react-redux";
 import { setEditedQuestion, setExcelAdd } from "../../../features/questionSlice";
+import TableModalViewer from "./TableModalViewer";
 
 function Table({
     searchPlaceHolder,

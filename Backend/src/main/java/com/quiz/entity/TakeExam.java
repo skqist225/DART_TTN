@@ -1,5 +1,6 @@
 package com.quiz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +16,7 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.List;
 
 @Getter
@@ -26,6 +28,8 @@ import java.util.List;
 @Table(name = "THI")
 @IdClass(TakeExamId.class)
 public class TakeExam {
+
+    @JsonIgnore
     @Id
     @ManyToOne
     @JoinColumn(name = "MACATHI")
@@ -43,12 +47,22 @@ public class TakeExam {
     @Column(name = "LANTHI", columnDefinition = "SMALLINT")
     private int tryTime;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "takeExam")
     private List<TakeExamDetail> takeExamDetails;
 
     @ManyToOne
+    @JoinColumn(name = "MADETHI")
     private Test test;
 
     @Column(name = "DIEM")
-    private float score;
+    private Float score;
+
+    public static TakeExam build(Exam exam, Register register, int tryTime) {
+        return TakeExam.builder()
+                .exam(exam)
+                .register(register)
+                .tryTime(tryTime)
+                .build();
+    }
 }

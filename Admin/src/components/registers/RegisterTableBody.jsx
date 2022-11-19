@@ -10,13 +10,13 @@ function RegisterTableBody({ rows, setIsEdit, dispatch, modalId }) {
         <tbody>
             {rows.map(row => (
                 <tr className={tailwindCss.tr} key={row.id}>
-                    <td className={cellCss}>{row.id}</td>
-                    <td className={cellCss}>{row.schoolYear}</td>
-                    <td className={cellCss}>{row.semester}</td>
-                    <td className={cellCss}>{row.subject.name}</td>
-                    <td className={cellCss}>{row.group}</td>
-                    <td className={cellCss}>{row.isCancelled}</td>
-                    <td className={cellCss}>{row.teacher.fullName}</td>
+                    <td className={cellCss}>{row.student.id}</td>
+                    <td className={cellCss}>{row.student.fullName}</td>
+                    <td className={cellCss}>{row.creditClass.id}</td>
+                    <td className={cellCss}>{row.creditClass.schoolYear}</td>
+                    <td className={cellCss}>{row.creditClass.semester}</td>
+                    <td className={cellCss}>{row.creditClass.subjectName}</td>
+                    <td className={cellCss}>{row.creditClass.teacherName}</td>
                     <td className={cellCss + " flex items-center"}>
                         <MyButton
                             type='edit'

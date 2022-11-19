@@ -76,39 +76,29 @@ export const findExam = createAsyncThunk(
     }
 );
 
-export const addExam = createAsyncThunk(
-    "exam/addExam",
-    async (postData, { rejectWithValue }) => {
-        try {
-            const { data } = await api.post(`/exams/save`, postData, {
-                headers: {
-                    "Content-Type": "multipart/formData",
-                },
-            });
+export const addExam = createAsyncThunk("exam/addExam", async (postData, { rejectWithValue }) => {
+    try {
+        const { data } = await api.post(`/exams/save`, postData);
 
-            return { data };
-        } catch ({ data: { error } }) {
-            return rejectWithValue(error);
-        }
+        return { data };
+    } catch ({ data: { error } }) {
+        return rejectWithValue(error);
     }
-);
+});
 
-export const editExam = createAsyncThunk(
-    "exam/editExam",
-    async (postData, { rejectWithValue }) => {
-        try {
-            const { data } = await api.post(`/exams/save?isEdit=true`, postData, {
-                headers: {
-                    "Content-Type": "multipart/formData",
-                },
-            });
+export const editExam = createAsyncThunk("exam/editExam", async (postData, { rejectWithValue }) => {
+    try {
+        const { data } = await api.post(`/exams/save?isEdit=true`, postData, {
+            headers: {
+                "Content-Type": "multipart/formData",
+            },
+        });
 
-            return { data };
-        } catch ({ data: { error } }) {
-            return rejectWithValue(error);
-        }
+        return { data };
+    } catch ({ data: { error } }) {
+        return rejectWithValue(error);
     }
-);
+});
 
 export const deleteExam = createAsyncThunk(
     "exam/deleteExam",
@@ -244,9 +234,7 @@ const examSlice = createSlice({
                 state.errorObject = null;
             })
             .addCase(addExam.fulfilled, (state, { payload }) => {
-                if (payload) {
-                    state.addExam.successMessage = "Thêm câu hỏi thành công";
-                }
+                state.addExam.successMessage = payload.data;
             })
             .addCase(addExam.rejected, (state, { payload }) => {
                 if (payload) {

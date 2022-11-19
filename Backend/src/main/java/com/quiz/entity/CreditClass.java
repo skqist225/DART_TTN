@@ -15,8 +15,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
+import java.util.List;
 
 @Getter
 @Setter
@@ -57,6 +59,10 @@ public class CreditClass {
     @JoinColumn(name = "MAGV")
     private User teacher;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "creditClass")
+    private List<Register> registers;
+
     public CreditClass(Integer id) {
         this.id = id;
     }
@@ -79,5 +85,19 @@ public class CreditClass {
 
     public String getSubjectName() {
         return this.subject.getName();
+    }
+
+    public String getTeacherName() {
+        return this.teacher.getFullName();
+    }
+
+    public int getNumberOfActiveStudents() {
+        int i = 0;
+        for (Register register : this.registers) {
+            if (!register.isStatus()) {
+                i++;
+            }
+        }
+        return i;
     }
 }

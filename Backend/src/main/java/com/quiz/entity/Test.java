@@ -150,4 +150,8 @@ public class Test {
     public String getSubjectName() {
         return this.subject.getName();
     }
+
+    public Test(Integer id) {
+        this.id = id;
+    }
 }

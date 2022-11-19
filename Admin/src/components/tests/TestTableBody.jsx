@@ -48,7 +48,7 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                         )}
                     </td>
                     <td className={cellCss}>{row.numberOfQuestions}</td>
-                    <td className={cellCss}>
+                    <td className={cellCss} style={{ zIndex: "9999" }}>
                         <Tooltip
                             content={
                                 <Table striped={true}>

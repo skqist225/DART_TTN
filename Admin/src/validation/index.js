@@ -113,6 +113,9 @@ export const roleSchema = yup
 export const examSchema = yup
     .object({
         creditClassId: yup.string().required("LTC không được để trống"),
+        numberOfActiveStudents: yup
+            .number()
+            .min(1, "Không thể tạo ca thi cho lớp TC không có sinh viên"),
         examDate: yup.string().required("Ngày thi không được để trống"),
         time: yup
             .number()
@@ -120,7 +123,7 @@ export const examSchema = yup
             .required("Thời gian làm bài không được để trống"),
         numberOfStudents: yup
             .number()
-            .typeError("Số SV thi hành phải là chữ số")
+            .typeError("Số SV thi phải là chữ số")
             .required("Số  SV thi không được để trống"),
     })
     .required();

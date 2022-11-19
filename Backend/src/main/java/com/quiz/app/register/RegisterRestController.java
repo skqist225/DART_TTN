@@ -39,12 +39,18 @@ public class RegisterRestController {
             @RequestParam("page") String page,
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
-            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField
+            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
+            @RequestParam(name = "creditClass", required = false, defaultValue = "") Integer creditClass
     ) {
         RegistersDTO subjectsDTO = new RegistersDTO();
 
         if(page.equals("0")) {
-            List<Register> registers = registerService.findAll();
+            List<Register> registers = null;
+            if(Objects.nonNull(creditClass)) {
+                
+            } else {
+                registers = registerService.findAll();
+            }
 
             subjectsDTO.setRegisters(registers);
             subjectsDTO.setTotalElements(registers.size());

@@ -79,17 +79,17 @@ public class RegisterService {
         List<Predicate> predicates = new ArrayList<>();
 
         if (!StringUtils.isEmpty(searchQuery)) {
-            Expression<String> id = root.get("id");
-            Expression<String> name = root.get("name");
+//            Expression<String> id = root.get("id");
+//            Expression<String> name = root.get("name");
 
-            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
+//            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
+//            Expression<String> wantedQueryField = criteriaBuilder.concat("", name);
 
-            predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
+//            predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
-        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
+//        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
 
         TypedQuery<Register> typedQuery = entityManager.createQuery(criteriaQuery);
 
