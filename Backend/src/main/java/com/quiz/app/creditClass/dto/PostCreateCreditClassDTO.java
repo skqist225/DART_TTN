@@ -15,6 +15,5 @@ public class PostCreateCreditClassDTO {
     private Integer semester;
     private String subjectId;
     private Integer group;
-    private Integer minimumNumberOfStudents;
     private String teacherId;
 }

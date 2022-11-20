@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useSelector } from "react-redux";
 import { chapterState, fetchAllChapters } from "../../features/chapterSlice";
-import { questionState } from "../../features/questionSlice";
+import { queryAvailableQuestions, questionState } from "../../features/questionSlice";
 import { clearErrorField, subjectState } from "../../features/subjectSlice";
 import { setEditedTest } from "../../features/testSlice";
 import TableHeader from "../utils/tables/TableHeader";
@@ -12,6 +12,7 @@ import Select from "../utils/userInputs/Select";
 import { QuestionTableBody } from "..";
 import { useDispatch } from "react-redux";
 import { tailwindCss } from "../../tailwind";
+import $ from "jquery";
 
 const columns = [
     {
@@ -65,13 +66,13 @@ const levelOptions = [
     },
 ];
 
-function TestModalBody({ errors, register, setValue, control }) {
+function TestModalBody({ errors, register, setValue, control, getValues, clearErrors }) {
     const dispatch = useDispatch();
     const [page, setPage] = useState(1);
-    const { editedTest, errorObject } = useSelector(subjectState);
-    const { subjects } = useSelector(subjectState);
+    const { editedTest, errorObject, subjects } = useSelector(subjectState);
     const { chapters } = useSelector(chapterState);
-    const { questions, totalPages, totalElements } = useSelector(questionState);
+    const { questions, totalPages, totalElements, queryAvailableQuestionsArr } =
+        useSelector(questionState);
 
     const onKeyDown = ({ target: { name } }) => {
         if (errorObject) {
@@ -101,16 +102,35 @@ function TestModalBody({ errors, register, setValue, control }) {
         }
     }, [subjects]);
 
-    function onChangeHandler(event) {
-        dispatch(fetchAllChapters({ page: 0, subject: event.target.value }));
+    function onSubjectChange({ target: { value } }) {
+        dispatch(fetchAllChapters({ page: 0, subject: value }));
         setValue(
             "testName",
-            `Đề thi ${
-                subjects.find(({ id }) => id === event.target.value).name
-            } ${new Date().getTime()}`
+            `Đề thi ${subjects.find(({ id }) => id === value).name} ${new Date().getTime()}`
         );
     }
 
+    function onChapterChange(event) {
+        const index = $(event.target).data("index");
+        const criteria = getValues("criteria");
+        const chapter = $(event.target).val();
+        const level = criteria[index].level;
+
+        if (level) {
+            dispatch(queryAvailableQuestions({ chapter, level, filterIndex: index }));
+        }
+    }
+
+    function onLevelChange(event) {
+        const index = $(event.target).data("index");
+        const criteria = getValues("criteria");
+        const chapter = criteria[index].chapterId;
+        const level = $(event.target).val();
+
+        if (chapter) {
+            dispatch(queryAvailableQuestions({ chapter, level, filterIndex: index }));
+        }
+    }
     console.log(errors);
 
     return (
@@ -140,7 +160,7 @@ function TestModalBody({ errors, register, setValue, control }) {
                                 value: s.id,
                             }))}
                             setValue={setValue}
-                            onChangeHandler={onChangeHandler}
+                            onChangeHandler={onSubjectChange}
                             defaultValue={subjects && subjects[0] && subjects[0].id}
                         />
                     </div>
@@ -155,73 +175,72 @@ function TestModalBody({ errors, register, setValue, control }) {
                 </div>
                 <ul className='w-full'>
                     {fields.map((field, index) => (
-                        <li className='flex items-center' key={index}>
+                        <li className='mt-3' key={index}>
                             <div
                                 className={`flex ${
                                     errors && errors.criteria && errors.criteria.length
-                                        ? "items-center"
+                                        ? "items-start"
                                         : "items-end"
                                 } w-full`}
                             >
-                                <div
-                                    className={`flex ${
-                                        errors && errors.criteria && errors.criteria.length
-                                            ? "items-start"
-                                            : "items-end"
-                                    } w-full`}
-                                >
-                                    {" "}
-                                    <div className='my-3 w-full mr-5'>
-                                        <Select
-                                            label='Chương *'
-                                            register={register}
-                                            name={`criteria.${index}.chapterId`}
-                                            error={
-                                                errors.criteria &&
-                                                errors.criteria[`${index}`] &&
-                                                errors.criteria[`${index}`].chapterId &&
-                                                errors.criteria[`${index}`].chapterId.message
-                                            }
-                                            options={chapters.map(s => ({
-                                                title: s.name,
-                                                value: s.id,
-                                            }))}
-                                            setValue={setValue}
-                                            defaultValue={chapters && chapters[0] && chapters[0].id}
-                                        />
-                                    </div>
-                                    <div className='my-3 w-full mr-5'>
-                                        <Select
-                                            label='Độ khó *'
-                                            register={register}
-                                            error={
-                                                errors.criteria &&
-                                                errors.criteria[`${index}`] &&
-                                                errors.criteria[`${index}`].level &&
-                                                errors.criteria[`${index}`].level.message
-                                            }
-                                            name={`criteria.${index}.level`}
-                                            options={levelOptions}
-                                            required
-                                        />
-                                    </div>
-                                    <div className='my-3 w-full'>
-                                        <Input
-                                            label='Số lượng câu hỏi *'
-                                            register={register}
-                                            error={
-                                                errors.criteria &&
-                                                errors.criteria[`${index}`] &&
-                                                errors.criteria[`${index}`].numberOfQuestions &&
-                                                errors.criteria[`${index}`].numberOfQuestions
-                                                    .message
-                                            }
-                                            name={`criteria.${index}.numberOfQuestions`}
-                                            required
-                                        />
-                                    </div>
+                                <div className='w-full mr-3'>
+                                    <Select
+                                        label='Chương *'
+                                        register={register}
+                                        name={`criteria.${index}.chapterId`}
+                                        error={
+                                            errors.criteria &&
+                                            errors.criteria[`${index}`] &&
+                                            errors.criteria[`${index}`].chapterId &&
+                                            errors.criteria[`${index}`].chapterId.message
+                                        }
+                                        options={chapters.map(s => ({
+                                            title: s.name,
+                                            value: s.id,
+                                        }))}
+                                        index={index}
+                                        setValue={setValue}
+                                        defaultValue={chapters && chapters[0] && chapters[0].id}
+                                        onChangeHandler={onChapterChange}
+                                    />
                                 </div>
-                                <div className='mb-1 ml-2'>
+                                <div className='w-full mr-3'>
+                                    <Select
+                                        label='Độ khó *'
+                                        register={register}
+                                        error={
+                                            errors.criteria &&
+                                            errors.criteria[`${index}`] &&
+                                            errors.criteria[`${index}`].level &&
+                                            errors.criteria[`${index}`].level.message
+                                        }
+                                        name={`criteria.${index}.level`}
+                                        index={index}
+                                        options={levelOptions}
+                                        required
+                                        onChangeHandler={onLevelChange}
+                                    />
+                                </div>
+                                <div className='w-full mr-3'>
+                                    <Input
+                                        label={`Số lượng câu hỏi * / Hiện có ${
+                                            queryAvailableQuestionsArr.length &&
+                                            queryAvailableQuestionsArr[index] &&
+                                            queryAvailableQuestionsArr[index]
+                                        }`}
+                                        register={register}
+                                        error={
+                                            errors.criteria &&
+                                            errors.criteria[`${index}`] &&
+                                            errors.criteria[`${index}`].numberOfQuestions &&
+                                            errors.criteria[`${index}`].numberOfQuestions.message
+                                        }
+                                        name={`criteria.${index}.numberOfQuestions`}
+                                        required
+                                    />
+                                </div>
+
+                                <div>
                                     <button
                                         type='button'
                                         className={tailwindCss.deleteOutlineButton}
@@ -234,7 +253,7 @@ function TestModalBody({ errors, register, setValue, control }) {
                         </li>
                     ))}
                 </ul>
-                <div className='self-start'>
+                <div className='mt-3 self-start'>
                     <button
                         type='button'
                         className='text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800'

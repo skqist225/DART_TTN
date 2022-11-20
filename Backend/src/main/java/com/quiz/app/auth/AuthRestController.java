@@ -90,7 +90,7 @@ public class AuthRestController {
 
             user.setToken(token);
 
-            if (admin.equals("true") && !user.hasRole("Quản trị viên")) {
+            if (admin.equals("true") && user.hasRole("Sinh viên")) {
                 return new ForbiddenResponse<User>(
                         "Tài khoản của bạn không đủ quyền để truy cập tài nguyên này").response();
             }

@@ -18,7 +18,9 @@ function Input({
         <>
             <label
                 htmlFor={name}
-                className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"}`}
+                className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"} ${
+                    readOnly && "text-slate-400	"
+                }`}
             >
                 {label}
             </label>
@@ -41,6 +43,7 @@ function Input({
                     onKeyDown={onKeyDown}
                     readOnly={readOnly}
                     autoComplete={type === "password" ? "new-password" : "off"}
+                    disabled={readOnly}
                 />
             </div>
             {error && <ErrorMessage message={error} />}

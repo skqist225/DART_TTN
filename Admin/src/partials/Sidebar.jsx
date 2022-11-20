@@ -1,6 +1,16 @@
 import React, { useEffect, useRef, useState } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { NavLink, useLocation, useNavigate } from "react-router-dom";
 import SidebarElement from "./SidebarElement";
+import SubjectIcon from "../images/subject.png";
+import QuestionIcon from "../images/question.png";
+import RoleIcon from "../images/role.png";
+import TestIcon from "../images/test.png";
+import UserIcon from "../images/user.png";
+import CreditClassIcon from "../images/creditClass.png";
+import ExamIcon from "../images/exam.png";
+import RegisterIcon from "../images/register.png";
+import { useSelector } from "react-redux";
+import { persistUserState } from "../features/persistUserSlice";
 
 function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const location = useLocation();
@@ -8,6 +18,8 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
 
     const trigger = useRef(null);
     const sidebar = useRef(null);
+
+    const { user } = useSelector(persistUserState);
 
     const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
     const [sidebarExpanded, setSidebarExpanded] = useState(
@@ -48,6 +60,17 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
             document.querySelector("body").classList.remove("sidebar-expanded");
         }
     }, [sidebarExpanded]);
+
+    let userRoles = [];
+    if (user && user.roles) {
+        userRoles = user.roles.map(({ name }) => name);
+    }
+    const navigate = useNavigate();
+    useEffect(() => {
+        if (!user) {
+            navigate("/auth/login");
+        }
+    }, [user]);
 
     return (
         <div>
@@ -137,7 +160,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             </span>
                         </h3>
                         <ul className='mt-3'>
-                            {/* Dashboard */}
                             <li
                                 className={`px-3 py-2 rounded-sm mb-0.5 last:mb-0 ${
                                     pathname === "/" && "bg-slate-900"
@@ -177,30 +199,62 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                     </div>
                                 </NavLink>
                             </li>
+                            <SidebarElement
+                                pathname={pathname}
+                                name='questions'
+                                title='Câu hỏi'
+                                Icon={QuestionIcon}
+                            />
+                            <SidebarElement
+                                pathname={pathname}
+                                name='tests'
+                                title='Đề thi'
+                                Icon={TestIcon}
+                            />
+                            <SidebarElement
+                                pathname={pathname}
+                                name='subjects'
+                                title='Môn học'
+                                Icon={SubjectIcon}
+                            />
+                            {user && userRoles.includes("Quản trị viên") && (
+                                <SidebarElement
+                                    pathname={pathname}
+                                    name='users'
+                                    title='Người dùng'
+                                    Icon={UserIcon}
+                                />
+                            )}
 
-                            <SidebarElement pathname={pathname} name='questions' title='Câu hỏi' />
-
-                            <SidebarElement pathname={pathname} name='tests' title='Đề thi' />
-
-                            <SidebarElement pathname={pathname} name='chapters' title='Chương' />
-
-                            <SidebarElement pathname={pathname} name='subjects' title='Môn học' />
-
-                            <SidebarElement pathname={pathname} name='users' title='Người dùng' />
-
-                            <SidebarElement pathname={pathname} name='exams' title='Ca thi' />
-
+                            <SidebarElement
+                                pathname={pathname}
+                                name='exams'
+                                title='Ca thi'
+                                Icon={ExamIcon}
+                            />
                             <SidebarElement
                                 pathname={pathname}
                                 name='creditClasses'
                                 title='Lớp tín chỉ'
+                                Icon={CreditClassIcon}
                             />
-
                             {/* <SidebarElement pathname={pathname} name='takeExams' title='Thi' /> */}
-
-                            <SidebarElement pathname={pathname} name='registers' title='Đăng ký' />
-
-                            <SidebarElement pathname={pathname} name='roles' title='Vai trò' />
+                            {user && userRoles.includes("Quản trị viên") && (
+                                <>
+                                    <SidebarElement
+                                        pathname={pathname}
+                                        name='registers'
+                                        title='Đăng ký'
+                                        Icon={RegisterIcon}
+                                    />
+                                    <SidebarElement
+                                        pathname={pathname}
+                                        name='roles'
+                                        title='Vai trò'
+                                        Icon={RoleIcon}
+                                    />
+                                </>
+                            )}
                         </ul>
                     </div>
                 </div>

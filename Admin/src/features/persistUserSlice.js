@@ -5,10 +5,12 @@ const persistUserSlice = createSlice({
     name: "persistUser",
     initialState: {
         user: null,
+        userRoles: [],
     },
     reducers: {
         setUser: (state, { payload }) => {
             state.user = payload;
+            state.userRoles = payload.roles.map(({ name }) => name);
         },
     },
     extraReducers: builder => {

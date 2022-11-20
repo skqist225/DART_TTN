@@ -31,16 +31,22 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
     const { subjects } = useSelector(subjectState);
     const { users } = useSelector(userState);
 
-    const onKeyDown = ({ target: { name } }) => {
-        if (errorObject) {
-            dispatch(clearErrorField(name));
-        }
-    };
-
     useEffect(() => {
+        console.log(editedCreditClass);
         if (editedCreditClass) {
             setValue("id", editedCreditClass.id);
-            setValue("name", editedCreditClass.name);
+            setValue("schoolYear", editedCreditClass.schoolYear);
+            setValue("semester", editedCreditClass.semester);
+            setValue("subjectId", editedCreditClass.subjectId);
+            setValue("group", editedCreditClass.group);
+            setValue("teacherId", editedCreditClass.teacherId);
+        } else {
+            setValue("id", "");
+            setValue("schoolYear", "");
+            setValue("semester", "");
+            setValue("subjectId", "");
+            setValue("group", "");
+            setValue("teacherId", "");
         }
     }, [editedCreditClass]);
 
@@ -116,7 +122,7 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
                     </div>
                 </div>
                 <div className='w-full my-5 flex items-center'>
-                    <div className='w-full mr-5'>
+                    <div className='w-full'>
                         <Select
                             label='Giảng viên *'
                             register={register}
@@ -128,18 +134,6 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
                             error={errors.teacherId && errors.teacherId.message}
                             setValue={setValue}
                             defaultValue={users && users.length && users[0].id}
-                        />
-                    </div>
-                    <div className='w-full'>
-                        <Input
-                            label='Số SV tối thiểu *'
-                            error={
-                                errors.minimumNumberOfStudents &&
-                                errors.minimumNumberOfStudents.message
-                            }
-                            register={register}
-                            name='minimumNumberOfStudents'
-                            onKeyDown={onKeyDown}
                         />
                     </div>
                 </div>

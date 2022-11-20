@@ -12,6 +12,7 @@ export const fetchAllExams = createAsyncThunk(
             level = "",
             subject = "",
             numberOfExams = 0,
+            teacher = "",
         },
         { dispatch, rejectWithValue }
     ) => {
@@ -53,7 +54,7 @@ export const fetchAllExams = createAsyncThunk(
             const {
                 data: { exams, totalElements, totalPages },
             } = await api.get(
-                `/exams?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&level=${level}&subject=${subject}&numberOfExams=${numberOfExams}`
+                `/exams?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&level=${level}&subject=${subject}&numberOfExams=${numberOfExams}&teacher=${teacher}`
             );
 
             return { exams, totalElements, totalPages };

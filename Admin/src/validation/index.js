@@ -91,10 +91,6 @@ export const creditClassSchema = yup
             .string()
             .typeError("Số SV tối thiểu phải là chữ số")
             .required("Nhóm không được để trống"),
-        minimumNumberOfStudents: yup
-            .number()
-            .typeError("Số SV tối thiểu phải là chữ số")
-            .required("Số SV tối thiểu không được để trống"),
     })
     .required();
 

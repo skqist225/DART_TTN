@@ -9,6 +9,9 @@ import { DropDownIcon, ExcelIcon } from "../../../images";
 import { useDispatch } from "react-redux";
 import { setEditedQuestion, setExcelAdd } from "../../../features/questionSlice";
 import TableModalViewer from "./TableModalViewer";
+import { useSelector } from "react-redux";
+import { persistUserState } from "../../../features/persistUserSlice";
+import userSlice from "../../../features/userSlice";
 
 function Table({
     searchPlaceHolder,
@@ -37,6 +40,8 @@ function Table({
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
 
+    const { userRoles } = useSelector(persistUserState);
+
     return (
         <div
             className='overflow-x-auto relative shadow-md sm:rounded-lg overflow-y-auto flex flex-col justify-between'
@@ -53,18 +58,21 @@ function Table({
                     </div>
 
                     {!["câu hỏi"].includes(modalLabel) ? (
-                        <div className='mr-5'>
-                            <button
-                                type='button'
-                                className={tailwindCss.button}
-                                onClick={() => {
-                                    $("#" + modalId).css("display", "flex");
-                                    setIsEdit(false);
-                                }}
-                            >
-                                Thêm {modalLabel}
-                            </button>
-                        </div>
+                        ["môn học"].includes(modalLabel) &&
+                        userRoles.includes("Quản trị viên") && (
+                            <div className='mr-5'>
+                                <button
+                                    type='button'
+                                    className={tailwindCss.button}
+                                    onClick={() => {
+                                        $("#" + modalId).css("display", "flex");
+                                        setIsEdit(false);
+                                    }}
+                                >
+                                    Thêm {modalLabel}
+                                </button>
+                            </div>
+                        )
                     ) : (
                         <div className='relative'>
                             <button
@@ -121,7 +129,11 @@ function Table({
                 </div>
 
                 <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                    <TableHeader columns={columns} handleSortChange={handleSortChange} />
+                    <TableHeader
+                        columns={columns}
+                        handleSortChange={handleSortChange}
+                        modalLabel={modalLabel}
+                    />
                     <TableBody rows={rows} setIsEdit={setIsEdit} />
                 </table>
             </div>

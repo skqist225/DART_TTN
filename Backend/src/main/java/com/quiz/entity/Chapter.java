@@ -19,12 +19,13 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.util.List;
 
+
+@Getter
+@Setter
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @Entity
-@Getter
-@Setter
 @Table(name = "CHUONG")
 public class Chapter {
     @Id
@@ -32,23 +33,23 @@ public class Chapter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(name = "SOCHUONG", nullable = false)
+    private Integer chapterNumber;
+
     @Column(name = "TENCHUONG", nullable = false, unique = true)
     private String name;
 
+    @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "MAMH")
+    @JoinColumn(name = "MAMH", nullable = false)
     private Subject subject;
 
     @JsonIgnore
     @OneToMany(mappedBy = "chapter", fetch = FetchType.LAZY)
     private List<Question> questions;
 
-    public static Chapter build(String name, Subject subject) {
-        return Chapter.builder().name(name).subject(subject).build();
+    public static Chapter build(int chapterNumber, String name, Subject subject) {
+        return Chapter.builder().chapterNumber(chapterNumber).name(name).subject(subject).build();
     }
 
-    public Chapter(Integer id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 }

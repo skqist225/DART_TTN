@@ -3,9 +3,9 @@ package com.quiz.app.creditClass;
 import com.quiz.app.common.CommonUtils;
 import com.quiz.app.creditClass.dto.CreditClassesDTO;
 import com.quiz.app.creditClass.dto.PostCreateCreditClassDTO;
+import com.quiz.app.exam.ExamService;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.app.register.RegisterService;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
@@ -13,6 +13,7 @@ import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.app.user.UserService;
 import com.quiz.entity.CreditClass;
+import com.quiz.entity.Exam;
 import com.quiz.entity.Subject;
 import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
@@ -30,6 +31,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -46,7 +48,7 @@ public class CreditClassRestController {
     private SubjectService subjectService;
 
     @Autowired
-    private RegisterService registerService;
+    private ExamService examService;
 
     @Autowired
     private UserService userService;
@@ -57,7 +59,8 @@ public class CreditClassRestController {
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
-            @RequestParam(name = "active", required = false, defaultValue = "false") boolean active
+            @RequestParam(name = "active", required = false, defaultValue = "false") boolean active,
+            @RequestParam(name = "teacher", required = false, defaultValue = "id") String teacherId
     ) {
         CreditClassesDTO creditClassesDTO = new CreditClassesDTO();
 
@@ -78,10 +81,18 @@ public class CreditClassRestController {
             filters.put("query", query);
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
+            filters.put("teacherId", teacherId);
 
             Page<CreditClass> creditClassesPage = creditClassService.findAllCreditClasses(filters);
 
-            creditClassesDTO.setCreditClasses(creditClassesPage.getContent());
+            List<CreditClass> creditClasses = new ArrayList<>();
+            for (CreditClass creditClass : creditClassesPage.getContent()) {
+                List<Exam> exams = examService.findAllExamsIdByCreditClass(creditClass.getId());
+                creditClass.setExams(exams);
+                creditClasses.add(creditClass);
+            }
+
+            creditClassesDTO.setCreditClasses(creditClasses);
             creditClassesDTO.setTotalElements(creditClassesPage.getTotalElements());
             creditClassesDTO.setTotalPages(creditClassesPage.getTotalPages());
         }
@@ -92,7 +103,7 @@ public class CreditClassRestController {
     public void catchCreditClassInputException(CommonUtils commonUtils, String schoolYear, Integer semester,
                                                String subjectId,
                                                Integer group,
-                                               Integer minimumNumberOfStudents, String teacherId
+                                               String teacherId
     ) {
         if (Objects.isNull(schoolYear) || StringUtils.isEmpty(schoolYear)) {
             commonUtils.addError("schoolYear", "Niên khóa không được để trống");
@@ -108,10 +119,6 @@ public class CreditClassRestController {
 
         if (Objects.isNull(group)) {
             commonUtils.addError("group", "Nhóm không được để trống");
-        }
-
-        if (Objects.isNull(minimumNumberOfStudents)) {
-            commonUtils.addError("minimumNumberOfStudents", "Số SV tối thiểu không được để trống");
         }
 
         if (Objects.isNull(teacherId) || StringUtils.isEmpty(teacherId)) {
@@ -135,11 +142,10 @@ public class CreditClassRestController {
         Integer semester = postCreateCreditClassDTO.getSemester();
         String subjectId = postCreateCreditClassDTO.getSubjectId();
         Integer group = postCreateCreditClassDTO.getGroup();
-        Integer minimumNumberOfStudents = postCreateCreditClassDTO.getMinimumNumberOfStudents();
         String teacherId = postCreateCreditClassDTO.getTeacherId();
 
         catchCreditClassInputException(commonUtils, schoolYear, semester, subjectId, group,
-                minimumNumberOfStudents, teacherId);
+                teacherId);
 
 
         if (commonUtils.getArrayNode().size() > 0) {
@@ -174,7 +180,6 @@ public class CreditClassRestController {
                 creditCls.setSchoolYear(schoolYear);
                 creditCls.setSemester(semester);
                 creditCls.setGroup(group);
-                creditCls.setMinimumNumberOfStudents(minimumNumberOfStudents);
                 creditCls.setTeacher(teacher);
 
                 creditClass = creditClassService.save(creditCls);

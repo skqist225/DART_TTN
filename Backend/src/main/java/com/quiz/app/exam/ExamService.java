@@ -66,7 +66,7 @@ public class ExamService {
                 responseMessage = "Kích họat ca thi thành công";
             } else {
                 exam.setStatus(false);
-                responseMessage = "Hủy kích họat ca thi thành công";
+                responseMessage = "Hủy ca thi thành công";
             }
 
             examRepository.save(exam);
@@ -81,11 +81,16 @@ public class ExamService {
         return (List<Exam>) examRepository.findAll();
     }
 
+    public List<Exam> findAllExamsIdByCreditClass(Integer creditClassId) {
+        return examRepository.findAllExamsIdByCreditClass(creditClassId);
+    }
+
     public Page<Exam> findAllExams(Map<String, String> filters) {
         int page = Integer.parseInt(filters.get("page"));
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
+        String teacherId = filters.get("teacherId");
 
         Sort sort = null;
 //        if(sortField.equals("subjectId")) {
@@ -114,6 +119,10 @@ public class ExamService {
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
 
+        if (!StringUtils.isEmpty(teacherId)) {
+            Expression<String> teacher = root.get("teacher").get("id");
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(teacher, teacherId)));
+        }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
         criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));

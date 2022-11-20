@@ -88,7 +88,7 @@ public class ChapterService {
 
     public boolean isNameDuplicated(Integer id, String name, boolean isEdit) {
         Chapter chapter = chapterRepository.findByName(name);
-
+        System.out.println(chapter);
         if (isEdit) {
             return Objects.nonNull(chapter) && !Objects.equals(chapter.getId(), id);
         } else {

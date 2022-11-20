@@ -48,11 +48,6 @@ export { default as TestModalBody } from "./tests/TestModalBody";
 export { default as TestTableBody } from "./tests/TestTableBody";
 export { default as TestFilter } from "./tests/TestFilter";
 
-//chapters
-export { default as ChapterModalBody } from "./chapters/ChapterModalBody";
-export { default as ChapterTableBody } from "./chapters/ChapterTableBody";
-export { default as ChapterFilter } from "./chapters/ChapterFilter";
-
 //roles
 export { default as RoleModalBody } from "./roles/RoleModalBody";
 export { default as RoleTableBody } from "./roles/RoleTableBody";

@@ -15,6 +15,7 @@ function Select({
     hiddenOption = false,
     multiple = false,
     readOnly = false,
+    index,
 }) {
     useEffect(() => {
         if (setValue && defaultValue) {
@@ -50,6 +51,8 @@ function Select({
                 ref={ref}
                 multiple={multiple}
                 disabled={readOnly}
+                data-id={propName}
+                data-index={index}
             >
                 {hiddenOption && (
                     <option value='' disabled selected style={{ display: "none" }}>

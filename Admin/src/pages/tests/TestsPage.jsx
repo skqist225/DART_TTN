@@ -90,6 +90,7 @@ function TestsPage() {
         handleSubmit,
         setError,
         clearErrors,
+        getValues,
         formState: { errors },
     } = useForm({
         resolver: yupResolver(testSchema),
@@ -237,7 +238,7 @@ function TestsPage() {
     }, [dsSuccessMessage]);
 
     function onCloseForm() {
-        dispatch(setQuestions([]));
+        dispatch(setEditedTest(null));
     }
 
     return (
@@ -265,7 +266,9 @@ function TestsPage() {
                             errors={errors}
                             register={register}
                             setValue={setValue}
+                            clearErrors={clearErrors}
                             control={control}
+                            getValues={getValues}
                         />
                     }
                     isEdit={isEdit}

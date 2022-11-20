@@ -6,10 +6,7 @@ import CheckIcon from "@mui/icons-material/Check";
 import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
-
 import DisableImage from "../../images/disable-icon.png";
-import ChooseImage from "../../images/icons8-choose-48.png";
-import { withWidth } from "@material-ui/core";
 
 function MyButton(props) {
     let { type, label, disabled } = props;

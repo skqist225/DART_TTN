@@ -59,7 +59,8 @@ public class ExamRestController {
             @RequestParam("page") String page,
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
-            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField
+            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
+            @RequestParam(name = "teacher", required = false, defaultValue = "") String teacherId
     ) {
         ExamsDTO subjectsDTO = new ExamsDTO();
 
@@ -76,6 +77,7 @@ public class ExamRestController {
             filters.put("query", query);
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
+            filters.put("teacherId", teacherId);
 
             Page<Exam> examsPage = examService.findAllExams(filters);
 

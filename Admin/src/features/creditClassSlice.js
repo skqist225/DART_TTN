@@ -4,7 +4,15 @@ import api from "../axios";
 export const fetchAllCreditClasses = createAsyncThunk(
     "creditClass/fetchAllCreditClasses",
     async (
-        { page = 1, query = "", sortField = "id", sortDir = "desc", subject = "", active = false },
+        {
+            page = 1,
+            query = "",
+            sortField = "id",
+            sortDir = "desc",
+            subject = "",
+            active = false,
+            teacher,
+        },
         { dispatch, rejectWithValue }
     ) => {
         try {
@@ -40,7 +48,7 @@ export const fetchAllCreditClasses = createAsyncThunk(
             const {
                 data: { creditClasses, totalElements, totalPages },
             } = await api.get(
-                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&active=${active}`
+                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&active=${active}&teacher=${teacher}`
             );
 
             return { creditClasses, totalElements, totalPages };
@@ -173,7 +181,7 @@ const creditClassSlice = createSlice({
                 });
             }
         },
-        setEditedClass(state, { payload }) {
+        setEditedCreditClass(state, { payload }) {
             state.editedCreditClass = payload;
         },
     },
@@ -222,7 +230,7 @@ const creditClassSlice = createSlice({
             })
             .addCase(editCreditClass.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.editCreditClass.successMessage = "Chỉnh sửa LTC thành công";
+                    state.editCreditClass.successMessage = "Chỉnh sửa lớp tín chỉ thành công";
                 }
             })
             .addCase(editCreditClass.rejected, (state, { payload }) => {

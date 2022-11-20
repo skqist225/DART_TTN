@@ -34,12 +34,30 @@ public class Register {
     @JoinColumn(name = "MASV")
     private User student;
 
-    @Column(name = "HUYDANGKY",columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "HUYDANGKY", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean status;
+
+    @Column(name = "DIEMCC")
+    private Float attendanceScore;
+
+    @Column(name = "DIEMGK")
+    private Float midTermScore;
+
+    @Column(name = "DIEMCK")
+    private Float finalTermScore;
 
     @Transient
     private boolean belongToMidTerm = false;
 
     @Transient
     private boolean belongToEndOfTerm = false;
+
+    public Register(User student, boolean status, Float attendanceScore, Float midTermScore,
+     Float               finalTermScore) {
+        this.student = student;
+        this.status = status;
+        this.attendanceScore = attendanceScore;
+        this.midTermScore = midTermScore;
+        this.finalTermScore = finalTermScore;
+    }
 }

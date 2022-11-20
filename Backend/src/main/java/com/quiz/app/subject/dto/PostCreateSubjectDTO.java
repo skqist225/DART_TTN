@@ -1,9 +1,12 @@
 package com.quiz.app.subject.dto;
 
+import com.quiz.app.chapter.dto.ChapterDTO;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @Getter
 @Setter
@@ -12,6 +15,7 @@ import lombok.Setter;
 public class PostCreateSubjectDTO {
     private String id;
     private String name;
-    private String numberOfTheoreticalPeriods;
-    private String numberOfPracticePeriods;
+    private Integer numberOfTheoreticalPeriods;
+    private Integer numberOfPracticePeriods;
+    private List<ChapterDTO> chapters;
 }

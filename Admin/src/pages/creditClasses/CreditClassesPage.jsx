@@ -4,6 +4,7 @@ import {
     CreditClassFilter,
     CreditClassModalBody,
     CreditClassTableBody,
+    ExamModalBody,
     Frame,
     Table,
 } from "../../components";
@@ -22,6 +23,7 @@ import {
     setEditedCreditClass,
 } from "../../features/creditClassSlice";
 import { fetchAllUsers } from "../../features/userSlice";
+import { persistUserState } from "../../features/persistUserSlice";
 
 const columns = [
     {
@@ -69,16 +71,28 @@ function CreditClassesPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
+    const { userRoles, user } = useSelector(persistUserState);
+
     const formId = "creditClassForm";
     const modalId = "creditClassModal";
     const modalLabel = "lớp tín chỉ";
 
     useEffect(() => {
-        dispatch(
-            fetchAllCreditClasses({
-                page: 1,
-            })
-        );
+        if (userRoles.includes("Quản trị viên")) {
+            dispatch(
+                fetchAllCreditClasses({
+                    page: 1,
+                })
+            );
+        } else {
+            dispatch(
+                fetchAllCreditClasses({
+                    page: 1,
+                    teacher: user.id,
+                })
+            );
+        }
+
         dispatch(fetchAllSubjects({ page: 0 }));
         dispatch(fetchAllUsers({ page: 0, role: "Giảng viên" }));
     }, []);
@@ -215,15 +229,23 @@ function CreditClassesPage() {
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={
-                        <CreditClassModalBody
-                            errors={errors}
-                            register={register}
-                            dispatch={dispatch}
-                            setValue={setValue}
-                            isEdit={isEdit}
-                            control={control}
-                            clearErrors={clearErrors}
-                        />
+                        <>
+                            <CreditClassModalBody
+                                errors={errors}
+                                register={register}
+                                dispatch={dispatch}
+                                setValue={setValue}
+                                isEdit={isEdit}
+                                control={control}
+                                clearErrors={clearErrors}
+                            />
+                            <ExamModalBody
+                                errors={errors}
+                                register={register}
+                                dispatch={dispatch}
+                                setValue={setValue}
+                            />
+                        </>
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}

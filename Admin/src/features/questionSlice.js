@@ -193,6 +193,23 @@ export const enableOrDisableQuestion = createAsyncThunk(
     }
 );
 
+export const queryAvailableQuestions = createAsyncThunk(
+    "question/queryAvailableQuestions",
+    async ({ chapter, level, filterIndex }, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get(
+                `/questions/queryAvailableQuestions?chapter=${chapter}&level=${level}&filterIndex=${filterIndex}`
+            );
+
+            console.log(data);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 const initialState = {
     loading: true,
     questions: [],
@@ -228,6 +245,7 @@ const initialState = {
     },
     loadedQuestions: [],
     resetFilter: false,
+    queryAvailableQuestionsArr: [],
 };
 
 const questionSlice = createSlice({
@@ -383,6 +401,10 @@ const questionSlice = createSlice({
                         };
                     });
                 }
+            })
+
+            .addCase(queryAvailableQuestions.fulfilled, (state, { payload }) => {
+                state.queryAvailableQuestionsArr[payload.data.filterIndex] = payload.data.data;
             })
 
             .addCase(deleteQuestion.pending, (state, _) => {

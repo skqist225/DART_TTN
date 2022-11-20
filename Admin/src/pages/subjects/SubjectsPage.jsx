@@ -72,6 +72,7 @@ function SubjectsPage() {
     }, []);
 
     const {
+        control,
         register,
         setValue,
         handleSubmit,
@@ -80,10 +81,14 @@ function SubjectsPage() {
         formState: { errors },
     } = useForm({
         resolver: yupResolver(subjectSchema),
+        defaultValues: {
+            chapters: [],
+        },
     });
 
     const onSubmit = data => {
-        const { numberOfTheoreticalPeriods, numberOfPracticePeriods } = data;
+        console.info(data);
+        let { numberOfTheoreticalPeriods, numberOfPracticePeriods, chapters } = data;
 
         if ((numberOfTheoreticalPeriods + numberOfPracticePeriods) % 3 != 0) {
             if (numberOfTheoreticalPeriods === 0 && numberOfPracticePeriods === 0) {
@@ -108,6 +113,35 @@ function SubjectsPage() {
             return;
         }
 
+        if (chapters.some(({ name }) => !name)) {
+            chapters.forEach(({ index, name }) => {
+                if (!name) {
+                    setError(`chapters.${index}.name`, {
+                        type: "custom",
+                        message: `Tên chương ${parseInt(index) + 1} không được để trống`,
+                    });
+                }
+            });
+            return;
+        }
+
+        const chaptersSet = new Set();
+        chapters.forEach(({ name }) => chaptersSet.add(name));
+        if (chapters.length !== chaptersSet.size) {
+            callToast("error", "Không được có 2 chương giống tên");
+            return;
+        }
+
+        chapters = chapters.map(({ id, index, name }) => {
+            return {
+                id,
+                chapterNumber: parseInt(index) + 1,
+                name,
+            };
+        });
+
+        data["chapters"] = chapters;
+
         if (isEdit) {
             dispatch(editSubject(data));
         } else {
@@ -117,13 +151,27 @@ function SubjectsPage() {
 
     const {
         subjects,
+        errorObject,
         totalElements,
         totalPages,
         filterObject,
         addSubject: { successMessage },
         editSubject: { successMessage: esSuccessMessage },
-        deleteSubject: { successMessage: dsSuccessMessage },
+        deleteSubject: { successMessage: dsSuccessMessage, errorMessage: dsErrorMessage },
     } = useSelector(subjectState);
+
+    useEffect(() => {
+        if (errorObject) {
+            Object.keys(errorObject).forEach(key => {
+                if (key.startsWith("chapters")) {
+                    setError(`chapters.${key.split(".")[1]}.name`, {
+                        type: "custom",
+                        message: "Tên chương đã tồn tại",
+                    });
+                }
+            });
+        }
+    }, [errorObject]);
 
     useEffect(() => {
         if (!isEdit) {
@@ -192,7 +240,15 @@ function SubjectsPage() {
 
     function onCloseForm() {
         dispatch(setEditedSubject(null));
+        setValue("chapters", []);
+        clearErrors("chapters");
     }
+
+    useEffect(() => {
+        if (dsErrorMessage) {
+            callToast("error", dsErrorMessage);
+        }
+    }, [dsErrorMessage]);
 
     return (
         <Frame
@@ -221,6 +277,7 @@ function SubjectsPage() {
                             dispatch={dispatch}
                             setValue={setValue}
                             clearErrors={clearErrors}
+                            control={control}
                         />
                     }
                     isEdit={isEdit}

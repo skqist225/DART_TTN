@@ -19,6 +19,7 @@ import { fetchAllSubjects } from "../../features/subjectSlice";
 import { fetchAllCreditClasses } from "../../features/creditClassSlice";
 import { setErrorField } from "../../features/userSlice";
 import { setTests } from "../../features/testSlice";
+import { persistUserState } from "../../features/persistUserSlice";
 
 const columns = [
     {
@@ -87,18 +88,39 @@ function ExamsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
+    const { userRoles, user } = useSelector(persistUserState);
+
     const modalId = "examModal";
     const formId = "examForm";
     const modalLabel = "ca thi";
 
     useEffect(() => {
-        dispatch(
-            fetchAllExams({
-                page: 1,
-            })
-        );
         dispatch(fetchAllSubjects({ page: 0 }));
-        dispatch(fetchAllCreditClasses({ page: 0, active: true }));
+        if (userRoles.includes("Quản trị viên")) {
+            dispatch(
+                fetchAllCreditClasses({
+                    page: 0,
+                })
+            );
+            dispatch(
+                fetchAllExams({
+                    page: 1,
+                })
+            );
+        } else {
+            dispatch(
+                fetchAllCreditClasses({
+                    page: 0,
+                    teacher: user.id,
+                })
+            );
+            dispatch(
+                fetchAllExams({
+                    page: 1,
+                    teacher: user.id,
+                })
+            );
+        }
     }, []);
 
     const {

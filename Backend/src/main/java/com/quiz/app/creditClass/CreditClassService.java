@@ -82,6 +82,7 @@ public class CreditClassService {
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
+        String teacherId = filters.get("teacherId");
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
@@ -101,6 +102,11 @@ public class CreditClassService {
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
+        }
+
+        if (!StringUtils.isEmpty(teacherId)) {
+            Expression<String> teacher = root.get("teacher").get("id");
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(teacher, teacherId)));
         }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));

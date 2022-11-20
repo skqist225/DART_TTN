@@ -19,7 +19,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.persistence.UniqueConstraint;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Getter
 @Setter
@@ -49,9 +52,6 @@ public class CreditClass {
     @Column(name = "NHOM", columnDefinition = "SMALLINT", nullable = false)
     private int group;
 
-    @Column(name = "SOSVTOITHIEU", columnDefinition = "SMALLINT", nullable = false)
-    private int minimumNumberOfStudents;
-
     @Column(name = "HUYLOP")
     private boolean status;
 
@@ -64,6 +64,9 @@ public class CreditClass {
     @OneToMany(mappedBy = "creditClass")
     private List<Register> registers;
 
+    @Transient
+    private List<Exam> exams;
+
     public CreditClass(Integer id) {
         this.id = id;
     }
@@ -74,7 +77,6 @@ public class CreditClass {
                 .semester(postCreateCreditClassDTO.getSemester())
                 .subject(subject)
                 .group(postCreateCreditClassDTO.getGroup())
-                .minimumNumberOfStudents(postCreateCreditClassDTO.getMinimumNumberOfStudents())
                 .status(false)
                 .teacher(teacher)
                 .build();
@@ -96,6 +98,11 @@ public class CreditClass {
     }
 
     @Transient
+    public String getTeacherId() {
+        return this.teacher.getId();
+    }
+
+    @Transient
     public int getNumberOfActiveStudents() {
         return this.registers.stream().reduce(0, (subtotal, element) -> {
             if (!element.isStatus()) {
@@ -105,6 +112,14 @@ public class CreditClass {
         }, Integer::sum);
     }
 
-    ;
-
+    @Transient
+    public List<Register> getTempRegisters() {
+        if (this.getRegisters().size() > 0) {
+            this.registers.sort(Comparator.comparing(register -> register.getStudent().getFullName()));
+            return this.registers.stream().map(register -> new Register(register.getStudent(),
+                    register.isStatus(), register.getAttendanceScore(), register.getMidTermScore(),
+                    register.getFinalTermScore())).collect(Collectors.toList());
+        }
+        return new ArrayList<>();
+    }
 }

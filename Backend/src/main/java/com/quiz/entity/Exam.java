@@ -40,6 +40,9 @@ public class Exam {
     @Column(name = "MACATHI")
     private Integer id;
 
+    @Column(name = "TENCATHI", columnDefinition = "NVARCHAR(255)", nullable = false)
+    private String name;
+
     @JsonFormat(pattern = "dd/MM/yyyy")
     @DateTimeFormat(pattern = "dd-MM-yyyy")
     @Column(name = "NGAYTHI", nullable = false)

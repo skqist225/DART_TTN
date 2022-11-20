@@ -5,7 +5,6 @@ import "./charts/ChartjsConfig";
 
 import Dashboard from "./pages/Dashboard";
 import {
-    ChaptersPage,
     CreditClassesPage,
     ExamsPage,
     QuestionsPage,
@@ -32,10 +31,6 @@ function App() {
                 <Route exact path='/' element={<Dashboard />} />
                 <Route path='/auth'>
                     <Route path='login' element={<LoginPage />} />
-                </Route>
-
-                <Route path='/chapters'>
-                    <Route path='' element={<ChaptersPage />} />
                 </Route>
 
                 <Route path='/subjects'>

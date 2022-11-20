@@ -1,5 +1,7 @@
 package com.quiz.app.subject;
 
+import com.quiz.app.chapter.ChapterService;
+import com.quiz.app.chapter.dto.ChapterDTO;
 import com.quiz.app.common.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
@@ -9,7 +11,9 @@ import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.subject.dto.PostCreateSubjectDTO;
 import com.quiz.app.subject.dto.SubjectDTO;
 import com.quiz.app.subject.dto.SubjectsDTO;
+import com.quiz.entity.Chapter;
 import com.quiz.entity.Subject;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -22,10 +26,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -33,6 +40,10 @@ import java.util.Objects;
 public class SubjectRestController {
     @Autowired
     private SubjectService subjectService;
+
+    @Autowired
+    private ChapterService chapterService;
+
 
     @GetMapping("")
     public ResponseEntity<StandardJSONResponse<SubjectsDTO>> fetchAllSubjects(
@@ -83,24 +94,14 @@ public class SubjectRestController {
         }
     }
 
-    @PostMapping("save")
-    public ResponseEntity<StandardJSONResponse<Subject>> saveSubject(
-            @RequestBody PostCreateSubjectDTO postCreateSubjectDTO,
-            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
-    ) {
-        Subject savedSubject = null;
-        CommonUtils commonUtils = new CommonUtils();
-
-        String id = postCreateSubjectDTO.getId();
-        String name = postCreateSubjectDTO.getName();
-        String numberOfTheoreticalPeriods = postCreateSubjectDTO.getNumberOfTheoreticalPeriods();
-        String numberOfPracticePeriods = postCreateSubjectDTO.getNumberOfPracticePeriods();
-
-        if (Objects.isNull(id)) {
+    public void catchSubjectInputException(CommonUtils commonUtils, String id, String name,
+                                           Integer numberOfTheoreticalPeriods,
+                                           Integer numberOfPracticePeriods, boolean isEdit) {
+        if (Objects.isNull(id) || StringUtils.isEmpty(name)) {
             commonUtils.addError("id", "Mã môn học không được để trống");
         }
 
-        if (Objects.isNull(name)) {
+        if (Objects.isNull(name) || StringUtils.isEmpty(name)) {
             commonUtils.addError("name", "Tên môn học không được để trống");
         }
 
@@ -112,9 +113,23 @@ public class SubjectRestController {
             commonUtils.addError("numberOfPracticePeriods", "Số tiết thực hành không được để " +
                     "trống");
         }
+    }
+
+    @PostMapping("save")
+    public ResponseEntity<StandardJSONResponse<String>> saveSubject(@RequestBody PostCreateSubjectDTO postCreateSubjectDTO, @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) {
+        CommonUtils commonUtils = new CommonUtils();
+
+        String id = postCreateSubjectDTO.getId();
+        String name = postCreateSubjectDTO.getName();
+        Integer numberOfTheoreticalPeriods = postCreateSubjectDTO.getNumberOfTheoreticalPeriods();
+        Integer numberOfPracticePeriods = postCreateSubjectDTO.getNumberOfPracticePeriods();
+        List<ChapterDTO> chapterDTOS = postCreateSubjectDTO.getChapters();
+
+        catchSubjectInputException(commonUtils, id, name, numberOfTheoreticalPeriods,
+                numberOfPracticePeriods, isEdit);
 
         if (commonUtils.getArrayNode().size() > 0) {
-            return new BadResponse<Subject>(commonUtils.getArrayNode().toString()).response();
+            return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
         } else {
             if (subjectService.isIdDuplicated(id, isEdit)) {
                 commonUtils.addError("id", "Mã môn học đã tồn tại");
@@ -124,52 +139,108 @@ public class SubjectRestController {
                 commonUtils.addError("name", "Tên môn học đã tồn tại");
             }
 
-            int numberOfTheoreticalPeriodsInt = 0, numberOfPracticePeriodsInt = 0;
-            try {
-                numberOfTheoreticalPeriodsInt = Integer.parseInt(numberOfTheoreticalPeriods);
-            } catch (final NumberFormatException e) {
-                commonUtils.addError("numberOfTheoreticalPeriods", "Số tiết lý thuyết không hợp " +
-                        "lệ");
-            }
-
-            try {
-                numberOfPracticePeriodsInt = Integer.parseInt(numberOfPracticePeriods);
-            } catch (final NumberFormatException e) {
-                commonUtils.addError("numberOfPracticePeriods", "Số tiết thực hành không hợp " +
-                        "lệ");
-            }
-
-            if (commonUtils.getArrayNode().size() > 0) {
-                return new BadResponse<Subject>(commonUtils.getArrayNode().toString()).response();
-            }
-
-            if ((numberOfPracticePeriodsInt + numberOfTheoreticalPeriodsInt) % 3 != 0) {
+            if ((numberOfTheoreticalPeriods + numberOfPracticePeriods) % 3 != 0) {
                 commonUtils.addError("numberOfPracticePeriods", "Số tiết lý thuyết + thực " +
                         "hành phải là bội số của 3 "
                 );
             }
 
             if (commonUtils.getArrayNode().size() > 0) {
-                return new BadResponse<Subject>(commonUtils.getArrayNode().toString()).response();
+                return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
             }
+        }
+
+        int i = 0;
+        if (chapterDTOS.size() > 0) {
+            for (ChapterDTO chapterDTO : chapterDTOS) {
+                if (chapterService.isNameDuplicated(chapterDTO.getId(), chapterDTO.getName(), isEdit)) {
+                    commonUtils.addError(String.format("chapters.%d.name", i), "Tên chương đã" +
+                            " tồn" +
+                            " " +
+                            "tại");
+                }
+                i++;
+            }
+        }
+
+        if (commonUtils.getArrayNode().size() > 0) {
+            return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
         }
 
         if (isEdit) {
             try {
+
                 Subject subject = subjectService.findById(id);
                 subject.setName(name);
-                subject.setNumberOfTheoreticalPeriods(Integer.parseInt(postCreateSubjectDTO.getNumberOfTheoreticalPeriods()));
-                subject.setNumberOfPracticePeriods(Integer.parseInt(postCreateSubjectDTO.getNumberOfPracticePeriods()));
+                subject.setNumberOfTheoreticalPeriods(numberOfTheoreticalPeriods);
+                subject.setNumberOfPracticePeriods(numberOfPracticePeriods);
 
-                savedSubject = subjectService.save(subject);
+                System.out.println(Objects.isNull(subject.getChapters()));
+                if (Objects.isNull(subject.getChapters())) {
+                    subject.setChapters(new ArrayList<>());
+                }
+                System.out.println(subject.getChapters());
+                List<Chapter> tempChapters = subject.getChapters();
+
+                if (chapterDTOS.size() == 0) {
+                    subject.removeAll();
+                } else {
+                    for (ChapterDTO chapterDTO : chapterDTOS) {
+                        // Add new chapter
+                        if (Objects.isNull(chapterDTO.getId())) {
+                            subject.addChapter(Chapter.build(chapterDTO.getChapterNumber(),
+                                    chapterDTO.getName(),
+                                    subject));
+                        } else {
+                            for (Chapter chapter : tempChapters) {
+                                // Edit existed chapter
+                                if (chapterDTO.getId().equals(chapter.getId())) {
+                                    chapter.setChapterNumber(chapterDTO.getChapterNumber());
+                                    chapter.setName(chapterDTO.getName());
+                                    chapterService.save(chapter);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    System.out.println("--------------------------------------");
+                    List<Chapter> removedChapters = new ArrayList<>();
+                    for (Chapter chapter : tempChapters) {
+                        boolean shouldDelete = true;
+                        for (ChapterDTO chapterDTO : chapterDTOS) {
+                            if (Objects.nonNull(chapterDTO.getId())) {
+                                if (chapterDTO.getId().equals(chapter.getId())) {
+                                    shouldDelete = false;
+                                    break;
+                                }
+                            } else {
+                                shouldDelete = false;
+                            }
+                        }
+                        // Remove none mentioned chapter
+                        if (shouldDelete) {
+                            removedChapters.add(chapter);
+                        }
+                    }
+
+                    for (Chapter chapter : removedChapters) {
+                        subject.removeChapter(chapter);
+                    }
+                }
+
+                subjectService.save(subject);
             } catch (NotFoundException exception) {
-                return new BadResponse<Subject>(exception.getMessage()).response();
+                return new BadResponse<String>(exception.getMessage()).response();
             }
         } else {
-            savedSubject = subjectService.save(Subject.build(postCreateSubjectDTO));
+            Subject subject = Subject.build(postCreateSubjectDTO);
+
+            subject.setChapters(chapterDTOS.stream().map(chapter -> Chapter.build(chapter.getChapterNumber(), chapter.getName(),
+                    subject)).collect(Collectors.toList()));
+            subjectService.save(subject);
         }
 
-        return new OkResponse<>(savedSubject).response();
+        return new OkResponse<>("Thêm môn học thành công").response();
     }
 
     @DeleteMapping("{id}/delete")

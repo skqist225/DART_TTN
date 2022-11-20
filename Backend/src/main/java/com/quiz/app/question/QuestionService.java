@@ -209,11 +209,15 @@ public class QuestionService {
             int chapter = Integer.parseInt(criteriaEl.split(",")[0]);
             String levelStr = criteriaEl.split(",")[1];
             int numberOfQuestions = Integer.parseInt(criteriaEl.split(",")[2]);
-
             questions.addAll(questionRepository.findByChapterAndLevel(chapter,
-                    Question.lookUpLevel(levelStr), numberOfQuestions));
+                    Question.lookUpLevelOrig(levelStr).ordinal(), numberOfQuestions));
         }
 
         return questions;
+    }
+
+    public Integer queryAvailableQuestions(Integer chapter, Level level) {
+        return questionRepository.queryAvailableQuestions(chapter,
+                level);
     }
 }

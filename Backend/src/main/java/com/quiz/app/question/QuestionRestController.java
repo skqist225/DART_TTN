@@ -6,6 +6,7 @@ import com.quiz.app.chapter.ChapterService;
 import com.quiz.app.common.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.question.dto.AvailableQuestionDTO;
 import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import com.quiz.app.question.dto.QuestionsDTO;
 import com.quiz.app.question.dto.ReadQuestionExcelDTO;
@@ -19,6 +20,7 @@ import com.quiz.app.utils.ExcelUtils;
 import com.quiz.app.utils.ProcessImage;
 import com.quiz.entity.Answer;
 import com.quiz.entity.Chapter;
+import com.quiz.entity.Level;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
 import com.quiz.entity.User;
@@ -75,11 +77,22 @@ public class QuestionRestController {
     @GetMapping("load")
     public ResponseEntity<StandardJSONResponse<Set<Question>>> loadCriteriaQuestions(
             @RequestParam(name = "criteria", required = false, defaultValue = "") String criteria) {
-        if (Objects.nonNull(criteria)) {
+        if (!StringUtils.isEmpty(criteria)) {
             return new OkResponse<>(questionService.findQuestionsByCriteria(criteria)).response();
         }
-        
+
         return null;
+    }
+
+    @GetMapping("queryAvailableQuestions")
+    public ResponseEntity<StandardJSONResponse<AvailableQuestionDTO>> queryAvailableQuestions(
+            @RequestParam(name = "chapter", required = false, defaultValue = "") Integer chapter,
+            @RequestParam(name = "level", required = false, defaultValue = "") Level level,
+            @RequestParam(name = "filterIndex", required = false, defaultValue = "") Integer filterIndex) {
+        AvailableQuestionDTO availableQuestionDTO = new AvailableQuestionDTO();
+        availableQuestionDTO.setFilterIndex(filterIndex);
+        availableQuestionDTO.setData(questionService.queryAvailableQuestions(chapter, level));
+        return new OkResponse<>(availableQuestionDTO).response();
     }
 
     @GetMapping("")
@@ -106,7 +119,7 @@ public class QuestionRestController {
             }
             questionsDTO.setQuestions(questions);
             questionsDTO.setTotalElements(questions.size());
-            questionsDTO.setTotalPages((long) Math.ceil(questions.size() / 5));
+            questionsDTO.setTotalPages((long) Math.ceil(questions.size() / 10));
         } else {
             Map<String, String> filters = new HashMap<>();
             filters.put("page", page);
@@ -202,11 +215,15 @@ public class QuestionRestController {
                 question.setChapter(chapter);
                 question.setTeacher(teacher);
 
+                if (Objects.isNull(question.getAnswers())) {
+                    question.setAnswers(new ArrayList<>());
+                }
+
                 if (postCreateQuestionDTO.getImage() != null) {
                     question.setImage(postCreateQuestionDTO.getImage().getOriginalFilename());
                 }
+
                 for (AnswerDTO answerDTO : answers) {
-                    System.out.println(answerDTO.getIsTempAnswer());
                     // Add new question
                     if (Objects.isNull(answerDTO.getId())) {
                         question.addAnswer(Answer.build(answerDTO.getContent(),
@@ -234,6 +251,8 @@ public class QuestionRestController {
                                 shouldDelete = false;
                                 break;
                             }
+                        } else {
+                            shouldDelete = false;
                         }
                     }
                     // Remove none mentioned question
@@ -309,7 +328,8 @@ public class QuestionRestController {
                 }
 
                 subject = subjectService.save(
-                        Subject.build(new PostCreateSubjectDTO(subjectId.toString().toUpperCase(), subjectName, "15", "0")));
+                        Subject.build(new PostCreateSubjectDTO(subjectId.toString().toUpperCase()
+                                , subjectName, 15, 0, null)));
             }
 
             Chapter chapter = null;
@@ -317,7 +337,7 @@ public class QuestionRestController {
                 chapter = chapterService.findByName(chapterName);
             } catch (NotFoundException e) {
                 chapter =
-                        chapterService.save(Chapter.build(chapterName, subject));
+                        chapterService.save(Chapter.build(1, chapterName, subject));
             }
 
             questionService.save(Question.build(question, teacher,

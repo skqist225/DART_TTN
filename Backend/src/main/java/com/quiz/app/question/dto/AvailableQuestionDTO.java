@@ -1,5 +1,4 @@
-package com.quiz.app.chapter.dto;
-
+package com.quiz.app.question.dto;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -10,8 +9,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class ChapterDTO {
-    private Integer id;
-    private Integer chapterNumber;
-    private String name;
+public class AvailableQuestionDTO {
+    private Integer filterIndex;
+    private Integer data;
 }

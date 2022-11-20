@@ -4,11 +4,17 @@ import MyButton from "./MyButton";
 
 function EnableOrDisable({ status, enableOrDisable, id, creditClassPage = false }) {
     const dispatch = useDispatch();
+
+    let tempStatus = status;
+    if (creditClassPage) {
+        tempStatus = !status;
+    }
+
+    console.log(tempStatus);
+
     return (
         <div>
-            {creditClassPage ? (
-                !status
-            ) : status ? (
+            {tempStatus ? (
                 <MyButton
                     type='disable'
                     onClick={() => {

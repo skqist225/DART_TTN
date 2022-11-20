@@ -18,6 +18,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
@@ -41,8 +42,9 @@ public class Question {
     @Column(name = "NOIDUNGCAUHOI", columnDefinition = "TEXT", nullable = false, unique = true)
     private String content;
 
+    @Builder.Default
     @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.ALL)
-    private List<Answer> answers;
+    private List<Answer> answers = new ArrayList<>();
 
     @Column(name = "DOKHO", nullable = false)
     private Level level;
@@ -109,6 +111,17 @@ public class Question {
             level = Level.HARD;
         } else if (Objects.equals(levelStr, "Trung bình")) {
             level = Level.MEDIUM;
+        }
+
+        return level;
+    }
+
+    public static Level lookUpLevelOrig(String levelStr) {
+        Level level = Level.EASY;
+        if (Objects.equals(levelStr, "MEDIUM")) {
+            level = Level.MEDIUM;
+        } else if (Objects.equals(levelStr, "HARD")) {
+            level = Level.HARD;
         }
 
         return level;

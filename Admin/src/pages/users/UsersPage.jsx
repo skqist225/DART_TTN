@@ -196,6 +196,10 @@ const UsersPage = () => {
         );
     };
 
+    const fetchDataByPageNumber = pageNumber => {
+        dispatch(fetchAllUsers({ ...filterObject, page: pageNumber }));
+    };
+
     const onSubmit = data => {
         if (data.roles.length === 0) {
             setError("roles", { type: "custom", message: "Vai trò không được để trống" });
@@ -297,6 +301,7 @@ const UsersPage = () => {
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                     onCloseForm={onCloseForm}
+                    fetchDataByPageNumber={fetchDataByPageNumber}
                 />
             }
         />
