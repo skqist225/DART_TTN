@@ -80,6 +80,7 @@ public class Exam {
 
     public static Exam build(PostCreateExamDTO postCreateExamDTO) {
         return Exam.builder()
+                .name(postCreateExamDTO.getName())
                 .time(postCreateExamDTO.getTime())
                 .noticePeriod(postCreateExamDTO.getNoticePeriod())
                 .type(postCreateExamDTO.getType())

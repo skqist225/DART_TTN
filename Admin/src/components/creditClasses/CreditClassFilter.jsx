@@ -1,7 +1,8 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-import { useDispatch,useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
+import { persistUserState } from "../../features/persistUserSlice";
 import { subjectState } from "../../features/subjectSlice";
 import Select from "../utils/userInputs/Select";
 
@@ -11,8 +12,20 @@ function CreditClassFilter() {
     const { subjects } = useSelector(subjectState);
     const { register, handleSubmit } = useForm();
 
+    const { userRoles, user } = useSelector(persistUserState);
+
     const handleSubjectChange = event => {
-        dispatch(fetchAllCreditClasses({ ...filterObject, subject: event.target.value }));
+        if (userRoles.includes("Quản trị viên")) {
+            dispatch(fetchAllCreditClasses({ ...filterObject, subject: event.target.value }));
+        } else {
+            dispatch(
+                fetchAllCreditClasses({
+                    ...filterObject,
+                    subject: event.target.value,
+                    teacher: user.id,
+                })
+            );
+        }
     };
 
     return (
@@ -50,9 +63,9 @@ function CreditClassFilter() {
                                 sortField: "id",
                                 sortDir: "desc",
                                 subject: "",
+                                teacher: user.id,
                             })
                         );
-                        dispatch(setResetFilter(true));
                     }}
                 >
                     Xóa bộ lọc

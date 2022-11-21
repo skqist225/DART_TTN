@@ -32,14 +32,14 @@ function TableHeader({ columns, handleSortChange, modalLabel, addCheckbox = fals
             <tr>
                 {addCheckbox && <th></th>}
                 {columns.map(({ name, sortField, sortable }) => {
-                    // console.log(modalLabel);
-                    // if (
-                    //     modalLabel === "lớp tín chỉ" &&
-                    //     !userRoles.includes("Quản trị viên") &&
-                    //     name === "Thao tác"
-                    // ) {
-                    //     return null;
-                    // }
+                    console.log(modalLabel);
+                    if (
+                        ["ca thi", "câu hỏi"].includes(modalLabel) &&
+                        !userRoles.includes("Quản trị viên") &&
+                        name === "Giảng viên"
+                    ) {
+                        return null;
+                    }
                     return (
                         <th scope='col' className='py-2 px-3' key={name}>
                             {!sortable ? (

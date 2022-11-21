@@ -52,4 +52,7 @@ public class Chapter {
         return Chapter.builder().chapterNumber(chapterNumber).name(name).subject(subject).build();
     }
 
+    public String getSubjectName() {
+        return this.subject.getName();
+    }
 }

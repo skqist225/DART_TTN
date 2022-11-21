@@ -83,6 +83,7 @@ public class CreditClassService {
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
         String teacherId = filters.get("teacherId");
+        String subjectId = filters.get("subjectId");
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
@@ -96,12 +97,26 @@ public class CreditClassService {
 
         if (!StringUtils.isEmpty(searchQuery)) {
             Expression<String> id = root.get("id");
-            Expression<String> name = root.get("name");
+            Expression<String> schoolYear= root.get("schoolYear");
+            Expression<String> semester= root.get("semester");
+            Expression<String> group= root.get("group");
+            Expression<String> subjectName = root.get("subject").get("name");
 
             Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, schoolYear);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, semester);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, group);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, subjectName);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
+        }
+        System.out.println(subjectId);
+        if (!StringUtils.isEmpty(subjectId)) {
+            Expression<String> subject = root.get("subject").get("id");
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(subject, subjectId)));
         }
 
         if (!StringUtils.isEmpty(teacherId)) {

@@ -98,6 +98,11 @@ public class UserService {
         return userRepository.save(user);
     }
 
+    @Transactional
+    public void save(List<User> users) {
+        userRepository.saveAll(users);
+    }
+
     public String deleteById(String id)
             throws VerifiedUserException {
         try {

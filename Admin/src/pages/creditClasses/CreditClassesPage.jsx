@@ -76,7 +76,7 @@ function CreditClassesPage() {
     const formId = "creditClassForm";
     const modalId = "creditClassModal";
     const modalLabel = "lớp tín chỉ";
-
+    console.log(userRoles);
     useEffect(() => {
         if (userRoles.includes("Quản trị viên")) {
             dispatch(
@@ -126,22 +126,43 @@ function CreditClassesPage() {
     };
 
     const handleQueryChange = ({ target: { value: query } }) => {
-        dispatch(
-            fetchAllCreditClasses({
-                ...filterObject,
-                query,
-            })
-        );
+        if (userRoles.includes("Quản trị viên")) {
+            dispatch(
+                fetchAllCreditClasses({
+                    ...filterObject,
+                    query,
+                })
+            );
+        } else {
+            dispatch(
+                fetchAllCreditClasses({
+                    ...filterObject,
+                    query,
+                    teacher: user.id,
+                })
+            );
+        }
     };
 
     const handleSortChange = (sortField, sortDir) => {
-        dispatch(
-            fetchAllCreditClasses({
-                ...filterObject,
-                sortField,
-                sortDir,
-            })
-        );
+        if (userRoles.includes("Quản trị viên")) {
+            dispatch(
+                fetchAllCreditClasses({
+                    ...filterObject,
+                    sortField,
+                    sortDir,
+                })
+            );
+        } else {
+            dispatch(
+                fetchAllCreditClasses({
+                    ...filterObject,
+                    sortField,
+                    sortDir,
+                    teacher: user.id,
+                })
+            );
+        }
     };
 
     useEffect(() => {
@@ -238,12 +259,6 @@ function CreditClassesPage() {
                                 isEdit={isEdit}
                                 control={control}
                                 clearErrors={clearErrors}
-                            />
-                            <ExamModalBody
-                                errors={errors}
-                                register={register}
-                                dispatch={dispatch}
-                                setValue={setValue}
                             />
                         </>
                     }

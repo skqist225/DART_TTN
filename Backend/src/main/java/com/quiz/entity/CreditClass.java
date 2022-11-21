@@ -68,6 +68,18 @@ public class CreditClass {
     @Transient
     private List<ExamCreditClassPageDTO> exams;
 
+    @Transient
+    private int numberOfMidTermExam;
+
+    @Transient
+    private int numberOfFinalTermExam;
+
+    @Transient
+    private int numberOfMidTermExamCreated;
+
+    @Transient
+    private int numberOfFinalTermExamCreated;
+
     public CreditClass(Integer id) {
         this.id = id;
     }

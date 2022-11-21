@@ -10,7 +10,7 @@ import java.util.List;
 
 @Repository
 public interface ExamRepository extends CrudRepository<Exam, Integer> {
-    @Query(value = "select ct.* from (SELECT macathi FROM quiz.dangky dk join thi t on t.masv = " +
-            "dk.masv where dk.maltc = :creditClassId group by t.macathi) temp left join cathi ct on ct.macathi = temp.macathi", nativeQuery = true)
+    @Query(value = "select ct.* from (SELECT macathi FROM quiz.thi where maltc = :creditClassId group by " +
+            "macathi) temp left join cathi ct on ct.macathi = temp.macathi", nativeQuery = true)
     public List<Exam> findAllExamsIdByCreditClass(Integer creditClassId);
 }

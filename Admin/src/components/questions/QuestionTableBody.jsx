@@ -10,6 +10,7 @@ import { tailwindCss } from "../../tailwind";
 import { MyButton, LevelBadge } from "..";
 import EnableOrDisable from "../common/EnableOrDisable";
 import $ from "jquery";
+import { persistUserState } from "../../features/persistUserSlice";
 
 export const cellCss = "py-2 px-3 text-black text-sm";
 
@@ -18,7 +19,7 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
     if (page !== null) {
         rows = rows.slice((page - 1) * 10, page * 10);
     }
-
+    const { userRoles } = useSelector(persistUserState);
     const { excelAdd } = useSelector(questionState);
 
     return (
@@ -64,7 +65,7 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                                     {!excelAdd ? row.chapter.name : row.chapterName}
                                 </td>
                                 <td className={cellCss}>
-                                    {!excelAdd ? row.chapter.subject.name : row.subjectName}
+                                    {!excelAdd ? row.chapter.subjectName : row.subjectName}
                                 </td>
                             </>
                         ) : (
@@ -76,7 +77,7 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                                 </td>
                             </>
                         )}
-                        {!excelAdd && (
+                        {!excelAdd && userRoles.includes("Quản trị viên") && (
                             <td className={cellCss}>
                                 {row.teacher.firstName} {row.teacher.lastName}
                             </td>

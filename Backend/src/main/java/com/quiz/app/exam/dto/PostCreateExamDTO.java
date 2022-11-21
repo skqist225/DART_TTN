@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class PostCreateExamDTO {
     private Integer id;
+    private String name;
     private Integer creditClassId;
     private String examDate;
     private Integer noticePeriod;

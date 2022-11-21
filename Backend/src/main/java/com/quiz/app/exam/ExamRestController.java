@@ -89,7 +89,7 @@ public class ExamRestController {
         return new OkResponse<>(subjectsDTO).response();
     }
 
-    public void catchExamInputException(CommonUtils commonUtils, Integer id,
+    public void catchExamInputException(CommonUtils commonUtils, Integer id, String name,
                                         Integer creditClassId, String examDate,
                                         Integer noticePeriod,
                                         Integer numberOfStudents, Integer time, String type,
@@ -104,6 +104,11 @@ public class ExamRestController {
 
         if (Objects.isNull(creditClassId)) {
             commonUtils.addError("creditClassId", "Mã LTC không được để " +
+                    "trống");
+        }
+
+        if (Objects.isNull(name) || StringUtils.isEmpty(name)) {
+            commonUtils.addError("name", "Tên ca thi không được để " +
                     "trống");
         }
 
@@ -150,6 +155,7 @@ public class ExamRestController {
         CreditClass creditClass = null;
 
         Integer id = postCreateExamDTO.getId();
+        String name = postCreateExamDTO.getName();
         Integer creditClassId = postCreateExamDTO.getCreditClassId();
         String examDate = postCreateExamDTO.getExamDate();
         Integer numberOfStudents = postCreateExamDTO.getNumberOfStudents();
@@ -158,7 +164,7 @@ public class ExamRestController {
         String type = postCreateExamDTO.getType();
         List<Integer> tests = postCreateExamDTO.getTests();
 
-        catchExamInputException(commonUtils, id, creditClassId, examDate, noticePeriod,
+        catchExamInputException(commonUtils, id, name, creditClassId, examDate, noticePeriod,
                 numberOfStudents, time,
                 type, tests, isEdit);
 

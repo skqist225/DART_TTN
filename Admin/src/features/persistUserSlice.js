@@ -16,6 +16,7 @@ const persistUserSlice = createSlice({
     extraReducers: builder => {
         builder.addCase(PURGE, state => {
             state.user = null;
+            state.userRoles = [];
         });
     },
 });

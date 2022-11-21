@@ -15,6 +15,6 @@ public interface CreditClassRepository extends CrudRepository<CreditClass, Integ
     public CreditClass findByUniqueKey(String schoolYear, int semester, String subjectId,
                                        int group);
 
-    @Query(value = "SELECT * FROM loptinchi WHERE huylop = false", nativeQuery = true)
+    @Query(value = "SELECT ltc.* FROM loptinchi ltc join dangky dk on dk.maltc = ltc.maltc WHERE huylop = false group by ltc.maltc", nativeQuery = true)
     public List<CreditClass> findAllActiveCreditClass();
 }

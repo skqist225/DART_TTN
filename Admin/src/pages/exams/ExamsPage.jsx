@@ -23,8 +23,8 @@ import { persistUserState } from "../../features/persistUserSlice";
 
 const columns = [
     {
-        name: "Mã ca thi",
-        sortField: "id",
+        name: "Tên ca thi",
+        sortField: "name",
         sortable: true,
     },
     {

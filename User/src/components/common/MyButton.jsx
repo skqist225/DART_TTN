@@ -8,11 +8,12 @@ import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 
 import DisableImage from "../../images/disable-icon.png";
-import ChooseImage from "../../images/icons8-choose-48.png";
-import { withWidth } from "@material-ui/core";
 
 function MyButton(props) {
     let { type, label, disabled } = props;
+
+    console.log(disabled);
+
     let buttonClassName = "",
         buttonDisableClassName = "";
     switch (type) {
@@ -67,10 +68,10 @@ function MyButton(props) {
             break;
         }
         case "view": {
-            if (label === "Booking") {
-                buttonClassName = "bg-blue-600 hover:bg-blue-600";
-            } else {
-                buttonClassName = "bg-green-500 hover:bg-green-500";
+            buttonClassName = "bg-green-500 hover:bg-green-500";
+
+            if (disabled) {
+                buttonDisableClassName = "bg-green-200 hover:bg-green-200";
             }
             break;
         }

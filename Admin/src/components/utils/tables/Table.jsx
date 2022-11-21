@@ -58,8 +58,9 @@ function Table({
                     </div>
 
                     {!["câu hỏi"].includes(modalLabel) ? (
-                        ["môn học"].includes(modalLabel) &&
-                        userRoles.includes("Quản trị viên") && (
+                        modalLabel === "môn học" && !userRoles.includes("Quản trị viên") ? (
+                            <></>
+                        ) : (
                             <div className='mr-5'>
                                 <button
                                     type='button'

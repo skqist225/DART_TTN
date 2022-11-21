@@ -11,7 +11,7 @@ export const fetchAllCreditClasses = createAsyncThunk(
             sortDir = "desc",
             subject = "",
             active = false,
-            teacher,
+            teacher = "",
         },
         { dispatch, rejectWithValue }
     ) => {
