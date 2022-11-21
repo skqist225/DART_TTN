@@ -4,6 +4,7 @@ import com.quiz.app.common.CommonUtils;
 import com.quiz.app.creditClass.dto.CreditClassesDTO;
 import com.quiz.app.creditClass.dto.PostCreateCreditClassDTO;
 import com.quiz.app.exam.ExamService;
+import com.quiz.app.exam.dto.ExamCreditClassPageDTO;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
@@ -36,6 +37,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @RestController
@@ -85,10 +87,15 @@ public class CreditClassRestController {
 
             Page<CreditClass> creditClassesPage = creditClassService.findAllCreditClasses(filters);
 
+//            List<CreditClass> creditClasses =creditClassesPage.getContent();
             List<CreditClass> creditClasses = new ArrayList<>();
             for (CreditClass creditClass : creditClassesPage.getContent()) {
                 List<Exam> exams = examService.findAllExamsIdByCreditClass(creditClass.getId());
-                creditClass.setExams(exams);
+                creditClass.setExams(exams.stream().map(exam -> new ExamCreditClassPageDTO(exam.getId(),
+                        exam.getName(),
+                        exam.getExamDate(), exam.getNoticePeriod(), exam.getTime(), exam.getTests(),
+                        exam.getType(), exam.isTaken(), exam.isStatus(), exam.getTakeExams().size()
+                )).collect(Collectors.toList()));
                 creditClasses.add(creditClass);
             }
 

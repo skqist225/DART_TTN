@@ -2,6 +2,7 @@ package com.quiz.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.quiz.app.creditClass.dto.PostCreateCreditClassDTO;
+import com.quiz.app.exam.dto.ExamCreditClassPageDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -65,7 +66,7 @@ public class CreditClass {
     private List<Register> registers;
 
     @Transient
-    private List<Exam> exams;
+    private List<ExamCreditClassPageDTO> exams;
 
     public CreditClass(Integer id) {
         this.id = id;

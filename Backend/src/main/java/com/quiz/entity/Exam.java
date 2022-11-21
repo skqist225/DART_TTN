@@ -123,4 +123,16 @@ public class Exam {
     public List<Integer> getTestIds() {
         return this.getTests().stream().map(Test::getId).collect(Collectors.toList());
     }
+
+    public Exam(Integer id, String name, LocalDate examDate, int noticePeriod, int time, Set<Test> tests, String type, boolean taken, boolean status) {
+        this.id = id;
+        this.name = name;
+        this.examDate = examDate;
+        this.noticePeriod = noticePeriod;
+        this.time = time;
+        this.tests = tests;
+        this.type = type;
+        this.taken = taken;
+        this.status = status;
+    }
 }

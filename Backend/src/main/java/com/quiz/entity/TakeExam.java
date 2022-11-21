@@ -51,6 +51,7 @@ public class TakeExam {
     @OneToMany(mappedBy = "takeExam")
     private List<TakeExamDetail> takeExamDetails;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MADETHI")
     private Test test;

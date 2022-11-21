@@ -175,15 +175,19 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                                 <Table.HeadCell>Tiết báo danh</Table.HeadCell>
                                             </Table.Head>
                                             <Table.Body className='divide-y'>
-                                                {row.tempRegisters.map(
+                                                {row.exams.map(
                                                     (
                                                         {
                                                             id,
-                                                            student: { id: studentId, fullName },
+                                                            name,
+                                                            noticePeriod,
                                                             status,
-                                                            attendanceScore,
-                                                            midTermScore,
-                                                            finalTermScore,
+                                                            taken,
+                                                            time,
+                                                            type,
+                                                            tests,
+                                                            numberOfRegisters,
+                                                            examDate,
                                                         },
                                                         index
                                                     ) => (
@@ -203,14 +207,14 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                                                     tailwindCss.tableViewerCell
                                                                 }
                                                             >
-                                                                {studentId}
+                                                                {name}
                                                             </Table.Cell>
                                                             <Table.Cell
                                                                 className={
                                                                     tailwindCss.tableViewerCell
                                                                 }
                                                             >
-                                                                {fullName}
+                                                                {type}
                                                             </Table.Cell>
                                                             <Table.Cell
                                                                 className={
@@ -232,21 +236,21 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                                                     tailwindCss.tableViewerCell
                                                                 }
                                                             >
-                                                                {attendanceScore}
+                                                                {numberOfRegisters}
                                                             </Table.Cell>
                                                             <Table.Cell
                                                                 className={
                                                                     tailwindCss.tableViewerCell
                                                                 }
                                                             >
-                                                                {midTermScore}
+                                                                {examDate}
                                                             </Table.Cell>
                                                             <Table.Cell
                                                                 className={
                                                                     tailwindCss.tableViewerCell
                                                                 }
                                                             >
-                                                                {finalTermScore}
+                                                                {noticePeriod}
                                                             </Table.Cell>
                                                         </Table.Row>
                                                     )
