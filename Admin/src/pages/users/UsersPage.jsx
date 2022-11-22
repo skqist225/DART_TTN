@@ -2,11 +2,13 @@ import { callToast } from "../../helpers";
 import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
 import {
+    addMultipleUsers,
     addUser,
     clearUserState,
     editUser,
     fetchAllUsers,
     setEditedUser,
+    setUserExcelAdd,
     userState,
 } from "../../features/userSlice";
 
@@ -68,6 +70,7 @@ const UsersPage = () => {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [image, setImage] = useState(null);
+    const [excelFile, setExcelFile] = useState(null);
 
     const formId = "userForm";
     const modalId = "userModal";
@@ -100,10 +103,12 @@ const UsersPage = () => {
         errorObject,
         totalElements,
         totalPages,
+        userExcelAdd,
         addUser: { successMessage },
         editUser: { successMessage: euSuccessMessage },
         deleteUser: { successMessage: duSuccessMessage },
         enableOrDisableUser: { successMessage: eodqSuccessMessage },
+        addMultipleUsers: { successMessage: amuSuccessMessage, loading },
     } = useSelector(userState);
 
     useEffect(() => {
@@ -260,8 +265,21 @@ const UsersPage = () => {
         }
     }, [eodqSuccessMessage]);
 
+    useEffect(() => {
+        if (amuSuccessMessage) {
+            cleanForm(amuSuccessMessage, "add");
+        }
+    }, [amuSuccessMessage]);
+
+    const handleAddMultipleFromExcelFile = () => {
+        if (excelFile) {
+            dispatch(addMultipleUsers({ file: excelFile }));
+        }
+    };
+
     const onCloseForm = () => {
         dispatch(setEditedUser(null));
+        dispatch(setUserExcelAdd(false));
     };
 
     return (
@@ -296,12 +314,15 @@ const UsersPage = () => {
                             }))}
                             setImage={setImage}
                             isEdit={isEdit}
+                            setExcelFile={setExcelFile}
                         />
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                     onCloseForm={onCloseForm}
                     fetchDataByPageNumber={fetchDataByPageNumber}
+                    handleAddMultipleFromExcelFile={handleAddMultipleFromExcelFile}
+                    excelAdd={userExcelAdd}
                 />
             }
         />

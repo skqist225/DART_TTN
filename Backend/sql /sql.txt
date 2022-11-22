@@ -32,3 +32,7 @@ insert into dangky values(0, "N18DCCN229", 3);
 insert into dangky values(0, "N18DCCN230", 3);
 
 
+SET SQL_SAFE_UPDATES = 0;
+delete from nguoidung_vaitro where manguoidung like "N18DCCN1%"
+delete from nguoidung where ngaysinh = "2022-12-30"
+

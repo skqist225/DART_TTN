@@ -20,7 +20,6 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +35,10 @@ public class SubjectService {
 
     @Autowired
     private EntityManager entityManager;
+
+    public void saveAll(List<Subject> subjects) {
+        subjectRepository.saveAll(subjects);
+    }
 
     public Subject save(Subject subject) {
         return subjectRepository.save(subject);

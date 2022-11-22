@@ -22,6 +22,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -69,8 +70,9 @@ public class Exam {
     @JoinColumn(name = "MAGV")
     private User teacher;
 
+    @Builder.Default
     @OneToMany(mappedBy = "exam")
-    private List<TakeExam> takeExams;
+    private List<TakeExam> takeExams = new ArrayList<>();
 
     @Column(name = "DATHI")
     private boolean taken;
@@ -114,11 +116,17 @@ public class Exam {
     }
 
     public String getTeacherName() {
-        return this.takeExams.get(0).getRegister().getCreditClass().getTeacherName();
+        if (this.takeExams.size() > 0) {
+            return this.takeExams.get(0).getRegister().getCreditClass().getTeacherName();
+        }
+        return "";
     }
 
     public Integer getCreditClassId() {
-        return this.takeExams.get(0).getRegister().getCreditClass().getId();
+        if (this.takeExams.size() > 0) {
+            return this.takeExams.get(0).getRegister().getCreditClass().getId();
+        }
+        return null;
     }
 
     public List<Integer> getTestIds() {

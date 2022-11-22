@@ -3,10 +3,12 @@ import { CloseIcon } from "../../../images";
 import { tailwindCss } from "../../../tailwind";
 import $ from "jquery";
 import { useSelector } from "react-redux";
-import { questionState, setExcelAdd } from "../../../features/questionSlice";
+import { questionState } from "../../../features/questionSlice";
 import { useDispatch } from "react-redux";
 import { addTest } from "../../../features/testSlice";
 import { callToast } from "../../../helpers";
+import { userState } from "../../../features/userSlice";
+import { Spinner } from "flowbite-react";
 
 function TableModal({
     modalId,
@@ -18,12 +20,18 @@ function TableModal({
     buttonLabel,
     setIsEdit,
     onCloseForm,
-    handleAddSelectedQuestionFromExcelFile,
-    addTest: addTst = false,
+    handleAddMultipleFromExcelFile,
     setError,
+    addTest: addTst = false,
+    excelAdd = false,
 }) {
     const dispatch = useDispatch();
-    const { excelAdd, questions } = useSelector(questionState);
+    const { questions } = useSelector(questionState);
+    const {
+        addMultipleUsers: { loading },
+    } = useSelector(userState);
+
+    console.log(modalLabel);
 
     return (
         <div
@@ -52,10 +60,7 @@ function TableModal({
                             onClick={() => {
                                 $(`#${modalId}`).css("display", "none");
                                 setIsEdit(false);
-                                dispatch(setExcelAdd(false));
-                                if (onCloseForm) {
-                                    onCloseForm();
-                                }
+                                onCloseForm();
                             }}
                         >
                             <CloseIcon />
@@ -74,13 +79,15 @@ function TableModal({
                                 </button>
                             </>
                         )}
+
                         <button
                             type={!excelAdd && !addTst ? "submit" : "button"}
                             className={tailwindCss.modal.saveButton}
                             onClick={() => {
-                                if (excelAdd && handleAddSelectedQuestionFromExcelFile) {
-                                    handleAddSelectedQuestionFromExcelFile();
+                                if (excelAdd && handleAddMultipleFromExcelFile) {
+                                    handleAddMultipleFromExcelFile();
                                 }
+
                                 if (addTst) {
                                     const name = $("#testName").val();
                                     if (!name) {
@@ -117,7 +124,10 @@ function TableModal({
                                 }
                             }}
                         >
-                            {excelAdd && excelAdd === true ? "Thêm tất cả" : buttonLabel}
+                            {modalLabel === "Thêm người dùng" && loading && (
+                                <Spinner size='sm' light={true} />
+                            )}
+                            {excelAdd ? "Thêm tất cả" : buttonLabel}
                         </button>
                     </div>
                 </form>

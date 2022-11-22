@@ -37,6 +37,7 @@ export { default as SubjectTableBody } from "./subjects/SubjectTableBody";
 //users
 export { default as UserModalBody } from "./users/UserModalBody";
 export { default as UserTableBody } from "./users/UserTableBody";
+export { default as UserExcelModalBody } from "./users/UserExcelModalBody";
 
 //classes
 export { default as CreditClassModalBody } from "./creditClasses/CreditClassModalBody";

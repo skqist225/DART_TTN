@@ -122,6 +122,22 @@ export const editUser = createAsyncThunk("user/editUser", async (formData, { rej
     }
 });
 
+export const addMultipleUsers = createAsyncThunk(
+    "user/addMultipleUsers",
+    async ({ file }, { rejectWithValue }) => {
+        try {
+            const formData = new FormData();
+            formData.set("file", file);
+
+            const { data } = await api.post(`/admin/users/save/multiple`, formData);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 const initialState = {
     loading: true,
     users: [],
@@ -148,7 +164,12 @@ const initialState = {
     enableOrDisableUser: {
         successMessage: null,
     },
+    addMultipleUsers: {
+        loading: false,
+        successMessage: null,
+    },
     roles: [],
+    userExcelAdd: false,
 };
 
 const userSlice = createSlice({
@@ -186,6 +207,9 @@ const userSlice = createSlice({
         },
         setEditedUser(state, { payload }) {
             state.editedUser = payload;
+        },
+        setUserExcelAdd(state, { payload }) {
+            state.userExcelAdd = payload;
         },
     },
     extraReducers: builder => {
@@ -271,12 +295,30 @@ const userSlice = createSlice({
             .addCase(enableOrDisableUser.fulfilled, (state, { payload }) => {
                 state.enableOrDisableUser.successMessage = payload.data;
             })
-            .addCase(enableOrDisableUser.rejected, (state, { payload }) => {});
+            .addCase(enableOrDisableUser.rejected, (state, { payload }) => {})
+
+            .addCase(addMultipleUsers.pending, (state, { payload }) => {
+                state.addMultipleUsers.successMessage = null;
+                state.addMultipleUsers.loading = true;
+            })
+            .addCase(addMultipleUsers.fulfilled, (state, { payload }) => {
+                state.addMultipleUsers.loading = false;
+                state.addMultipleUsers.successMessage = payload.data;
+            })
+            .addCase(addMultipleUsers.rejected, (state, { payload }) => {
+                state.addMultipleUsers.loading = false;
+            });
     },
 });
 
-export const { clearUserState, clearErrorField, setFilterObject, setEditedUser, setErrorField } =
-    userSlice.actions;
+export const {
+    clearUserState,
+    clearErrorField,
+    setFilterObject,
+    setEditedUser,
+    setErrorField,
+    setUserExcelAdd,
+} = userSlice.actions;
 
 export const userState = state => state.user;
 export default userSlice.reducer;

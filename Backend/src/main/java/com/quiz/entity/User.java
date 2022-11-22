@@ -40,10 +40,10 @@ public class User {
     @Column(name = "MANGUOIDUNG", columnDefinition = "NCHAR(10)")
     private String id;
 
-    @Column(name = "TEN", columnDefinition = "NVARCHAR(50)", nullable = false)
+    @Column(name = "TEN", columnDefinition = "NVARCHAR(100)", nullable = false)
     private String firstName;
 
-    @Column(name = "HO", columnDefinition = "NVARCHAR(10)", nullable = false)
+    @Column(name = "HO", columnDefinition = "NVARCHAR(100)", nullable = false)
     private String lastName;
 
     @Enumerated(EnumType.STRING)
@@ -82,6 +82,9 @@ public class User {
     @JoinTable(name = "NGUOIDUNG_VAITRO", joinColumns = @JoinColumn(name = "MANGUOIDUNG"),
             inverseJoinColumns = @JoinColumn(name = "MAVAITRO"))
     private Set<Role> roles = new HashSet<>();
+
+    @Transient
+    private String rolesStr;
 
     @Builder.Default
     @Column(name = "XACTHUCDIACHIEMAIL", columnDefinition = "BOOLEAN DEFAULT FALSE")

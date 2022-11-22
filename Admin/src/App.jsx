@@ -28,42 +28,16 @@ function App() {
     return (
         <>
             <Routes>
-                <Route exact path='/' element={<Dashboard />} />
-                <Route path='/auth'>
-                    <Route path='login' element={<LoginPage />} />
-                </Route>
-
-                <Route path='/subjects'>
-                    <Route path='' element={<SubjectsPage />} />
-                </Route>
-
-                <Route path='/questions'>
-                    <Route path='' element={<QuestionsPage />} />
-                </Route>
-
-                <Route path='/tests'>
-                    <Route path='' element={<TestsPage />} />
-                </Route>
-
-                <Route path='/users'>
-                    <Route path='' element={<UsersPage />} />
-                </Route>
-
-                <Route path='/creditClasses'>
-                    <Route path='' element={<CreditClassesPage />} />
-                </Route>
-
-                <Route path='/registers'>
-                    <Route path='' element={<RegistersPage />} />
-                </Route>
-
-                <Route path='/exams'>
-                    <Route path='' element={<ExamsPage />} />
-                </Route>
-
-                <Route path='/roles'>
-                    <Route path='' element={<RolesPage />} />
-                </Route>
+                <Route path='/statistics' element={<Dashboard />} />
+                <Route path='/auth' element={<LoginPage />} />
+                <Route path='/subjects' element={<SubjectsPage />} />
+                <Route path='/questions' element={<QuestionsPage />} />
+                <Route path='/tests' element={<TestsPage />} />
+                <Route path='/users' element={<UsersPage />} />
+                <Route path='/creditClasses' element={<CreditClassesPage />} />
+                <Route path='/registers' element={<RegistersPage />} />
+                <Route path='/exams' element={<ExamsPage />} />
+                <Route path='/roles' element={<RolesPage />} />
             </Routes>
         </>
     );

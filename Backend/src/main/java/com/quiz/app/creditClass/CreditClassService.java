@@ -36,6 +36,10 @@ public class CreditClassService {
     @Autowired
     private EntityManager entityManager;
 
+    public void saveAll(List<CreditClass> creditClasses) {
+        creditClassRepository.saveAll(creditClasses);
+    }
+
     public CreditClass save(CreditClass cls) {
         return creditClassRepository.save(cls);
     }
@@ -66,7 +70,20 @@ public class CreditClassService {
         return creditClassRepository.findAllActiveCreditClass();
     }
 
-    public boolean isUniqueKey(Integer id, String schoolYear, int semester, String subjectId, int group, boolean isEdit) {
+    public CreditClass findByUniqueKey(String schoolYear, double semester, String subjectId,
+                                       int group) throws NotFoundException {
+        CreditClass creditClass = creditClassRepository.findByUniqueKey(schoolYear, semester,
+                subjectId,
+                group);
+
+        if (Objects.isNull(creditClass)) {
+            throw new NotFoundException("Không tìm thấy lớp tín chỉ này");
+        }
+
+        return creditClass;
+    }
+
+    public boolean isUniqueKey(Integer id, String schoolYear, double semester, String subjectId, int group, boolean isEdit) {
         CreditClass creditClass = creditClassRepository.findByUniqueKey(schoolYear, semester,
                 subjectId,
                 group);

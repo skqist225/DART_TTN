@@ -102,6 +102,7 @@ function QuestionsPage() {
         totalElements,
         totalPages,
         filterObject,
+        excelAdd,
         addQuestion: { successMessage },
         editQuestion: { successMessage: eqSuccessMessage },
         deleteQuestion: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
@@ -295,7 +296,7 @@ function QuestionsPage() {
         dispatch(fetchAllQuestions({ ...filterObject, page: pageNumber }));
     };
 
-    const handleAddSelectedQuestionFromExcelFile = () => {
+    const handleAddMultipleFromExcelFile = () => {
         dispatch(addMultipleQuestions({ questions: questionsExcel }));
     };
 
@@ -303,6 +304,7 @@ function QuestionsPage() {
         dispatch(setEditedQuestion(null));
         setValue("answers", []);
         clearErrors("answers");
+        dispatch(setExcelAdd(false));
     }
 
     return (
@@ -338,10 +340,11 @@ function QuestionsPage() {
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
-                    handleAddSelectedQuestionFromExcelFile={handleAddSelectedQuestionFromExcelFile}
+                    handleAddMultipleFromExcelFile={handleAddMultipleFromExcelFile}
                     fetchDataByPageNumber={fetchDataByPageNumber}
                     onCloseForm={onCloseForm}
                     Filter={QuestionsFilter}
+                    excelAdd={excelAdd}
                 />
             }
         />

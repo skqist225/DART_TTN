@@ -9,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -62,8 +63,9 @@ public class CreditClass {
     private User teacher;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "creditClass")
-    private List<Register> registers;
+    @Builder.Default
+    @OneToMany(mappedBy = "creditClass", cascade = CascadeType.ALL)
+    private List<Register> registers = new ArrayList<>();
 
     @Transient
     private List<ExamCreditClassPageDTO> exams;
@@ -135,4 +137,13 @@ public class CreditClass {
         }
         return new ArrayList<>();
     }
+
+    public void addRegister(Register register) {
+        this.registers.add(register);
+    }
+
+    public void removeRegister(Register register) {
+        this.registers.remove(register);
+    }
+
 }

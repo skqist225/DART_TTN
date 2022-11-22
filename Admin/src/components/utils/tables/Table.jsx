@@ -8,10 +8,11 @@ import $ from "jquery";
 import { DropDownIcon, ExcelIcon } from "../../../images";
 import { useDispatch } from "react-redux";
 import { setEditedQuestion, setExcelAdd } from "../../../features/questionSlice";
-import TableModalViewer from "./TableModalViewer";
 import { useSelector } from "react-redux";
 import { persistUserState } from "../../../features/persistUserSlice";
-import userSlice from "../../../features/userSlice";
+import { setUserExcelAdd } from "../../../features/userSlice";
+import { Tooltip } from "flowbite-react";
+import AddIcon from "@mui/icons-material/Add";
 
 function Table({
     searchPlaceHolder,
@@ -30,12 +31,13 @@ function Table({
     ModalBody,
     isEdit,
     handleSortChange,
-    handleAddSelectedQuestionFromExcelFile,
+    handleAddMultipleFromExcelFile,
     fetchDataByPageNumber,
     addTest,
     onCloseForm,
     Filter,
     setError,
+    excelAdd,
 }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
@@ -57,21 +59,37 @@ function Table({
                         {Filter && <Filter />}
                     </div>
 
-                    {!["câu hỏi"].includes(modalLabel) ? (
+                    {!["câu hỏi", "người dùng"].includes(modalLabel) ? (
                         modalLabel === "môn học" && !userRoles.includes("Quản trị viên") ? (
                             <></>
                         ) : (
                             <div className='mr-5'>
-                                <button
-                                    type='button'
-                                    className={tailwindCss.button}
-                                    onClick={() => {
-                                        $("#" + modalId).css("display", "flex");
-                                        setIsEdit(false);
-                                    }}
+                                <Tooltip
+                                    placement='left'
+                                    animation='duration-200'
+                                    style='dark'
+                                    content={<> Thêm {modalLabel}</>}
                                 >
-                                    Thêm {modalLabel}
-                                </button>
+                                    <button
+                                        type='button'
+                                        onClick={() => {
+                                            $("#" + modalId).css("display", "flex");
+                                            setIsEdit(false);
+                                        }}
+                                        style={{
+                                            backgroundColor: "#2e83f2",
+                                        }}
+                                        className='px-2 py-2 rounded-lg'
+                                    >
+                                        <AddIcon
+                                            style={{
+                                                width: "32px",
+                                                height: "32px",
+                                                filter: "brightness(0) invert(1)",
+                                            }}
+                                        />
+                                    </button>
+                                </Tooltip>
                             </div>
                         )
                     ) : (
@@ -79,7 +97,7 @@ function Table({
                             <button
                                 id='dropdownDefault'
                                 data-dropdown-toggle='dropdown'
-                                className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-4 py-2.5 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-10'
+                                className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-10'
                                 type='button'
                                 onClick={() => {
                                     if (!open) {
@@ -115,12 +133,17 @@ function Table({
                                             type='button'
                                             className={tailwindCss.lightButton}
                                             onClick={() => {
-                                                dispatch(setExcelAdd(true));
+                                                if (modalLabel === "câu hỏi") {
+                                                    dispatch(setExcelAdd(true));
+                                                } else if (modalLabel === "người dùng") {
+                                                    dispatch(setUserExcelAdd(true));
+                                                } else {
+                                                }
                                                 $("#" + modalId).css("display", "flex");
                                             }}
                                         >
                                             <ExcelIcon />
-                                            Thêm từ file Excel
+                                            Import Excel
                                         </button>
                                     </li>
                                 </ul>
@@ -153,9 +176,10 @@ function Table({
                 ModalBody={ModalBody}
                 buttonLabel={isEdit ? `Chỉnh sửa` : `Thêm`}
                 setIsEdit={setIsEdit}
-                handleAddSelectedQuestionFromExcelFile={handleAddSelectedQuestionFromExcelFile}
+                handleAddMultipleFromExcelFile={handleAddMultipleFromExcelFile}
                 addTest={addTest}
                 onCloseForm={onCloseForm}
+                excelAdd={excelAdd}
             />
         </div>
     );

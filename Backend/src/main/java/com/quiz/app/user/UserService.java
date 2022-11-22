@@ -43,6 +43,10 @@ public class UserService {
     @Autowired
     private EntityManager entityManager;
 
+    public void saveAll(List<User> users) {
+        userRepository.saveAll(users);
+    }
+
     public List<User> findByRole(Integer roleId) {
         return userRepository.findByRole(roleId);
     }

@@ -1,10 +1,15 @@
 package com.quiz.app.register;
 
+import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.subject.SubjectService;
+import com.quiz.app.user.UserService;
 import com.quiz.entity.CreditClass;
 import com.quiz.entity.Register;
 import com.quiz.entity.RegisterId;
+import com.quiz.entity.Subject;
+import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -20,6 +25,7 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -34,6 +40,28 @@ public class RegisterService {
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private SubjectService subjectService;
+
+    @Autowired
+    private CreditClassService creditClassService;
+
+    @Transactional
+    public void saveAllFromExcel(List<User> users, List<Subject> subjects,
+                                 List<CreditClass> creditClasses, List<Register> registers) {
+        userService.saveAll(users);
+        subjectService.saveAll(subjects);
+        creditClassService.saveAll(creditClasses);
+        saveAll(registers);
+    }
+
+    public void saveAll(List<Register> registers) {
+        registerRepository.saveAll(registers);
+    }
 
     public Register save(Register Register) {
         return registerRepository.save(Register);

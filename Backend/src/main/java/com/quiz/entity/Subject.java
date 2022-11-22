@@ -11,7 +11,6 @@ import lombok.Setter;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -28,10 +27,10 @@ import java.util.List;
 @Table(name = "MONHOC")
 public class Subject {
 	@Id
-	@Column(name = "MAMH", columnDefinition = "NCHAR(10)")
+	@Column(name = "MAMH", columnDefinition = "NCHAR(12)")
 	private String id;
 
-	@Column(name = "TENMH", columnDefinition = "NVARCHAR(50)", nullable = false, unique = true)
+	@Column(name = "TENMH", columnDefinition = "NVARCHAR(50)", nullable = false)
 	private String name;
 
 	@Column(name = "SOTIET_LT", columnDefinition = "SMALLINT", nullable = false)
@@ -42,7 +41,7 @@ public class Subject {
 
 	@JsonIgnore
 	@Builder.Default
-	@OneToMany(mappedBy = "subject", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "subject", orphanRemoval = true, cascade = CascadeType.ALL)
 	private List<Test> tests = new ArrayList<>();
 
 	@Builder.Default
@@ -86,5 +85,22 @@ public class Subject {
 	@Transient
 	public void removeAll() {
 		this.chapters.clear();
+	}
+
+	public Subject(String id, String name, int numberOfTheoreticalPeriods, int numberOfPracticePeriods) {
+		this.id = id;
+		this.name = name;
+		this.numberOfTheoreticalPeriods = numberOfTheoreticalPeriods;
+		this.numberOfPracticePeriods = numberOfPracticePeriods;
+	}
+
+	@Override
+	public String toString() {
+		return "Subject{" +
+				"id='" + id + '\'' +
+				", name='" + name + '\'' +
+				", numberOfTheoreticalPeriods=" + numberOfTheoreticalPeriods +
+				", numberOfPracticePeriods=" + numberOfPracticePeriods +
+				'}';
 	}
 }

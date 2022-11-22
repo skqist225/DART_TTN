@@ -28,8 +28,10 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/api/admin/users")
@@ -83,9 +85,9 @@ public class AdminUserRestController {
 
     @PostMapping("save/multiple")
     public ResponseEntity<StandardJSONResponse<String>> readExcelFile(
-            @RequestParam(name = "file") MultipartFile excelFile) throws IOException {
+            @RequestParam(name = "file") MultipartFile file) throws IOException {
         List<User> users = new ArrayList<>();
-        ExcelUtils excelUtils = new ExcelUtils((FileInputStream) excelFile.getInputStream());
+        ExcelUtils excelUtils = new ExcelUtils((FileInputStream) file.getInputStream());
         excelUtils.readUserFromFile(users);
         int totalRecords = users.size();
         int i = 0;
@@ -94,6 +96,30 @@ public class AdminUserRestController {
                 userService.findById(user.getId());
             } catch (NotFoundException e) {
                 if (!userService.isEmailDuplicated(user.getId(), user.getEmail(), false)) {
+                    Set<Role> roles = new HashSet<>();
+                    if (user.getRolesStr().contains(",")) {
+                        for (String roleName : user.getRolesStr().split(",")) {
+                            Role role = null;
+                            try {
+                                role = roleService.findByName(roleName.trim());
+                            } catch (NotFoundException exception) {
+                                role = roleService.save(new Role(roleName.trim()));
+                            }
+                            roles.add(role);
+                        }
+                    } else {
+                        Role role = null;
+                        try {
+                            System.out.println(user.getRolesStr());
+                            role = roleService.findByName(user.getRolesStr().trim());
+                        } catch (NotFoundException exception) {
+                            role = roleService.save(new Role(user.getRolesStr().trim()));
+                        }
+                        roles.add(role);
+                    }
+
+                    user.setRoles(roles);
+                    userService.encodePassword(user);
                     userService.save(user);
                     i++;
                 }

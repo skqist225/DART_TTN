@@ -1,7 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-//rfce
 function SidebarElement({ pathname, name, title, Icon }) {
     return (
         <li
