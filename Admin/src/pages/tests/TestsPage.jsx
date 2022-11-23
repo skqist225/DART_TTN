@@ -100,8 +100,6 @@ function TestsPage() {
     });
 
     const onSubmit = ({ criteria, numberOfQuestions, testSubjectId: subject }) => {
-        console.log(subject);
-
         if (isEdit) {
             dispatch(editTest(data));
         } else {

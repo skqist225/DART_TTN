@@ -164,13 +164,6 @@ const creditClassSlice = createSlice({
             state.deleteCreditClass.successMessage = null;
             state.deleteCreditClass.errorObject = null;
         },
-        clearErrorField(state, { payload }) {
-            if (payload) {
-                if (state.errorObject && state.errorObject[payload]) {
-                    delete state.errorObject[payload];
-                }
-            }
-        },
         setFilterObject(state, { payload }) {
             if (payload) {
                 payload.forEach(({ field, value }) => {
@@ -262,7 +255,7 @@ const creditClassSlice = createSlice({
 });
 
 export const {
-    actions: { clearCreditClassState, clearErrorField, setFilterObject, setEditedCreditClass },
+    actions: { clearCreditClassState, setFilterObject, setEditedCreditClass },
 } = creditClassSlice;
 
 export const creditClassState = state => state.creditClass;

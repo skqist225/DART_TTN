@@ -28,6 +28,7 @@ function App() {
     return (
         <>
             <Routes>
+                <Route exact path='/' element={<Dashboard />} />
                 <Route path='/statistics' element={<Dashboard />} />
                 <Route path='/auth' element={<LoginPage />} />
                 <Route path='/subjects' element={<SubjectsPage />} />

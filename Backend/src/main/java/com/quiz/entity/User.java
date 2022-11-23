@@ -66,7 +66,7 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @Column(name = "DANGHIHOC", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "HOATDONG", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean status;
 
     @JsonIgnore
@@ -146,7 +146,7 @@ public class User {
 
     @Transient
     public String getFullName() {
-        return String.format("%s %s", this.firstName, this.lastName);
+        return String.format("%s %s", this.lastName, this.firstName);
     }
 
     public boolean hasRole(String role) {

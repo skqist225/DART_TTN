@@ -201,8 +201,6 @@ export const queryAvailableQuestions = createAsyncThunk(
                 `/questions/queryAvailableQuestions?chapter=${chapter}&level=${level}&filterIndex=${filterIndex}`
             );
 
-            console.log(data);
-
             return { data };
         } catch ({ data: { error } }) {
             return rejectWithValue(error);
@@ -253,9 +251,9 @@ const questionSlice = createSlice({
     initialState,
     reducers: {
         clearQuestionState(state) {
-            state.addQuestion.successMessage = null;
             state.errorObject = null;
 
+            state.addQuestion.successMessage = null;
             state.editQuestion.successMessage = null;
 
             state.deleteQuestion.successMessage = null;

@@ -7,6 +7,7 @@ import DoDisturbIcon from "@mui/icons-material/DoDisturb";
 import SearchIcon from "@mui/icons-material/Search";
 import ClearIcon from "@mui/icons-material/Clear";
 import DisableImage from "../../images/disable-icon.png";
+import { Tooltip } from "flowbite-react";
 
 function MyButton(props) {
     let { type, label, disabled } = props;
@@ -100,6 +101,7 @@ function MyButton(props) {
     }
 
     return (
+        // <Tooltip placement='top' animation='duration-300' style='light' content={label}>
         <button
             className={`btn ${buttonClassName} text-white ${
                 props.disabled && buttonDisableClassName
@@ -145,6 +147,7 @@ function MyButton(props) {
             )}
             {type === "cancel" && <>Cancel</>}
         </button>
+        // </Tooltip>
     );
 }
 

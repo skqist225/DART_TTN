@@ -6,6 +6,9 @@ import { useDispatch } from "react-redux";
 import $ from "jquery";
 import { cellCss } from "../questions/QuestionTableBody";
 import { Badge, Button, Table, Tooltip } from "flowbite-react";
+import CriteriaList from "./CriteriaList";
+import TableModalViewer from "../utils/tables/TableModalViewer";
+import VisibilityIcon from "@mui/icons-material/Visibility";
 import LevelBadge from "../common/LevelBadge";
 
 function TestTableBody({ rows, setIsEdit, examPage = false }) {
@@ -13,7 +16,7 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
 
     return (
         <tbody>
-            {rows.map(row => (
+            {rows.map((row, index) => (
                 <tr className={tailwindCss.tr} key={row.id}>
                     {examPage && (
                         <th scope='col' className='p-4'>
@@ -53,16 +56,20 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                             content={
                                 <Table striped={true}>
                                     <Table.Head>
+                                        <Table.HeadCell>STT</Table.HeadCell>
                                         <Table.HeadCell>Chương</Table.HeadCell>
                                         <Table.HeadCell>Số câu hỏi</Table.HeadCell>
                                     </Table.Head>
                                     <Table.Body className='divide-y'>
-                                        {row.criteria.map(({ chapter, levelAndNumbers }) => (
+                                        {row.criteria.map(({ chapter, levelAndNumbers }, index) => (
                                             <Table.Row
                                                 className='bg-white dark:border-gray-700 dark:bg-gray-800'
                                                 key={chapter}
                                             >
-                                                <Table.Cell className='whitespace-nowrap font-medium text-gray-900 dark:text-white'>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {index + 1}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
                                                     {chapter}
                                                 </Table.Cell>
                                                 <Table.Cell>
@@ -98,15 +105,44 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                     <td className={cellCss}>{row.teacherName}</td>
                     {!examPage && (
                         <td className={`${cellCss} flex items-center`}>
-                            <MyButton
-                                type='edit'
-                                onClick={() => {
-                                    $("#subjectModal").css("display", "flex");
-                                    setIsEdit(true);
-                                    dispatch(setEditedTest(row));
-                                }}
-                            />
-                            <div className='mx-3'>
+                            <div className='mr-2'>
+                                <Tooltip
+                                    content={"Xem danh sách tiêu chí"}
+                                    placement='bottom'
+                                    animation='duration-300'
+                                    style='light'
+                                >
+                                    <Button
+                                        onClick={() => {
+                                            $(`#criteriaViewer${index}`).css("display", "flex");
+                                        }}
+                                        color='success'
+                                        style={{
+                                            width: "46px",
+                                            height: "42px",
+                                            backgroundColor: "#0E9F6E",
+                                        }}
+                                    >
+                                        <VisibilityIcon />
+                                    </Button>
+                                </Tooltip>
+                                <TableModalViewer
+                                    modalId={`criteriaViewer${index}`}
+                                    modalLabel='Danh sách tiêu chí'
+                                    ModalBody={<CriteriaList criteria={row.criteria} />}
+                                />
+                            </div>
+                            <div className='mr-2'>
+                                <MyButton
+                                    type='edit'
+                                    onClick={() => {
+                                        $("#subjectModal").css("display", "flex");
+                                        setIsEdit(true);
+                                        dispatch(setEditedTest(row));
+                                    }}
+                                />
+                            </div>
+                            <div>
                                 <MyButton
                                     type='delete'
                                     onClick={() => {

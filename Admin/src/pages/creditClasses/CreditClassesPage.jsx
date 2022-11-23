@@ -76,7 +76,6 @@ function CreditClassesPage() {
     const formId = "creditClassForm";
     const modalId = "creditClassModal";
     const modalLabel = "lớp tín chỉ";
-    console.log(userRoles);
     useEffect(() => {
         if (userRoles.includes("Quản trị viên")) {
             dispatch(

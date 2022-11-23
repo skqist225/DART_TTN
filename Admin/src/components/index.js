@@ -43,11 +43,14 @@ export { default as UserExcelModalBody } from "./users/UserExcelModalBody";
 export { default as CreditClassModalBody } from "./creditClasses/CreditClassModalBody";
 export { default as CreditClassTableBody } from "./creditClasses/CreditClassTableBody";
 export { default as CreditClassFilter } from "./creditClasses/CreditClassFilter";
+export { default as RegisterList } from "./creditClasses/RegisterList";
+export { default as ExamList } from "./creditClasses/ExamList";
 
 //tests
 export { default as TestModalBody } from "./tests/TestModalBody";
 export { default as TestTableBody } from "./tests/TestTableBody";
 export { default as TestFilter } from "./tests/TestFilter";
+export { default as CriteriaList } from "./tests/CriteriaList";
 
 //roles
 export { default as RoleModalBody } from "./roles/RoleModalBody";

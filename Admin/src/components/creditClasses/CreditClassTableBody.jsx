@@ -20,6 +20,8 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import VisibilityIcon from "@mui/icons-material/Visibility";
+import RegisterList from "./RegisterList";
+import ExamList from "./ExamList";
 
 function CreditClassTableBody({ rows, setIsEdit }) {
     const modalId = "examModal";
@@ -198,106 +200,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                     <TableModalViewer
                                         modalId={`studentsViewer${index}`}
                                         modalLabel='Danh sách sinh viên'
-                                        ModalBody={
-                                            <>
-                                                <Table striped={true}>
-                                                    <Table.Head>
-                                                        <Table.HeadCell>STT</Table.HeadCell>
-                                                        <Table.HeadCell>MSSV</Table.HeadCell>
-                                                        <Table.HeadCell>Họ tên</Table.HeadCell>
-                                                        <Table.HeadCell>Trạng thái</Table.HeadCell>
-                                                        <Table.HeadCell>Điểm CC</Table.HeadCell>
-                                                        <Table.HeadCell>Điểm GK</Table.HeadCell>
-                                                        <Table.HeadCell>Điểm GK</Table.HeadCell>
-                                                    </Table.Head>
-                                                    <Table.Body className='divide-y'>
-                                                        {row.tempRegisters.map(
-                                                            (
-                                                                {
-                                                                    id,
-                                                                    student: {
-                                                                        id: studentId,
-                                                                        fullName,
-                                                                    },
-                                                                    status,
-                                                                    attendanceScore,
-                                                                    midTermScore,
-                                                                    finalTermScore,
-                                                                },
-                                                                index
-                                                            ) => (
-                                                                <Table.Row
-                                                                    className='bg-white dark:border-gray-700 dark:bg-gray-800'
-                                                                    key={id}
-                                                                >
-                                                                    <Table.Cell
-                                                                        className={
-                                                                            tailwindCss.tableViewerCell
-                                                                        }
-                                                                    >
-                                                                        {index + 1}
-                                                                    </Table.Cell>
-                                                                    <Table.Cell
-                                                                        className={
-                                                                            tailwindCss.tableViewerCell
-                                                                        }
-                                                                    >
-                                                                        {studentId}
-                                                                    </Table.Cell>
-                                                                    <Table.Cell
-                                                                        className={
-                                                                            tailwindCss.tableViewerCell
-                                                                        }
-                                                                    >
-                                                                        {fullName}
-                                                                    </Table.Cell>
-                                                                    <Table.Cell
-                                                                        className={
-                                                                            tailwindCss.tableViewerCell
-                                                                        }
-                                                                    >
-                                                                        {!status ? (
-                                                                            <Badge color='success'>
-                                                                                Đang học
-                                                                            </Badge>
-                                                                        ) : (
-                                                                            <Badge color='failure'>
-                                                                                Đã hủy
-                                                                            </Badge>
-                                                                        )}
-                                                                    </Table.Cell>
-                                                                    <Table.Cell
-                                                                        className={
-                                                                            tailwindCss.tableViewerCell
-                                                                        }
-                                                                    >
-                                                                        {attendanceScore}
-                                                                    </Table.Cell>
-                                                                    <Table.Cell
-                                                                        className={
-                                                                            tailwindCss.tableViewerCell
-                                                                        }
-                                                                    >
-                                                                        {midTermScore}
-                                                                    </Table.Cell>
-                                                                    <Table.Cell
-                                                                        className={
-                                                                            tailwindCss.tableViewerCell
-                                                                        }
-                                                                    >
-                                                                        {finalTermScore}
-                                                                    </Table.Cell>
-                                                                </Table.Row>
-                                                            )
-                                                        )}
-                                                    </Table.Body>
-                                                </Table>
-                                                <TablePagination
-                                                    totalElements={row.tempRegisters.length}
-                                                    totalPages={row.tempRegisters / 10 + 1}
-                                                />
-                                            </>
-                                        }
+                                        ModalBody={<RegisterList registers={row.tempRegisters} />}
                                     />
                                 </div>
                                 <div className='mr-3'>
@@ -321,213 +224,18 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                         modalId={`examsViewer${index}`}
                                         modalLabel='Danh sách ca thi'
                                         ModalBody={
-                                            <>
-                                                <div>Tổng số SV : {row.numberOfActiveStudents}</div>
-                                                <Table striped={true}>
-                                                    <Table.Head>
-                                                        <Table.HeadCell>STT</Table.HeadCell>
-                                                        <Table.HeadCell>Loại</Table.HeadCell>
-                                                        <Table.HeadCell>Số ca</Table.HeadCell>
-                                                        <Table.HeadCell>Đã thi</Table.HeadCell>
-                                                        <Table.HeadCell>Chưa thi</Table.HeadCell>
-                                                    </Table.Head>
-                                                    <Table.Body className='divide-y'>
-                                                        <Table.Row>
-                                                            <Table.Cell
-                                                                className={
-                                                                    tailwindCss.tableViewerCell
-                                                                }
-                                                            >
-                                                                1
-                                                            </Table.Cell>
-                                                            <Table.Cell
-                                                                className={
-                                                                    tailwindCss.tableViewerCell
-                                                                }
-                                                            >
-                                                                Giữa kỳ
-                                                            </Table.Cell>
-                                                            <Table.Cell
-                                                                className={
-                                                                    tailwindCss.tableViewerCell
-                                                                }
-                                                            >
-                                                                {row.numberOfMidTermExam}
-                                                            </Table.Cell>
-                                                            <Table.Cell
-                                                                className={
-                                                                    tailwindCss.tableViewerCell
-                                                                }
-                                                            >
-                                                                {row.numberOfMidTermExamCreated}
-                                                            </Table.Cell>
-                                                            <Table.Cell
-                                                                className={
-                                                                    tailwindCss.tableViewerCell
-                                                                }
-                                                            >
-                                                                {row.numberOfActiveStudents -
-                                                                    row.numberOfMidTermExamCreated}
-                                                            </Table.Cell>
-                                                        </Table.Row>
-                                                        <Table.Row>
-                                                            <Table.Cell
-                                                                className={
-                                                                    tailwindCss.tableViewerCell
-                                                                }
-                                                            >
-                                                                2
-                                                            </Table.Cell>
-                                                            <Table.Cell
-                                                                className={
-                                                                    tailwindCss.tableViewerCell
-                                                                }
-                                                            >
-                                                                Cuối kỳ
-                                                            </Table.Cell>
-                                                            <Table.Cell
-                                                                className={
-                                                                    tailwindCss.tableViewerCell
-                                                                }
-                                                            >
-                                                                {row.numberOfFinalTermExam}
-                                                            </Table.Cell>
-                                                            <Table.Cell
-                                                                className={
-                                                                    tailwindCss.tableViewerCell
-                                                                }
-                                                            >
-                                                                {row.numberOfFinalTermExamCreated}
-                                                            </Table.Cell>
-                                                            <Table.Cell
-                                                                className={
-                                                                    tailwindCss.tableViewerCell
-                                                                }
-                                                            >
-                                                                {row.numberOfActiveStudents -
-                                                                    row.numberOfFinalTermExamCreated}
-                                                            </Table.Cell>
-                                                        </Table.Row>
-                                                    </Table.Body>
-                                                </Table>
-                                                <Table striped={true}>
-                                                    <Table.Head>
-                                                        <Table.HeadCell>STT</Table.HeadCell>
-                                                        <Table.HeadCell>Tên ca thi</Table.HeadCell>
-                                                        <Table.HeadCell>Loại kỳ thi</Table.HeadCell>
-                                                        <Table.HeadCell>Trạng thái</Table.HeadCell>
-                                                        <Table.HeadCell>Tình trạng</Table.HeadCell>
-                                                        <Table.HeadCell>Số SV thi</Table.HeadCell>
-                                                        <Table.HeadCell>Ngày thi</Table.HeadCell>
-                                                        <Table.HeadCell>
-                                                            Tiết báo danh
-                                                        </Table.HeadCell>
-                                                    </Table.Head>
-                                                    <Table.Body className='divide-y'>
-                                                        {row.exams &&
-                                                            row.exams.length &&
-                                                            row.exams.map(
-                                                                (
-                                                                    {
-                                                                        id,
-                                                                        name,
-                                                                        noticePeriod,
-                                                                        status,
-                                                                        taken,
-                                                                        time,
-                                                                        type,
-                                                                        tests,
-                                                                        numberOfRegisters,
-                                                                        examDate,
-                                                                    },
-                                                                    index
-                                                                ) => (
-                                                                    <Table.Row
-                                                                        className='bg-white dark:border-gray-700 dark:bg-gray-800'
-                                                                        key={id}
-                                                                    >
-                                                                        <Table.Cell
-                                                                            className={
-                                                                                tailwindCss.tableViewerCell
-                                                                            }
-                                                                        >
-                                                                            {index + 1}
-                                                                        </Table.Cell>
-                                                                        <Table.Cell
-                                                                            className={
-                                                                                tailwindCss.tableViewerCell
-                                                                            }
-                                                                        >
-                                                                            {name}
-                                                                        </Table.Cell>
-                                                                        <Table.Cell
-                                                                            className={
-                                                                                tailwindCss.tableViewerCell
-                                                                            }
-                                                                        >
-                                                                            {type}
-                                                                        </Table.Cell>
-                                                                        <Table.Cell
-                                                                            className={
-                                                                                tailwindCss.tableViewerCell
-                                                                            }
-                                                                        >
-                                                                            {!taken ? (
-                                                                                <Badge color='info'>
-                                                                                    Chưa thi
-                                                                                </Badge>
-                                                                            ) : (
-                                                                                <Badge color='success'>
-                                                                                    Đã thi
-                                                                                </Badge>
-                                                                            )}
-                                                                        </Table.Cell>
-                                                                        <Table.Cell
-                                                                            className={
-                                                                                tailwindCss.tableViewerCell
-                                                                            }
-                                                                        >
-                                                                            {!status ? (
-                                                                                <Badge color='warning'>
-                                                                                    Chưa hủy
-                                                                                </Badge>
-                                                                            ) : (
-                                                                                <Badge color='failure'>
-                                                                                    Đã hủy
-                                                                                </Badge>
-                                                                            )}
-                                                                        </Table.Cell>
-                                                                        <Table.Cell
-                                                                            className={
-                                                                                tailwindCss.tableViewerCell
-                                                                            }
-                                                                        >
-                                                                            {numberOfRegisters}
-                                                                        </Table.Cell>
-                                                                        <Table.Cell
-                                                                            className={
-                                                                                tailwindCss.tableViewerCell
-                                                                            }
-                                                                        >
-                                                                            {examDate}
-                                                                        </Table.Cell>
-                                                                        <Table.Cell
-                                                                            className={
-                                                                                tailwindCss.tableViewerCell
-                                                                            }
-                                                                        >
-                                                                            {noticePeriod}
-                                                                        </Table.Cell>
-                                                                    </Table.Row>
-                                                                )
-                                                            )}
-                                                    </Table.Body>
-                                                </Table>
-                                                <TablePagination
-                                                    totalElements={row.tempRegisters.length}
-                                                    totalPages={row.tempRegisters / 10 + 1}
-                                                />
-                                            </>
+                                            <ExamList
+                                                exams={row.exams}
+                                                numberOfActiveStudents={row.numberOfActiveStudents}
+                                                numberOfMidTermExam={row.numberOfMidTermExam}
+                                                numberOfMidTermExamCreated={
+                                                    row.numberOfMidTermExamCreated
+                                                }
+                                                numberOfFinalTermExam={row.numberOfFinalTermExam}
+                                                numberOfFinalTermExamCreated={
+                                                    row.numberOfFinalTermExamCreated
+                                                }
+                                            />
                                         }
                                     />
                                 </div>

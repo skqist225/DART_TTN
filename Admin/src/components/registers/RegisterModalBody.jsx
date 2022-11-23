@@ -1,7 +1,6 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { clearErrorField, creditClassState } from "../../features/creditClassSlice";
-import { subjectState } from "../../features/subjectSlice";
+import { creditClassState } from "../../features/creditClassSlice";
 import { userState } from "../../features/userSlice";
 import { callToast } from "../../helpers";
 import Input from "../utils/userInputs/Input";
@@ -25,12 +24,6 @@ const schoolYears = [
 function RegisterModalBody({ errors, register, dispatch, setValue }) {
     const { editedCreditClass, errorObject } = useSelector(creditClassState);
     const { users } = useSelector(userState);
-
-    const onKeyDown = ({ target: { name } }) => {
-        if (errorObject) {
-            dispatch(clearErrorField(name));
-        }
-    };
 
     useEffect(() => {
         if (editedCreditClass) {
@@ -120,7 +113,6 @@ function RegisterModalBody({ errors, register, dispatch, setValue }) {
                             }
                             register={register}
                             name='minimumNumberOfStudents'
-                            onKeyDown={onKeyDown}
                         />
                     </div>
                 </div>

@@ -107,11 +107,6 @@ public class ExamRestController {
                     "trống");
         }
 
-        if (Objects.isNull(name) || StringUtils.isEmpty(name)) {
-            commonUtils.addError("name", "Tên ca thi không được để " +
-                    "trống");
-        }
-
         if (Objects.isNull(examDate) || StringUtils.isEmpty(examDate)) {
             commonUtils.addError("examDate", "Số tiết thực hành không được để " +
                     "trống");

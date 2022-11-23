@@ -164,7 +164,7 @@ function ExamsPage() {
             `${examDate.split("/")[1]}/${examDate.split("/")[0]}/${examDate.split("/")[2]} 00:00:00`
         );
 
-        if (examDt.getTime() <= new Date().getTime()) {
+        if (!isEdit && examDt.getTime() <= new Date().getTime()) {
             callToast("error", "Ngày thi phải lớn hơn hiện tại");
             return;
         }

@@ -128,12 +128,13 @@ const subjectSlice = createSlice({
     initialState,
     reducers: {
         clearSubjectState(state) {
-            state.addSubject.successMessage = null;
             state.errorObject = null;
 
+            state.addSubject.successMessage = null;
             state.editSubject.successMessage = null;
 
             state.deleteSubject.successMessage = null;
+            state.deleteSubject.errorMessage = null;
             state.deleteSubject.errorObject = null;
         },
         clearErrorField(state, { payload }) {

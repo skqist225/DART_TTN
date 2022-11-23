@@ -113,7 +113,6 @@ const UsersPage = () => {
 
     useEffect(() => {
         if (errorObject) {
-            console.log(errorObject);
             Object.keys(errorObject).forEach(key => {
                 setError(key, {
                     type: "custom",
@@ -191,7 +190,6 @@ const UsersPage = () => {
     };
 
     const handleSortChange = (sortField, sortDir) => {
-        console.log(sortField, sortDir);
         dispatch(
             fetchAllUsers({
                 ...filterObject,
@@ -210,7 +208,6 @@ const UsersPage = () => {
             setError("roles", { type: "custom", message: "Vai trò không được để trống" });
             return;
         }
-        console.log(data);
 
         let { birthday } = data;
         birthday = birthday.split("/");

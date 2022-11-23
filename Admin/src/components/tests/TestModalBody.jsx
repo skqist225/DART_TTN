@@ -131,7 +131,6 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
             dispatch(queryAvailableQuestions({ chapter, level, filterIndex: index }));
         }
     }
-    console.log(errors);
 
     return (
         <div>

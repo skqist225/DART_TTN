@@ -159,10 +159,10 @@ public class CreditClassService {
             String responseMessage = "";
             if (action.equals("enable")) {
                 creditClass.setStatus(false);
-                responseMessage = "Kích họat LTC thành công";
+                responseMessage = "Mở lớp tín chỉ thành công";
             } else {
                 creditClass.setStatus(true);
-                responseMessage = "Hủy kích họat LTC thành công";
+                responseMessage = "Hủy lớp tín chỉ thành công";
             }
 
             creditClassRepository.save(creditClass);

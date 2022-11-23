@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { clearErrorField, creditClassState } from "../../features/creditClassSlice";
+import { creditClassState } from "../../features/creditClassSlice";
 import { examState, setEditedExam } from "../../features/examSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
 import TestTableBody from "../tests/TestTableBody";
@@ -101,15 +101,8 @@ function ExamModalBody({
     const { tests } = useSelector(testState);
     const { registers, totalElements, totalPages } = useSelector(registerState);
 
-    const onKeyDown = ({ target: { name } }) => {
-        if (errorObject) {
-            dispatch(clearErrorField(name));
-        }
-    };
-
     useEffect(() => {
         if (editedExam) {
-            console.log(editedExam);
             setValue("id", editedExam.id);
             setValue("creditClassId", editedExam.creditClassId);
             dispatch(fetchAllTests({ page: 0, subject: editedExam.subjectId }));
@@ -309,7 +302,6 @@ function ExamModalBody({
                                     error={errors.time && errors.time.message}
                                     register={register}
                                     name='time'
-                                    onKeyDown={onKeyDown}
                                 />
                             </div>
                         </div>{" "}
@@ -319,7 +311,6 @@ function ExamModalBody({
                                 error={errors.numberOfStudents && errors.numberOfStudents.message}
                                 register={register}
                                 name='numberOfStudents'
-                                onKeyDown={onKeyDown}
                                 readOnly={editedExam && editedExam.numberOfRegisters}
                             />
                         </div>

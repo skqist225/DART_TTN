@@ -2,12 +2,16 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { questionState, setResetFilter } from "../../../features/questionSlice";
 
-function TablePagination({ totalElements, totalPages, setPage, fetchDataByPageNumber }) {
+function TablePagination({
+    totalElements,
+    totalPages,
+    setPage,
+    fetchDataByPageNumber,
+    recordsPerPage = 10,
+}) {
     const dispatch = useDispatch();
     const [currentIndex, setCurrentIndex] = useState(1);
     const { resetFilter, excelAdd } = useSelector(questionState);
-
-    console.log(totalElements, totalPages);
 
     useEffect(() => {
         if (resetFilter) {
@@ -22,11 +26,15 @@ function TablePagination({ totalElements, totalPages, setPage, fetchDataByPageNu
     }, [currentIndex]);
 
     return (
-        <nav className='col-flex justify-between items-center pt-4' aria-label='Table navigation'>
+        <nav
+            className='col-flex justify-between items-center pt-4'
+            aria-label='Table navigation'
+            style={{ marginTop: "0" }}
+        >
             <span className='text-sm font-normal text-gray-500 dark:text-gray-400'>
                 Hiển thị{" "}
                 <span className='font-semibold text-gray-900 dark:text-white'>
-                    {(currentIndex - 1) * 10 + 1}-{currentIndex * 10}
+                    {(currentIndex - 1) * recordsPerPage + 1}-{currentIndex * recordsPerPage}
                 </span>{" "}
                 của{" "}
                 <span className='font-semibold text-gray-900 dark:text-white'>{totalElements}</span>

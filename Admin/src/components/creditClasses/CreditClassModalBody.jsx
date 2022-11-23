@@ -1,21 +1,12 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import {
-    clearErrorField,
-    setEditedCreditClass,
-    creditClassState,
-} from "../../features/creditClassSlice";
+import { creditClassState } from "../../features/creditClassSlice";
 import { subjectState } from "../../features/subjectSlice";
 import { userState } from "../../features/userSlice";
 import { callToast } from "../../helpers";
-import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
 
 const schoolYears = [
-    {
-        title: "2021-2022",
-        value: "2021-2022",
-    },
     {
         title: "2022-2023",
         value: "2022-2023",
@@ -24,7 +15,21 @@ const schoolYears = [
         title: "2023-2024",
         value: "2023-2024",
     },
+    {
+        title: "2024-2025",
+        value: "2024-2025",
+    },
 ];
+
+const semesters = Array.from({ length: 4 }).map((_, index) => ({
+    title: index + 1,
+    value: index + 1,
+}));
+
+const groups = Array.from({ length: 10 }).map((_, index) => ({
+    title: index + 1,
+    value: index + 1,
+}));
 
 function CreditClassModalBody({ errors, register, dispatch, setValue }) {
     const { editedCreditClass, errorObject } = useSelector(creditClassState);
@@ -32,7 +37,6 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
     const { users } = useSelector(userState);
 
     useEffect(() => {
-        console.log(editedCreditClass);
         if (editedCreditClass) {
             setValue("id", editedCreditClass.id);
             setValue("schoolYear", editedCreditClass.schoolYear);
@@ -42,13 +46,15 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
             setValue("teacherId", editedCreditClass.teacherId);
         } else {
             setValue("id", "");
-            setValue("schoolYear", "");
-            setValue("semester", "");
+            setValue("schoolYear", schoolYears[0].value);
+            setValue("semester", semesters[0].value);
             setValue("subjectId", "");
-            setValue("group", "");
+            setValue("group", groups[0].value);
             setValue("teacherId", "");
         }
     }, [editedCreditClass]);
+
+    useEffect(() => {}, []);
 
     const handleTypeChange = () => {};
 
@@ -63,7 +69,11 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
     return (
         <div className='mt-5'>
             <div className='col-flex items-center justify-center w-full'>
-                <div className='flex items-center w-full my-3'>
+                <div
+                    className={`flex w-full mt-5 ${
+                        errors.schoolYear || errors.semester ? "items-start" : "items-center"
+                    }`}
+                >
                     <div className='mr-5 w-full'>
                         <Select
                             label='Niên khóa *'
@@ -73,7 +83,7 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
                             error={errors.schoolYear && errors.schoolYear.message}
                             setValue={setValue}
                             onChangeHandler={handleTypeChange}
-                            defaultValue={"2021-2022"}
+                            defaultValue={schoolYears && schoolYears.length && schoolYears[0].value}
                         />
                     </div>
                     <div className='w-full'>
@@ -81,17 +91,18 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
                             label='Học kỳ *'
                             register={register}
                             name='semester'
-                            options={Array.from({ length: 4 }).map((_, index) => ({
-                                title: index + 1,
-                                value: index + 1,
-                            }))}
+                            options={semesters}
                             error={errors.semester && errors.semester.message}
                             setValue={setValue}
-                            defaultValue={1}
+                            defaultValue={semesters && semesters.length && semesters[0].value}
                         />
                     </div>
                 </div>
-                <div className='flex items-center w-full my-3'>
+                <div
+                    className={`flex w-full mt-5 ${
+                        errors.subjectId || errors.group ? "items-start" : "items-center"
+                    }`}
+                >
                     <div className='mr-5 w-full'>
                         <Select
                             label='Môn học *'
@@ -111,13 +122,10 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
                             label='Nhóm *'
                             register={register}
                             name='group'
-                            options={Array.from({ length: 10 }).map((_, index) => ({
-                                title: index + 1,
-                                value: index + 1,
-                            }))}
+                            options={groups}
                             error={errors.group && errors.group.message}
                             setValue={setValue}
-                            defaultValue={1}
+                            defaultValue={groups && groups.length && groups[0].value}
                         />
                     </div>
                 </div>

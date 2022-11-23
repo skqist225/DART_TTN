@@ -10,8 +10,6 @@ function EnableOrDisable({ status, enableOrDisable, id, creditClassPage = false 
         tempStatus = !status;
     }
 
-    console.log(tempStatus);
-
     return (
         <div>
             {tempStatus ? (
