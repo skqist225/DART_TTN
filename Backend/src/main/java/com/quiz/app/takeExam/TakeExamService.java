@@ -44,8 +44,9 @@ public class TakeExamService {
 
     @Transactional
     public void insertIntoTakeExamTable(int tryTime, int examId, int creditClassId,
-                                        String studentId) {
-        takeExamRepository.insertIntoTakeExamTable(tryTime, examId, creditClassId, studentId);
+                                        String studentId, int testId) {
+         takeExamRepository.insertIntoTakeExamTable(tryTime, examId, creditClassId, studentId,
+                testId);
     }
 
     public String deleteById(TakeExamId id) throws ConstrainstViolationException {

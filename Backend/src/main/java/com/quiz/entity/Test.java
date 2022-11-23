@@ -52,7 +52,7 @@ public class Test {
 
     @Getter(AccessLevel.NONE)
     @Builder.Default
-    @JsonIgnore
+//    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "DETHI_CAUHOI", joinColumns = @JoinColumn(name = "MADETHI"),
             inverseJoinColumns = @JoinColumn(name = "MACAUHOI"))
@@ -80,6 +80,9 @@ public class Test {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "CAPNHATLUC")
     private Date updatedDate;
+
+    @Column(name = "DASUDUNG",columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean used;
 
     public void addQuestion(Question question) {
         this.questions.add(question);

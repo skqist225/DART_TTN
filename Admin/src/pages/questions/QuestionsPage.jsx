@@ -92,7 +92,7 @@ function QuestionsPage() {
                 page: 1,
             })
         );
-        dispatch(fetchAllSubjects({ page: 0 }));
+        dispatch(fetchAllSubjects({ page: 0, haveChapter: true }));
     }, []);
 
     const {
@@ -200,8 +200,9 @@ function QuestionsPage() {
                 if (id) {
                     formData.append(`answers[${index}].id`, id);
                 }
-                formData.append(`answers[${index}].content`, `${name}. ${content}`);
+                formData.append(`answers[${index}].content`, content);
                 formData.append(`answers[${index}].isTempAnswer`, isAnswer);
+                formData.append(`answers[${index}].order`, name);
             });
         }
 

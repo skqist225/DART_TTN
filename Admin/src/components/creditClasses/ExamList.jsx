@@ -116,10 +116,14 @@ function ExamList({
                                     {type}
                                 </Table.Cell>
                                 <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {!taken ? (
-                                        <Badge color='info'>Chưa thi</Badge>
+                                    {!status ? (
+                                        !taken ? (
+                                            <Badge color='info'>Chưa thi</Badge>
+                                        ) : (
+                                            <Badge color='success'>Đã thi</Badge>
+                                        )
                                     ) : (
-                                        <Badge color='success'>Đã thi</Badge>
+                                        <Badge color='failure'>Đã hủy</Badge>
                                     )}
                                 </Table.Cell>
                                 <Table.Cell className={tailwindCss.tableViewerCell}>

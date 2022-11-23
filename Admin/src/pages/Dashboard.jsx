@@ -6,7 +6,7 @@ import { UsersPage, SubjectsPage } from ".";
 import { useLocation, useNavigate } from "react-router-dom";
 import { authState } from "../features/authSlice";
 import SimpleStatNumber from "../components/utils/SimpleStatNumber";
-// import StackedBarChart from "../partials/dashboard/DashboardCard09";
+import StackedBarChart from "../partials/dashboard/StackedBarChart";
 import WelcomeBanner from "../partials/dashboard/WelcomeBanner";
 
 import LineChart from "../partials/dashboard/LineChart";
@@ -14,6 +14,14 @@ import LineChartDashboard from "../partials/dashboard/LineChartDashboard";
 import CircleChart from "../partials/dashboard/CircleChart";
 import { userState } from "../features/userSlice";
 import { Frame } from "../components";
+import {
+    countTestsBySubjectAndStatus,
+    countTotalRecords,
+    doughnut,
+    statisticState,
+} from "../features/statisticSlice";
+import { Doughnut } from "react-chartjs-2";
+import PieChart from "../partials/dashboard/PieChart";
 
 function Dashboard() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -24,43 +32,136 @@ function Dashboard() {
     const { pathname } = useLocation();
     const { user } = useSelector(userState);
     const {
+        countTotal,
+        doughnut: { countQuestionsBySubject, countExamsByCreditClass },
+        countTestsBySubjectAndStatuses,
+    } = useSelector(statisticState);
+    const {
         loginAction: { loading },
     } = useSelector(authState);
+
+    useEffect(() => {
+        dispatch(countTotalRecords());
+        dispatch(doughnut());
+        dispatch(countTestsBySubjectAndStatus());
+    }, []);
+
+    const countQuestionsBySubjectLabel = [];
+    const countQuestionsBySubjectData = [];
+    const countExamsByCreditClassLabel = [];
+    const countExamsByCreditClassData = [];
+
+    countQuestionsBySubject.forEach(({ numberOfQuestions, subjectName }) => {
+        countQuestionsBySubjectLabel.push(subjectName);
+        countQuestionsBySubjectData.push(numberOfQuestions);
+    });
+    countExamsByCreditClass.forEach(({ schoolYear, semester, grp, subjectName, numberOfExams }) => {
+        countExamsByCreditClassLabel.push(`${schoolYear}-${semester}-${grp}-${subjectName}`);
+        countExamsByCreditClassData.push(numberOfExams);
+    });
+
+    const countQuestionsBySubjectChart = {
+        labels: countQuestionsBySubjectLabel,
+        datasets: [
+            {
+                label: "# of Votes",
+                data: countQuestionsBySubjectData,
+                backgroundColor: [
+                    "rgba(255, 99, 132, 0.2)",
+                    "rgba(54, 162, 235, 0.2)",
+                    "rgba(255, 206, 86, 0.2)",
+                    "rgba(75, 192, 192, 0.2)",
+                    "rgba(153, 102, 255, 0.2)",
+                    "rgba(255, 159, 64, 0.2)",
+                ],
+                borderColor: [
+                    "rgba(255, 99, 132, 1)",
+                    "rgba(54, 162, 235, 1)",
+                    "rgba(255, 206, 86, 1)",
+                    "rgba(75, 192, 192, 1)",
+                    "rgba(153, 102, 255, 1)",
+                    "rgba(255, 159, 64, 1)",
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const countExamsByCreditClassChart = {
+        labels: countExamsByCreditClassLabel,
+        datasets: [
+            {
+                label: "# of Votes",
+                data: countExamsByCreditClassData,
+                backgroundColor: [
+                    "rgba(255, 99, 132, 0.2)",
+                    "rgba(54, 162, 235, 0.2)",
+                    "rgba(255, 206, 86, 0.2)",
+                    "rgba(75, 192, 192, 0.2)",
+                    "rgba(153, 102, 255, 0.2)",
+                    "rgba(255, 159, 64, 0.2)",
+                ],
+                borderColor: [
+                    "rgba(255, 99, 132, 1)",
+                    "rgba(54, 162, 235, 1)",
+                    "rgba(255, 206, 86, 1)",
+                    "rgba(75, 192, 192, 1)",
+                    "rgba(153, 102, 255, 1)",
+                    "rgba(255, 159, 64, 1)",
+                ],
+                borderWidth: 1,
+            },
+        ],
+    };
+
+    const usedTests = [],
+        notUsedTests = [];
+    const countTestsBySubjectAndStatusesLabel = [];
+    countTestsBySubjectAndStatuses.forEach(({ subjectName, used, notUsed }) => {
+        countTestsBySubjectAndStatusesLabel.push(subjectName);
+        usedTests.push(used);
+        notUsedTests.push(notUsed);
+    });
 
     return (
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH CÂU HỎI"}
+            title={"THỐNG KÊ"}
             children={
                 <>
                     <WelcomeBanner />
-                    <p>a</p>
                     <div>
                         <div className='flex items-center justify-between w-full'>
                             <SimpleStatNumber
-                                label='Total Sales In Month'
+                                label='Tổng số  ca thi'
                                 type='All'
                                 backgroundColor={`bg-violet-500`}
-                                number={0}
+                                number={countTotal.totalExams}
                             />
                             <SimpleStatNumber
-                                label='Total Bookings'
+                                label='Tổng số lớp tín chỉ '
                                 type='Approved'
                                 backgroundColor={`bg-rose-500`}
-                                number={0}
+                                number={countTotal.totalCreditClasses}
                             />
                             <SimpleStatNumber
-                                label='Total Houses/Rooms'
+                                label='Tổng số môn học'
                                 type='Pending'
                                 backgroundColor={`bg-amber-500`}
-                                number={0}
+                                number={countTotal.totalSubjects}
                             />
                             <SimpleStatNumber
-                                label='Total Users'
+                                label='Tổng số bộ đề'
                                 type='Cancelled'
                                 backgroundColor={`bg-green-500`}
-                                number={0}
+                                number={countTotal.totalTests}
+                            />
+                            <SimpleStatNumber
+                                label='Tổng số câu hỏi'
+                                type='Cancelled'
+                                backgroundColor={`bg-green-500`}
+                                number={countTotal.totalQuestions}
                             />
                         </div>
 
@@ -73,37 +174,42 @@ function Dashboard() {
                                         )} */}
                         </div>
                         <div>
-                            {/* <DashboardCard04 /> */}
-                            {/* <DashboardCard05 /> */}
-                            {/* {!countUserByRoleActionLoading && (
-                                            <CircleChart
-                                                data={[numberOfUsers, numberOfHost, numberOfAdmin]}
-                                            />
-                                        )} */}
-                            {/* <DashboardCard06 /> */}
-                            {/* <DashboardCard07 />
-                                        <DashboardCard08 /> */}
-                            {/* <StackedBarChart /> */}
-                            {/* <DashboardCard10 /> */}
-                            {/* <DashboardCard11 />
-                                        <DashboardCard12 />
-                                        <DashboardCard13 /> */}
+                            {/* className='flex items-center' */}
+                            <div
+                                className='flex items-center'
+                                style={{ maxWidth: "1000px", position: "relative" }}
+                            >
+                                <div>
+                                    <Doughnut
+                                        data={countQuestionsBySubjectChart}
+                                        height='400px'
+                                        width='200px'
+                                        options={{ maintainAspectRatio: false }}
+                                    />
+                                </div>
+                                <div>
+                                    <PieChart
+                                        data={countExamsByCreditClassData}
+                                        labels={countExamsByCreditClassLabel}
+                                    />
+                                </div>
+                            </div>
                         </div>
-                        {/* <div className='my-10'>
-                                        {!fetchBookingsCountByMonthAndYearActionLoading && (
-                                            <StackedBarChart
-                                                data={[dataSet1, dataSet2, dataSet3]}
-                                            />
-                                        )}
-                                    </div>
-                                    <div className='my-10'>
-                                        {!gbrLoading && (
-                                            <LineChart
-                                                data={[lcdataSet11, lcdataSet22]}
-                                                label='Sales Over Time (all bookings)'
-                                            />
-                                        )}
-                                    </div> */}
+
+                        <div className='my-10'>
+                            {countTestsBySubjectAndStatuses.length && (
+                                <StackedBarChart
+                                    data={[notUsedTests, usedTests]}
+                                    labels={countTestsBySubjectAndStatusesLabel}
+                                />
+                            )}
+                        </div>
+                        <div className='my-10'>
+                            {/* <LineChart
+                                data={[lcdataSet11, lcdataSet22]}
+                                label='Sales Over Time (all bookings)'
+                            /> */}
+                        </div>
                     </div>
                 </>
             }

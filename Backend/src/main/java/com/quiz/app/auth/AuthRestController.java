@@ -90,10 +90,10 @@ public class AuthRestController {
 
             user.setToken(token);
 
-            if (admin.equals("true") && user.hasRole("Sinh viên")) {
-                return new ForbiddenResponse<User>(
-                        "Tài khoản của bạn không đủ quyền để truy cập tài nguyên này").response();
-            }
+//            if (admin.equals("true") && user.hasRole("Sinh viên")) {
+//                return new ForbiddenResponse<User>(
+//                        "Tài khoản của bạn không đủ quyền để truy cập tài nguyên này").response();
+//            }
 
             return new OkResponse<>(user).response();
         } catch (BadCredentialsException | NotFoundException e) {

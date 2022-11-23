@@ -2,7 +2,9 @@ package com.quiz.app.exam;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.statistics.dto.CountExamByCreditClassDTO;
 import com.quiz.entity.Exam;
+import com.quiz.entity.TakeExam;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -30,7 +34,7 @@ import java.util.Optional;
 public class ExamService {
 
     @Autowired
-    ExamRepository examRepository;
+    private ExamRepository examRepository;
 
     @Autowired
     private EntityManager entityManager;
@@ -38,6 +42,15 @@ public class ExamService {
     public Exam save(Exam subject) {
         return examRepository.save(subject);
     }
+
+    public List<CountExamByCreditClassDTO> countExamByCreditClass() {
+        return examRepository.countExamByCreditClass();
+    }
+
+    public List<Exam> findByStudentAndTaken(String studentId) {
+        return examRepository.findByStudentAndTaken(studentId);
+    }
+
 
     public String deleteById(Integer id) throws ConstrainstViolationException {
         try {
@@ -62,10 +75,10 @@ public class ExamService {
             Exam exam = findById(id);
             String responseMessage = "";
             if (action.equals("enable")) {
-                exam.setStatus(true);
+                exam.setStatus(false);
                 responseMessage = "Kích họat ca thi thành công";
             } else {
-                exam.setStatus(false);
+                exam.setStatus(true);
                 responseMessage = "Hủy ca thi thành công";
             }
 
@@ -82,7 +95,11 @@ public class ExamService {
     }
 
     public List<Exam> findAllExamsIdByCreditClass(Integer creditClassId) {
-        return examRepository.findAllExamsIdByCreditClass(creditClassId);
+        return examRepository.findAllExamsByCreditClass(creditClassId);
+    }
+
+    public int countTotalExams() {
+        return examRepository.countTotalExams();
     }
 
     public Page<Exam> findAllExams(Map<String, String> filters) {
@@ -91,7 +108,12 @@ public class ExamService {
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
         String teacherId = filters.get("teacherId");
-
+        String creditClassId = filters.get("creditClassId");
+        String studentId = filters.get("studentId");
+        String schoolYear = filters.get("schoolYear");
+        String semester = filters.get("semester");
+        String type = filters.get("type");
+        String taken = filters.get("taken");
         Sort sort = null;
 //        if(sortField.equals("subjectId")) {
 //            sort = Sort.by(sortField);
@@ -119,13 +141,36 @@ public class ExamService {
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
 
+        if (!StringUtils.isEmpty(creditClassId)) {
+            Join<Exam, TakeExam> joinOptions = root.join("takeExams", JoinType.LEFT);
+            Expression<String> creditClassIdExp = joinOptions.get("register").get("creditClass").get("id");
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(creditClassIdExp, creditClassId)));
+        }
+
         if (!StringUtils.isEmpty(teacherId)) {
             Expression<String> teacher = root.get("teacher").get("id");
             predicates.add(criteriaBuilder.and(criteriaBuilder.equal(teacher, teacherId)));
         }
 
+        if (!StringUtils.isEmpty(studentId)) {
+            Join<Exam, TakeExam> joinOptions = root.join("takeExams", JoinType.LEFT);
+            Expression<String> studentIdExp = joinOptions.get("register").get("student").get(
+                    "id");
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(studentIdExp, studentId)));
+        }
+
+//        if (!StringUtils.isEmpty(schoolYear)) {
+//            Expression<String> teacher = root.get("teacher").get("id");
+//            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(teacher, teacherId)));
+//        }
+
+        if (!StringUtils.isEmpty(type)) {
+            Expression<String> typeExp = root.get("type");
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(typeExp, type)));
+        }
+
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
-        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));
+        criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder)).groupBy(root.get("id"));
 
         TypedQuery<Exam> typedQuery = entityManager.createQuery(criteriaQuery);
 

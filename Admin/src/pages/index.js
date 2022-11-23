@@ -25,3 +25,7 @@ export { default as LoginPage } from "./auth/LoginPage";
 
 // Register
 export { default as RegistersPage } from "./registers/RegistersPage";
+
+export { default as TakeTestPage } from "./takeTests/TakeTestPage";
+
+export { default as RanksPage } from "./ranks/RanksPage";

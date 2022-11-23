@@ -20,6 +20,7 @@ import {
     setEditedRegister,
     registerState,
 } from "../../features/registerSlice";
+import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
 
 const columns = [
     {
@@ -74,6 +75,7 @@ function RegistersPage() {
                 page: 1,
             })
         );
+        dispatch(fetchAllCreditClasses({ page: 0 }));
     }, []);
 
     const {
@@ -221,6 +223,7 @@ function RegistersPage() {
                     fetchDataByPageNumber={fetchDataByPageNumber}
                     onCloseForm={onCloseForm}
                     Filter={RegisterFilter}
+                    recordsPerPage={15}
                 />
             }
         />

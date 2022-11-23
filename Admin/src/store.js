@@ -17,6 +17,7 @@ import {
     takeExamSlice,
     testSlice,
     userSlice,
+    statisticSlice,
 } from "./features";
 
 const rootReducer = combineReducers({
@@ -33,6 +34,7 @@ const rootReducer = combineReducers({
     test: testSlice,
     user: userSlice,
     persistUser: persistUserSlice,
+    statistic: statisticSlice,
 });
 
 const persistConfig = {

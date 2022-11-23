@@ -8,12 +8,15 @@ import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
+import com.quiz.app.takeExamDetail.TakeExamDetailService;
 import com.quiz.app.test.dto.HandInDTO;
 import com.quiz.app.test.dto.PostCreateTestDTO;
 import com.quiz.app.test.dto.TestDTO;
 import com.quiz.app.test.dto.TestsDTO;
+import com.quiz.entity.Answer;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
+import com.quiz.entity.TakeExamDetail;
 import com.quiz.entity.Test;
 import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
@@ -45,6 +48,9 @@ public class TestRestController {
 
     @Autowired
     private SubjectService subjectService;
+
+    @Autowired
+    private TakeExamDetailService takeExamDetailService;
 
     @GetMapping("")
     public ResponseEntity<StandardJSONResponse<TestsDTO>> fetchAllSubjects(
@@ -200,32 +206,76 @@ public class TestRestController {
         }
     }
 
-    @PostMapping("{id}/handIn")
-    public ResponseEntity<StandardJSONResponse<TestDTO>> handIn(@PathVariable("id") Integer id,
-                                                                @RequestBody List<HandInDTO> answers) {
-        try {
-            int numberOfRightAnswer = 0;
-            float mark = 0;
-            Test test = testService.findById(id);
+    @GetMapping("get-test")
+    public ResponseEntity<StandardJSONResponse<Test>> findByStudentAndExam(
+            @RequestParam(name = "student", required = false, defaultValue = "id") String studentId,
+            @RequestParam(name = "exam", required = false, defaultValue = "") Integer examId) {
+        return new OkResponse<>(testService.findByStudentAndExam(studentId, examId)).response();
+    }
 
-            for (Question question : test.getQuestions()) {
-                for (HandInDTO answer : answers) {
-                    if (answer.getId().equals(question.getId())) {
-//                        if (question.getFinalAnswer().equals(answer.getAnswer())) {
+    @PostMapping("{examId}/handIn")
+    public ResponseEntity<StandardJSONResponse<TestDTO>> handIn(
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+            @PathVariable("examId") Integer examId,
+            @RequestBody List<HandInDTO> answers) {
+        User student = userDetailsImpl.getUser();
+
+        int numberOfRightAnswer = 0;
+        float mark = 0;
+        List<TakeExamDetail> takeExamDetails =
+                takeExamDetailService.findByStudentAndExam(student.getId(), examId);
+        List<Question> questions = new ArrayList<>();
+        for (TakeExamDetail detail : takeExamDetails) {
+            Question question = detail.getQuestion();
+            String finalAnswer = "";
+            for (HandInDTO answer : answers) {
+                if (answer.getQuestionId().equals(question.getId())) {
+                    if (question.getType().equals("Một đáp án")) {
+                        for (Answer ans : question.getAnswers()) {
+                            if (ans.isAnswer()) {
+                                finalAnswer = ans.getOrder();
+                                if (ans.getOrder().toLowerCase().trim().equals(answer.getAnswer().toLowerCase().trim())) {
+                                    numberOfRightAnswer++;
+                                }
+                            }
+                        }
+                    } else if (question.getType().equals("Nhiều đáp án")) {
+                        List<String> finalAnswers = new ArrayList<>();
+                        for (Answer ans : question.getAnswers()) {
+                            if (ans.isAnswer()) {
+                                finalAnswers.add(ans.getOrder());
+                            }
+                        }
+                        finalAnswer = String.join(",", finalAnswers).trim();
+                        if (finalAnswer.equals(answer.getAnswer().trim())) {
                             numberOfRightAnswer++;
-//                        }
-                        question.setSelectedAnswer(answer.getAnswer());
+                        }
+                    } else {
+                        if (question.getAnswers().get(0).getContent().equals(answer.getAnswer())) {
+                            finalAnswer = question.getAnswers().get(0).getContent();
+                            numberOfRightAnswer++;
+                        }
                     }
+
+                    question.setSelectedAnswer(answer.getAnswer());
+                    break;
                 }
+
+                takeExamDetailService.updateAnswerForQuestionInStudentTest(student.getId(), examId
+                        , answer.getQuestionId(), answer.getAnswer());
             }
-
-            mark = (float) numberOfRightAnswer / test.getQuestions().size() * 10;
-
-
-            return new OkResponse<>(TestDTO.build(test, true)).response();
-        } catch (NotFoundException ex) {
-            return new BadResponse<TestDTO>(ex.getMessage()).response();
+            question.setFinalAnswer(finalAnswer);
+            questions.add(question);
         }
+
+        mark = (float) numberOfRightAnswer / takeExamDetails.size() * 10;
+        TestDTO testDTO = new TestDTO();
+        testDTO.setMark(mark);
+        testDTO.setNumberOfQuestions(questions.size());
+        testDTO.setNumberOfRightAnswer(numberOfRightAnswer);
+        testDTO.setQuestions(questions);
+        return new OkResponse<>(testDTO).response();
+
     }
 
     @DeleteMapping("{id}/delete")

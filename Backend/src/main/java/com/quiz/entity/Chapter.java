@@ -17,6 +17,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.List;
 
 
@@ -52,6 +53,12 @@ public class Chapter {
         return Chapter.builder().chapterNumber(chapterNumber).name(name).subject(subject).build();
     }
 
+    @Transient
+    public String getSubjectId() {
+        return this.subject.getId();
+    }
+
+    @Transient
     public String getSubjectName() {
         return this.subject.getName();
     }

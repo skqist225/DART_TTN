@@ -2,17 +2,17 @@ import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
+import { fetchAllRegisters } from "../../features/registerSlice";
 import { subjectState } from "../../features/subjectSlice";
 import Select from "../utils/userInputs/Select";
 
 function RegisterFilter() {
     const dispatch = useDispatch();
-    const { filterObject } = useSelector(creditClassState);
-    const { subjects } = useSelector(subjectState);
+    const { creditClasses, filterObject } = useSelector(creditClassState);
     const { register, handleSubmit } = useForm();
 
-    const handleSubjectChange = event => {
-        dispatch(fetchAllCreditClasses({ ...filterObject, subject: event.target.value }));
+    const handleCreditClassChange = event => {
+        dispatch(fetchAllRegisters({ ...filterObject, creditClass: event.target.value }));
     };
 
     return (
@@ -26,14 +26,16 @@ function RegisterFilter() {
         >
             <div className='mr-2 w-full flex items-center justify-start'>
                 <Select
-                    label='môn học'
-                    name='subjectFilter'
+                    label='lớp tín chỉ'
+                    name='creditClassFilter'
                     register={register}
-                    options={subjects.map(subject => ({
-                        title: subject.name,
-                        value: subject.id,
-                    }))}
-                    onChangeHandler={handleSubjectChange}
+                    options={creditClasses.map(
+                        ({ id, schoolYear, semester, subjectName, group }) => ({
+                            title: `${schoolYear} ${semester} ${subjectName} ${group}`,
+                            value: id,
+                        })
+                    )}
+                    onChangeHandler={handleCreditClassChange}
                     hiddenOption
                     width={"w-52"}
                 />
@@ -44,7 +46,7 @@ function RegisterFilter() {
                     className='text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-40'
                     onClick={() => {
                         dispatch(
-                            fetchAllCreditClasses({
+                            fetchAllRegisters({
                                 page: 1,
                                 query: "",
                                 sortField: "id",

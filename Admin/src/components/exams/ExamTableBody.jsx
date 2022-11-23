@@ -23,7 +23,7 @@ function ExamTableBody({ rows, setIsEdit }) {
                     return (
                         <tr
                             className={`${tailwindCss.tr} ${
-                                !row.status && "bg-gray-200 hover:bg-gray-200"
+                                row.status && "bg-gray-200 hover:bg-gray-200"
                             }`}
                             key={row.id}
                         >
@@ -64,8 +64,13 @@ function ExamTableBody({ rows, setIsEdit }) {
                                                     <Table.HeadCell>STT</Table.HeadCell>
                                                     <Table.HeadCell>MSSV</Table.HeadCell>
                                                     <Table.HeadCell>Họ tên</Table.HeadCell>
-                                                    <Table.HeadCell>Bộ đề</Table.HeadCell>
-                                                    <Table.HeadCell>Điểm số</Table.HeadCell>
+                                                    {!userRoles.includes("Sinh viên") && (
+                                                        <>
+                                                            {" "}
+                                                            <Table.HeadCell>Bộ đề</Table.HeadCell>
+                                                            <Table.HeadCell>Điểm số</Table.HeadCell>
+                                                        </>
+                                                    )}
                                                 </Table.Head>
                                                 <Table.Body className='divide-y'>
                                                     {row.takeExams.map(
@@ -73,9 +78,9 @@ function ExamTableBody({ rows, setIsEdit }) {
                                                             {
                                                                 register: {
                                                                     student: { fullName, id },
-                                                                    score,
-                                                                    test,
                                                                 },
+                                                                score,
+                                                                testName,
                                                             },
                                                             index
                                                         ) => (
@@ -104,20 +109,27 @@ function ExamTableBody({ rows, setIsEdit }) {
                                                                 >
                                                                     {fullName}
                                                                 </Table.Cell>
-                                                                <Table.Cell
-                                                                    className={
-                                                                        tailwindCss.tableViewerCell
-                                                                    }
-                                                                >
-                                                                    {test && test.id}
-                                                                </Table.Cell>
-                                                                <Table.Cell
-                                                                    className={
-                                                                        tailwindCss.tableViewerCell
-                                                                    }
-                                                                >
-                                                                    {score}
-                                                                </Table.Cell>
+                                                                {!userRoles.includes(
+                                                                    "Sinh viên"
+                                                                ) && (
+                                                                    <>
+                                                                        {" "}
+                                                                        <Table.Cell
+                                                                            className={
+                                                                                tailwindCss.tableViewerCell
+                                                                            }
+                                                                        >
+                                                                            {testName}
+                                                                        </Table.Cell>
+                                                                        <Table.Cell
+                                                                            className={
+                                                                                tailwindCss.tableViewerCell
+                                                                            }
+                                                                        >
+                                                                            {score}
+                                                                        </Table.Cell>
+                                                                    </>
+                                                                )}
                                                             </Table.Row>
                                                         )
                                                     )}
@@ -126,21 +138,27 @@ function ExamTableBody({ rows, setIsEdit }) {
                                         }
                                     />
                                 </div>
-                                <div className='mr-2'>
-                                    <MyButton
-                                        type='edit'
-                                        onClick={() => {
-                                            $(`#examModal`).css("display", "flex");
-                                            setIsEdit(true);
-                                            dispatch(setEditedExam(row));
-                                        }}
-                                    />
-                                </div>
-                                <EnableOrDisable
-                                    status={row.status}
-                                    enableOrDisable={enableOrDisableExam}
-                                    id={row.id}
-                                />
+                                {!userRoles.includes("Sinh viên") && (
+                                    <>
+                                        <div className='mr-2'>
+                                            <MyButton
+                                                type='edit'
+                                                onClick={() => {
+                                                    $(`#examModal`).css("display", "flex");
+                                                    setIsEdit(true);
+                                                    dispatch(setEditedExam(row));
+                                                }}
+                                            />
+                                        </div>
+                                        <EnableOrDisable
+                                            status={row.status}
+                                            enableOrDisable={enableOrDisableExam}
+                                            id={row.id}
+                                            taken={row.taken}
+                                            creditClassPage={true}
+                                        />
+                                    </>
+                                )}
                             </td>
                         </tr>
                     );

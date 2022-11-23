@@ -153,6 +153,10 @@ public class CreditClassService {
         return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
     }
 
+    public int countTotalCreditClasses() {
+        return creditClassRepository.countTotalCreditClasses();
+    }
+
     public String enableOrDisable(Integer id, String action) throws NotFoundException {
         try {
             CreditClass creditClass = findById(id);

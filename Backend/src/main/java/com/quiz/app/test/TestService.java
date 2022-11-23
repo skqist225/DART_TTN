@@ -2,7 +2,7 @@ package com.quiz.app.test;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.entity.Chapter;
+import com.quiz.app.statistics.dto.CountTestsBySubjectAndStatus;
 import com.quiz.entity.Subject;
 import com.quiz.entity.Test;
 import org.apache.commons.lang.StringUtils;
@@ -51,9 +51,20 @@ public class TestService {
         }
     }
 
+    public List<CountTestsBySubjectAndStatus> countTestBySubjectAndStatus() {
+        return testRepository.countTestBySubjectAndStatus();
+    }
+
     public List<Test> findBySubject(Subject subject) {
         return testRepository.findBySubject(subject);
+    }
 
+    public Test findByStudentAndExam(String studentId, Integer examId) {
+        return testRepository.findByStudentAndExam(studentId, examId);
+    }
+
+    public int countTotalTests() {
+        return testRepository.countTotalTests();
     }
 
     public Test findById(Integer id) throws NotFoundException {

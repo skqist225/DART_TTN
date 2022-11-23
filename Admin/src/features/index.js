@@ -11,3 +11,4 @@ export { default as registerSlice } from "./registerSlice";
 export { default as takeExamSlice } from "./takeExamSlice";
 export { default as takeExamDetailSlice } from "./takeExamDetailSlice";
 export { default as persistUserSlice } from "./persistUserSlice";
+export { default as statisticSlice } from "./statisticSlice";

@@ -38,12 +38,13 @@ function Table({
     Filter,
     setError,
     excelAdd,
+    recordsPerPage = 12,
 }) {
     const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
 
     const { userRoles } = useSelector(persistUserState);
-
+    console.log(modalLabel);
     return (
         <div
             className='overflow-x-auto relative shadow-md sm:rounded-lg overflow-y-auto flex flex-col justify-between'
@@ -60,7 +61,8 @@ function Table({
                     </div>
 
                     {!["câu hỏi", "người dùng"].includes(modalLabel) ? (
-                        modalLabel === "môn học" && !userRoles.includes("Quản trị viên") ? (
+                        (modalLabel === "môn học" && !userRoles.includes("Quản trị viên")) ||
+                        (modalLabel === "ca thi" && userRoles.includes("Sinh viên")) ? (
                             <></>
                         ) : (
                             <div className='mr-5'>
@@ -165,6 +167,7 @@ function Table({
                 totalElements={totalElements}
                 totalPages={totalPages}
                 fetchDataByPageNumber={fetchDataByPageNumber}
+                recordsPerPage={recordsPerPage}
             />
 
             <TableModal

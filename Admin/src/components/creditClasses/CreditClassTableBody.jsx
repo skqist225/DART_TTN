@@ -22,6 +22,7 @@ import { callToast } from "../../helpers";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import RegisterList from "./RegisterList";
 import ExamList from "./ExamList";
+import ExamIcon from "../../images/exam.png";
 
 function CreditClassTableBody({ rows, setIsEdit }) {
     const modalId = "examModal";
@@ -176,7 +177,11 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                             <td className={cellCss}>{row.subjectName}</td>
                             <td className={cellCss}>{row.group}</td>
                             <td className={cellCss}>
-                                <Badge color='success'>{row.status ? "Đã hủy" : "Đang mở"}</Badge>
+                                {row.status ? (
+                                    <Badge color='failure'>Đã hủy</Badge>
+                                ) : (
+                                    <Badge color='success'>Đang mở</Badge>
+                                )}
                             </td>
                             <td className={cellCss}>{row.teacherName}</td>
                             <td className={cellCss + " flex items-center"}>
@@ -259,18 +264,19 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                         />
                                     </>
                                 )}
-                                <div className='mr-2'>
-                                    <Button
-                                        onClick={() => {
-                                            $(`#examModal`).css("display", "flex");
-                                            setCreditClassId(row.id);
-                                            setValue("creditClassId", row.id);
-                                        }}
-                                        disabled={row.numberOfActiveStudents === 0}
-                                    >
-                                        {/* <img src={AddIcon} width='30px' height='30px' /> */}
-                                        <span>Thêm ca thi</span>
-                                    </Button>
+                                <div className='mx-2'>
+                                    <Tooltip content='Thêm ca thi' placement='top'>
+                                        <Button
+                                            onClick={() => {
+                                                $(`#examModal`).css("display", "flex");
+                                                setCreditClassId(row.id);
+                                                setValue("creditClassId", row.id);
+                                            }}
+                                            disabled={row.numberOfActiveStudents === 0}
+                                        >
+                                            <img src={ExamIcon} width='24px' height='24px' />
+                                        </Button>
+                                    </Tooltip>
                                 </div>
                             </td>
                         </tr>

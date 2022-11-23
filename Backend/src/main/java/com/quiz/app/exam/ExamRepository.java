@@ -1,5 +1,6 @@
 package com.quiz.app.exam;
 
+import com.quiz.app.statistics.dto.CountExamByCreditClassDTO;
 import com.quiz.entity.Exam;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
@@ -12,5 +13,32 @@ import java.util.List;
 public interface ExamRepository extends CrudRepository<Exam, Integer> {
     @Query(value = "select ct.* from (SELECT macathi FROM quiz.thi where maltc = :creditClassId group by " +
             "macathi) temp left join cathi ct on ct.macathi = temp.macathi", nativeQuery = true)
-    public List<Exam> findAllExamsIdByCreditClass(Integer creditClassId);
+    public List<Exam> findAllExamsByCreditClass(Integer creditClassId);
+
+//    @Query(value = "select ct.* from (SELECT macathi FROM quiz.thi where maltc = :creditClassId group by " +
+//            "macathi) temp left join cathi ct on ct.macathi = temp.macathi WHERE CONCAT(ct" +
+//            ".macathi, ' ', ct.tencathi) LIKE %:query%",
+//            nativeQuery =
+//            true)
+//    public List<Exam> findAllExamsIdByCreditClassAndIdAndName(Integer creditClassId, String query);
+
+    @Query(value = "select temp.nienkhoa as schoolYear, temp.hocky as semester, temp.nhom as " +
+            "grp, mh" +
+            ".tenmh as subjectName, temp.socathi as numberOfExams from" +
+            "(select ltc" +
+            ".nienkhoa, ltc.hocky, ltc.mamh, ltc.nhom, count(temp.macathi) as socathi from " +
+            "(select t.macathi, t.maltc from loptinchi ltc left join thi t on t.maltc = ltc.maltc" +
+            " group by t.macathi,t.maltc) as temp right join loptinchi ltc on ltc.maltc = temp" +
+            ".maltc group by ltc.maltc) temp left join monhoc mh on mh.mamh = temp.mamh", nativeQuery = true)
+    public List<CountExamByCreditClassDTO> countExamByCreditClass();
+
+    @Query(value = "select ct.* from (select * from thi t where t.masv = :studentId) temp " +
+            "left join cathi ct on ct.macathi = temp.macathi where ct.dahuy = 0 and ct.dathi " +
+            " = 0 order by ct.macathi desc",
+            nativeQuery =
+                    true)
+    public List<Exam> findByStudentAndTaken(String studentId);
+
+    @Query(value = "SELECT count(*) FROM cathi", nativeQuery = true)
+    public int countTotalExams();
 }

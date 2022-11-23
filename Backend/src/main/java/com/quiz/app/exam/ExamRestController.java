@@ -11,8 +11,11 @@ import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.takeExam.TakeExamService;
+import com.quiz.app.takeExamDetail.TakeExamDetailService;
+import com.quiz.app.test.TestService;
 import com.quiz.entity.CreditClass;
 import com.quiz.entity.Exam;
+import com.quiz.entity.Question;
 import com.quiz.entity.Register;
 import com.quiz.entity.TakeExam;
 import com.quiz.entity.Test;
@@ -35,11 +38,13 @@ import org.springframework.web.bind.annotation.RestController;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Random;
 
 
 @RestController
@@ -54,18 +59,35 @@ public class ExamRestController {
     @Autowired
     private TakeExamService takeExamService;
 
+    @Autowired
+    private TakeExamDetailService takeExamDetailService;
+
+    @Autowired
+    private TestService testService;
+
     @GetMapping("")
     public ResponseEntity<StandardJSONResponse<ExamsDTO>> fetchAllSubjects(
             @RequestParam("page") String page,
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
-            @RequestParam(name = "teacher", required = false, defaultValue = "") String teacherId
+            @RequestParam(name = "teacher", required = false, defaultValue = "") String teacherId,
+            @RequestParam(name = "creditClass", required = false, defaultValue = "") String creditClassId,
+            @RequestParam(name = "student", required = false, defaultValue = "") String studentId,
+            @RequestParam(name = "schoolYear", required = false, defaultValue = "") String schoolYear,
+            @RequestParam(name = "semester", required = false, defaultValue = "") String semester,
+            @RequestParam(name = "type", required = false, defaultValue = "") String type,
+            @RequestParam(name = "taken", required = false, defaultValue = "") String taken
     ) {
         ExamsDTO subjectsDTO = new ExamsDTO();
-
+        List<Exam> exams = null;
         if (page.equals("0")) {
-            List<Exam> exams = examService.findAll();
+            if (!StringUtils.isEmpty(taken)) {
+                exams = examService.findByStudentAndTaken(studentId);
+            } else {
+                exams = examService.findAll();
+
+            }
 
             subjectsDTO.setExams(exams);
             subjectsDTO.setTotalElements(exams.size());
@@ -78,6 +100,12 @@ public class ExamRestController {
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
             filters.put("teacherId", teacherId);
+            filters.put("creditClassId", creditClassId);
+            filters.put("studentId", studentId);
+            filters.put("schoolYear", schoolYear);
+            filters.put("semester", semester);
+            filters.put("type", type);
+            filters.put("taken", taken);
 
             Page<Exam> examsPage = examService.findAllExams(filters);
 
@@ -248,12 +276,29 @@ public class ExamRestController {
                     continue;
                 }
                 try {
-                    takeExamService.insertIntoTakeExamTable(takeExamService.determineTryTime(register), exam.getId(),
-                            register.getCreditClass().getId(), register.getStudent().getId());
+                    Random ran = new Random();
+                    int randomTest = ran.nextInt(tests.size());
+                    int testId = tests.get(randomTest);
+                    System.out.println("Test Id" + testId);
+
+                    int tryTime = takeExamService.determineTryTime(register);
+                    takeExamService.insertIntoTakeExamTable(tryTime, exam.getId(),
+                            register.getCreditClass().getId(), register.getStudent().getId(), testId
+                    );
+                    try {
+                        Test test = testService.findById(testId);
+                        Collections.shuffle(test.getQuestions());
+                        for (Question question : test.getQuestions()) {
+                            takeExamDetailService.insertIntoTakeExamDetail(question.getId(), tryTime, exam.getId(),
+                                    register.getCreditClass().getId(), register.getStudent().getId());
+                        }
+
+                    } catch (NotFoundException e) {
+                        return new BadResponse<String>(e.getMessage()).response();
+                    }
                 } catch (ConstrainstViolationException e) {
-
+                    return new BadResponse<String>(e.getMessage()).response();
                 }
-
                 i++;
             }
         }

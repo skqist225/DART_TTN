@@ -13,6 +13,12 @@ export const fetchAllExams = createAsyncThunk(
             subject = "",
             numberOfExams = 0,
             teacher = "",
+            creditClass = "",
+            student = "",
+            schoolYear = "",
+            semester = "",
+            type = "",
+            taken = "",
         },
         { dispatch, rejectWithValue }
     ) => {
@@ -49,12 +55,42 @@ export const fetchAllExams = createAsyncThunk(
                 value: subject,
             });
 
+            filterArray.push({
+                field: "creditClass",
+                value: creditClass,
+            });
+
+            filterArray.push({
+                field: "teacher",
+                value: teacher,
+            });
+
+            filterArray.push({
+                field: "student",
+                value: student,
+            });
+
+            filterArray.push({
+                field: "schoolYear",
+                value: schoolYear,
+            });
+
+            filterArray.push({
+                field: "semester",
+                value: semester,
+            });
+
+            filterArray.push({
+                field: "type",
+                value: type,
+            });
+
             dispatch(setFilterObject(filterArray));
 
             const {
                 data: { exams, totalElements, totalPages },
             } = await api.get(
-                `/exams?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&level=${level}&subject=${subject}&numberOfExams=${numberOfExams}&teacher=${teacher}`
+                `/exams?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&level=${level}&subject=${subject}&numberOfExams=${numberOfExams}&teacher=${teacher}&creditClass=${creditClass}&student=${student}&type=${type}&schoolYear=${schoolYear}&semester=${semester}&taken=${taken}`
             );
 
             return { exams, totalElements, totalPages };
@@ -134,6 +170,10 @@ const initialState = {
         query: "",
         sortField: "id",
         sortDir: "desc",
+        teacher: "",
+        student: "",
+        creditClass: "",
+        type: "",
     },
     errorObject: null,
     addExam: {

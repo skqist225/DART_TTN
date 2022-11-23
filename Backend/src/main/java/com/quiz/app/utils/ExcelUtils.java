@@ -76,8 +76,8 @@ public class ExcelUtils {
                     isAns = true;
                 }
 
-                Answer answer = new Answer(alphabets.get(c - 3).toUpperCase() + ". " + content,
-                        type.equals("Đáp án điền") || isAns);
+                Answer answer = new Answer(content,
+                        type.equals("Đáp án điền") || isAns, alphabets.get(c - 3).toUpperCase());
                 answers.add(answer);
             }
 
@@ -90,6 +90,8 @@ public class ExcelUtils {
                     answerCell + 2).getStringCellValue());
             question.setSubjectName(row.getCell(type.equals("Đáp án điền") ? answerCell + 2 :
                     answerCell + 3).getStringCellValue());
+            question.setSubjectId(row.getCell(type.equals("Đáp án điền") ? answerCell + 3 :
+                    answerCell + 4).getStringCellValue());
             question.setStatus(true);
 
             questions.add(question);

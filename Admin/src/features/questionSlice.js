@@ -63,6 +63,19 @@ export const fetchAllQuestions = createAsyncThunk(
     }
 );
 
+export const getQuestions = createAsyncThunk(
+    "question/getQuestions",
+    async ({ exam = "" }, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get(`/questions/get-questions?exam=${exam}`);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 export const loadQuestionsByCriteria = createAsyncThunk(
     "question/loadQuestionsByCriteria",
     async ({ subject = "", criteria = [], numberOfQuestions = 0 }, { rejectWithValue }) => {
@@ -217,6 +230,7 @@ const initialState = {
     totalElements: 0,
     totalPages: 0,
     editedQuestion: null,
+    testedQuestions: [],
     filterObject: {
         page: 1,
         query: "",
@@ -254,6 +268,7 @@ const questionSlice = createSlice({
             state.errorObject = null;
 
             state.addQuestion.successMessage = null;
+            state.addMultipleQuestions.successMessage = null;
             state.editQuestion.successMessage = null;
 
             state.deleteQuestion.successMessage = null;
@@ -301,6 +316,9 @@ const questionSlice = createSlice({
         },
         setQuestions(state, { payload }) {
             state.questions = payload;
+        },
+        setTestedQuestions(state, { payload }) {
+            state.testedQuestions = payload;
         },
     },
     extraReducers: builder => {
@@ -352,6 +370,12 @@ const questionSlice = createSlice({
                 // state.question = payload.data;
             })
             .addCase(findQuestion.rejected, (state, { payload }) => {})
+
+            .addCase(getQuestions.pending, (state, { payload }) => {})
+            .addCase(getQuestions.fulfilled, (state, { payload }) => {
+                state.testedQuestions = payload.data;
+            })
+            .addCase(getQuestions.rejected, (state, { payload }) => {})
 
             .addCase(addQuestion.pending, (state, _) => {
                 state.addQuestion.successMessage = null;
@@ -428,6 +452,7 @@ export const {
         disableOrEnableLoadedQuestions,
         setResetFilter,
         setQuestions,
+        setTestedQuestions,
     },
 } = questionSlice;
 

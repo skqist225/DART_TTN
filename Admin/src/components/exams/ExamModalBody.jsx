@@ -14,7 +14,7 @@ import RegisterTableBody from "../registers/RegisterTableBody";
 import TablePagination from "../utils/tables/TablePagination";
 import TableHeader from "../utils/tables/TableHeader";
 
-const examTypes = [
+export const examTypes = [
     {
         title: "Giữa kỳ",
         value: "Giữa kỳ",

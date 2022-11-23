@@ -27,7 +27,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,18 +43,23 @@ public class SubjectRestController {
     @Autowired
     private ChapterService chapterService;
 
-
     @GetMapping("")
     public ResponseEntity<StandardJSONResponse<SubjectsDTO>> fetchAllSubjects(
             @RequestParam("page") String page,
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
-            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField
+            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
+            @RequestParam(name = "haveChapter", required = false, defaultValue = "false") Boolean haveChapter
     ) {
         SubjectsDTO subjectsDTO = new SubjectsDTO();
 
         if(page.equals("0")) {
-            List<Subject> subjects = subjectService.findAll();
+            List<Subject> subjects = null;
+            if (haveChapter) {
+                subjects = subjectService.findByHaveChapter();
+            } else {
+                subjects = subjectService.findAll();
+            }
 
             subjectsDTO.setSubjects(subjects);
             subjectsDTO.setTotalElements(subjects.size());

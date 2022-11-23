@@ -42,6 +42,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -227,12 +228,13 @@ public class QuestionRestController {
                     // Add new question
                     if (Objects.isNull(answerDTO.getId())) {
                         question.addAnswer(Answer.build(answerDTO.getContent(),
-                                answerDTO.getIsTempAnswer().equals("true"), question));
+                                answerDTO.getIsTempAnswer().equals("true"), question, answerDTO.getOrder()));
                     } else {
                         for (Answer answer : question.getAnswers()) {
                             // Edit existed question
                             if (answerDTO.getId().equals(answer.getId())) {
                                 answer.setContent(answerDTO.getContent());
+                                answer.setOrder(answerDTO.getOrder());
                                 answer.setAnswer(answerDTO.getIsTempAnswer().equals("true"));
                                 answerService.save(answer);
                                 break;
@@ -278,7 +280,7 @@ public class QuestionRestController {
                 question.setAnswers(postCreateQuestionDTO.getAnswers().stream().map(
                         answer -> Answer.build(answer.getContent(),
                                 answer.getIsTempAnswer().equals("true"),
-                                question)).collect(Collectors.toList()));
+                                question, answer.getOrder())).collect(Collectors.toList()));
             }
             questionService.save(question);
         }
@@ -293,6 +295,7 @@ public class QuestionRestController {
         return new OkResponse<>("Thêm hoặc sửa câu hỏi thành công").response();
     }
 
+    @Transactional
     @PostMapping("save/multiple")
     public ResponseEntity<StandardJSONResponse<String>> saveMultipleQuestions(
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
@@ -304,10 +307,13 @@ public class QuestionRestController {
         int totalQuestions = questions.size();
 
         for (PostCreateQuestionDTO question : questions) {
-            System.out.println(question);
             String content = question.getContent();
+            String subjectId = question.getSubjectId();
             String subjectName = question.getSubjectName();
-            String chapterName = question.getChapterName();
+
+            String chapterName = question.getChapterName().split(":")[1].trim();
+            int chapterNumber =
+                    Integer.parseInt(String.valueOf(question.getChapterName().charAt(7)));
 
             if (Objects.isNull(content) ||
                     StringUtils.isEmpty(content) ||
@@ -319,25 +325,21 @@ public class QuestionRestController {
             System.out.println(i);
             Subject subject = null;
             try {
-                subject = subjectService.findByName(subjectName);
+                subject = subjectService.findById(subjectId);
             } catch (NotFoundException e) {
-                StringBuilder subjectId = new StringBuilder();
-
-                for (String s : subjectName.split(" ")) {
-                    subjectId.append(s.charAt(0));
-                }
-
                 subject = subjectService.save(
-                        Subject.build(new PostCreateSubjectDTO(subjectId.toString().toUpperCase()
+                        Subject.build(new PostCreateSubjectDTO(subjectId
                                 , subjectName, 15, 0, null)));
             }
-
+            System.out.println(chapterNumber);
+            System.out.println(chapterName);
             Chapter chapter = null;
             try {
                 chapter = chapterService.findByName(chapterName);
             } catch (NotFoundException e) {
                 chapter =
-                        chapterService.save(Chapter.build(1, chapterName, subject));
+                        chapterService.save(Chapter.build(chapterNumber, chapterName,
+                                subject));
             }
 
             questionService.save(Question.build(question, teacher,
@@ -355,7 +357,8 @@ public class QuestionRestController {
     }
 
     @PostMapping("excel/read")
-    public ResponseEntity<StandardJSONResponse<QuestionsDTO<ReadQuestionExcelDTO>>> readExcelFile(@RequestParam(name = "file") MultipartFile excelFile) throws IOException {
+    public ResponseEntity<StandardJSONResponse<QuestionsDTO<ReadQuestionExcelDTO>>> readExcelFile(
+            @RequestParam(name = "file") MultipartFile excelFile) throws IOException {
         List<ReadQuestionExcelDTO> questions = new ArrayList<>();
         ExcelUtils excelUtils = new ExcelUtils((FileInputStream) excelFile.getInputStream());
 
@@ -392,5 +395,12 @@ public class QuestionRestController {
         } catch (NotFoundException ex) {
             return new BadResponse<String>(ex.getMessage()).response();
         }
+    }
+
+    @GetMapping("get-questions")
+    public ResponseEntity<StandardJSONResponse<List<Question>>> getQuestions(
+            @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
+            @RequestParam(name = "exam", defaultValue = "") Integer examId) {
+        return new OkResponse<>(questionService.findByStudentAndExam(userDetailsImpl.getUser().getId(), examId)).response();
     }
 }

@@ -24,6 +24,7 @@ import {
 } from "../../features/creditClassSlice";
 import { fetchAllUsers } from "../../features/userSlice";
 import { persistUserState } from "../../features/persistUserSlice";
+import { clearExamState, examState } from "../../features/examSlice";
 
 const columns = [
     {
@@ -109,6 +110,16 @@ function CreditClassesPage() {
     } = useSelector(creditClassState);
 
     const {
+        addExam: { successMessage: aeSuccessMessage },
+    } = useSelector(examState);
+
+    useEffect(() => {
+        if (aeSuccessMessage) {
+            callToast("success", aeSuccessMessage);
+        }
+    }, [aeSuccessMessage]);
+
+    const {
         register,
         setValue,
         handleSubmit,
@@ -167,6 +178,7 @@ function CreditClassesPage() {
     useEffect(() => {
         return () => {
             dispatch(clearCreditClassState());
+            dispatch(clearExamState());
         };
     }, []);
 

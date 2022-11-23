@@ -16,7 +16,6 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.List;
 
 @Getter
@@ -59,11 +58,16 @@ public class TakeExam {
     @Column(name = "DIEM")
     private Float score;
 
-    public static TakeExam build(Exam exam, Register register, int tryTime) {
+    public static TakeExam build(Exam exam, Register register, int tryTime, Test test) {
         return TakeExam.builder()
                 .exam(exam)
                 .register(register)
                 .tryTime(tryTime)
+                .test(test)
                 .build();
+    }
+
+    public String getTestName() {
+        return this.test.getName();
     }
 }

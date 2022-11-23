@@ -77,7 +77,7 @@ public class Exam {
     @Column(name = "DATHI")
     private boolean taken;
 
-    @Column(name = "TRANGTHAI")
+    @Column(name = "DAHUY")
     private boolean status;
 
     public static Exam build(PostCreateExamDTO postCreateExamDTO) {

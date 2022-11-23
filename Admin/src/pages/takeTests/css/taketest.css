@@ -1,0 +1,18 @@
+.chosen.active {
+    background-color: rgb(249, 210, 187) !important;
+    color:#ef803d !important;
+}
+
+.border.up {
+    border: 2px solid #67758D !important;
+}
+
+.right.right2 {
+    background-color: #00C48C !important;
+    color: white !important;
+}
+
+.wrong.wrong2 {
+    background-color: #ff7272 !important;
+    color:white !important;
+} 

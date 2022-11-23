@@ -11,6 +11,6 @@ import lombok.Setter;
 @Getter
 @Setter
 public class HandInDTO {
-    private Integer id;
+    private Integer questionId;
     private String answer;
 }

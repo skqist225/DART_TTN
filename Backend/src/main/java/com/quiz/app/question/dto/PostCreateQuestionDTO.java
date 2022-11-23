@@ -23,6 +23,7 @@ public class PostCreateQuestionDTO {
     private List<AnswerDTO> answers;
     private String answer;
     private String subjectName;
+    private String subjectId;
     private String chapterName;
     private Integer chapterId;
     private MultipartFile image;

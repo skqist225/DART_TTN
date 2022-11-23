@@ -39,7 +39,7 @@ const types = [
     },
 ];
 
-function lookupIndex(index) {
+export function lookupIndex(index) {
     const alphabet = [
         "A",
         "B",
@@ -102,8 +102,9 @@ function QuestionModalBody({
         if (editedQuestion) {
             setValue("id", editedQuestion.id);
             setValue("content", editedQuestion.content);
-            dispatch(fetchAllChapters({ page: 0, subject: editedQuestion.chapter.subject.id }));
-
+            dispatch(fetchAllChapters({ page: 0, subject: editedQuestion.chapter.subjectId }));
+            setValue("chapterId", editedQuestion.chapter.id);
+            setValue("subject", editedQuestion.chapter.subjectId);
             handleTypeChange({ target: { value: editedQuestion.type } });
             if (editedQuestion.type === "Đáp án điền") {
                 if (editedQuestion.answers[0]) {
@@ -112,7 +113,7 @@ function QuestionModalBody({
                 }
             } else {
                 editedQuestion.answers.forEach(({ id, content, answer }) => {
-                    append({ id, content: content.slice(3), isAnswer: answer });
+                    append({ id, content, isAnswer: answer });
                 });
             }
         } else {
@@ -123,10 +124,28 @@ function QuestionModalBody({
         }
     }, [editedQuestion]);
 
+    useEffect(() => {
+        if (editedQuestion && chapters && chapters.length) {
+            setValue("chapterId", chapters[0].id);
+        }
+    }, [editedQuestion, chapters]);
+
+    useEffect(() => {
+        if (editedQuestion && subjects && subjects.length) {
+            setValue("chapterId", subjects[0].id);
+        }
+    }, [editedQuestion, subjects]);
+
     const handleSubjectChange = event => {
         event.preventDefault();
         dispatch(fetchAllChapters({ page: 0, subject: event.target.value }));
     };
+
+    useEffect(() => {
+        if (subjects && subjects.length) {
+            dispatch(fetchAllChapters({ page: 0, subject: subjects[0].id }));
+        }
+    }, [subjects]);
 
     const handleTypeChange = event => {
         if (event.target.value === "Đáp án điền") {
@@ -331,9 +350,7 @@ function QuestionModalBody({
                                     }))}
                                     setValue={setValue}
                                     onChangeHandler={handleSubjectChange}
-                                    defaultValue={
-                                        editedQuestion && editedQuestion.chapter.subject.id
-                                    }
+                                    defaultValue={subjects && subjects.length && subjects[0].id}
                                 />
                             </div>
                             <div className='w-full'>
@@ -343,16 +360,16 @@ function QuestionModalBody({
                                     name='chapterId'
                                     error={errors.chapterId && errors.chapterId.message}
                                     options={chapters.map(chapter => ({
-                                        title: chapter.name,
+                                        title: `Chương ${chapter.chapterNumber}: ${chapter.name}`,
                                         value: chapter.id,
                                     }))}
                                     setValue={setValue}
-                                    defaultValue={editedQuestion && editedQuestion.chapter.id}
+                                    defaultValue={chapters && chapters.length && chapters[0].id}
                                 />
                             </div>
                         </div>
                     </div>
-                    <FileInput setImage={setImage} image={editedQuestion && editedQuestion.image} />
+                    {/* <FileInput setImage={setImage} image={editedQuestion && editedQuestion.image} /> */}
                 </div>
             ) : (
                 <QuestionExcelModalBody />

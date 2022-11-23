@@ -43,4 +43,15 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
             ".status = 1")
     public Integer queryAvailableQuestions(Integer chapterId,
                                            Level level);
+
+    @Query("SELECT count(*) FROM Question")
+    public int countTotalQuestions();
+
+    @Query(value = "SELECT ch.* FROM chitietthi ctt left join cauhoi ch on ch.macauhoi = ctt" +
+            ".macauhoi where ctt.masv = :studentId AND ctt.macathi = :examId order by ch.macauhoi" +
+            " " +
+            "asc",
+            nativeQuery = true)
+    public List<Question> findByStudentAndExam(String studentId,
+                                               Integer examId);
 }

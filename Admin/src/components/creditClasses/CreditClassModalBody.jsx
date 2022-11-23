@@ -6,7 +6,7 @@ import { userState } from "../../features/userSlice";
 import { callToast } from "../../helpers";
 import Select from "../utils/userInputs/Select";
 
-const schoolYears = [
+export const schoolYears = [
     {
         title: "2022-2023",
         value: "2022-2023",
@@ -21,7 +21,7 @@ const schoolYears = [
     },
 ];
 
-const semesters = Array.from({ length: 4 }).map((_, index) => ({
+export const semesters = Array.from({ length: 4 }).map((_, index) => ({
     title: index + 1,
     value: index + 1,
 }));
@@ -38,6 +38,7 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
 
     useEffect(() => {
         if (editedCreditClass) {
+            console.log(editedCreditClass);
             setValue("id", editedCreditClass.id);
             setValue("schoolYear", editedCreditClass.schoolYear);
             setValue("semester", editedCreditClass.semester);

@@ -2,6 +2,7 @@ package com.quiz.app.subject;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.statistics.dto.CountQuestionsBySubjectDTO;
 import com.quiz.entity.Subject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,12 +37,24 @@ public class SubjectService {
     @Autowired
     private EntityManager entityManager;
 
+    public int countTotalSubjects() {
+        return subjectRepository.countTotalSubjects();
+    }
+
     public void saveAll(List<Subject> subjects) {
         subjectRepository.saveAll(subjects);
     }
 
     public Subject save(Subject subject) {
         return subjectRepository.save(subject);
+    }
+
+    public List<CountQuestionsBySubjectDTO> countQuestionsBySubject() {
+        return subjectRepository.countQuestionsBySubject();
+    }
+
+    public List<Subject> findByHaveChapter() {
+        return subjectRepository.findByHaveChapter();
     }
 
     public String deleteById(String id) throws ConstrainstViolationException {

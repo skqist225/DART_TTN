@@ -31,8 +31,6 @@ function CircleChart({ data }) {
             <header className='px-5 py-4 border-b border-slate-100'>
                 <h2 className='font-semibold text-slate-800'>Users</h2>
             </header>
-            {/* Chart built with Chart.js 3 */}
-            {/* Change the height attribute to adjust the chart height */}
             <DoughnutChart data={chartData} width={389} height={260} />
         </div>
     );

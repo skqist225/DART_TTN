@@ -15,7 +15,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
 @Getter
@@ -45,4 +44,8 @@ public class TakeExamDetail {
 
     @Column(name = "CAUTRALOI")
     private String answer;
+
+    public static TakeExamDetail build(TakeExam takeExam, Question question) {
+        return TakeExamDetail.builder().takeExam(takeExam).question(question).build();
+    }
 }

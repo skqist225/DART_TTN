@@ -107,7 +107,7 @@ function ExamsPage() {
                     page: 1,
                 })
             );
-        } else {
+        } else if (userRoles.includes("Giảng viên")) {
             dispatch(
                 fetchAllCreditClasses({
                     page: 0,
@@ -118,6 +118,13 @@ function ExamsPage() {
                 fetchAllExams({
                     page: 1,
                     teacher: user.id,
+                })
+            );
+        } else {
+            dispatch(
+                fetchAllExams({
+                    page: 1,
+                    student: user.id,
                 })
             );
         }
@@ -266,7 +273,7 @@ function ExamsPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH CA THI"}
+            title={!userRoles.includes("Sinh viên") ? "DANH SÁCH CA THI" : "DANH SÁCH LỊCH THI"}
             children={
                 <Table
                     searchPlaceHolder={"Tìm kiếm theo tên và mã ca thi"}
@@ -292,7 +299,7 @@ function ExamsPage() {
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
-                    // Filter={ExamFilter}
+                    Filter={ExamFilter}
                     onCloseForm={onCloseForm}
                 />
             }

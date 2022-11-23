@@ -53,6 +53,10 @@ public class QuestionService {
         return questionRepository.save(question);
     }
 
+    public int countTotalQuestions() {
+        return questionRepository.countTotalQuestions();
+    }
+
     public String deleteById(Integer id) throws ConstrainstViolationException {
         try {
             questionRepository.deleteById(id);
@@ -90,6 +94,11 @@ public class QuestionService {
         }
 
         throw new NotFoundException("Không tìm thấy câu hỏi với mã bằng " + id);
+    }
+
+    public List<Question> findByStudentAndExam(String studentId,
+                                               Integer examId) {
+        return questionRepository.findByStudentAndExam(studentId, examId);
     }
 
     public boolean isContentDuplicated(Integer id, String content, boolean isEdit) {

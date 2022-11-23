@@ -63,6 +63,9 @@ public class Question {
     private boolean status;
 
     @Transient
+    private String finalAnswer;
+
+    @Transient
     private String selectedAnswer;
 
     @Transient
@@ -73,12 +76,6 @@ public class Question {
     @Transient
     public void addAnswer(Answer answer) {
         this.answers.add(answer);
-    }
-
-    @Transient
-    public List<Answer> getAnswers() {
-        this.answers.sort(Comparator.comparing(Answer::getContent));
-        return this.answers;
     }
 
     public static Question build(PostCreateQuestionDTO postCreateQuestionDTO, User teacher,
@@ -94,7 +91,8 @@ public class Question {
 
         if (addAnswer && postCreateQuestionDTO.getAnswers().size() > 0) {
             question.setAnswers(postCreateQuestionDTO.getAnswers().stream().map(
-                    answer -> Answer.build(answer.getContent(), answer.isAnswer(), question))
+                            answer -> Answer.build(answer.getContent(), answer.isAnswer(), question,
+                                    answer.getOrder()))
                     .collect(Collectors.toList()));
         }
 
@@ -103,6 +101,12 @@ public class Question {
         }
 
         return question;
+    }
+
+    @Transient
+    public List<Answer> getAnswers() {
+        this.answers.sort(Comparator.comparing(Answer::getOrder));
+        return this.answers;
     }
 
     public static Level lookUpLevel(String levelStr) {
@@ -214,5 +218,13 @@ public class Question {
 
     public void setAnswers(List<Answer> answers) {
         this.answers = answers;
+    }
+
+    public String getFinalAnswer() {
+        return finalAnswer;
+    }
+
+    public void setFinalAnswer(String finalAnswer) {
+        this.finalAnswer = finalAnswer;
     }
 }

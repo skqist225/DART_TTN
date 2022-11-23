@@ -63,6 +63,19 @@ export const findTest = createAsyncThunk(
     }
 );
 
+export const getTest = createAsyncThunk(
+    "test/getTest",
+    async ({ student = "", exam = "" }, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get(`/tests/get-test?student=${student}&exam=${exam}`);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 export const addTest = createAsyncThunk("test/addTest", async (postData, { rejectWithValue }) => {
     try {
         const { data } = await api.post(`/tests/save`, postData);
@@ -72,6 +85,24 @@ export const addTest = createAsyncThunk("test/addTest", async (postData, { rejec
         return rejectWithValue(error);
     }
 });
+
+export const handIn = createAsyncThunk(
+    "test/handIn",
+    async ({ exam, answers }, { rejectWithValue }) => {
+        try {
+            const ans = [];
+            for (let [key, value] of answers) {
+                ans.push({ questionId: key, answer: value });
+            }
+
+            const { data } = await api.post(`/tests/${exam}/handIn`, ans);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
 
 export const editTest = createAsyncThunk("test/editTest", async (postData, { rejectWithValue }) => {
     try {
@@ -99,6 +130,7 @@ export const deleteTest = createAsyncThunk(
 const initialState = {
     loading: true,
     tests: [],
+    test: {},
     totalElements: 0,
     totalPages: 0,
     editedTest: null,
@@ -163,9 +195,21 @@ const testSlice = createSlice({
 
             .addCase(findTest.pending, (state, { payload }) => {})
             .addCase(findTest.fulfilled, (state, { payload }) => {
-                // state.test = payload.data;
+                state.test = payload.data;
             })
             .addCase(findTest.rejected, (state, { payload }) => {})
+
+            .addCase(getTest.pending, (state, { payload }) => {})
+            .addCase(getTest.fulfilled, (state, { payload }) => {
+                state.test = payload.data;
+            })
+            .addCase(getTest.rejected, (state, { payload }) => {})
+
+            .addCase(handIn.pending, (state, { payload }) => {})
+            .addCase(handIn.fulfilled, (state, { payload }) => {
+                state.test = payload.data;
+            })
+            .addCase(handIn.rejected, (state, { payload }) => {})
 
             .addCase(addTest.pending, (state, _) => {
                 state.addTest.successMessage = null;
@@ -213,18 +257,18 @@ const testSlice = createSlice({
                         };
                     });
                 }
-            })
-
-            .addCase(deleteTest.pending, (state, _) => {
-                state.deleteTest.successMessage = null;
-                state.deleteTest.errorMessage = null;
-            })
-            .addCase(deleteTest.fulfilled, (state, { payload }) => {
-                state.deleteTest.successMessage = payload.data;
-            })
-            .addCase(deleteTest.rejected, (state, { payload }) => {
-                state.deleteTest.errorMessage = payload;
             });
+
+        // .addCase(deleteTest.pending, (state, _) => {
+        //     state.deleteTest.successMessage = null;
+        //     state.deleteTest.errorMessage = null;
+        // })
+        // .addCase(deleteTest.fulfilled, (state, { payload }) => {
+        //     state.deleteTest.successMessage = payload.data;
+        // })
+        // .addCase(deleteTest.rejected, (state, { payload }) => {
+        //     state.deleteTest.errorMessage = payload;
+        // });
     },
 });
 

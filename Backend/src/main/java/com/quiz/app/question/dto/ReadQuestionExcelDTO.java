@@ -20,6 +20,7 @@ public class ReadQuestionExcelDTO {
     private List<Answer> answers;
     private String level;
     private String chapterName;
+    private String subjectId;
     private String subjectName;
     private boolean status;
 }

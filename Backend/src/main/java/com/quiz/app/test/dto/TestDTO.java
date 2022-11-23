@@ -21,8 +21,6 @@ public class TestDTO {
     private String name;
     private String image;
     private String teacherName;
-    private int numberOfTested;
-    private int numberOfViews;
     private int time;
     private int numberOfQuestions;
     private int numberOfRightAnswer;

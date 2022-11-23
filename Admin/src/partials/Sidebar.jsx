@@ -161,30 +161,34 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             </span>
                         </h3>
                         <ul className='mt-3'>
-                            <SidebarElement
-                                pathname={pathname}
-                                name='statistics'
-                                title='Thống kê'
-                                Icon={StatisticsIcon}
-                            />
-                            <SidebarElement
-                                pathname={pathname}
-                                name='questions'
-                                title='Câu hỏi'
-                                Icon={QuestionIcon}
-                            />
-                            <SidebarElement
-                                pathname={pathname}
-                                name='tests'
-                                title='Đề thi'
-                                Icon={TestIcon}
-                            />
-                            <SidebarElement
-                                pathname={pathname}
-                                name='subjects'
-                                title='Môn học'
-                                Icon={SubjectIcon}
-                            />
+                            {user && userRoles.includes("Quản trị viên", "Giảng viên") && (
+                                <>
+                                    <SidebarElement
+                                        pathname={pathname}
+                                        name='statistics'
+                                        title='Thống kê'
+                                        Icon={StatisticsIcon}
+                                    />
+                                    <SidebarElement
+                                        pathname={pathname}
+                                        name='questions'
+                                        title='Câu hỏi'
+                                        Icon={QuestionIcon}
+                                    />
+                                    <SidebarElement
+                                        pathname={pathname}
+                                        name='tests'
+                                        title='Đề thi'
+                                        Icon={TestIcon}
+                                    />
+                                    <SidebarElement
+                                        pathname={pathname}
+                                        name='subjects'
+                                        title='Môn học'
+                                        Icon={SubjectIcon}
+                                    />
+                                </>
+                            )}
                             {user && userRoles.includes("Quản trị viên") && (
                                 <SidebarElement
                                     pathname={pathname}
@@ -193,20 +197,22 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                     Icon={UserIcon}
                                 />
                             )}
-
-                            <SidebarElement
-                                pathname={pathname}
-                                name='exams'
-                                title='Ca thi'
-                                Icon={ExamIcon}
-                            />
-                            <SidebarElement
-                                pathname={pathname}
-                                name='creditClasses'
-                                title='Lớp tín chỉ'
-                                Icon={CreditClassIcon}
-                            />
-                            {/* <SidebarElement pathname={pathname} name='takeExams' title='Thi' /> */}
+                            {user && userRoles.includes("Quản trị viên", "Giảng viên") && (
+                                <>
+                                    <SidebarElement
+                                        pathname={pathname}
+                                        name='exams'
+                                        title='Ca thi'
+                                        Icon={ExamIcon}
+                                    />
+                                    <SidebarElement
+                                        pathname={pathname}
+                                        name='creditClasses'
+                                        title='Lớp tín chỉ'
+                                        Icon={CreditClassIcon}
+                                    />
+                                </>
+                            )}
                             {user && userRoles.includes("Quản trị viên") && (
                                 <>
                                     <SidebarElement
@@ -223,6 +229,30 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                     />
                                 </>
                             )}
+
+                            {user && userRoles.includes("Sinh viên") && (
+                                <>
+                                    <SidebarElement
+                                        pathname={pathname}
+                                        name='viewExams'
+                                        title='Xem lịch thi'
+                                        Icon={RegisterIcon}
+                                    />
+                                    <SidebarElement
+                                        pathname={pathname}
+                                        name='takeTest'
+                                        title='Làm bài thi'
+                                        Icon={RoleIcon}
+                                    />
+                                </>
+                            )}
+
+                            <SidebarElement
+                                pathname={pathname}
+                                name='ranks'
+                                title='Bảng xếp hạng'
+                                Icon={CreditClassIcon}
+                            />
                         </ul>
                     </div>
                 </div>

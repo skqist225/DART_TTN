@@ -34,21 +34,26 @@ public class Answer {
     @Column(name = "LADAPAN", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isAnswer;
 
+    @Column(name = "THUTU", columnDefinition = "NCHAR(3)")
+    private String order;
+
     @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MACAUHOI", nullable = false)
     private Question question;
 
-    public static Answer build(String content, boolean isAnswer, Question question) {
+    public Answer(String content, boolean isAnswer, String order) {
+        this.content = content;
+        this.isAnswer = isAnswer;
+        this.order = order;
+    }
+
+    public static Answer build(String content, boolean isAnswer, Question question, String order) {
         return Answer.builder()
                 .content(content)
                 .isAnswer(isAnswer)
                 .question(question)
+                .order(order)
                 .build();
-    }
-
-    public Answer(String content, boolean isAnswer) {
-        this.content = content;
-        this.isAnswer = isAnswer;
     }
 }
