@@ -68,7 +68,7 @@ public class CreditClass {
     private List<Register> registers = new ArrayList<>();
 
     @Transient
-    private List<ExamCreditClassPageDTO> exams;
+    private List<ExamCreditClassPageDTO> exams = new ArrayList<>();
 
     @Transient
     private int numberOfMidTermExam;

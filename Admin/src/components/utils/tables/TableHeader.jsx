@@ -27,12 +27,12 @@ function TableHeader({ columns, handleSortChange, modalLabel, addCheckbox = fals
             : reverseSortDir(`.downer.${sortField}`);
     }
     const { userRoles } = useSelector(persistUserState);
+    console.log(modalLabel);
     return (
         <thead className={tailwindCss.thead}>
             <tr>
                 {addCheckbox && <th></th>}
                 {columns.map(({ name, sortField, sortable }) => {
-                    console.log(modalLabel);
                     if (
                         ["ca thi", "câu hỏi"].includes(modalLabel) &&
                         !userRoles.includes("Quản trị viên") &&

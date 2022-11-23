@@ -5,31 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
-      <change afterPath="$PROJECT_DIR$/../Admin/src/components/creditClasses/ExamList.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Admin/src/components/creditClasses/RegisterList.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/App.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/App.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/common/EnableOrDisable.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/common/EnableOrDisable.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/common/MyButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/common/MyButton.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/creditClasses/CreditClassModalBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/creditClasses/CreditClassModalBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/creditClasses/CreditClassTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/creditClasses/CreditClassTableBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/exams/ExamModalBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/exams/ExamModalBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/registers/RegisterModalBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/registers/RegisterModalBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/creditClasses/ExamList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/creditClasses/ExamList.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/components/tests/TestModalBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/tests/TestModalBody.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/components/tests/TestTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/tests/TestTableBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TablePagination.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TablePagination.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/features/authSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/authSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/features/creditClassSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/creditClassSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/features/questionSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/questionSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/features/subjectSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/subjectSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/creditClasses/CreditClassesPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/creditClasses/CreditClassesPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/exams/ExamsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/exams/ExamsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/tests/TestsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/tests/TestsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/users/UsersPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/users/UsersPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/creditClass/CreditClassService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/creditClass/CreditClassService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/exam/ExamRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/exam/ExamRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TableHeader.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/TableHeader.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/features/testSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/testSlice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/CreditClass.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/CreditClass.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -197,7 +178,7 @@
       <workItem from="1668905757364" duration="31894000" />
       <workItem from="1669001475990" duration="22471000" />
       <workItem from="1669104264343" duration="18355000" />
-      <workItem from="1669170760352" duration="4047000" />
+      <workItem from="1669170760352" duration="4724000" />
     </task>
     <servers />
   </component>

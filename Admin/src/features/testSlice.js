@@ -134,13 +134,6 @@ const testSlice = createSlice({
             state.deleteTest.successMessage = null;
             state.deleteTest.errorObject = null;
         },
-        clearErrorField(state, { payload }) {
-            if (payload) {
-                if (state.errorObject && state.errorObject[payload]) {
-                    delete state.errorObject[payload];
-                }
-            }
-        },
         setFilterObject(state, { payload }) {
             if (payload) {
                 payload.forEach(({ field, value }) => {
@@ -151,7 +144,7 @@ const testSlice = createSlice({
                 });
             }
         },
-        setEditedsubject(state, { payload }) {
+        setEditedTest(state, { payload }) {
             state.editedTest = payload;
         },
         setTests(state, { payload }) {
@@ -236,7 +229,7 @@ const testSlice = createSlice({
 });
 
 export const {
-    actions: { clearTestState, clearErrorField, setFilterObject, setEditedTest, setTests },
+    actions: { clearTestState, setFilterObject, setEditedTest, setTests },
 } = testSlice;
 
 export const testState = state => state.test;

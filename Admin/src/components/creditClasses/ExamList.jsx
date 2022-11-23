@@ -35,7 +35,7 @@ function ExamList({
     };
 
     return (
-        <>
+        <div>
             <div>Tổng số SV : {numberOfActiveStudents}</div>
             <Table striped={true}>
                 <Table.Head>
@@ -148,7 +148,7 @@ function ExamList({
                 totalPages={Math.ceil(exams.length / 10)}
                 fetchDataByPageNumber={fetchDataByPageNumber}
             />
-        </>
+        </div>
     );
 }
 
