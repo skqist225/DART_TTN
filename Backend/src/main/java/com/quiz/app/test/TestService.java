@@ -33,7 +33,7 @@ import java.util.Optional;
 public class TestService {
 
     @Autowired
-    TestRepository testRepository;
+    private TestRepository testRepository;
 
     @Autowired
     private EntityManager entityManager;

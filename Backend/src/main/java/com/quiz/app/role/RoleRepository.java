@@ -8,6 +8,6 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface  RoleRepository extends CrudRepository<Role, Integer> {
     @Query(value = "SELECT * FROM vaitro WHERE tenvaitro= :name", nativeQuery = true)
-    public Role findByName(String name);
+    Role findByName(String name);
 
 }

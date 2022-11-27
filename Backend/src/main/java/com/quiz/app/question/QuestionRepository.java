@@ -13,19 +13,19 @@ import java.util.List;
 public interface QuestionRepository extends CrudRepository<Question, Integer> {
 
     @Query(value = "SELECT * FROM cauhoi where macauhoi = :id", nativeQuery = true)
-    public Question getById(Integer id);
+    Question getById(Integer id);
 
     @Query(value = "SELECT * FROM cauhoi where noidungcauhoi = :content", nativeQuery = true)
-    public Question findByContent(String content);
+    Question findByContent(String content);
 
     @Query
-    public List<Question> findByChapterIn(List<Chapter> subject);
+    List<Question> findByChapterIn(List<Chapter> subject);
 
     @Query(value = "SELECT * FROM cauhoi as q WHERE q.machuong IN (:chapters) ORDER BY RAND" +
             "()" +
             "LIMIT :numberOfQuestions",
             nativeQuery = true)
-    public List<Question> findBySubject(List<Integer> chapters, Integer numberOfQuestions);
+    List<Question> findBySubject(List<Integer> chapters, Integer numberOfQuestions);
 
     @Query(value = "SELECT * FROM cauhoi as q  WHERE q.machuong = :chapterId AND q.dokho = :level" +
             " " +
@@ -35,23 +35,23 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
             "()" +
             "LIMIT :numberOfQuestions",
             nativeQuery = true)
-    public List<Question> findByChapterAndLevel(Integer chapterId,
-                                                Integer level, int numberOfQuestions);
+    List<Question> findByChapterAndLevel(Integer chapterId,
+                                         Integer level, int numberOfQuestions);
 
     @Query("SELECT count(*) FROM Question q WHERE q.chapter.id = :chapterId AND q.level = :level " +
             "AND q" +
             ".status = 1")
-    public Integer queryAvailableQuestions(Integer chapterId,
-                                           Level level);
+    Integer queryAvailableQuestions(Integer chapterId,
+                                    Level level);
 
     @Query("SELECT count(*) FROM Question")
-    public int countTotalQuestions();
+    int countTotalQuestions();
 
     @Query(value = "SELECT ch.* FROM chitietthi ctt left join cauhoi ch on ch.macauhoi = ctt" +
             ".macauhoi where ctt.masv = :studentId AND ctt.macathi = :examId order by ch.macauhoi" +
             " " +
             "asc",
             nativeQuery = true)
-    public List<Question> findByStudentAndExam(String studentId,
-                                               Integer examId);
+    List<Question> findByStudentAndExam(String studentId,
+                                        Integer examId);
 }

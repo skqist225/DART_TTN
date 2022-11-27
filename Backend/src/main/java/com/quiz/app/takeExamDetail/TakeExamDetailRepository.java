@@ -16,18 +16,18 @@ public interface TakeExamDetailRepository extends CrudRepository<TakeExamDetail,
     @Modifying
     @Query(value = "INSERT INTO chitietthi(macauhoi, macathi, maltc, masv, lanthi) values" +
             "(:questionId, :examId, :creditClassId,  +:studentId, :tryTime)", nativeQuery = true)
-    public void insertIntoTakeExamDetail(Integer questionId, int tryTime, int examId, int creditClassId,
-                                         String studentId);
-
+    void insertIntoTakeExamDetail(Integer questionId, int tryTime, int examId, int creditClassId,
+                                  String studentId);
 
     @Modifying
     @Query(value = "update chitietthi set cautraloi = :userAnswer where masv = :studentId AND " +
             "macathi = :examId AND macauhoi = :questionId", nativeQuery = true)
-    public void updateAnswerForQuestionInStudentTest(String studentId, Integer examId,
-                                                     Integer questionId,
-                                                     String userAnswer);
+    void updateAnswerForQuestionInStudentTest(String userAnswer, String studentId,
+                                              Integer examId,
+                                              Integer questionId
+    );
 
     @Query(value = "select * from chitietthi where masv = :studentId AND macathi = :examId",
             nativeQuery = true)
-    public List<TakeExamDetail> findByStudentAndExam(String studentId, Integer examId);
+    List<TakeExamDetail> findByStudentAndExam(String studentId, Integer examId);
 }

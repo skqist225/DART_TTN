@@ -9,11 +9,12 @@ import $ from "jquery";
 import "./css/taketest.css";
 import { examState, fetchAllExams } from "../../features/examSlice";
 import { persistUserState } from "../../features/persistUserSlice";
-import { Select } from "../../components";
+import { Answer, Input, Select } from "../../components";
 import { useForm } from "react-hook-form";
 import { Button } from "flowbite-react";
 import { getQuestions, questionState, setTestedQuestions } from "../../features/questionSlice";
 import { lookupIndex } from "../../components/questions/QuestionModalBody";
+import { tailwindCss } from "../../tailwind";
 
 const renderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -38,7 +39,8 @@ function TakeTestPage() {
     const [time, setTime] = useState(0);
     const [questions, setQuestions] = useState([]);
     const [activeIndex, setActiveIndex] = useState(1);
-    const [answer, setAnswer] = useState(new Map());
+    const [tempQstId, setTempQstId] = useState(0);
+    const [finalAnswer, setFinalAnswer] = useState(new Map());
     const [resultMode, setResultMode] = useState(false);
     const [examId, setExamId] = useState(0);
     const [qsts, setQsts] = useState([]);
@@ -66,8 +68,8 @@ function TakeTestPage() {
     useEffect(() => {
         if (questions && questions.length) {
             questions.forEach(question => {
-                if (answer.has(question.id)) {
-                    $(`#question-${question.id}-answer${answer.get(question.id)}`).prop(
+                if (finalAnswer.has(question.id)) {
+                    $(`#question-${question.id}-answer${finalAnswer.get(question.id)}`).prop(
                         "checked",
                         "true"
                     );
@@ -93,6 +95,46 @@ function TakeTestPage() {
             setQsts(test.questions);
         }
     }, [resultMode, test]);
+
+    function handleChangeQuestionPage(index, questionId) {
+        if (resultMode) {
+            return;
+        }
+
+        let divResult = 0;
+        let actIndex = 0;
+        // base 1
+        let baseIndex = index + 1;
+
+        if (baseIndex % questionPerPage === 1) {
+            divResult = Math.round(baseIndex / questionPerPage);
+            actIndex = baseIndex;
+        } else if (baseIndex % questionPerPage === 2) {
+            divResult = Math.round((baseIndex - 1) / questionPerPage);
+            actIndex = baseIndex - 1;
+        } else if (baseIndex % questionPerPage === 3) {
+            divResult = Math.round((baseIndex - 2) / questionPerPage);
+            actIndex = baseIndex - 2;
+        } else if (baseIndex % questionPerPage === 0) {
+            divResult = Math.round((baseIndex - 3) / questionPerPage);
+            actIndex = baseIndex - 3;
+        }
+
+        const qsts = testedQuestions.slice(
+            divResult * questionPerPage,
+            divResult * questionPerPage + questionPerPage
+        );
+
+        setQuestions(qsts);
+        setActiveIndex(actIndex);
+
+        $(".question-answer").each(function () {
+            $(this).removeClass("border up");
+        });
+        if (questionId) {
+            $(`#question-${questionId}-answer`).addClass("border up");
+        }
+    }
 
     return (
         <div>
@@ -162,13 +204,26 @@ function TakeTestPage() {
                                             if (!question.selectedAnswer) {
                                                 additionalClass = "wrong wrong2";
                                             } else {
-                                                if (
-                                                    question.selectedAnswer.toString() ===
-                                                    question.finalAnswer.toString()
-                                                ) {
-                                                    additionalClass = "right right2";
+                                                if (question.type === "Nhiều đáp án") {
+                                                    if (
+                                                        question.selectedAnswer
+                                                            .replace(/,/g, "")
+                                                            .toString() ===
+                                                        question.finalAnswer.toString()
+                                                    ) {
+                                                        additionalClass = "right right2";
+                                                    } else {
+                                                        additionalClass = "wrong wrong2";
+                                                    }
                                                 } else {
-                                                    additionalClass = "wrong wrong2";
+                                                    if (
+                                                        question.selectedAnswer.toString() ===
+                                                        question.finalAnswer.toString()
+                                                    ) {
+                                                        additionalClass = "right right2";
+                                                    } else {
+                                                        additionalClass = "wrong wrong2";
+                                                    }
                                                 }
                                             }
                                         }
@@ -182,52 +237,7 @@ function TakeTestPage() {
                                                 }}
                                                 key={question.id + 1}
                                                 onClick={() => {
-                                                    if (resultMode) {
-                                                        return;
-                                                    }
-
-                                                    let divResult = 0;
-                                                    let actIndex = 0;
-                                                    // base 1
-                                                    let baseIndex = index + 1;
-
-                                                    if (baseIndex % questionPerPage === 1) {
-                                                        divResult = Math.round(
-                                                            baseIndex / questionPerPage
-                                                        );
-                                                        actIndex = baseIndex;
-                                                    } else if (baseIndex % questionPerPage === 2) {
-                                                        divResult = Math.round(
-                                                            (baseIndex - 1) / questionPerPage
-                                                        );
-                                                        actIndex = baseIndex - 1;
-                                                    } else if (baseIndex % questionPerPage === 3) {
-                                                        divResult = Math.round(
-                                                            (baseIndex - 2) / questionPerPage
-                                                        );
-                                                        actIndex = baseIndex - 2;
-                                                    } else if (baseIndex % questionPerPage === 0) {
-                                                        divResult = Math.round(
-                                                            (baseIndex - 3) / questionPerPage
-                                                        );
-                                                        actIndex = baseIndex - 3;
-                                                    }
-
-                                                    const qsts = testedQuestions.slice(
-                                                        divResult * questionPerPage,
-                                                        divResult * questionPerPage +
-                                                            questionPerPage
-                                                    );
-
-                                                    setQuestions(qsts);
-                                                    setActiveIndex(actIndex);
-
-                                                    $(".question-answer").each(function () {
-                                                        $(this).removeClass("border up");
-                                                    });
-                                                    $(`#question-${question.id}-answer`).addClass(
-                                                        "border up"
-                                                    );
+                                                    handleChangeQuestionPage(question.id, index);
                                                 }}
                                             >
                                                 {index + 1}
@@ -251,78 +261,25 @@ function TakeTestPage() {
                                                 {question.content}
                                             </p>
                                             {question.type === "Đáp án điền" ? (
-                                                <></>
+                                                <>
+                                                    <Input
+                                                        id={`question-${question.id}-answer`}
+                                                        register={register}
+                                                        name={`question-${question.id}-answer`}
+                                                    />
+                                                </>
                                             ) : (
                                                 question.answers.map((answer, index) => {
                                                     return (
-                                                        <div
-                                                            className='flex items-center mb-4'
-                                                            key={answer.id}
-                                                        >
-                                                            <input
-                                                                id={`question-${
-                                                                    question.id
-                                                                }-answer${lookupIndex(index)}`}
-                                                                type='radio'
-                                                                value={lookupIndex(index)}
-                                                                name={`question-${question.id}-answer`}
-                                                                className='w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600'
-                                                            />
-                                                            <label
-                                                                htmlFor={`question-${question.id}-answer`}
-                                                                className='ml-2 text-sm hover:font-medium hover:text-sky-600 text-gray-900 dark:text-gray-300 cursor-pointer'
-                                                                onClick={() => {
-                                                                    const ans = $(
-                                                                        `#question-${
-                                                                            question.id
-                                                                        }-answer${lookupIndex(
-                                                                            index
-                                                                        )}`
-                                                                    );
-
-                                                                    if (ans.prop("checked")) {
-                                                                        ans.prop("checked", false);
-
-                                                                        $(
-                                                                            `#question-${question.id}-answer`
-                                                                        ).removeClass(
-                                                                            "chosen",
-                                                                            "active"
-                                                                        );
-
-                                                                        if (
-                                                                            answer.has(question.id)
-                                                                        ) {
-                                                                            answer.delete(
-                                                                                question.id
-                                                                            );
-                                                                            setAnswer(answer);
-                                                                        }
-                                                                    } else {
-                                                                        ans.prop("checked", "true");
-
-                                                                        $(
-                                                                            `#question-${question.id}-answer`
-                                                                        ).addClass("chosen active");
-
-                                                                        setAnswer(
-                                                                            prev =>
-                                                                                new Map([
-                                                                                    ...prev,
-                                                                                    [
-                                                                                        question.id,
-                                                                                        lookupIndex(
-                                                                                            index
-                                                                                        ),
-                                                                                    ],
-                                                                                ])
-                                                                        );
-                                                                    }
-                                                                }}
-                                                            >
-                                                                {answer.order}. {answer.content}
-                                                            </label>
-                                                        </div>
+                                                        <Answer
+                                                            answer={answer}
+                                                            question={question}
+                                                            register={register}
+                                                            finalAnswer={finalAnswer}
+                                                            setFinalAnswer={setFinalAnswer}
+                                                            index={index}
+                                                            type={question.type}
+                                                        />
                                                     );
                                                 })
                                             )}
@@ -343,14 +300,13 @@ function TakeTestPage() {
                                 <div className='mt-3'>
                                     <button
                                         type='button'
-                                        className='text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2'
+                                        className={tailwindCss.radiantButton}
                                         onClick={() => {
                                             if (!resultMode) {
-                                                console.log(answer);
                                                 dispatch(
                                                     handIn({
                                                         exam: examId,
-                                                        answers: answer,
+                                                        answers: finalAnswer,
                                                     })
                                                 );
                                                 setResultMode(true);
@@ -361,6 +317,27 @@ function TakeTestPage() {
                                     >
                                         {!resultMode ? "Nộp bài" : "Làm bài thi khác"}
                                     </button>
+                                    {resultMode ? (
+                                        <button
+                                            type='button'
+                                            className={tailwindCss.radiantButton}
+                                            onClick={() => {}}
+                                        >
+                                            Xem chi tiết bài thi
+                                        </button>
+                                    ) : (
+                                        testedQuestions.length !== activeIndex && (
+                                            <button
+                                                type='button'
+                                                className={tailwindCss.radiantButton}
+                                                onClick={() => {
+                                                    handleChangeQuestionPage(activeIndex + 4);
+                                                }}
+                                            >
+                                                "Trang kế
+                                            </button>
+                                        )
+                                    )}
                                 </div>
                             </div>
                         </div>

@@ -64,3 +64,5 @@ export { default as ExamTableBody } from "./exams/ExamTableBody";
 export { default as RegisterModalBody } from "./registers/RegisterModalBody";
 export { default as RegisterTableBody } from "./registers/RegisterTableBody";
 export { default as RegisterFilter } from "./registers/RegisterFilter";
+
+export { default as Answer } from "./takeTests/Answer";

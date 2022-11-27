@@ -155,7 +155,7 @@ public class HostRestController {
         JSONObject object = new JSONObject();
         object.put("status", "success");
         object.put("roomImages", multipartFiles);
-        System.out.println(multipartFiles.toString());
+        System.out.println(multipartFiles);
 
         return object.toString();
     }
@@ -186,7 +186,7 @@ public class HostRestController {
         JSONObject object = new JSONObject();
         object.put("status", "success");
         object.put("roomImages", multipartFiles);
-        System.out.println(multipartFiles.toString());
+        System.out.println(multipartFiles);
 
         return object.toString();
     }

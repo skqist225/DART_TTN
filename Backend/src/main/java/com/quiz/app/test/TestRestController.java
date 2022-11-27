@@ -227,44 +227,50 @@ public class TestRestController {
         List<Question> questions = new ArrayList<>();
         for (TakeExamDetail detail : takeExamDetails) {
             Question question = detail.getQuestion();
-            String finalAnswer = "";
+            StringBuilder finalAnswer = new StringBuilder();
             for (HandInDTO answer : answers) {
                 if (answer.getQuestionId().equals(question.getId())) {
                     if (question.getType().equals("Một đáp án")) {
                         for (Answer ans : question.getAnswers()) {
                             if (ans.isAnswer()) {
-                                finalAnswer = ans.getOrder();
+                                finalAnswer = new StringBuilder(ans.getOrder());
                                 if (ans.getOrder().toLowerCase().trim().equals(answer.getAnswer().toLowerCase().trim())) {
                                     numberOfRightAnswer++;
                                 }
                             }
                         }
                     } else if (question.getType().equals("Nhiều đáp án")) {
-                        List<String> finalAnswers = new ArrayList<>();
+                        int count = 0;
+                        int numberOfAns = 0;
                         for (Answer ans : question.getAnswers()) {
                             if (ans.isAnswer()) {
-                                finalAnswers.add(ans.getOrder());
+                                finalAnswer.append(ans.getOrder());
+                                numberOfAns++;
+                                for (String selectedAns : answer.getAnswer().split(",")) {
+                                    if (ans.getOrder().equals(selectedAns)) {
+                                        count++;
+                                    }
+                                }
                             }
                         }
-                        finalAnswer = String.join(",", finalAnswers).trim();
-                        if (finalAnswer.equals(answer.getAnswer().trim())) {
+                        if (numberOfAns == count) {
                             numberOfRightAnswer++;
                         }
                     } else {
                         if (question.getAnswers().get(0).getContent().equals(answer.getAnswer())) {
-                            finalAnswer = question.getAnswers().get(0).getContent();
+                            finalAnswer = new StringBuilder(question.getAnswers().get(0).getContent());
                             numberOfRightAnswer++;
                         }
                     }
 
                     question.setSelectedAnswer(answer.getAnswer());
+
+                    takeExamDetailService.updateAnswerForQuestionInStudentTest(answer.getAnswer().trim(), student.getId(), examId
+                            , answer.getQuestionId());
                     break;
                 }
-
-                takeExamDetailService.updateAnswerForQuestionInStudentTest(student.getId(), examId
-                        , answer.getQuestionId(), answer.getAnswer());
             }
-            question.setFinalAnswer(finalAnswer);
+            question.setFinalAnswer(finalAnswer.toString());
             questions.add(question);
         }
 

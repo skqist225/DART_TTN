@@ -14,12 +14,12 @@ import java.util.List;
 public interface TestRepository extends CrudRepository<Test, Integer> {
 
     @Query(value = "SELECT * FROM dethi where tendethi = :name", nativeQuery = true)
-    public Test findByName(String name);
+    Test findByName(String name);
 
-    public List<Test> findBySubject(Subject subject);
+    List<Test> findBySubject(Subject subject);
 
     @Query("SELECT count(*) FROM Test")
-    public int countTotalTests();
+    int countTotalTests();
 
     @Query(value =
             "select temp1.tenmh as subjectName, temp1.used as used, temp2.notused as notUsed from" +
@@ -31,9 +31,9 @@ public interface TestRepository extends CrudRepository<Test, Integer> {
                     "count" +
                     "(dt.madethi) as used from monhoc mh join dethi dt on dt.mamh = mh.mamh where dt.dasudung = 1 group by mh.mamh) temp1 left join \n" +
                     "(select mh.mamh ,mh.tenmh, count(dt.madethi) as notused from monhoc mh join dethi dt on dt.mamh = mh.mamh where dt.dasudung = 0 group by mh.mamh) temp2 on temp1.mamh = temp2.mamh", nativeQuery = true)
-    public List<CountTestsBySubjectAndStatus> countTestBySubjectAndStatus();
+    List<CountTestsBySubjectAndStatus> countTestBySubjectAndStatus();
 
     @Query(value = "select dt.* from (select * from thi t where  t.masv = :studentId AND " +
             "macathi = :examId) temp join dethi dt on dt.madethi = temp.madethi", nativeQuery = true)
-    public Test findByStudentAndExam(String studentId, Integer examId);
+    Test findByStudentAndExam(String studentId, Integer examId);
 }

@@ -32,7 +32,7 @@ import java.util.Optional;
 public class SubjectService {
 
     @Autowired
-    SubjectRepository subjectRepository;
+    private SubjectRepository subjectRepository;
 
     @Autowired
     private EntityManager entityManager;

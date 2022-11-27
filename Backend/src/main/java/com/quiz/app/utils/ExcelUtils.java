@@ -71,10 +71,7 @@ public class ExcelUtils {
                 } else if (Objects.equals(row.getCell(c).getCellType(), CellType.NUMERIC)) {
                     content = String.valueOf(row.getCell(c).getNumericCellValue());
                 }
-                boolean isAns = false;
-                if (ans.contains(c - 2)) {
-                    isAns = true;
-                }
+                boolean isAns = ans.contains(c - 2);
 
                 Answer answer = new Answer(content,
                         type.equals("Đáp án điền") || isAns, alphabets.get(c - 3).toUpperCase());

@@ -33,7 +33,7 @@ import java.util.Optional;
 public class TakeExamService {
 
     @Autowired
-    TakeExamRepository takeExamRepository;
+    private TakeExamRepository takeExamRepository;
 
     @Autowired
     private EntityManager entityManager;

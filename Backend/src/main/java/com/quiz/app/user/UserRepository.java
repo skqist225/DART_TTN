@@ -14,14 +14,14 @@ import java.util.Optional;
 public interface UserRepository extends JpaRepository<User, String> {
 
     @Query(value = "SELECT * FROM nguoidung WHERE nguoidung.manguoidung = :id", nativeQuery = true)
-    public Optional<User> findById(String id);
+    Optional<User> findById(String id);
 
     @Query(value = "SELECT * FROM nguoidung WHERE nguoidung.email = :email", nativeQuery = true)
-    public User findByEmail(String email);
+    User findByEmail(String email);
 
-    public Page<User> findAll(Pageable pageable);
+    Page<User> findAll(Pageable pageable);
 
     @Query(value = "SELECT * FROM nguoidung as nd JOIN nguoidung_vaitro vt ON nd.manguoidung = vt" +
             ".manguoidung WHERE vt.mavaitro = :roleId GROUP BY nd.manguoidung", nativeQuery = true)
-    public List<User> findByRole(Integer roleId);
+    List<User> findByRole(Integer roleId);
 }

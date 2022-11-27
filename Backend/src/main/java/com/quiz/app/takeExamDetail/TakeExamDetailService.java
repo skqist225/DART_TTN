@@ -31,11 +31,13 @@ public class TakeExamDetailService {
     }
 
     @Transactional
-    public void updateAnswerForQuestionInStudentTest(String studentId, Integer examId,
-                                                     Integer questionId,
-                                                     String userAnswer) {
-        takeExamDetailRepository.updateAnswerForQuestionInStudentTest(studentId, examId, questionId
-                , userAnswer);
+    public void updateAnswerForQuestionInStudentTest(String userAnswer, String studentId,
+                                                     Integer examId,
+                                                     Integer questionId
+    ) {
+        takeExamDetailRepository.updateAnswerForQuestionInStudentTest(userAnswer, studentId,
+                examId, questionId
+        );
     }
 
     @Transactional

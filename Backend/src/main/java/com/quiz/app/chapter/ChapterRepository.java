@@ -15,19 +15,19 @@ import java.util.Optional;
 public interface ChapterRepository extends CrudRepository<Chapter, Integer> {
 
     @Query(value = "SELECT * FROM chuong where machuong = :id", nativeQuery = true)
-    public Optional<Chapter> findById(Integer id);
+    Optional<Chapter> findById(Integer id);
 
-    public List<Chapter> findBySubject(Subject subject);
+    List<Chapter> findBySubject(Subject subject);
 
     @Query(value = "SELECT * FROM chuong where tenchuong = :name", nativeQuery = true)
-    public Chapter findByName(String name);
+    Chapter findByName(String name);
 
     @Modifying
     @Query(value = "delete from chuong where machuong = :id", nativeQuery = true)
-    public void deleteById(Integer id);
+    void deleteById(Integer id);
 
     @Modifying
     @Query(value = "update chuong set tenchuong = :name where machuong = :id", nativeQuery = true)
-    public void updateById(Integer id, String name);
+    void updateById(Integer id, String name);
 
 }

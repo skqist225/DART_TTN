@@ -17,8 +17,8 @@ import java.util.Set;
 public class UserDetailsImpl implements UserDetails {
 	private static final long serialVersionUID = 1;
 
-	private User user;
-	private Collection<? extends GrantedAuthority> authorities;
+	private final User user;
+	private final Collection<? extends GrantedAuthority> authorities;
 
 	public UserDetailsImpl(User user, Collection<? extends GrantedAuthority> authorities) {
 		this.user = user;
@@ -98,10 +98,6 @@ public class UserDetailsImpl implements UserDetails {
 	protected boolean hasRole(String role) {
 		// get security context from thread local
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		if (authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_Admin"))) {
-			return true;
-		}
-
-		return false;
+		return authentication.getAuthorities().contains(new SimpleGrantedAuthority("ROLE_Admin"));
 	}
 }

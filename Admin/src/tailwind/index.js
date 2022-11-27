@@ -40,4 +40,8 @@ export const tailwindCss = {
     tooltipContainer:
         "hidden absolute z-10 py-2 px-3 text-sm font-medium text-white left-0 -top-11 bg-gray-900 rounded-lg shadow-sm transition-opacity duration-300 dark:bg-gray-700",
     tableViewerCell: "whitespace-nowrap font-medium text-gray-900 dark:text-white",
+    radioButtonLabel:
+        "siblings ml-2 text-sm hover:font-medium hover:text-sky-600 text-gray-900 dark:text-gray-300 cursor-pointer",
+    radiantButton:
+        "text-white bg-gradient-to-r from-cyan-500 to-blue-500 hover:bg-gradient-to-bl focus:ring-4 focus:outline-none focus:ring-cyan-300 dark:focus:ring-cyan-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2",
 };

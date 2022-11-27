@@ -19,7 +19,7 @@ public class SendEmail {
     private static final String password = "tqgxcudjgljrhztj";
     private static final String smtpServer = "smtp.gmail.com";
 
-    public static void send(String receipt, String subject, String msg) throws AddressException, MessagingException {
+    public static void send(String receipt, String subject, String msg) throws MessagingException {
         Properties properties = new Properties();
         properties.put("mail.smtp.auth", "true");
         // properties.put("mail.smtp.starttls.enable", "true"); #587

@@ -15,9 +15,9 @@ public enum Level {
             lookup.put(w.getCode(), w);
     }
 
-    private int code;
+    private final int code;
 
-    private Level(int code) {
+    Level(int code) {
         this.code = code;
     }
 
