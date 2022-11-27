@@ -66,3 +66,5 @@ export { default as RegisterTableBody } from "./registers/RegisterTableBody";
 export { default as RegisterFilter } from "./registers/RegisterFilter";
 
 export { default as Answer } from "./takeTests/Answer";
+export { default as RankFilter } from "./ranks/RankFilter";
+export { default as RankTableBody } from "./ranks/RankTableBody";

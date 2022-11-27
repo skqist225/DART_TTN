@@ -3,11 +3,13 @@ package com.quiz.app.test;
 import com.quiz.app.common.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.register.RegisterService;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
+import com.quiz.app.takeExam.TakeExamService;
 import com.quiz.app.takeExamDetail.TakeExamDetailService;
 import com.quiz.app.test.dto.HandInDTO;
 import com.quiz.app.test.dto.PostCreateTestDTO;
@@ -16,6 +18,7 @@ import com.quiz.app.test.dto.TestsDTO;
 import com.quiz.entity.Answer;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
+import com.quiz.entity.TakeExam;
 import com.quiz.entity.TakeExamDetail;
 import com.quiz.entity.Test;
 import com.quiz.entity.User;
@@ -33,6 +36,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -50,7 +54,13 @@ public class TestRestController {
     private SubjectService subjectService;
 
     @Autowired
+    private TakeExamService takeExamService;
+
+    @Autowired
     private TakeExamDetailService takeExamDetailService;
+
+    @Autowired
+    private RegisterService registerService;
 
     @GetMapping("")
     public ResponseEntity<StandardJSONResponse<TestsDTO>> fetchAllSubjects(
@@ -228,12 +238,34 @@ public class TestRestController {
         for (TakeExamDetail detail : takeExamDetails) {
             Question question = detail.getQuestion();
             StringBuilder finalAnswer = new StringBuilder();
+
+            if (question.getType().equals("Một đáp án")) {
+                for (Answer ans : question.getAnswers()) {
+                    if (ans.isAnswer()) {
+                        finalAnswer = new StringBuilder(ans.getOrder());
+                    }
+                }
+            } else if (question.getType().equals("Nhiều đáp án")) {
+                int k = 0;
+                for (Answer ans : question.getAnswers()) {
+                    if (ans.isAnswer()) {
+                        if (k > 0) {
+                            finalAnswer.append(",").append(ans.getOrder());
+                        } else {
+                            finalAnswer.append(ans.getOrder());
+                        }
+                        k++;
+                    }
+                }
+            } else {
+                finalAnswer = new StringBuilder(question.getAnswers().get(0).getContent());
+            }
+
             for (HandInDTO answer : answers) {
                 if (answer.getQuestionId().equals(question.getId())) {
                     if (question.getType().equals("Một đáp án")) {
                         for (Answer ans : question.getAnswers()) {
                             if (ans.isAnswer()) {
-                                finalAnswer = new StringBuilder(ans.getOrder());
                                 if (ans.getOrder().toLowerCase().trim().equals(answer.getAnswer().toLowerCase().trim())) {
                                     numberOfRightAnswer++;
                                 }
@@ -244,7 +276,6 @@ public class TestRestController {
                         int numberOfAns = 0;
                         for (Answer ans : question.getAnswers()) {
                             if (ans.isAnswer()) {
-                                finalAnswer.append(ans.getOrder());
                                 numberOfAns++;
                                 for (String selectedAns : answer.getAnswer().split(",")) {
                                     if (ans.getOrder().equals(selectedAns)) {
@@ -258,7 +289,6 @@ public class TestRestController {
                         }
                     } else {
                         if (question.getAnswers().get(0).getContent().equals(answer.getAnswer())) {
-                            finalAnswer = new StringBuilder(question.getAnswers().get(0).getContent());
                             numberOfRightAnswer++;
                         }
                     }
@@ -280,8 +310,24 @@ public class TestRestController {
         testDTO.setNumberOfQuestions(questions.size());
         testDTO.setNumberOfRightAnswer(numberOfRightAnswer);
         testDTO.setQuestions(questions);
-        return new OkResponse<>(testDTO).response();
 
+        DecimalFormat df = new DecimalFormat("#.#");
+
+        takeExamService.updateTakeExamScore(student.getId(), examId, Float.parseFloat(df.format(mark)));
+        TakeExam takeExam = takeExamService.findByStudentAndExam(student.getId(),
+                examId);
+
+        if (takeExam.getExam().getType().equals("Giữa kỳ")) {
+            registerService.updateMidTermScore(student.getId(),
+                    takeExam.getRegister().getCreditClass().getId(),
+                    Float.parseFloat(df.format(mark)));
+        } else if (takeExam.getExam().getType().equals("Cuối kỳ")) {
+            registerService.updateFinalTermScore(student.getId(),
+                    takeExam.getRegister().getCreditClass().getId(),
+                    Float.parseFloat(df.format(mark)));
+        }
+
+        return new OkResponse<>(testDTO).response();
     }
 
     @DeleteMapping("{id}/delete")

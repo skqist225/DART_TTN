@@ -16,6 +16,7 @@ import javax.persistence.JoinColumns;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.util.List;
 
 @Getter
@@ -58,6 +59,21 @@ public class TakeExam {
     @Column(name = "DIEM")
     private Float score;
 
+    @Transient
+    private String studentId;
+
+    @Transient
+    private String studentFullName;
+
+    @Transient
+    private String examName;
+
+    @Transient
+    private int testId;
+
+    @Transient
+    private String testName;
+
     public static TakeExam build(Exam exam, Register register, int tryTime, Test test) {
         return TakeExam.builder()
                 .exam(exam)
@@ -69,5 +85,36 @@ public class TakeExam {
 
     public String getTestName() {
         return this.test.getName();
+    }
+
+    public String getStudentId() {
+        return this.register.getStudent().getId();
+    }
+    public String getStudentName() {
+        return this.register.getStudent().getFullName();
+    }
+    public String getExamName() {
+        return this.getExam().getName();
+    }
+
+
+    @Override
+    public String toString() {
+        return "TakeExam{" +
+                "tryTime=" + tryTime +
+                ", score=" + score +
+                '}';
+    }
+
+    public static TakeExam build(TakeExam takeExam) {
+        return TakeExam.builder()
+                .studentId(takeExam.getRegister().getStudent().getId())
+                .studentFullName(takeExam.getRegister().getStudent().getFullName())
+                .score(takeExam.getScore())
+                .examName(takeExam.getExam().getName())
+                .testId(takeExam.getTest().getId())
+                .testName(takeExam.getTest().getName())
+                .build()
+                ;
     }
 }

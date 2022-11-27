@@ -1,9 +1,6 @@
 import React from "react";
 import { tailwindCss } from "../../tailwind";
-import MyButton from "../common/MyButton";
-import { deleteCreditClass, setEditedCreditClass } from "../../features/creditClassSlice";
 import { cellCss } from "../questions/QuestionTableBody";
-import $ from "jquery";
 import { useDispatch } from "react-redux";
 
 function RegisterTableBody({ rows, setIsEdit, type = "", addExam = false }) {
@@ -50,33 +47,6 @@ function RegisterTableBody({ rows, setIsEdit, type = "", addExam = false }) {
                                 <td className={cellCss}>{row.creditClass.teacherName}</td>
                             </>
                         )}
-
-                        <td className={cellCss + " flex items-center"}>
-                            {!addExam ? (
-                                <>
-                                    <div>
-                                        <MyButton
-                                            type='edit'
-                                            onClick={() => {
-                                                $(`#registerModal`).css("display", "flex");
-                                                setIsEdit(true);
-                                                dispatch(setEditedCreditClass(row));
-                                            }}
-                                        />
-                                    </div>
-                                    <div className='mx-3'>
-                                        <MyButton
-                                            type='delete'
-                                            onClick={() => {
-                                                dispatch(deleteCreditClass(row.id));
-                                            }}
-                                        />
-                                    </div>
-                                </>
-                            ) : (
-                                <></>
-                            )}
-                        </td>
                     </tr>
                 );
             })}

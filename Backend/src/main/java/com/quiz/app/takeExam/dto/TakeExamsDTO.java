@@ -2,6 +2,7 @@ package com.quiz.app.takeExam.dto;
 
 
 import com.quiz.entity.Subject;
+import com.quiz.entity.TakeExam;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,8 +14,8 @@ import java.util.List;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class SubjectsDTO {
-    private List<Subject> subjects;
+public class TakeExamsDTO {
+    private List<TakeExam> takeExams;
     private long totalElements;
     private long totalPages;
 }

@@ -1,14 +1,14 @@
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
-import { fetchAllRegisters } from "../../features/registerSlice";
-import { subjectState } from "../../features/subjectSlice";
+import { creditClassState } from "../../features/creditClassSlice";
+import { fetchAllRegisters, registerState } from "../../features/registerSlice";
 import Select from "../utils/userInputs/Select";
 
 function RegisterFilter() {
     const dispatch = useDispatch();
-    const { creditClasses, filterObject } = useSelector(creditClassState);
+    const { creditClasses } = useSelector(creditClassState);
+    const { filterObject } = useSelector(registerState);
     const { register, handleSubmit } = useForm();
 
     const handleCreditClassChange = event => {
@@ -37,7 +37,7 @@ function RegisterFilter() {
                     )}
                     onChangeHandler={handleCreditClassChange}
                     hiddenOption
-                    width={"w-52"}
+                    width={"w-90"}
                 />
             </div>
             <div>

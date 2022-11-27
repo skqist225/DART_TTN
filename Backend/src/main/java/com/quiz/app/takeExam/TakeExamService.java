@@ -72,6 +72,15 @@ public class TakeExamService {
                 register.getStudent().getId());
     }
 
+    @Transactional
+    public void updateTakeExamScore(String studentId, Integer examId, float mark) {
+        takeExamRepository.updateTakeExamScore(studentId, examId, mark);
+    }
+
+    public TakeExam findByStudentAndExam(String studentId, Integer examId) {
+        return takeExamRepository.findByStudentAndExam(studentId, examId);
+    }
+
     public int determineTryTime(Register register) throws ConstrainstViolationException {
         int tryTime = findByRegister(register).size() + 1;
         if (tryTime == 3) {
@@ -118,7 +127,7 @@ public class TakeExamService {
         return (List<TakeExam>) takeExamRepository.findAll();
     }
 
-    public Page<TakeExam> findAllSubjects(Map<String, String> filters) {
+    public Page<TakeExam> findAllTakeExams(Map<String, String> filters) {
         int page = Integer.parseInt(filters.get("page"));
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
@@ -134,15 +143,15 @@ public class TakeExamService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        if (!StringUtils.isEmpty(searchQuery)) {
-            Expression<String> id = root.get("id");
-            Expression<String> name = root.get("name");
-
-            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
-
-            predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
-        }
+//        if (!StringUtils.isEmpty(searchQuery)) {
+//            Expression<String> id = root.get("id");
+//            Expression<String> name = root.get("name");
+//
+//            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
+//            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
+//
+//            predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
+//        }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
         criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));

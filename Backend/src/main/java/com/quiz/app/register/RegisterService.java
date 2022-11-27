@@ -23,6 +23,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
@@ -36,7 +37,7 @@ import java.util.Optional;
 public class RegisterService {
 
     @Autowired
-    RegisterRepository registerRepository;
+    private RegisterRepository registerRepository;
 
     @Autowired
     private EntityManager entityManager;
@@ -85,6 +86,17 @@ public class RegisterService {
         throw new NotFoundException("Không tìm thấy môn học với mã " + id);
     }
 
+    @Transactional
+    public void updateMidTermScore(String studentId, Integer creditClassId, float mark) {
+        registerRepository.updateMidTermScore(studentId, creditClassId, mark);
+    }
+
+    @Transactional
+    public void updateFinalTermScore(String studentId, Integer creditClassId, float mark) {
+        registerRepository.updateFinalTermScore(studentId, creditClassId, mark);
+    }
+
+
     public List<Register> findAll() {
         return (List<Register>) registerRepository.findAll();
     }
@@ -98,10 +110,11 @@ public class RegisterService {
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
+        String creditClassId = filters.get("creditClassId");
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+        Pageable pageable = PageRequest.of(page - 1, 15, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Register> criteriaQuery = criteriaBuilder.createQuery(Register.class);
@@ -117,6 +130,12 @@ public class RegisterService {
 //            Expression<String> wantedQueryField = criteriaBuilder.concat("", name);
 
 //            predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
+        }
+
+        if (!StringUtils.isEmpty(creditClassId)) {
+            Expression<String> creditClassIdExp = root.get("creditClass").get("id");
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(creditClassIdExp,
+                    creditClassId)));
         }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));

@@ -7,7 +7,7 @@ export const fetchAllTakeExams = createAsyncThunk(
         {
             page = 1,
             query = "",
-            sortField = "id",
+            sortField = "score",
             sortDir = "desc",
             level = "",
             subject = "",

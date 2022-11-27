@@ -79,14 +79,14 @@ public class RegisterRestController {
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
-            @RequestParam(name = "creditClass", required = false, defaultValue = "") Integer creditClassId
+            @RequestParam(name = "creditClass", required = false, defaultValue = "") String creditClassId
     ) {
         RegistersDTO registersDTO = new RegistersDTO();
 
         if(page.equals("0")) {
             List<Register> registers = new ArrayList<>();
             if (Objects.nonNull(creditClassId)) {
-                List<Register> tempRegisters = registerService.findByCreditClass(creditClassId);
+                List<Register> tempRegisters = registerService.findByCreditClass(Integer.parseInt(creditClassId));
 
                 for (Register register : tempRegisters) {
                     List<TakeExam> takeExams = takeExamService.findByRegister(register);
@@ -113,6 +113,7 @@ public class RegisterRestController {
             filters.put("query", query);
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
+            filters.put("creditClassId", creditClassId);
 
             Page<Register> subjectsPage = registerService.findAllRegisters(filters);
 
