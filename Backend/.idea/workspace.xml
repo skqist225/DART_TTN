@@ -5,29 +5,21 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
-      <change afterPath="$PROJECT_DIR$/../Admin/src/components/ranks/RankFilter.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Admin/src/components/ranks/RankTableBody.jsx" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/../Admin/src/components/takeTests/MyDrawer.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/common/MyButton.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/common/MyButton.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/creditClasses/CreditClassTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/creditClasses/CreditClassTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/exams/ExamTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/exams/ExamTableBody.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/components/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/questions/QuestionTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/questions/QuestionTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/ranks/RankTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/ranks/RankTableBody.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/components/registers/RegisterTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/registers/RegisterTableBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/components/takeTests/Answer.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/takeTests/Answer.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/css/tailwind.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/css/tailwind.config.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/features/takeExamSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/features/takeExamSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/ranks/RanksPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/ranks/RanksPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/takeTests/TakeTestPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/takeTests/TakeTestPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/roles/RoleTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/roles/RoleTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/subjects/SubjectTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/subjects/SubjectTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/tests/TestTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/tests/TestTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/users/UserTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/users/UserTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/components/utils/tables/Table.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/components/utils/tables/Table.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/src/pages/questions/QuestionsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/pages/questions/QuestionsPage.jsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Admin/src/tailwind/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/tailwind/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/register/RegisterRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/register/RegisterRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/register/RegisterRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/register/RegisterRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/register/RegisterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/register/RegisterService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/dto/SubjectsDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/dto/TakeExamsDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Register.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Register.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/TakeExam.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/TakeExam.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,30 +66,30 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_ADD_EXTERNAL_FILES": "true",
-    "RequestMappingsPanelOrder0": "0",
-    "RequestMappingsPanelOrder1": "1",
-    "RequestMappingsPanelWidth0": "75",
-    "RequestMappingsPanelWidth1": "75",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "/home/skqist225/Projects/DART_TTN/Backend/data",
-    "nodejs_package_manager_path": "npm",
-    "ruby.rails.projectView.checked": "true",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "preferences.sourceCode.Java",
-    "spring.configuration.checksum": "c94958ada0c81bb4e847abe659379e76"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_ADD_EXTERNAL_FILES&quot;: &quot;true&quot;,
+    &quot;RequestMappingsPanelOrder0&quot;: &quot;0&quot;,
+    &quot;RequestMappingsPanelOrder1&quot;: &quot;1&quot;,
+    &quot;RequestMappingsPanelWidth0&quot;: &quot;75&quot;,
+    &quot;RequestMappingsPanelWidth1&quot;: &quot;75&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;WebServerToolWindowFactoryState&quot;: &quot;false&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/home/skqist225/Projects/DART_TTN/Backend/data&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;ruby.rails.projectView.checked&quot;: &quot;true&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.sourceCode.Java&quot;,
+    &quot;spring.configuration.checksum&quot;: &quot;c94958ada0c81bb4e847abe659379e76&quot;
   },
-  "keyToStringList": {
-    "DatabaseDriversLRU": [
-      "mysql"
+  &quot;keyToStringList&quot;: {
+    &quot;DatabaseDriversLRU&quot;: [
+      &quot;mysql&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="ReactorSettings">
     <option name="notificationShown" value="true" />
   </component>
@@ -203,7 +195,8 @@
       <workItem from="1669425490244" duration="7293000" />
       <workItem from="1669445894883" duration="19788000" />
       <workItem from="1669513911475" duration="638000" />
-      <workItem from="1669522801588" duration="16525000" />
+      <workItem from="1669522801588" duration="17145000" />
+      <workItem from="1669639815807" duration="708000" />
     </task>
     <servers />
   </component>

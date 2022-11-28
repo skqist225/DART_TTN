@@ -6,34 +6,7 @@ import { fetchAllExams } from "../../features/examSlice";
 import { fetchAllQuestions } from "../../features/questionSlice";
 import { fetchAllSubjects } from "../../features/subjectSlice";
 import { fetchAllTakeExams, takeExamState } from "../../features/takeExamSlice";
-
-const columns = [
-    {
-        name: "STT",
-        sortField: "index",
-        sortable: true,
-    },
-    {
-        name: "MSSV",
-        sortField: "studentId",
-        sortable: true,
-    },
-    {
-        name: "Họ và tên",
-        sortField: "studentName",
-        sortable: true,
-    },
-    {
-        name: "Điểm",
-        sortField: "score",
-        sortable: true,
-    },
-    {
-        name: "Tên ca thi",
-        sortField: "examName",
-        sortable: true,
-    },
-];
+import { rankColumns } from "../columns";
 
 function RanksPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -79,19 +52,17 @@ function RanksPage() {
             setSidebarOpen={setSidebarOpen}
             title={"BẢNG XẾP HẠNG"}
             children={
-                <>
-                    <Table
-                        handleQueryChange={handleQueryChange}
-                        handleSortChange={handleSortChange}
-                        columns={columns}
-                        rows={takeExams}
-                        totalElements={totalElements}
-                        totalPages={totalPages}
-                        TableBody={RankTableBody}
-                        fetchDataByPageNumber={fetchDataByPageNumber}
-                        Filter={RankFilter}
-                    />
-                </>
+                <Table
+                    handleQueryChange={handleQueryChange}
+                    handleSortChange={handleSortChange}
+                    columns={rankColumns}
+                    rows={takeExams}
+                    totalElements={totalElements}
+                    totalPages={totalPages}
+                    TableBody={RankTableBody}
+                    fetchDataByPageNumber={fetchDataByPageNumber}
+                    Filter={RankFilter}
+                />
             }
         />
     );

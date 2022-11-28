@@ -5,7 +5,6 @@ import $ from "jquery";
 import { getImage } from "../../helpers";
 import { deleteUser, enableOrDisableUser, setEditedUser } from "../../features/userSlice";
 import { useDispatch } from "react-redux";
-import { cellCss } from "../questions/QuestionTableBody";
 import { Badge } from "flowbite-react";
 
 function UserTableModal({ rows, setIsEdit }) {
@@ -24,14 +23,14 @@ function UserTableModal({ rows, setIsEdit }) {
                     }`}
                     key={row.id}
                 >
-                    <td className={cellCss}>{row.id}</td>
-                    <td className={cellCss}>
+                    <td className={tailwindCss.tableCell}>{row.id}</td>
+                    <td className={tailwindCss.tableCell}>
                         <div className='normal-flex' style={{ width: "150px" }}>
                             <img src={getImage(row.avatarPath)} className='image' />
                             <span className='listings__room-name'>{row.fullName}</span>
                         </div>
                     </td>
-                    <td className={cellCss} style={{ width: "150px" }}>
+                    <td className={tailwindCss.tableCell} style={{ width: "150px" }}>
                         <div className='normal-flex'>
                             <div className='mr-10'>
                                 {row.status === true ? (
@@ -62,16 +61,16 @@ function UserTableModal({ rows, setIsEdit }) {
                             <div>{row.status === true ? "Hoạt động" : "Hủy"}</div>
                         </div>
                     </td>
-                    <td className={cellCss}>{row.birthday}</td>
-                    <td className={cellCss}>{row.address}</td>
-                    <td className={cellCss}>{row.email}</td>
-                    <td className={cellCss}>{lookupSex(row.sex)}</td>
-                    <td className={cellCss}>
+                    <td className={tailwindCss.tableCell}>{row.birthday}</td>
+                    <td className={tailwindCss.tableCell}>{row.address}</td>
+                    <td className={tailwindCss.tableCell}>{row.email}</td>
+                    <td className={tailwindCss.tableCell}>{lookupSex(row.sex)}</td>
+                    <td className={tailwindCss.tableCell}>
                         {row.roles.map(role => (
                             <Badge color='purple'>{role.name}</Badge>
                         ))}
                     </td>
-                    <td class={`${cellCss} flex items-center`}>
+                    <td class={`${tailwindCss.tableCell} flex items-center`}>
                         <MyButton
                             type='edit'
                             onClick={() => {

@@ -4,7 +4,6 @@ import MyButton from "../common/MyButton";
 import $ from "jquery";
 import { deleteRole, setEditedRole } from "../../features/roleSlice";
 import { useDispatch } from "react-redux";
-import { cellCss } from "../questions/QuestionTableBody";
 
 function RoleTableBody({ rows, setIsEdit }) {
     const dispatch = useDispatch();
@@ -12,9 +11,9 @@ function RoleTableBody({ rows, setIsEdit }) {
         <tbody>
             {rows.map(row => (
                 <tr className={tailwindCss.tr} key={row.id}>
-                    <td className={cellCss}>{row.id}</td>
-                    <td className={cellCss}>{row.name}</td>
-                    <td class={`${cellCss} flex items-center`}>
+                    <td className={tailwindCss.tableCell}>{row.id}</td>
+                    <td className={tailwindCss.tableCell}>{row.name}</td>
+                    <td class={`${tailwindCss.tableCell} flex items-center`}>
                         <MyButton
                             type='edit'
                             onClick={() => {

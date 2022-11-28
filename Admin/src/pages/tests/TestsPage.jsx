@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Frame, TestModalBody, TestTableBody, Table, TestFilter } from "../../components";
 import {
     addTest,
@@ -9,61 +11,20 @@ import {
     setEditedTest,
     testState,
 } from "../../features/testSlice";
-import $ from "jquery";
 import { testSchema } from "../../validation";
-import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
-import { yupResolver } from "@hookform/resolvers/yup";
 import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
 import {
     fetchAllQuestions,
     loadQuestionsByCriteria,
     setQuestions,
 } from "../../features/questionSlice";
-
-const columns = [
-    {
-        name: "Mã đề thi",
-        sortField: "id",
-        sortable: true,
-    },
-    {
-        name: "Tên đề thi",
-        sortField: "name",
-        sortable: true,
-    },
-    {
-        name: "Trạng thái",
-        sortField: "status",
-        sortable: true,
-    },
-    {
-        name: "Tổng số câu hỏi",
-        sortField: "numberOfQuestions",
-        sortable: true,
-    },
-    {
-        name: "Tiêu chí",
-        sortField: "criteria",
-    },
-    {
-        name: "Môn học",
-        sortField: "subject",
-        sortable: true,
-    },
-    {
-        name: "Người tạo",
-        sortField: "teacher",
-        sortable: true,
-    },
-    {
-        name: "Thao tác",
-        sortField: "teacher",
-    },
-];
+import { testColumns } from "../columns";
+import $ from "jquery";
 
 function TestsPage() {
     const dispatch = useDispatch();
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
@@ -243,13 +204,13 @@ function TestsPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH ĐỀ THI"}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
             children={
                 <Table
-                    searchPlaceHolder={"Tìm kiếm theo tên và mã đề thi"}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={columns}
+                    columns={testColumns}
                     rows={tests}
                     totalElements={totalElements}
                     totalPages={totalPages}

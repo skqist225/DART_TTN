@@ -15,19 +15,7 @@ import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { roleState } from "../../features/roleSlice";
-
-const columns = [
-    {
-        name: "Mã vai trò",
-        sortField: "id",
-        sortable: true,
-    },
-    {
-        name: "Tên vai trò",
-        sortField: "name",
-        sortable: true,
-    },
-];
+import { roleColumns } from "../columns";
 
 function RolesPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -137,13 +125,13 @@ function RolesPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH VAI TRÒ"}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
             children={
                 <Table
-                    searchPlaceHolder={"Tìm kiếm theo tên và mã vai trò"}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={columns}
+                    columns={roleColumns}
                     rows={roles}
                     totalElements={totalElements}
                     totalPages={totalPages}

@@ -55,7 +55,7 @@ function QuestionsFilter() {
                     }))}
                     onChangeHandler={handleSubjectChange}
                     hiddenOption
-                    width={"w-40"}
+                    width={"w-48"}
                 />
             </div>
             <div>

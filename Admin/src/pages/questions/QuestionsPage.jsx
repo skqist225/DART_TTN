@@ -23,52 +23,7 @@ import {
     setEditedQuestion,
 } from "../../features/questionSlice";
 import { fetchAllSubjects } from "../../features/subjectSlice";
-
-const columns = [
-    {
-        name: "Mã câu hỏi",
-        sortField: "id",
-        sortable: true,
-    },
-    {
-        name: "Nội dung",
-        sortField: "content",
-        sortable: true,
-    },
-    {
-        name: "Loại",
-        sortField: "type",
-        sortable: true,
-    },
-    {
-        name: "Số lựa chọn",
-        sortField: "answerC",
-    },
-    {
-        name: "Độ khó",
-        sortField: "level",
-        sortable: true,
-    },
-    {
-        name: "Chương",
-        sortField: "chapter",
-        sortable: true,
-    },
-    {
-        name: "Môn học",
-        sortField: "subject",
-        sortable: true,
-    },
-    {
-        name: "Giảng viên",
-        sortField: "teacher",
-        sortable: true,
-    },
-    {
-        name: "Thao tác",
-        sortable: false,
-    },
-];
+import { questionColumns } from "../columns";
 
 const Type = {
     oneAnswer: "Một đáp án",
@@ -312,12 +267,13 @@ function QuestionsPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH CÂU HỎI"}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
             children={
                 <Table
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={columns}
+                    columns={questionColumns}
                     rows={questions}
                     totalElements={totalElements}
                     totalPages={totalPages}

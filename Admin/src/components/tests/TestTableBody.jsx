@@ -1,10 +1,9 @@
 import React from "react";
 import { deleteTest, setEditedTest } from "../../features/testSlice";
 import { tailwindCss } from "../../tailwind";
-import MyButton from "../common/MyButton";
+import MyButton, { ButtonType } from "../common/MyButton";
 import { useDispatch } from "react-redux";
 import $ from "jquery";
-import { cellCss } from "../questions/QuestionTableBody";
 import { Badge, Button, Table, Tooltip } from "flowbite-react";
 import CriteriaList from "./CriteriaList";
 import TableModalViewer from "../utils/tables/TableModalViewer";
@@ -32,14 +31,14 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                             </div>
                         </th>
                     )}
-                    <td className={cellCss}>{row.id}</td>
+                    <td className={tailwindCss.tableCell}>{row.id}</td>
                     <td
-                        className={cellCss + ` text-sm`}
+                        className={`${tailwindCss.tableCell} text-sm`}
                         style={{ maxWidth: `${examPage && "150px"}` }}
                     >
                         {row.name}
                     </td>
-                    <td className={cellCss}>
+                    <td className={tailwindCss.tableCell}>
                         {row.status === "Chưa sử dụng" ? (
                             <Badge color='indigo' size='sm'>
                                 {row.status}
@@ -50,53 +49,24 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                             </Badge>
                         )}
                     </td>
-                    <td className={cellCss}>{row.numberOfQuestions}</td>
-                    <td className={cellCss} style={{ zIndex: "9999" }}>
+                    <td className={tailwindCss.tableCell}>{row.numberOfQuestions}</td>
+                    <td className={tailwindCss.tableCell} style={{ zIndex: "9999" }}>
                         <Tooltip
                             content={<CriteriaList criteria={row.criteria} />}
                             placement='bottom'
                             animation='duration-300'
                             style='light'
                         >
-                            <Button color='purple'>
-                                <VisibilityIcon />
-                            </Button>
+                            <MyButton type={ButtonType.view} />
                         </Tooltip>
                     </td>
-                    <td className={cellCss}>{row.subjectName}</td>
-                    <td className={cellCss}>{row.teacherName}</td>
+                    <td className={tailwindCss.tableCell}>{row.subjectName}</td>
+                    <td className={tailwindCss.tableCell}>{row.teacherName}</td>
                     {!examPage && (
-                        <td className={`${cellCss} flex items-center`}>
-                            {/* <div className='mr-2'>
-                                <Tooltip
-                                    content={"Xem danh sách tiêu chí"}
-                                    placement='bottom'
-                                    animation='duration-300'
-                                    style='light'
-                                >
-                                    <Button
-                                        onClick={() => {
-                                            $(`#criteriaViewer${index}`).css("display", "flex");
-                                        }}
-                                        color='success'
-                                        style={{
-                                            width: "46px",
-                                            height: "42px",
-                                            backgroundColor: "#0E9F6E",
-                                        }}
-                                    >
-                                        <VisibilityIcon />
-                                    </Button>
-                                </Tooltip>
-                                <TableModalViewer
-                                    modalId={`criteriaViewer${index}`}
-                                    modalLabel='Danh sách tiêu chí'
-                                    ModalBody={<CriteriaList criteria={row.criteria} />}
-                                />
-                            </div> */}
+                        <td className={`${tailwindCss.tableCell} flex items-center`}>
                             <div className='mr-2'>
                                 <MyButton
-                                    type='edit'
+                                    type={ButtonType.edit}
                                     onClick={() => {
                                         $("#testModal").css("display", "flex");
                                         setIsEdit(true);
@@ -106,7 +76,7 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                             </div>
                             <div>
                                 <MyButton
-                                    type='delete'
+                                    type={ButtonType.delete}
                                     onClick={() => {
                                         dispatch(deleteTest(row.id));
                                     }}

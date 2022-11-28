@@ -21,44 +21,7 @@ import {
     registerState,
 } from "../../features/registerSlice";
 import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
-
-const columns = [
-    {
-        name: "Mã SV",
-        sortField: "fullName",
-        sortable: true,
-    },
-    {
-        name: "Họ tên",
-        sortField: "creditClass",
-        sortable: true,
-    },
-    {
-        name: "Mã LTC",
-        sortField: "creditClass",
-        sortable: true,
-    },
-    {
-        name: "Niên khóa",
-        sortField: "creditClass",
-        sortable: true,
-    },
-    {
-        name: "Học kỳ",
-        sortField: "creditClass",
-        sortable: true,
-    },
-    {
-        name: "Môn học",
-        sortField: "status",
-        sortable: true,
-    },
-    {
-        name: "Giảng viên",
-        sortField: "status",
-        sortable: true,
-    },
-];
+import { registerColumns } from "../columns";
 
 function RegistersPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -192,12 +155,13 @@ function RegistersPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH ĐĂNG KÝ"}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
             children={
                 <Table
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={columns}
+                    columns={registerColumns}
                     rows={registers}
                     totalElements={totalElements}
                     totalPages={totalPages}

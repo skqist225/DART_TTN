@@ -3,7 +3,6 @@ import { tailwindCss } from "../../tailwind";
 import MyButton from "../common/MyButton";
 import $ from "jquery";
 import { enableOrDisableCreditClass, setEditedCreditClass } from "../../features/creditClassSlice";
-import { cellCss } from "../questions/QuestionTableBody";
 import EnableOrDisable from "../common/EnableOrDisable";
 import { useDispatch } from "react-redux";
 import { persistUserState } from "../../features/persistUserSlice";
@@ -171,20 +170,20 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                             }`}
                             key={row.id}
                         >
-                            <td className={cellCss}>{row.id}</td>
-                            <td className={cellCss}>{row.schoolYear}</td>
-                            <td className={cellCss}>{row.semester}</td>
-                            <td className={cellCss}>{row.subjectName}</td>
-                            <td className={cellCss}>{row.group}</td>
-                            <td className={cellCss}>
+                            <td className={tailwindCss.tableCell}>{row.id}</td>
+                            <td className={tailwindCss.tableCell}>{row.schoolYear}</td>
+                            <td className={tailwindCss.tableCell}>{row.semester}</td>
+                            <td className={tailwindCss.tableCell}>{row.subjectName}</td>
+                            <td className={tailwindCss.tableCell}>{row.group}</td>
+                            <td className={tailwindCss.tableCell}>
                                 {row.status ? (
                                     <Badge color='failure'>Đã hủy</Badge>
                                 ) : (
                                     <Badge color='success'>Đang mở</Badge>
                                 )}
                             </td>
-                            <td className={cellCss}>{row.teacherName}</td>
-                            <td className={cellCss + " flex items-center"}>
+                            <td className={tailwindCss.tableCell}>{row.teacherName}</td>
+                            <td className={`${tailwindCss.tableCell} flex items-center`}>
                                 <div className='mr-3'>
                                     <Tooltip content='Xem danh sách đăng ký' placement='top'>
                                         <Button

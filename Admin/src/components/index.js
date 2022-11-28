@@ -29,6 +29,7 @@ export { default as QuestionExcelModalBody } from "./questions/QuestionExcelModa
 export { default as QuestionModalBody } from "./questions/QuestionModalBody";
 export { default as QuestionsFilter } from "./questions/QuestionsFilter";
 export { default as QuestionTableBody } from "./questions/QuestionTableBody";
+export { default as AnswerList } from "./questions/AnswerList";
 
 //subjects
 export { default as SubjectModalBody } from "./subjects/SubjectModalBody";

@@ -12,6 +12,8 @@ import { persistUserState } from "../../../features/persistUserSlice";
 import { setUserExcelAdd } from "../../../features/userSlice";
 import { Tooltip } from "flowbite-react";
 import AddIcon from "@mui/icons-material/Add";
+import MyButton, { ButtonType } from "../../common/MyButton";
+import { height } from "@mui/system";
 
 function Table({
     searchPlaceHolder,
@@ -39,11 +41,12 @@ function Table({
     excelAdd,
     recordsPerPage = 12,
 }) {
-    const [open, setOpen] = useState(false);
     const dispatch = useDispatch();
 
+    const [open, setOpen] = useState(false);
+
     const { userRoles } = useSelector(persistUserState);
-    console.log(modalLabel);
+
     return (
         <div
             className='overflow-x-auto relative shadow-md sm:rounded-lg overflow-y-auto flex flex-col justify-between'
@@ -58,99 +61,54 @@ function Table({
                         />
                         {Filter && <Filter />}
                     </div>
-
-                    {!["câu hỏi", "người dùng"].includes(modalLabel) ? (
-                        (modalLabel === "môn học" && !userRoles.includes("Quản trị viên")) ||
+                    <div
+                        className='flex items-center
+                    '
+                    >
+                        {(modalLabel === "môn học" && !userRoles.includes("Quản trị viên")) ||
                         (modalLabel === "ca thi" && userRoles.includes("Sinh viên")) ? (
                             <></>
                         ) : (
-                            <div className='mr-5'>
+                            <div className='mr-2'>
                                 <Tooltip
                                     placement='left'
                                     animation='duration-200'
                                     style='dark'
-                                    content={<> Thêm {modalLabel}</>}
+                                    content={<span>Thêm {modalLabel}</span>}
                                 >
-                                    <button
-                                        type='button'
+                                    <MyButton
+                                        type={ButtonType.add}
                                         onClick={() => {
-                                            $("#" + modalId).css("display", "flex");
+                                            $(`#${modalId}`).css("display", "flex");
                                             setIsEdit(false);
-                                        }}
-                                        style={{
-                                            backgroundColor: "#2e83f2",
                                         }}
                                         className='px-2 py-2 rounded-lg'
-                                    >
-                                        <AddIcon
-                                            style={{
-                                                width: "32px",
-                                                height: "32px",
-                                                filter: "brightness(0) invert(1)",
-                                            }}
-                                        />
-                                    </button>
+                                    />
                                 </Tooltip>
                             </div>
-                        )
-                    ) : (
-                        <div className='relative'>
+                        )}
+
+                        <div className='mr-2'>
                             <button
-                                id='dropdownDefault'
-                                data-dropdown-toggle='dropdown'
-                                className='text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-2 py-2 text-center inline-flex items-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800 mr-10'
                                 type='button'
+                                className={
+                                    tailwindCss.lightButton + " bg-gray-200 hover:bg-gray-300"
+                                }
                                 onClick={() => {
-                                    if (!open) {
-                                        $("#dropdown").css("display", "block");
-                                        setOpen(true);
+                                    if (modalLabel === "câu hỏi") {
+                                        dispatch(setExcelAdd(true));
+                                    } else if (modalLabel === "người dùng") {
+                                        dispatch(setUserExcelAdd(true));
                                     } else {
-                                        $("#dropdown").css("display", "none");
-                                        setOpen(false);
                                     }
+                                    $(`#${modalId}`).css("display", "flex");
                                 }}
-                                style={{ width: "170px" }}
+                                style={{ width: "46px", height: "46px" }}
                             >
-                                Thêm {modalLabel}
-                                <DropDownIcon />
+                                <ExcelIcon />
                             </button>
-                            <div id='dropdown' className={tailwindCss.dropdown.button}>
-                                <ul
-                                    className='py-1 text-sm text-gray-700 dark:text-gray-200'
-                                    aria-labelledby='dropdownMenuIconButton'
-                                >
-                                    <li
-                                        className={tailwindCss.dropdown.li}
-                                        onClick={() => {
-                                            $("#" + modalId).css("display", "flex");
-                                            setIsEdit(false);
-                                            dispatch(setEditedQuestion(null));
-                                        }}
-                                    >
-                                        Thêm {modalLabel}
-                                    </li>
-                                    <li>
-                                        <button
-                                            type='button'
-                                            className={tailwindCss.lightButton}
-                                            onClick={() => {
-                                                if (modalLabel === "câu hỏi") {
-                                                    dispatch(setExcelAdd(true));
-                                                } else if (modalLabel === "người dùng") {
-                                                    dispatch(setUserExcelAdd(true));
-                                                } else {
-                                                }
-                                                $("#" + modalId).css("display", "flex");
-                                            }}
-                                        >
-                                            <ExcelIcon />
-                                            Import Excel
-                                        </button>
-                                    </li>
-                                </ul>
-                            </div>
                         </div>
-                    )}
+                    </div>
                 </div>
 
                 <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>

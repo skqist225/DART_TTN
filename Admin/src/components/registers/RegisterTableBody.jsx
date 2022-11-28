@@ -1,6 +1,5 @@
 import React from "react";
 import { tailwindCss } from "../../tailwind";
-import { cellCss } from "../questions/QuestionTableBody";
 import { useDispatch } from "react-redux";
 
 function RegisterTableBody({ rows, setIsEdit, type = "", addExam = false }) {
@@ -36,15 +35,23 @@ function RegisterTableBody({ rows, setIsEdit, type = "", addExam = false }) {
                                 </div>
                             </td>
                         )}
-                        <td className={cellCss}>{row.student.id}</td>
-                        <td className={cellCss}>{row.student.fullName}</td>
+                        <td className={tailwindCss.tableCell}>{row.student.id}</td>
+                        <td className={tailwindCss.tableCell}>{row.student.fullName}</td>
                         {!addExam && (
                             <>
-                                <td className={cellCss}>{row.creditClass.id}</td>
-                                <td className={cellCss}>{row.creditClass.schoolYear}</td>
-                                <td className={cellCss}>{row.creditClass.semester}</td>
-                                <td className={cellCss}>{row.creditClass.subjectName}</td>
-                                <td className={cellCss}>{row.creditClass.teacherName}</td>
+                                <td className={tailwindCss.tableCell}>{row.creditClass.id}</td>
+                                <td className={tailwindCss.tableCell}>
+                                    {row.creditClass.schoolYear}
+                                </td>
+                                <td className={tailwindCss.tableCell}>
+                                    {row.creditClass.semester}
+                                </td>
+                                <td className={tailwindCss.tableCell}>
+                                    {row.creditClass.subjectName}
+                                </td>
+                                <td className={tailwindCss.tableCell}>
+                                    {row.creditClass.teacherName}
+                                </td>
                             </>
                         )}
                     </tr>

@@ -1,14 +1,12 @@
 import React from "react";
-import { deleteSubject, setEditedSubject } from "../../features/subjectSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { Table } from "flowbite-react";
 import { tailwindCss } from "../../tailwind";
 import MyButton from "../../components/common/MyButton";
-import $ from "jquery";
-import { useDispatch } from "react-redux";
-import { cellCss } from "../questions/QuestionTableBody";
-import { Table } from "flowbite-react";
 import TableModalViewer from "../utils/tables/TableModalViewer";
 import { persistUserState } from "../../features/persistUserSlice";
-import { useSelector } from "react-redux";
+import { deleteSubject, setEditedSubject } from "../../features/subjectSlice";
+import $ from "jquery";
 
 function SubjectTableBody({ rows, setIsEdit }) {
     const dispatch = useDispatch();
@@ -18,14 +16,14 @@ function SubjectTableBody({ rows, setIsEdit }) {
         <tbody>
             {rows.map((row, index) => (
                 <tr className={tailwindCss.tr} key={row.id}>
-                    <td className={cellCss}>{row.id}</td>
-                    <td className={cellCss}>{row.name}</td>
-                    <td className={cellCss}>{row.numberOfTheoreticalPeriods}</td>
-                    <td className={cellCss}>{row.numberOfPracticePeriods}</td>
-                    <td className={cellCss}>{row.chapters.length}</td>
-                    <td className={cellCss}>{row.numberOfTests}</td>
-                    <td className={cellCss}>{row.numberOfQuestions}</td>
-                    <td class={`${cellCss} flex items-center`}>
+                    <td className={tailwindCss.tableCell}>{row.id}</td>
+                    <td className={tailwindCss.tableCell}>{row.name}</td>
+                    <td className={tailwindCss.tableCell}>{row.numberOfTheoreticalPeriods}</td>
+                    <td className={tailwindCss.tableCell}>{row.numberOfPracticePeriods}</td>
+                    <td className={tailwindCss.tableCell}>{row.chapters.length}</td>
+                    <td className={tailwindCss.tableCell}>{row.numberOfTests}</td>
+                    <td className={tailwindCss.tableCell}>{row.numberOfQuestions}</td>
+                    <td class={`${tailwindCss.tableCell} flex items-center`}>
                         <div className='mr-2'>
                             <MyButton
                                 type='view'

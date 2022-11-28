@@ -17,74 +17,13 @@ import ExamFilter from "../../components/exams/ExamFilter";
 import $ from "jquery";
 import { fetchAllSubjects } from "../../features/subjectSlice";
 import { fetchAllCreditClasses } from "../../features/creditClassSlice";
-import { setErrorField } from "../../features/userSlice";
 import { setTests } from "../../features/testSlice";
 import { persistUserState } from "../../features/persistUserSlice";
-
-const columns = [
-    {
-        name: "Tên ca thi",
-        sortField: "name",
-        sortable: true,
-    },
-    {
-        name: "Mã môn học",
-        sortField: "subjectId",
-        // sortable: true,
-    },
-    {
-        name: "Tên môn học",
-        sortField: "subjectName",
-        // sortable: true,
-    },
-    {
-        name: "Trạng thái",
-        sortField: "taken",
-        // sortable: true,
-    },
-    {
-        name: "Số lượng",
-        sortField: "numberOfStudents",
-        // sortable: true,
-    },
-    {
-        name: "Ngày thi",
-        sortField: "examDate",
-        sortable: true,
-    },
-    {
-        name: "Tiết báo danh",
-        sortField: "noticePeriod",
-        sortable: true,
-    },
-    {
-        name: "Thời gian thi",
-        sortField: "time",
-        sortable: true,
-    },
-    {
-        name: "Loại thi",
-        sortField: "type",
-        sortable: true,
-    },
-    {
-        name: "Giảng viên",
-        sortField: "time",
-        // sortable: true,
-    },
-    // {
-    //     name: "Người tạo",
-    //     sortField: "name",
-    //     sortable: true,
-    // },
-    {
-        name: "Thao tác",
-        sortField: "name",
-    },
-];
+import { examColumns } from "../columns";
 
 function ExamsPage() {
     const dispatch = useDispatch();
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
@@ -276,10 +215,10 @@ function ExamsPage() {
             title={!userRoles.includes("Sinh viên") ? "DANH SÁCH CA THI" : "DANH SÁCH LỊCH THI"}
             children={
                 <Table
-                    searchPlaceHolder={"Tìm kiếm theo tên và mã ca thi"}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={columns}
+                    columns={examColumns}
                     rows={exams}
                     totalElements={totalElements}
                     totalPages={totalPages}

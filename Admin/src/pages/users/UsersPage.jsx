@@ -19,51 +19,7 @@ import { userRegisterSchema, userSchema } from "../../validation";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { fetchAllRoles } from "../../features/roleSlice";
-
-const columns = [
-    {
-        name: "Mã người dùng",
-        sortField: "id",
-        sortable: true,
-    },
-    {
-        name: "Họ tên",
-        sortField: "fullName",
-        sortable: true,
-    },
-    {
-        name: "Trạng thái",
-        sortField: "status",
-    },
-    {
-        name: "Ngày sinh",
-        sortField: "birthday",
-        sortable: true,
-    },
-    {
-        name: "Địa chỉ",
-        sortField: "address",
-        sortable: true,
-    },
-    {
-        name: "Email",
-        sortField: "email",
-        sortable: true,
-    },
-    {
-        name: "Giới tính",
-        sortField: "sex",
-        sortable: true,
-    },
-    {
-        name: "Vai trò",
-        sortField: "role",
-        sortable: true,
-    },
-    {
-        name: "Thao tác",
-    },
-];
+import { userColumns } from "../columns";
 
 const UsersPage = () => {
     const dispatch = useDispatch();
@@ -283,13 +239,13 @@ const UsersPage = () => {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH NGƯỜI DÙNG"}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
             children={
                 <Table
-                    searchPlaceHolder={"Tìm kiếm theo tên và mã người dùng"}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={columns}
+                    columns={userColumns}
                     rows={users}
                     totalElements={totalElements}
                     totalPages={totalPages}

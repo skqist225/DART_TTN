@@ -25,47 +25,7 @@ import {
 import { fetchAllUsers } from "../../features/userSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import { clearExamState, examState } from "../../features/examSlice";
-
-const columns = [
-    {
-        name: "Mã LTC",
-        sortField: "id",
-        sortable: true,
-    },
-    {
-        name: "Năm học",
-        sortField: "content",
-        sortable: true,
-    },
-    {
-        name: "Học kỳ",
-        sortField: "type",
-        sortable: true,
-    },
-    {
-        name: "Môn học",
-        sortField: "answerC",
-    },
-    {
-        name: "Nhóm",
-        sortField: "level",
-        sortable: true,
-    },
-    {
-        name: "Tình trạng",
-        sortField: "chapter",
-        sortable: true,
-    },
-    {
-        name: "Giảng viên",
-        sortField: "subject",
-        sortable: true,
-    },
-    {
-        name: "Thao tác",
-        sortable: false,
-    },
-];
+import { creditClassColumns } from "../columns";
 
 function CreditClassesPage() {
     const dispatch = useDispatch();
@@ -245,12 +205,13 @@ function CreditClassesPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH LỚP TÍN CHỈ"}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
             children={
                 <Table
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={columns}
+                    columns={creditClassColumns}
                     rows={creditClasses}
                     totalElements={totalElements}
                     totalPages={totalPages}
@@ -261,17 +222,15 @@ function CreditClassesPage() {
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={
-                        <>
-                            <CreditClassModalBody
-                                errors={errors}
-                                register={register}
-                                dispatch={dispatch}
-                                setValue={setValue}
-                                isEdit={isEdit}
-                                control={control}
-                                clearErrors={clearErrors}
-                            />
-                        </>
+                        <CreditClassModalBody
+                            errors={errors}
+                            register={register}
+                            dispatch={dispatch}
+                            setValue={setValue}
+                            isEdit={isEdit}
+                            control={control}
+                            clearErrors={clearErrors}
+                        />
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}

@@ -11,8 +11,9 @@ import { MyButton, LevelBadge } from "..";
 import EnableOrDisable from "../common/EnableOrDisable";
 import $ from "jquery";
 import { persistUserState } from "../../features/persistUserSlice";
-
-export const cellCss = "py-2 px-3 text-black text-sm";
+import { Tooltip } from "flowbite-react";
+import { ButtonType } from "../common/MyButton";
+import { AnswerList } from "../";
 
 function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
     const dispatch = useDispatch();
@@ -25,12 +26,6 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
     return (
         <tbody>
             {rows.map(row => {
-                let answer = null;
-                if (row.type === "Đáp án điền") {
-                    answer = row.finalAnswer;
-                } else if (row.type === "Một đáp án") {
-                }
-
                 return (
                     <tr
                         className={`${tailwindCss.tr} ${
@@ -38,9 +33,9 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                         }`}
                         key={row.id}
                     >
-                        <td className={cellCss}>{row.id}</td>
+                        <td className={tailwindCss.tableCell}>{row.id}</td>
                         <td
-                            className={cellCss}
+                            className={tailwindCss.tableCell}
                             style={{
                                 maxWidth: "250px",
                                 display: "-webkit-box",
@@ -53,35 +48,44 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                             }}
                         >
                             {row.content}
+                        </td>{" "}
+                        <td className={tailwindCss.tableCell} style={{ zIndex: "9999" }}>
+                            <Tooltip
+                                content={<AnswerList answers={row.answers} />}
+                                placement='bottom'
+                                animation='duration-300'
+                                style='light'
+                            >
+                                <MyButton type={ButtonType.view} />
+                            </Tooltip>
                         </td>
                         {!addTest ? (
                             <>
-                                <td className={cellCss}>{row.type}</td>
-                                <td className={cellCss}>{row.answers && row.answers.length}</td>
-                                <td className={cellCss}>
+                                <td className={tailwindCss.tableCell}>{row.type}</td>
+                                <td className={tailwindCss.tableCell}>
                                     <LevelBadge level={row.level} />
                                 </td>
-                                <td className={cellCss}>
+                                <td className={tailwindCss.tableCell}>
                                     {!excelAdd ? row.chapter.name : row.chapterName}
                                 </td>
-                                <td className={cellCss}>
+                                <td className={tailwindCss.tableCell}>
                                     {!excelAdd ? row.chapter.subjectName : row.subjectName}
                                 </td>
                             </>
                         ) : (
                             <>
-                                <td className={cellCss}>{row.type}</td>
-                                <td className={cellCss}>{row.chapter.name}</td>
+                                <td className={tailwindCss.tableCell}>{row.type}</td>
+                                <td className={tailwindCss.tableCell}>{row.chapter.name}</td>
                                 <td>
                                     <LevelBadge level={row.level} />
                                 </td>
                             </>
                         )}
                         {!excelAdd && userRoles.includes("Quản trị viên") && (
-                            <td className={cellCss}>
+                            <td className={tailwindCss.tableCell}>
                                 {row.teacher.firstName} {row.teacher.lastName}
                             </td>
-                        )}
+                        )}{" "}
                         <td className='py-2 px-3 flex items-center justify-center'>
                             {!addTest ? (
                                 <>

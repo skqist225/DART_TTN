@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
 import { Frame, SubjectModalBody, SubjectTableBody, Table } from "../../components";
 import {
     addSubject,
@@ -10,49 +11,10 @@ import {
     setEditedSubject,
     subjectState,
 } from "../../features/subjectSlice";
-import $ from "jquery";
 import { subjectSchema } from "../../validation";
-import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
-import { yupResolver } from "@hookform/resolvers/yup";
-
-const columns = [
-    {
-        name: "Mã môn học",
-        sortField: "id",
-        sortable: true,
-    },
-    {
-        name: "Tên môn học",
-        sortField: "name",
-        sortable: true,
-    },
-    {
-        name: "Số tiết lý thuyết",
-        sortField: "numberOfTheoreticalPeriods",
-        sortable: true,
-    },
-    {
-        name: "Số tiết thực hành",
-        sortField: "numberOfPracticePeriods",
-        sortable: true,
-    },
-    {
-        name: "Số chương",
-        sortField: "numberOfChapters",
-        sortable: true,
-    },
-    {
-        name: "Số bộ đề",
-        sortField: "numberOfTests",
-        sortable: true,
-    },
-    {
-        name: "Số câu hỏi",
-        sortField: "numberOfQuestions",
-        sortable: true,
-    },
-];
+import $ from "jquery";
+import { subjectColumns } from "../columns";
 
 function SubjectsPage() {
     const dispatch = useDispatch();
@@ -254,13 +216,13 @@ function SubjectsPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"DANH SÁCH MÔN HỌC"}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
             children={
                 <Table
-                    searchPlaceHolder={"Tìm kiếm theo tên và mã môn học"}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={columns}
+                    columns={subjectColumns}
                     rows={subjects}
                     totalElements={totalElements}
                     totalPages={totalPages}

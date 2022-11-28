@@ -4,7 +4,6 @@ import MyButton from "../common/MyButton";
 import $ from "jquery";
 // import { deleteCreditClass } from "../../features/creditClassSlice";
 import { useDispatch, useSelector } from "react-redux";
-import { cellCss } from "../questions/QuestionTableBody";
 import TableModalViewer from "../utils/tables/TableModalViewer";
 import { Badge, Table } from "flowbite-react";
 import { enableOrDisableExam, setEditedExam } from "../../features/examSlice";
@@ -27,26 +26,26 @@ function ExamTableBody({ rows, setIsEdit }) {
                             }`}
                             key={row.id}
                         >
-                            <td className={cellCss}>{row.name}</td>
-                            <td className={cellCss}>{row.subjectId}</td>
-                            <td className={cellCss}>{row.subjectName}</td>
-                            <td className={cellCss}>
+                            <td className={tailwindCss.tableCell}>{row.name}</td>
+                            <td className={tailwindCss.tableCell}>{row.subjectId}</td>
+                            <td className={tailwindCss.tableCell}>{row.subjectName}</td>
+                            <td className={tailwindCss.tableCell}>
                                 {row.taken ? (
                                     <Badge color='success'>Đã thi</Badge>
                                 ) : (
                                     <Badge color='info'>Chưa thi</Badge>
                                 )}
                             </td>
-                            <td className={cellCss}>{row.numberOfRegisters}</td>
-                            <td className={cellCss}>{row.examDate}</td>
-                            <td className={cellCss}>{row.noticePeriod}</td>
-                            <td className={cellCss}>{row.time} phút</td>
-                            <td className={cellCss}>{row.type}</td>
-                            {/* <td className={cellCss}>{row.teacherName}</td> */}
+                            <td className={tailwindCss.tableCell}>{row.numberOfRegisters}</td>
+                            <td className={tailwindCss.tableCell}>{row.examDate}</td>
+                            <td className={tailwindCss.tableCell}>{row.noticePeriod}</td>
+                            <td className={tailwindCss.tableCell}>{row.time} phút</td>
+                            <td className={tailwindCss.tableCell}>{row.type}</td>
+                            {/* <td className={tailwindCss.tableCell}>{row.teacherName}</td> */}
                             {userRoles.includes("Quản trị viên") && (
-                                <td className={cellCss}>{row.createdBy}</td>
+                                <td className={tailwindCss.tableCell}>{row.createdBy}</td>
                             )}
-                            <td className={`${cellCss} flex items-center`}>
+                            <td className={`${tailwindCss.tableCell} flex items-center`}>
                                 <div className='mr-2'>
                                     <MyButton
                                         type='view'
