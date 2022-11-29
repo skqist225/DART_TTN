@@ -34,7 +34,7 @@ public class Chapter {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "SOCHUONG", nullable = false)
+    @Column(name = "SOCHUONG", columnDefinition = "SMALLINT", nullable = false)
     private Integer chapterNumber;
 
     @Column(name = "TENCHUONG", nullable = false, unique = true)

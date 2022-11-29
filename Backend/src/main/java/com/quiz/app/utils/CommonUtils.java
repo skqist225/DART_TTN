@@ -1,4 +1,4 @@
-package com.quiz.app.common;
+package com.quiz.app.utils;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;

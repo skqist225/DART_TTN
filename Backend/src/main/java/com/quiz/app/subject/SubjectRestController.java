@@ -2,7 +2,7 @@ package com.quiz.app.subject;
 
 import com.quiz.app.chapter.ChapterService;
 import com.quiz.app.chapter.dto.ChapterDTO;
-import com.quiz.app.common.CommonUtils;
+import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;

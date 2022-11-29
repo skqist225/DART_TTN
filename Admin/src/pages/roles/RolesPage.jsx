@@ -21,6 +21,10 @@ function RolesPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
+    const formId = "questionForm";
+    const modalId = "questionModal";
+    const modalLabel = "câu hỏi";
+
     const {
         register,
         setValue,

@@ -66,7 +66,7 @@ public class User {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    @Column(name = "HOATDONG", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "HOATDONG", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean status;
 
     @JsonIgnore
@@ -85,10 +85,6 @@ public class User {
 
     @Transient
     private String rolesStr;
-
-    @Builder.Default
-    @Column(name = "XACTHUCDIACHIEMAIL", columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private boolean emailVerified = false;
 
     @JsonIgnore
     @Column(name = "ANHDAIDIEN")
@@ -112,7 +108,6 @@ public class User {
         return User.builder().id(id).firstName(firstName).lastName(lastName)
                 .email(email).password(password).sex(sex)
                 .birthday(birthday)
-                .emailVerified(false)
                 .status(true)
                 .address(address)
                 .build();

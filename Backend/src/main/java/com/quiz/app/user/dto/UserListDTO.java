@@ -43,7 +43,6 @@ public class UserListDTO {
                 .sex(user.getSex().toString())
                 .roles(roles)
                 .birthday(user.getBirthday())
-                .emailVerified(user.isEmailVerified())
                 .identityVerified(false)
                 .build();
     }

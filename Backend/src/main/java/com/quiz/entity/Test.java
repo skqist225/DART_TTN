@@ -59,12 +59,12 @@ public class Test {
     private List<Question> questions = new ArrayList<>();
 
     @ManyToOne
-    @JoinColumn(name = "MAMH")
+    @JoinColumn(name = "MAMH", nullable = false)
     private Subject subject;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "MAGV")
+    @JoinColumn(name = "MAGV", nullable = false)
     private User teacher;
 
     @ManyToOne

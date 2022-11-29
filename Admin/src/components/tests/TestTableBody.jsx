@@ -9,6 +9,7 @@ import CriteriaList from "./CriteriaList";
 import TableModalViewer from "../utils/tables/TableModalViewer";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import LevelBadge from "../common/LevelBadge";
+import EnableOrDisable from "../common/EnableOrDisable";
 
 function TestTableBody({ rows, setIsEdit, examPage = false }) {
     const dispatch = useDispatch();
@@ -74,14 +75,19 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                                     }}
                                 />
                             </div>
-                            <div>
+                            <EnableOrDisable
+                                status={row.status}
+                                // enableOrDisable={enableOrDisableTest}
+                                id={row.id}
+                            />
+                            {/* <div>
                                 <MyButton
                                     type={ButtonType.delete}
                                     onClick={() => {
                                         dispatch(deleteTest(row.id));
                                     }}
                                 />
-                            </div>
+                            </div> */}
                         </td>
                     )}
                 </tr>

@@ -1,6 +1,5 @@
+import React, { useEffect, useState } from "react";
 import { Badge, Table } from "flowbite-react";
-import React, { useEffect } from "react";
-import { useState } from "react";
 import { tailwindCss } from "../../tailwind";
 import TablePagination from "../utils/tables/TablePagination";
 

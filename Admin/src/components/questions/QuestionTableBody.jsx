@@ -48,7 +48,7 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                             }}
                         >
                             {row.content}
-                        </td>{" "}
+                        </td>
                         <td className={tailwindCss.tableCell} style={{ zIndex: "9999" }}>
                             <Tooltip
                                 content={<AnswerList answers={row.answers} />}

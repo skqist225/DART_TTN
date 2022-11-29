@@ -34,7 +34,7 @@ public class Answer {
     @Column(name = "LADAPAN", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean isAnswer;
 
-    @Column(name = "THUTU", columnDefinition = "NCHAR(3)")
+    @Column(name = "THUTU", columnDefinition = "NCHAR(3)", nullable = false)
     private String order;
 
     @JsonIgnore

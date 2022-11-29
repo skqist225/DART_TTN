@@ -36,7 +36,7 @@ public class Question {
     @Column(name = "MACAUHOI")
     private Integer id;
 
-    @Column(name = "LOAICAUHOI")
+    @Column(name = "LOAICAUHOI", columnDefinition = "VARCHAR(20)", nullable = false)
     private String type;
 
     @Column(name = "NOIDUNGCAUHOI", columnDefinition = "TEXT", nullable = false, unique = true)
@@ -46,7 +46,7 @@ public class Question {
     @OneToMany(mappedBy = "question", orphanRemoval = true, cascade = CascadeType.ALL)
     private List<Answer> answers = new ArrayList<>();
 
-    @Column(name = "DOKHO", nullable = false)
+    @Column(name = "DOKHO", columnDefinition = "TINYINT(2)", nullable = false)
     private Level level;
 
     @Column(name = "HINHANH")
@@ -60,6 +60,7 @@ public class Question {
     @JoinColumn(name = "MAGV", nullable = false)
     private User teacher;
 
+    @Column(name = "CONSUDUNG", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean status;
 
     @Transient

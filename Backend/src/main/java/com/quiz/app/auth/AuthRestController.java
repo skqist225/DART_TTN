@@ -1,6 +1,6 @@
 package com.quiz.app.auth;
 
-import com.quiz.app.common.CommonUtils;
+import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.email.SendEmail;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.jwt.JwtUtils;

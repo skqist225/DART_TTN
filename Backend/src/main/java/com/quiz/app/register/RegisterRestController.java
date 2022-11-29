@@ -1,6 +1,6 @@
 package com.quiz.app.register;
 
-import com.quiz.app.common.CommonUtils;
+import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.register.dto.PostCreateRegisterDTO;

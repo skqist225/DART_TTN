@@ -3,7 +3,7 @@ import { Route, Routes, useLocation } from "react-router-dom";
 import "./css/style.scss";
 import "./charts/ChartjsConfig";
 
-import Dashboard from "./pages/Dashboard";
+import Dashboard from "./pages/dashboard/Dashboard";
 import {
     CreditClassesPage,
     ExamsPage,

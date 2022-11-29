@@ -54,12 +54,12 @@ public class CreditClass {
     @Column(name = "NHOM", columnDefinition = "SMALLINT", nullable = false)
     private int group;
 
-    @Column(name = "HUYLOP")
+    @Column(name = "HUYLOP", columnDefinition = "BOOLEAN DEFAULT 0")
     private boolean status;
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "MAGV")
+    @JoinColumn(name = "MAGV", nullable = false)
     private User teacher;
 
     @JsonIgnore

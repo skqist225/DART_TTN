@@ -67,17 +67,17 @@ public class Exam {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "MAGV")
+    @JoinColumn(name = "MAGV", nullable = false)
     private User teacher;
 
     @Builder.Default
     @OneToMany(mappedBy = "exam")
     private List<TakeExam> takeExams = new ArrayList<>();
 
-    @Column(name = "DATHI")
+    @Column(name = "DATHI", columnDefinition = "BOOLEAN DEFAULT 0")
     private boolean taken;
 
-    @Column(name = "DAHUY")
+    @Column(name = "DAHUY", columnDefinition = "BOOLEAN DEFAULT 0")
     private boolean status;
 
     public static Exam build(PostCreateExamDTO postCreateExamDTO) {

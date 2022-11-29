@@ -1,6 +1,5 @@
 package com.quiz.app.test;
 
-import com.quiz.app.common.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.register.RegisterService;
@@ -15,6 +14,7 @@ import com.quiz.app.test.dto.HandInDTO;
 import com.quiz.app.test.dto.PostCreateTestDTO;
 import com.quiz.app.test.dto.TestDTO;
 import com.quiz.app.test.dto.TestsDTO;
+import com.quiz.app.utils.CommonUtils;
 import com.quiz.entity.Answer;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
@@ -130,13 +130,12 @@ public class TestRestController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<StandardJSONResponse<Test>> saveSubject(
+    public ResponseEntity<StandardJSONResponse<String>> saveSubject(
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
             @RequestBody PostCreateTestDTO postCreateTestDTO,
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
     ) {
         CommonUtils commonUtils = new CommonUtils();
-        Test savedTest = null;
         Subject subject = null;
 
         Integer id = postCreateTestDTO.getId();
@@ -148,7 +147,7 @@ public class TestRestController {
         catchTestInputException(commonUtils, isEdit, id, name, subjectId, questions);
 
         if (commonUtils.getArrayNode().size() > 0) {
-            return new BadResponse<Test>(commonUtils.getArrayNode().toString()).response();
+            return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
         } else {
             if (testService.isNameDuplicated(null, name, isEdit)) {
                 commonUtils.addError("name", "Tên bộ đề đã tồn tại");
@@ -161,7 +160,7 @@ public class TestRestController {
             }
 
             if (commonUtils.getArrayNode().size() > 0) {
-                return new BadResponse<Test>(commonUtils.getArrayNode().toString()).response();
+                return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
             }
         }
 
@@ -196,15 +195,15 @@ public class TestRestController {
                     }
                 }
 
-                savedTest = testService.save(test);
+                testService.save(test);
             } catch (NotFoundException exception) {
-                return new BadResponse<Test>(exception.getMessage()).response();
+                return new BadResponse<String>(exception.getMessage()).response();
             }
         } else {
-            savedTest = testService.save(Test.build(name, questions, subject, teacher));
+            testService.save(Test.build(name, questions, subject, teacher));
         }
 
-        return new OkResponse<>(savedTest).response();
+        return new OkResponse<>("Thêm đề thi thành công").response();
     }
 
     @GetMapping("{id}")

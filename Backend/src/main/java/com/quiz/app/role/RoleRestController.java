@@ -1,6 +1,6 @@
 package com.quiz.app.role;
 
-import com.quiz.app.common.CommonUtils;
+import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;

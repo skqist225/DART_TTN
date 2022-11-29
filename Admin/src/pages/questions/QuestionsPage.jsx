@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
+import { yupResolver } from "@hookform/resolvers/yup";
+import { useForm } from "react-hook-form";
 import {
     Frame,
     QuestionModalBody,
@@ -7,11 +9,8 @@ import {
     QuestionTableBody,
     Table,
 } from "../../components";
-import $ from "jquery";
 import { questionSchema } from "../../validation";
-import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
-import { yupResolver } from "@hookform/resolvers/yup";
 import {
     addQuestion,
     editQuestion,
@@ -24,6 +23,7 @@ import {
 } from "../../features/questionSlice";
 import { fetchAllSubjects } from "../../features/subjectSlice";
 import { questionColumns } from "../columns";
+import $ from "jquery";
 
 const Type = {
     oneAnswer: "Một đáp án",
@@ -32,23 +32,11 @@ const Type = {
 };
 
 function QuestionsPage() {
+    const dispatch = useDispatch();
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [image, setImage] = useState(null);
-    const dispatch = useDispatch();
-
-    const formId = "questionForm";
-    const modalId = "questionModal";
-    const modalLabel = "câu hỏi";
-
-    useEffect(() => {
-        dispatch(
-            fetchAllQuestions({
-                page: 1,
-            })
-        );
-        dispatch(fetchAllSubjects({ page: 0, haveChapter: true }));
-    }, []);
 
     const {
         questions,
@@ -64,6 +52,19 @@ function QuestionsPage() {
         addMultipleQuestions: { successMessage: amqSuccessMessage },
         enableOrDisableQuestion: { successMessage: eodqSuccessMessage },
     } = useSelector(questionState);
+
+    const formId = "questionForm";
+    const modalId = "questionModal";
+    const modalLabel = "câu hỏi";
+
+    useEffect(() => {
+        dispatch(
+            fetchAllQuestions({
+                page: 1,
+            })
+        );
+        dispatch(fetchAllSubjects({ page: 0, haveChapter: true }));
+    }, []);
 
     const {
         register,
@@ -183,6 +184,10 @@ function QuestionsPage() {
         );
     };
 
+    const fetchDataByPageNumber = pageNumber => {
+        dispatch(fetchAllQuestions({ ...filterObject, page: pageNumber }));
+    };
+
     useEffect(() => {
         return () => {
             dispatch(clearQuestionState());
@@ -248,10 +253,6 @@ function QuestionsPage() {
         }
     }, [eodqSuccessMessage]);
 
-    const fetchDataByPageNumber = pageNumber => {
-        dispatch(fetchAllQuestions({ ...filterObject, page: pageNumber }));
-    };
-
     const handleAddMultipleFromExcelFile = () => {
         dispatch(addMultipleQuestions({ questions: questionsExcel }));
     };
@@ -273,6 +274,7 @@ function QuestionsPage() {
                     searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
+                    fetchDataByPageNumber={fetchDataByPageNumber}
                     columns={questionColumns}
                     rows={questions}
                     totalElements={totalElements}
@@ -298,10 +300,10 @@ function QuestionsPage() {
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                     handleAddMultipleFromExcelFile={handleAddMultipleFromExcelFile}
-                    fetchDataByPageNumber={fetchDataByPageNumber}
                     onCloseForm={onCloseForm}
                     Filter={QuestionsFilter}
                     excelAdd={excelAdd}
+                    recordsPerPage={10}
                 />
             }
         />

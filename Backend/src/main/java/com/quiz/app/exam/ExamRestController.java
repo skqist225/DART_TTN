@@ -1,6 +1,6 @@
 package com.quiz.app.exam;
 
-import com.quiz.app.common.CommonUtils;
+import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exam.dto.ExamsDTO;
 import com.quiz.app.exam.dto.PostCreateExamDTO;

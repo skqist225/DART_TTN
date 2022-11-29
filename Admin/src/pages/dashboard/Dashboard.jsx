@@ -1,27 +1,27 @@
 import React, { useEffect, useState } from "react";
-import Sidebar from "../partials/Sidebar";
-import Header from "../partials/Header";
+import Sidebar from "../../partials/Sidebar";
+import Header from "../../partials/Header";
 import { useDispatch, useSelector } from "react-redux";
-import { UsersPage, SubjectsPage } from ".";
+import { UsersPage, SubjectsPage } from "..";
 import { useLocation, useNavigate } from "react-router-dom";
-import { authState } from "../features/authSlice";
-import SimpleStatNumber from "../components/utils/SimpleStatNumber";
-import StackedBarChart from "../partials/dashboard/StackedBarChart";
-import WelcomeBanner from "../partials/dashboard/WelcomeBanner";
+import { authState } from "../../features/authSlice";
+import SimpleStatNumber from "../../components/utils/SimpleStatNumber";
+import StackedBarChart from "../../partials/dashboard/StackedBarChart";
+import WelcomeBanner from "../../partials/dashboard/WelcomeBanner";
 
-import LineChart from "../partials/dashboard/LineChart";
-import LineChartDashboard from "../partials/dashboard/LineChartDashboard";
-import CircleChart from "../partials/dashboard/CircleChart";
-import { userState } from "../features/userSlice";
-import { Frame } from "../components";
+import LineChart from "../../partials/dashboard/LineChart";
+import LineChartDashboard from "../../partials/dashboard/LineChartDashboard";
+import CircleChart from "../../partials/dashboard/CircleChart";
+import { userState } from "../../features/userSlice";
+import { Frame } from "../../components";
 import {
     countTestsBySubjectAndStatus,
     countTotalRecords,
     doughnut,
     statisticState,
-} from "../features/statisticSlice";
+} from "../../features/statisticSlice";
 import { Doughnut } from "react-chartjs-2";
-import PieChart from "../partials/dashboard/PieChart";
+import PieChart from "../../partials/dashboard/PieChart";
 
 function Dashboard() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
