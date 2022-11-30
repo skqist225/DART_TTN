@@ -162,29 +162,14 @@ export const deleteQuestion = createAsyncThunk(
     }
 );
 
-export const readExcelFile = createAsyncThunk(
-    "question/readExcelFile",
-    async (excelFile, { rejectWithValue }) => {
-        try {
-            const formData = new FormData();
-            formData.set("file", excelFile);
-
-            const {
-                data: { questions, totalElements, totalPages },
-            } = await api.post(`/questions/excel/read`, formData);
-
-            return { questions, totalElements, totalPages };
-        } catch ({ data: { error } }) {
-            return rejectWithValue(error);
-        }
-    }
-);
-
 export const addMultipleQuestions = createAsyncThunk(
     "question/addMultipleQuestions",
-    async ({ questions }, { rejectWithValue }) => {
+    async ({ file }, { rejectWithValue }) => {
         try {
-            const { data } = await api.post(`/questions/save/multiple`, questions);
+            const formData = new FormData();
+            formData.set("file", file);
+
+            const { data } = await api.post(`/questions/save/multiple`, formData);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -224,7 +209,6 @@ export const queryAvailableQuestions = createAsyncThunk(
 const initialState = {
     loading: true,
     questions: [],
-    questionsExcel: [],
     totalExcelElements: 0,
     totalExcelPages: 0,
     totalElements: 0,
@@ -249,7 +233,9 @@ const initialState = {
         errorMessage: null,
     },
     addMultipleQuestions: {
+        loading: false,
         successMessage: null,
+        errorMessage: null,
     },
     excelAdd: false,
     enableOrDisableQuestion: {
@@ -268,20 +254,16 @@ const questionSlice = createSlice({
             state.errorObject = null;
 
             state.addQuestion.successMessage = null;
-            state.addMultipleQuestions.successMessage = null;
             state.editQuestion.successMessage = null;
 
             state.deleteQuestion.successMessage = null;
             state.deleteQuestion.errorMessage = null;
 
             state.enableOrDisableQuestion.successMessage = null;
-        },
-        clearErrorField(state, { payload }) {
-            if (payload) {
-                if (state.errorObject && state.errorObject[payload]) {
-                    delete state.errorObject[payload];
-                }
-            }
+
+            state.addMultipleQuestions.loading = false;
+            state.addMultipleQuestions.successMessage = null;
+            state.addMultipleQuestions.errorMessage = null;
         },
         setFilterObject(state, { payload }) {
             if (payload) {
@@ -320,6 +302,9 @@ const questionSlice = createSlice({
         setTestedQuestions(state, { payload }) {
             state.testedQuestions = payload;
         },
+        setExcelQuestions(state, { payload }) {
+            state.testedQuestions = payload;
+        },
     },
     extraReducers: builder => {
         builder
@@ -339,23 +324,19 @@ const questionSlice = createSlice({
             })
             .addCase(loadQuestionsByCriteria.rejected, (state, { payload }) => {})
 
-            .addCase(readExcelFile.pending, (state, { payload }) => {
-                state.loading = true;
+            .addCase(addMultipleQuestions.pending, (state, { payload }) => {
+                state.addMultipleQuestions.loading = true;
+                state.addMultipleQuestions.successMessage = null;
+                state.addMultipleQuestions.errorMessage = null;
             })
-            .addCase(readExcelFile.fulfilled, (state, { payload }) => {
-                state.loading = false;
-                // state.questions = payload.questions;
-                state.questionsExcel = payload.questions;
-                state.totalExcelElements = payload.totalElements;
-                state.totalExcelPages = payload.totalPages;
-            })
-            .addCase(readExcelFile.rejected, (state, { payload }) => {})
-
-            .addCase(addMultipleQuestions.pending, (state, { payload }) => {})
             .addCase(addMultipleQuestions.fulfilled, (state, { payload }) => {
+                state.addMultipleQuestions.loading = false;
                 state.addMultipleQuestions.successMessage = payload.data;
             })
-            .addCase(addMultipleQuestions.rejected, (state, { payload }) => {})
+            .addCase(addMultipleQuestions.rejected, (state, { payload }) => {
+                state.addMultipleQuestions.loading = false;
+                state.addMultipleQuestions.errorMessage = payload;
+            })
 
             .addCase(enableOrDisableQuestion.pending, (state, { payload }) => {
                 state.enableOrDisableQuestion.successMessage = null;
@@ -445,7 +426,6 @@ const questionSlice = createSlice({
 export const {
     actions: {
         clearQuestionState,
-        clearErrorField,
         setFilterObject,
         setEditedQuestion,
         setExcelAdd,
@@ -453,6 +433,7 @@ export const {
         setResetFilter,
         setQuestions,
         setTestedQuestions,
+        setExcelQuestions,
     },
 } = questionSlice;
 

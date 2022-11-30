@@ -1,13 +1,13 @@
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import { clearErrorField, questionState } from "../../features/questionSlice";
+import { questionState } from "../../features/questionSlice";
 import { tailwindCss } from "../../tailwind";
-import { TextArea, Select, FileInput, Input } from "..";
-import { QuestionExcelModalBody } from "..";
+import { TextArea, Select, Input } from "..";
 import { chapterState, fetchAllChapters } from "../../features/chapterSlice";
 import { subjectState } from "../../features/subjectSlice";
 import { useFieldArray } from "react-hook-form";
 import $ from "jquery";
+import ExcelModalBody from "../utils/forms/ExcelModalBody";
 
 export const levelOptions = [
     {
@@ -79,6 +79,7 @@ function QuestionModalBody({
     setImage,
     control,
     clearErrors,
+    setExcelFile,
 }) {
     const { editedQuestion, errorObject, excelAdd } = useSelector(questionState);
     const { chapters } = useSelector(chapterState);
@@ -88,15 +89,6 @@ function QuestionModalBody({
         control,
         name: "answers",
     });
-
-    const onKeyDown = ({ target: { name } }) => {
-        if (errorObject) {
-            dispatch(clearErrorField(name));
-        }
-        if (name === "typedAnswer") {
-            clearErrors("typedAnswer");
-        }
-    };
 
     useEffect(() => {
         if (editedQuestion) {
@@ -180,7 +172,6 @@ function QuestionModalBody({
                                 }
                                 register={register}
                                 name='content'
-                                onKeyDown={onKeyDown}
                             />
                         </div>
                         <input type='hidden' {...register("typedId")} />
@@ -190,7 +181,6 @@ function QuestionModalBody({
                                 error={errors.typedAnswer && errors.typedAnswer.message}
                                 register={register}
                                 name='typedAnswer'
-                                onKeyDown={onKeyDown}
                             />
                         </div>
                         {fields.length > 0 && (
@@ -372,7 +362,7 @@ function QuestionModalBody({
                     {/* <FileInput setImage={setImage} image={editedQuestion && editedQuestion.image} /> */}
                 </div>
             ) : (
-                <QuestionExcelModalBody />
+                <ExcelModalBody setExcelFile={setExcelFile} />
             )}
         </div>
     );

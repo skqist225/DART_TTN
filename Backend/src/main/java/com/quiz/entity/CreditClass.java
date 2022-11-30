@@ -146,4 +146,14 @@ public class CreditClass {
         this.registers.remove(register);
     }
 
+    @Override
+    public String toString() {
+        return "CreditClass{" +
+                "id=" + id +
+                ", schoolYear='" + schoolYear + '\'' +
+                ", semester=" + semester +
+                ", group=" + group +
+                ", status=" + status +
+                '}';
+    }
 }

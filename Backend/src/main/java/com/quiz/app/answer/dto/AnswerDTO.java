@@ -17,4 +17,10 @@ public class AnswerDTO {
     private String isTempAnswer;
     private boolean isAnswer;
     private String order;
+
+    public AnswerDTO(String content, boolean isAnswer, String order) {
+        this.content = content;
+        this.isAnswer = isAnswer;
+        this.order = order;
+    }
 }

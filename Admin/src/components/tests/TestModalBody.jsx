@@ -1,51 +1,23 @@
 import React, { useEffect, useState } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import { useFieldArray } from "react-hook-form";
-import { useSelector } from "react-redux";
 import { chapterState, fetchAllChapters } from "../../features/chapterSlice";
-import { queryAvailableQuestions, questionState } from "../../features/questionSlice";
+import {
+    loadQuestionsByCriteria,
+    queryAvailableQuestions,
+    questionState,
+    setQuestions,
+} from "../../features/questionSlice";
 import { subjectState } from "../../features/subjectSlice";
 import TableHeader from "../utils/tables/TableHeader";
 import TablePagination from "../utils/tables/TablePagination";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
 import { QuestionTableBody } from "..";
-import { useDispatch } from "react-redux";
 import { tailwindCss } from "../../tailwind";
-import $ from "jquery";
 import { testState } from "../../features/testSlice";
-
-const columns = [
-    {
-        name: "Mã câu hỏi",
-        sortField: "id",
-        // sortable: true,
-    },
-    {
-        name: "Nội dung",
-        sortField: "content",
-        // sortable: true,
-    },
-    {
-        name: "Loại câu hỏi",
-        sortField: "finalAnswer",
-        // sortable: true,
-    },
-    {
-        name: "Chương",
-        sortField: "chapter",
-        // sortable: true,
-    },
-    {
-        name: "Độ khó",
-        sortField: "level",
-        // sortable: true,
-    },
-    {
-        name: "Giảng viên",
-        sortField: "teacher",
-        // sortable: true,
-    },
-];
+import $ from "jquery";
+import { questionColumnsTestPage } from "../../pages/columns";
 
 const levelOptions = [
     {
@@ -68,7 +40,10 @@ const levelOptions = [
 
 function TestModalBody({ errors, register, setValue, control, getValues, clearErrors }) {
     const dispatch = useDispatch();
+
     const [page, setPage] = useState(1);
+    const [disabled, setDisabled] = useState(false);
+
     const { subjects } = useSelector(subjectState);
     const { editedTest, errorObject } = useSelector(testState);
     const { chapters } = useSelector(chapterState);
@@ -94,6 +69,12 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
         if (subjects && subjects.length) {
             dispatch(fetchAllChapters({ page: 0, subject: subjects[0].id }));
             setValue("testName", `Đề thi ${subjects[0].name} ${new Date().getTime()}`);
+
+            if (!subjects[0].chapters.length) {
+                setDisabled(true);
+            } else {
+                setDisabled(false);
+            }
         }
     }, [subjects]);
 
@@ -103,6 +84,13 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
             "testName",
             `Đề thi ${subjects.find(({ id }) => id === value).name} ${new Date().getTime()}`
         );
+
+        const subject = subjects.find(({ id }) => id.toString() === $("#testSubjectId").val());
+        if (!subject.chapters.length) {
+            setDisabled(true);
+        } else {
+            setDisabled(false);
+        }
     }
 
     function onChapterChange(event) {
@@ -126,7 +114,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
             dispatch(queryAvailableQuestions({ chapter, level, filterIndex: index }));
         }
     }
-    console.log(editedTest);
+
     return (
         <div>
             {!editedTest ? (
@@ -150,7 +138,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                 register={register}
                                 name='testSubjectId'
                                 options={subjects.map(s => ({
-                                    title: `${s.name} (${s.numberOfQuestions})`,
+                                    title: `${s.name} (${s.numberOfActiveQuestions})`,
                                     value: s.id,
                                 }))}
                                 setValue={setValue}
@@ -160,7 +148,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                         </div>
                         <div className='my-3 w-full'>
                             <Input
-                                label='Số lượng câu hỏi'
+                                label={`Số lượng câu hỏi`}
                                 register={register}
                                 name='numberOfQuestions'
                             />
@@ -238,7 +226,20 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                         <button
                                             type='button'
                                             className={tailwindCss.deleteOutlineButton}
-                                            onClick={() => remove(index)}
+                                            onClick={() => {
+                                                remove(index);
+                                                if (index === 0) {
+                                                    dispatch(setQuestions([]));
+                                                } else {
+                                                    const criteria = getValues("criteria");
+                                                    dispatch(
+                                                        loadQuestionsByCriteria({
+                                                            subject: $("#testSubjectId").val(),
+                                                            criteria,
+                                                        })
+                                                    );
+                                                }
+                                            }}
                                         >
                                             Xóa
                                         </button>
@@ -250,10 +251,13 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                     <div className='mt-3 self-start'>
                         <button
                             type='button'
-                            className='text-green-700 hover:text-white border border-green-700 hover:bg-green-800 focus:ring-4 focus:outline-none focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center mr-2 mb-2 dark:border-green-500 dark:text-green-500 dark:hover:text-white dark:hover:bg-green-600 dark:focus:ring-green-800'
+                            className={`${tailwindCss.greenOutlineButton} ${
+                                disabled && "cursor-not-allowed hover:text-green-700 hover:bg-white"
+                            }`}
                             onClick={() => {
                                 prepend({});
                             }}
+                            disabled={disabled}
                         >
                             Thêm tiêu chí
                         </button>
@@ -261,7 +265,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                     {questions && questions.length > 0 && (
                         <div>
                             <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                                <TableHeader columns={columns} />
+                                <TableHeader columns={questionColumnsTestPage} />
                                 <QuestionTableBody
                                     rows={questions}
                                     page={page}

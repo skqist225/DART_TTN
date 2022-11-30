@@ -19,14 +19,29 @@ import {
     fetchAllRegisters,
     setEditedRegister,
     registerState,
+    addMultipleRegisters,
 } from "../../features/registerSlice";
-import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
+import { fetchAllCreditClasses } from "../../features/creditClassSlice";
 import { registerColumns } from "../columns";
 
 function RegistersPage() {
+    const dispatch = useDispatch();
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
-    const dispatch = useDispatch();
+    const [excelFile, setExcelFile] = useState(null);
+
+    const {
+        registers,
+        errorObject,
+        totalElements,
+        totalPages,
+        filterObject,
+        addRegister: { successMessage },
+        editRegister: { successMessage: eqSuccessMessage },
+        deleteRegister: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
+        addMultipleRegisters: { successMessage: amuSuccessMessage, errorMessage: amuErrorMessage },
+    } = useSelector(registerState);
 
     const formId = "registerForm";
     const modalId = "registerModal";
@@ -40,17 +55,6 @@ function RegistersPage() {
         );
         dispatch(fetchAllCreditClasses({ page: 0 }));
     }, []);
-
-    const {
-        registers,
-        errorObject,
-        totalElements,
-        totalPages,
-        filterObject,
-        addRegister: { successMessage },
-        editRegister: { successMessage: eqSuccessMessage },
-        deleteRegister: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
-    } = useSelector(registerState);
 
     const {
         register,
@@ -145,6 +149,24 @@ function RegistersPage() {
         dispatch(fetchAllRegisters({ ...filterObject, page: pageNumber }));
     };
 
+    useEffect(() => {
+        if (amuSuccessMessage) {
+            cleanForm(amuSuccessMessage, "add");
+        }
+    }, [amuSuccessMessage]);
+
+    useEffect(() => {
+        if (amuErrorMessage) {
+            callToast("error", amuErrorMessage);
+        }
+    }, [amuErrorMessage]);
+
+    const handleAddMultipleFromExcelFile = () => {
+        if (excelFile) {
+            dispatch(addMultipleRegisters({ file: excelFile }));
+        }
+    };
+
     function onCloseForm() {
         dispatch(setEditedRegister(null));
         setValue("answers", []);
@@ -180,12 +202,14 @@ function RegistersPage() {
                             isEdit={isEdit}
                             control={control}
                             clearErrors={clearErrors}
+                            setExcelFile={setExcelFile}
                         />
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                     fetchDataByPageNumber={fetchDataByPageNumber}
                     onCloseForm={onCloseForm}
+                    handleAddMultipleFromExcelFile={handleAddMultipleFromExcelFile}
                     Filter={RegisterFilter}
                     recordsPerPage={15}
                 />

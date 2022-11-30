@@ -1,27 +1,23 @@
 import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
     deleteQuestion,
     enableOrDisableQuestion,
-    questionState,
     setEditedQuestion,
 } from "../../features/questionSlice";
 import { tailwindCss } from "../../tailwind";
 import { MyButton, LevelBadge } from "..";
 import EnableOrDisable from "../common/EnableOrDisable";
-import $ from "jquery";
-import { persistUserState } from "../../features/persistUserSlice";
 import { Tooltip } from "flowbite-react";
 import { ButtonType } from "../common/MyButton";
 import { AnswerList } from "../";
+import $ from "jquery";
 
 function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
     const dispatch = useDispatch();
     if (page !== null) {
         rows = rows.slice((page - 1) * 10, page * 10);
     }
-    const { userRoles } = useSelector(persistUserState);
-    const { excelAdd } = useSelector(questionState);
 
     return (
         <tbody>
@@ -65,27 +61,19 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                                 <td className={tailwindCss.tableCell}>
                                     <LevelBadge level={row.level} />
                                 </td>
-                                <td className={tailwindCss.tableCell}>
-                                    {!excelAdd ? row.chapter.name : row.chapterName}
-                                </td>
-                                <td className={tailwindCss.tableCell}>
-                                    {!excelAdd ? row.chapter.subjectName : row.subjectName}
-                                </td>
+                                <td className={tailwindCss.tableCell}>{row.chapterName}</td>
+                                <td className={tailwindCss.tableCell}>{row.subjectName}</td>
                             </>
                         ) : (
                             <>
                                 <td className={tailwindCss.tableCell}>{row.type}</td>
-                                <td className={tailwindCss.tableCell}>{row.chapter.name}</td>
+                                <td className={tailwindCss.tableCell}>{row.chapterName}</td>
                                 <td>
                                     <LevelBadge level={row.level} />
                                 </td>
                             </>
                         )}
-                        {!excelAdd && userRoles.includes("Quản trị viên") && (
-                            <td className={tailwindCss.tableCell}>
-                                {row.teacher.firstName} {row.teacher.lastName}
-                            </td>
-                        )}{" "}
+                        <td className={tailwindCss.tableCell}>{row.teacherName}</td>
                         <td className='py-2 px-3 flex items-center justify-center'>
                             {!addTest ? (
                                 <>
@@ -97,16 +85,14 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                                             dispatch(setEditedQuestion(row));
                                         }}
                                     />
-                                    {!excelAdd && (
-                                        <div className='mx-1'>
-                                            <MyButton
-                                                type='delete'
-                                                onClick={() => {
-                                                    dispatch(deleteQuestion(row.id));
-                                                }}
-                                            />
-                                        </div>
-                                    )}
+                                    <div className='mx-1'>
+                                        <MyButton
+                                            type='delete'
+                                            onClick={() => {
+                                                dispatch(deleteQuestion(row.id));
+                                            }}
+                                        />
+                                    </div>
                                     <EnableOrDisable
                                         status={row.status}
                                         enableOrDisable={enableOrDisableQuestion}
@@ -115,23 +101,6 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                                 </>
                             ) : (
                                 <></>
-                                // <div className='mx-3'>
-                                //     {row.status ? (
-                                //         <MyButton
-                                //             type='delete'
-                                //             onClick={() => {
-                                //                 dispatch(disableOrEnableLoadedQuestions(row.id));
-                                //             }}
-                                //         />
-                                //     ) : (
-                                //         <MyButton
-                                //             type='enable'
-                                //             onClick={() => {
-                                //                 dispatch(disableOrEnableLoadedQuestions(row.id));
-                                //             }}
-                                //         />
-                                //     )}
-                                // </div>
                             )}
                         </td>
                     </tr>

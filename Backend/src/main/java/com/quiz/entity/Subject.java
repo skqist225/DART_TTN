@@ -73,6 +73,16 @@ public class Subject {
 	}
 
 	@Transient
+	public int getNumberOfActiveQuestions() {
+		int i = 0;
+		for (Chapter chapter : this.chapters) {
+			i += chapter.getNumberOfActiveQuestions();
+		}
+
+		return i;
+	}
+
+	@Transient
 	public void addChapter(Chapter chapter) {
 		this.chapters.add(chapter);
 	}

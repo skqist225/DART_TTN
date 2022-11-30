@@ -10,6 +10,8 @@ import TableModalViewer from "../utils/tables/TableModalViewer";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import LevelBadge from "../common/LevelBadge";
 import EnableOrDisable from "../common/EnableOrDisable";
+import QuestionTableBody from "../questions/QuestionTableBody";
+import QuestionList from "./QuestionList";
 
 function TestTableBody({ rows, setIsEdit, examPage = false }) {
     const dispatch = useDispatch();
@@ -67,6 +69,19 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                         <td className={`${tailwindCss.tableCell} flex items-center`}>
                             <div className='mr-2'>
                                 <MyButton
+                                    type='view'
+                                    onClick={() => {
+                                        $(`#questionsViewer${index}`).css("display", "flex");
+                                    }}
+                                />
+                                <TableModalViewer
+                                    modalId={`questionsViewer${index}`}
+                                    modalLabel='Danh sách câu hỏi'
+                                    ModalBody={<QuestionList questions={row.questions} />}
+                                />
+                            </div>
+                            <div className='mr-2'>
+                                <MyButton
                                     type={ButtonType.edit}
                                     onClick={() => {
                                         $("#testModal").css("display", "flex");
@@ -80,14 +95,6 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                                 // enableOrDisable={enableOrDisableTest}
                                 id={row.id}
                             />
-                            {/* <div>
-                                <MyButton
-                                    type={ButtonType.delete}
-                                    onClick={() => {
-                                        dispatch(deleteTest(row.id));
-                                    }}
-                                />
-                            </div> */}
                         </td>
                     )}
                 </tr>

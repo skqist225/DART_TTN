@@ -16,7 +16,7 @@ import {
 import ExamFilter from "../../components/exams/ExamFilter";
 import $ from "jquery";
 import { fetchAllSubjects } from "../../features/subjectSlice";
-import { fetchAllCreditClasses } from "../../features/creditClassSlice";
+import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
 import { setTests } from "../../features/testSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import { examColumns } from "../columns";
@@ -28,6 +28,7 @@ function ExamsPage() {
     const [isEdit, setIsEdit] = useState(false);
 
     const { userRoles, user } = useSelector(persistUserState);
+    const { creditClasses } = useSelector(creditClassState);
 
     const modalId = "examModal";
     const formId = "examForm";
@@ -120,6 +121,19 @@ function ExamsPage() {
         examDate = examDate.split("/");
         examDate = examDate[2] + "-" + examDate[1] + "-" + examDate[0];
         data["examDate"] = examDate;
+
+        const { schoolYear, semester, subjectName, group, exams } = creditClasses.find(
+            ({ id }) => id.toString() === data.creditClassId.toString()
+        );
+        let index = 1;
+        if (exams && exams.length) {
+            exams.forEach(exam => {
+                if (exam.type === data.type) {
+                    index += 1;
+                }
+            });
+        }
+        data["name"] = `${schoolYear}-${semester}-${subjectName}-${group}-${data.type}-${index}`;
 
         if (isEdit) {
             dispatch(editExam(data));

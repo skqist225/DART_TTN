@@ -6,8 +6,8 @@ import { userState } from "../../features/userSlice";
 import DatePicker from "../utils/datePicker/DatePicker";
 import FileInput from "../utils/userInputs/FileInput";
 import { roleState } from "../../features/roleSlice";
+import ExcelModalBody from "../utils/forms/ExcelModalBody";
 import $ from "jquery";
-import UserExcelModalBody from "./UserExcelModalBody";
 
 const sexOptions = [
     {
@@ -164,9 +164,7 @@ function UserModalBody({ errors, register, dispatch, setValue, setImage, isEdit,
                     <FileInput setImage={setImage} image={editedUser && editedUser.avatarPath} />
                 </div>
             ) : (
-                <>
-                    <UserExcelModalBody setExcelFile={setExcelFile} />
-                </>
+                <ExcelModalBody setExcelFile={setExcelFile} />
             )}
         </div>
     );

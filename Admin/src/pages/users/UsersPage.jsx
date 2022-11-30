@@ -47,6 +47,7 @@ const UsersPage = () => {
         handleSubmit,
         setError,
         clearErrors,
+
         formState: { errors },
     } = useForm({
         resolver: yupResolver(isEdit ? userRegisterSchema : userSchema),
@@ -64,7 +65,7 @@ const UsersPage = () => {
         editUser: { successMessage: euSuccessMessage },
         deleteUser: { successMessage: duSuccessMessage },
         enableOrDisableUser: { successMessage: eodqSuccessMessage },
-        addMultipleUsers: { successMessage: amuSuccessMessage, loading },
+        addMultipleUsers: { successMessage: amuSuccessMessage, errorMessage: amuErrorMessage },
     } = useSelector(userState);
 
     useEffect(() => {
@@ -223,6 +224,12 @@ const UsersPage = () => {
             cleanForm(amuSuccessMessage, "add");
         }
     }, [amuSuccessMessage]);
+
+    useEffect(() => {
+        if (amuErrorMessage) {
+            callToast("error", amuErrorMessage);
+        }
+    }, [amuErrorMessage]);
 
     const handleAddMultipleFromExcelFile = () => {
         if (excelFile) {

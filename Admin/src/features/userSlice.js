@@ -167,6 +167,7 @@ const initialState = {
     addMultipleUsers: {
         loading: false,
         successMessage: null,
+        errorMessage: null,
     },
     roles: [],
     userExcelAdd: false,
@@ -184,6 +185,10 @@ const userSlice = createSlice({
 
             state.deleteUser.successMessage = null;
             state.deleteUser.errorMessage = null;
+
+            state.addMultipleUsers.loading = false;
+            state.addMultipleUsers.successMessage = null;
+            state.addMultipleUsers.errorMessage = null;
         },
         setErrorField(state, { payload: { key, value } }) {
             state.errorObject[key] = value;
@@ -298,8 +303,9 @@ const userSlice = createSlice({
             .addCase(enableOrDisableUser.rejected, (state, { payload }) => {})
 
             .addCase(addMultipleUsers.pending, (state, { payload }) => {
-                state.addMultipleUsers.successMessage = null;
                 state.addMultipleUsers.loading = true;
+                state.addMultipleUsers.successMessage = null;
+                state.addMultipleUsers.errorMessage = null;
             })
             .addCase(addMultipleUsers.fulfilled, (state, { payload }) => {
                 state.addMultipleUsers.loading = false;
@@ -307,6 +313,7 @@ const userSlice = createSlice({
             })
             .addCase(addMultipleUsers.rejected, (state, { payload }) => {
                 state.addMultipleUsers.loading = false;
+                state.addMultipleUsers.errorMessage = payload.data;
             });
     },
 });

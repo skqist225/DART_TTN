@@ -62,4 +62,15 @@ public class Chapter {
     public String getSubjectName() {
         return this.subject.getName();
     }
+
+    @Transient
+    public int getNumberOfActiveQuestions() {
+        return questions.stream().reduce(0, (subtotal, element) -> {
+            if (element
+                    .isStatus()) {
+                return subtotal + 1;
+            }
+            return subtotal;
+        }, Integer::sum);
+    }
 }

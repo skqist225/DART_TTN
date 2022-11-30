@@ -26,13 +26,17 @@ function TableModal({
     excelAdd = false,
 }) {
     const dispatch = useDispatch();
-    const { questions } = useSelector(questionState);
+
     const {
-        addMultipleUsers: { loading },
+        questions,
+        addMultipleQuestions: { loading: questionLoading },
+    } = useSelector(questionState);
+    const {
+        addMultipleUsers: { loading: registerLoading },
     } = useSelector(userState);
 
     console.log(modalLabel);
-
+    console.log(modalId);
     return (
         <div
             id={modalId}
@@ -70,14 +74,13 @@ function TableModal({
 
                     <div className='flex items-center p-4 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600'>
                         {addTst && (
-                            <>
-                                <button
-                                    type='submit'
-                                    className='text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800'
-                                >
-                                    Tải câu hỏi
-                                </button>
-                            </>
+                            <button
+                                id='loadQuestionTestPageButton'
+                                type='submit'
+                                className='text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800'
+                            >
+                                Tải câu hỏi
+                            </button>
                         )}
 
                         <button
@@ -124,7 +127,10 @@ function TableModal({
                                 }
                             }}
                         >
-                            {modalLabel === "Thêm người dùng" && loading && (
+                            {modalLabel === "Thêm người dùng" && registerLoading && (
+                                <Spinner size='sm' light={true} />
+                            )}
+                            {modalLabel === "Thêm người dùng" && questionLoading && (
                                 <Spinner size='sm' light={true} />
                             )}
                             {excelAdd ? "Thêm tất cả" : buttonLabel}

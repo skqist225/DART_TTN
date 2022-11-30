@@ -123,6 +123,22 @@ export const enableOrDisableRegister = createAsyncThunk(
     }
 );
 
+export const addMultipleRegisters = createAsyncThunk(
+    "register/addMultipleRegisters",
+    async ({ file }, { rejectWithValue }) => {
+        try {
+            const formData = new FormData();
+            formData.set("file", file);
+
+            const { data } = await api.post(`/registers/save/multiple`, formData);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 const initialState = {
     loading: true,
     registers: [],
@@ -135,6 +151,7 @@ const initialState = {
         sortField: "id",
         sortDir: "desc",
     },
+    registerExcelAdd: false,
     errorObject: null,
     addRegister: {
         successMessage: null,
@@ -148,6 +165,11 @@ const initialState = {
     },
     enableOrDisableRegister: {
         successMessage: null,
+    },
+    addMultipleRegisters: {
+        loading: false,
+        successMessage: null,
+        errorMessage: null,
     },
 };
 
@@ -165,6 +187,10 @@ const registerSlice = createSlice({
             state.deleteRegister.errorMessage = null;
 
             state.enableOrDisableRegister.successMessage = null;
+
+            state.addMultipleRegisters.loading = false;
+            state.addMultipleRegisters.successMessage = null;
+            state.addMultipleRegisters.errorMessage = null;
         },
         clearErrorField(state, { payload }) {
             if (payload) {
@@ -200,6 +226,9 @@ const registerSlice = createSlice({
 
                 return register;
             });
+        },
+        setRegisterExcelAdd(state, { payload }) {
+            state.registerExcelAdd = payload;
         },
     },
     extraReducers: builder => {
@@ -283,6 +312,20 @@ const registerSlice = createSlice({
             })
             .addCase(deleteRegister.rejected, (state, { payload }) => {
                 state.deleteRegister.errorMessage = payload;
+            })
+
+            .addCase(addMultipleRegisters.pending, (state, { payload }) => {
+                state.addMultipleRegisters.loading = true;
+                state.addMultipleRegisters.successMessage = null;
+                state.addMultipleRegisters.errorMessage = null;
+            })
+            .addCase(addMultipleRegisters.fulfilled, (state, { payload }) => {
+                state.addMultipleRegisters.loading = false;
+                state.addMultipleRegisters.successMessage = payload.data;
+            })
+            .addCase(addMultipleRegisters.rejected, (state, { payload }) => {
+                state.addMultipleRegisters.loading = false;
+                state.addMultipleRegisters.errorMessage = payload.data;
             });
     },
 });
@@ -294,6 +337,7 @@ export const {
         setFilterObject,
         setEditedRegister,
         disableOrEnableLoadedRegisters,
+        setRegisterExcelAdd,
     },
 } = registerSlice;
 

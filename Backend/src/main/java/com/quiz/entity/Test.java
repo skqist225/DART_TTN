@@ -52,12 +52,12 @@ public class Test {
 
     @Getter(AccessLevel.NONE)
     @Builder.Default
-//    @JsonIgnore
     @ManyToMany
     @JoinTable(name = "DETHI_CAUHOI", joinColumns = @JoinColumn(name = "MADETHI"),
             inverseJoinColumns = @JoinColumn(name = "MACAUHOI"))
     private List<Question> questions = new ArrayList<>();
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MAMH", nullable = false)
     private Subject subject;
@@ -67,6 +67,7 @@ public class Test {
     @JoinColumn(name = "MAGV", nullable = false)
     private User teacher;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MACATHI")
     private Exam exam;

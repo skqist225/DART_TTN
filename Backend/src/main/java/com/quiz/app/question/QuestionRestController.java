@@ -3,19 +3,18 @@ package com.quiz.app.question;
 import com.quiz.app.answer.AnswerService;
 import com.quiz.app.answer.dto.AnswerDTO;
 import com.quiz.app.chapter.ChapterService;
-import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.question.dto.AvailableQuestionDTO;
 import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import com.quiz.app.question.dto.QuestionsDTO;
-import com.quiz.app.question.dto.ReadQuestionExcelDTO;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.app.subject.dto.PostCreateSubjectDTO;
+import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.utils.ExcelUtils;
 import com.quiz.app.utils.ProcessImage;
 import com.quiz.entity.Answer;
@@ -36,7 +35,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -297,83 +295,69 @@ public class QuestionRestController {
 
     @Transactional
     @PostMapping("save/multiple")
-    public ResponseEntity<StandardJSONResponse<String>> saveMultipleQuestions(
+    public ResponseEntity<StandardJSONResponse<String>> readExcelFile(
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
-            @RequestBody List<PostCreateQuestionDTO> questions) {
-        CommonUtils commonUtils = new CommonUtils();
-        User teacher = userDetailsImpl.getUser();
-
-        int i = 0;
-        int totalQuestions = questions.size();
-
-        for (PostCreateQuestionDTO question : questions) {
-            String content = question.getContent();
-            String subjectId = question.getSubjectId();
-            String subjectName = question.getSubjectName();
-
-            String chapterName = question.getChapterName().split(":")[1].trim();
-            int chapterNumber =
-                    Integer.parseInt(String.valueOf(question.getChapterName().charAt(7)));
-
-            if (Objects.isNull(content) ||
-                    StringUtils.isEmpty(content) ||
-                    questionService.isContentDuplicated(null, content, false)) {
-                continue;
-            }
-
-            i++;
-            System.out.println(i);
-            Subject subject = null;
-            try {
-                subject = subjectService.findById(subjectId);
-            } catch (NotFoundException e) {
-                subject = subjectService.save(
-                        Subject.build(new PostCreateSubjectDTO(subjectId
-                                , subjectName, 15, 0, null)));
-            }
-            System.out.println(chapterNumber);
-            System.out.println(chapterName);
-            Chapter chapter = null;
-            try {
-                chapter = chapterService.findByName(chapterName);
-            } catch (NotFoundException e) {
-                chapter =
-                        chapterService.save(Chapter.build(chapterNumber, chapterName,
-                                subject));
-            }
-
-            questionService.save(Question.build(question, teacher,
-                    chapter, true));
-        }
-
-        String responseMessage = "";
-        if (i == 0) {
-            responseMessage = "Tất cả câu hỏi đã được thêm từ trước";
-        } else {
-            responseMessage = String.format("%d/%d câu hỏi đã được thêm vào thành công", i, totalQuestions);
-        }
-
-        return new OkResponse<>("Thêm tất cả câu hỏi thành công").response();
-    }
-
-    @PostMapping("excel/read")
-    public ResponseEntity<StandardJSONResponse<QuestionsDTO<ReadQuestionExcelDTO>>> readExcelFile(
             @RequestParam(name = "file") MultipartFile excelFile) throws IOException {
-        List<ReadQuestionExcelDTO> questions = new ArrayList<>();
-        ExcelUtils excelUtils = new ExcelUtils((FileInputStream) excelFile.getInputStream());
-
         try {
+            User teacher = userDetailsImpl.getUser();
+
+            List<PostCreateQuestionDTO> questions = new ArrayList<>();
+            ExcelUtils excelUtils = new ExcelUtils((FileInputStream) excelFile.getInputStream());
+
             excelUtils.readQuestionFromFile(questions);
 
-            QuestionsDTO<ReadQuestionExcelDTO> questionsDTO = new QuestionsDTO<>();
+            int i = 0;
+            int totalQuestions = questions.size();
 
-            questionsDTO.setQuestions(questions);
-            questionsDTO.setTotalElements(questions.size());
-            questionsDTO.setTotalPages((int) Math.ceil(questions.size() / 10.0));
+            for (PostCreateQuestionDTO question : questions) {
+                String content = question.getContent();
+                String subjectId = question.getSubjectId();
+                String subjectName = question.getSubjectName();
 
-            return new OkResponse<>(questionsDTO).response();
-        } catch (NotFoundException e) {
-            return new BadResponse<QuestionsDTO<ReadQuestionExcelDTO>>(e.getMessage()).response();
+                String chapterName = question.getChapterName().split(":")[1].trim();
+                int chapterNumber =
+                        Integer.parseInt(String.valueOf(question.getChapterName().charAt(7)));
+
+                if (Objects.isNull(content) ||
+                        StringUtils.isEmpty(content) ||
+                        questionService.isContentDuplicated(null, content, false)) {
+                    continue;
+                }
+
+                i++;
+                System.out.println(i);
+                Subject subject = null;
+                try {
+                    subject = subjectService.findById(subjectId);
+                } catch (NotFoundException e) {
+                    subject = subjectService.save(
+                            Subject.build(new PostCreateSubjectDTO(subjectId
+                                    , subjectName, 15, 0, null)));
+                }
+                System.out.println(chapterNumber);
+                System.out.println(chapterName);
+                Chapter chapter = null;
+                try {
+                    chapter = chapterService.findByName(chapterName);
+                } catch (NotFoundException e) {
+                    chapter =
+                            chapterService.save(Chapter.build(chapterNumber, chapterName,
+                                    subject));
+                }
+
+                questionService.save(Question.build(question, teacher,
+                        chapter, true));
+            }
+
+            String responseMessage = "";
+            if (i == 0) {
+                responseMessage = "Tất cả câu hỏi đã được thêm từ trước";
+            } else {
+                responseMessage = String.format("%d/%d câu hỏi đã được thêm vào thành công", i, totalQuestions);
+            }
+            return new OkResponse<>(responseMessage).response();
+        } catch (IllegalStateException e) {
+            return new BadResponse<String>("Không thể đọc file Excel").response();
         }
     }
 

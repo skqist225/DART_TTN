@@ -29,17 +29,45 @@ export const questionColumns = [
     },
     {
         name: "Môn học",
-        sortField: "subject",
-        sortable: true,
     },
     {
-        name: "Giảng viên",
-        sortField: "teacher",
-        sortable: true,
+        name: "Người tạo",
     },
     {
         name: "Thao tác",
-        sortable: false,
+    },
+];
+
+export const questionExcelColumns = [
+    {
+        name: "STT",
+        sortField: "id",
+        sortable: true,
+    },
+    {
+        name: "Nội dung",
+        sortField: "content",
+        sortable: true,
+    },
+    {
+        name: "Loại câu hỏi",
+        sortField: "type",
+        sortable: true,
+    },
+    {
+        name: "Độ khó",
+        sortField: "level",
+        sortable: true,
+    },
+    {
+        name: "Chương",
+        sortField: "chapterName",
+        sortable: true,
+    },
+    {
+        name: "Môn học",
+        sortField: "subjectName",
+        sortable: true,
     },
 ];
 
@@ -70,17 +98,36 @@ export const testColumns = [
     },
     {
         name: "Môn học",
-        sortField: "subject",
-        sortable: true,
     },
     {
         name: "Người tạo",
-        sortField: "teacher",
-        sortable: true,
     },
     {
         name: "Thao tác",
-        sortField: "teacher",
+    },
+];
+
+export const questionColumnsTestPage = [
+    {
+        name: "Mã câu hỏi",
+    },
+    {
+        name: "Nội dung",
+    },
+    {
+        name: "Đáp án",
+    },
+    {
+        name: "Loại câu hỏi",
+    },
+    {
+        name: "Chương",
+    },
+    {
+        name: "Độ khó",
+    },
+    {
+        name: "Giảng viên",
     },
 ];
 

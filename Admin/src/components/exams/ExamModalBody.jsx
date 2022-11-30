@@ -105,7 +105,7 @@ function ExamModalBody({
         if (editedExam) {
             setValue("id", editedExam.id);
             setValue("creditClassId", editedExam.creditClassId);
-            dispatch(fetchAllTests({ page: 0, subject: editedExam.subjectId }));
+            dispatch(fetchAllTests({ page: 0, subject: editedExam.subjectId, notUsedTest: true }));
 
             setValue("examDate", editedExam.examDate);
             setValue("noticePeriod", editedExam.noticePeriod);
@@ -139,7 +139,9 @@ function ExamModalBody({
 
     useEffect(() => {
         if (creditClasses && creditClasses.length && !creditClassPage) {
-            dispatch(fetchAllTests({ page: 0, subject: creditClasses[0].subjectId }));
+            dispatch(
+                fetchAllTests({ page: 0, subject: creditClasses[0].subjectId, notUsedTest: true })
+            );
         }
     }, [creditClasses]);
 
@@ -159,7 +161,7 @@ function ExamModalBody({
 
     const handleCreditClassChange = ({ target: { value } }) => {
         const creditClass = creditClasses.find(({ id }) => id.toString() === value.toString());
-        dispatch(fetchAllTests({ page: 0, subject: creditClass.subjectId }));
+        dispatch(fetchAllTests({ page: 0, subject: creditClass.subjectId, notUsedTest: true }));
         setNumberOfActiveStudents(creditClass.numberOfActiveStudents);
 
         setValue(

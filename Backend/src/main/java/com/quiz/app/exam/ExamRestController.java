@@ -1,6 +1,5 @@
 package com.quiz.app.exam;
 
-import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exam.dto.ExamsDTO;
 import com.quiz.app.exam.dto.PostCreateExamDTO;
@@ -13,6 +12,7 @@ import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.takeExam.TakeExamService;
 import com.quiz.app.takeExamDetail.TakeExamDetailService;
 import com.quiz.app.test.TestService;
+import com.quiz.app.utils.CommonUtils;
 import com.quiz.entity.CreditClass;
 import com.quiz.entity.Exam;
 import com.quiz.entity.Question;
@@ -247,12 +247,29 @@ public class ExamRestController {
                 return new BadResponse<String>(e.getMessage()).response();
             }
         } else {
+            List<Test> tsts = new ArrayList<>();
             Exam tempExam = Exam.build(postCreateExamDTO);
+            tempExam.setTeacher(teacher);
             tempExam.setExamDate(tempExamDate);
             for (Integer testId : tests) {
-                tempExam.addTest(new Test(testId));
+                try {
+                    Test test = testService.findById(testId);
+                    tsts.add(test);
+                    tempExam.addTest(new Test(testId));
+                } catch (NotFoundException e) {
+
+                }
             }
             exam = examService.save(tempExam);
+            for (Test test : tsts) {
+                test.setExam(exam);
+                test.setUsed(true);
+                testService.save(
+                        test
+                );
+            }
+
+
             exam.setTeacher(teacher);
 
             int i = 0;
@@ -279,11 +296,12 @@ public class ExamRestController {
                     Random ran = new Random();
                     int randomTest = ran.nextInt(tests.size());
                     int testId = tests.get(randomTest);
-                    System.out.println("Test Id" + testId);
+                    String studentId = register.getStudent().getId();
+                    System.out.printf("Student %s use %d%n", studentId, testId);
 
                     int tryTime = takeExamService.determineTryTime(register);
                     takeExamService.insertIntoTakeExamTable(tryTime, exam.getId(),
-                            register.getCreditClass().getId(), register.getStudent().getId(), testId
+                            register.getCreditClass().getId(), studentId, testId
                     );
                     try {
                         Test test = testService.findById(testId);

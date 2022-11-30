@@ -59,6 +59,11 @@ public class TestService {
         return testRepository.findBySubject(subject);
     }
 
+    public List<Test> findBySubjectAndUsed(Subject subject) {
+        return testRepository.findBySubjectAndUsed(subject, false);
+    }
+
+
     public Test findByStudentAndExam(String studentId, Integer examId) {
         return testRepository.findByStudentAndExam(studentId, examId);
     }

@@ -3,7 +3,7 @@ import { tailwindCss } from "../../tailwind";
 
 function AnswerList({ answers }) {
     return (
-        <>
+        <div className='w-full p-4 rounded-lg border-gray-400 border-2'>
             {answers.map(answer => (
                 <div className='flex items-start mb-4'>
                     <label
@@ -15,7 +15,7 @@ function AnswerList({ answers }) {
                     </label>
                 </div>
             ))}
-        </>
+        </div>
     );
 }
 

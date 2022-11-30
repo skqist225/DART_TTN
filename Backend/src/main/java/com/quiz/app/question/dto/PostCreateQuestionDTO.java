@@ -1,6 +1,7 @@
 package com.quiz.app.question.dto;
 
 import com.quiz.app.answer.dto.AnswerDTO;
+import com.quiz.entity.Answer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,5 +27,6 @@ public class PostCreateQuestionDTO {
     private String subjectId;
     private String chapterName;
     private Integer chapterId;
+    private boolean status;
     private MultipartFile image;
 }

@@ -68,18 +68,24 @@ public class TestRestController {
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
-            @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId
+            @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
+            @RequestParam(name = "notUsedTest", required = false, defaultValue = "false") boolean notUsedTest
     ) {
         TestsDTO testsDTO = new TestsDTO();
 
         if (page.equals("0")) {
             List<Test> tests = null;
             if (!StringUtils.isEmpty(subjectId)) {
+                Subject subject = null;
                 try {
-                    Subject subject = subjectService.findById(subjectId);
-                    tests = testService.findBySubject(subject);
+                    subject = subjectService.findById(subjectId);
                 } catch (NotFoundException e) {
-                    tests = new ArrayList<>();
+                    throw new RuntimeException(e);
+                }
+                if (notUsedTest) {
+                    tests = testService.findBySubjectAndUsed(subject);
+                } else {
+                    tests = testService.findBySubject(subject);
                 }
             } else {
                 tests = testService.findAll();

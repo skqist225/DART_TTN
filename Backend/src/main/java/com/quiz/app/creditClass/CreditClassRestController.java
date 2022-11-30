@@ -74,7 +74,7 @@ public class CreditClassRestController {
             } else {
                 creditClasses = creditClassService.findAll();
             }
-
+            System.out.println(creditClasses);
             creditClassesDTO.setCreditClasses(creditClasses);
             creditClassesDTO.setTotalElements(creditClasses.size());
             creditClassesDTO.setTotalPages((long) Math.ceil(creditClasses.size() / 10));

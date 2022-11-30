@@ -25,7 +25,6 @@ export { default as TableModalViewer } from "./utils/tables/TableModalViewer";
 export { default as DatePicker } from "./utils/datePicker/DatePicker";
 
 //questions
-export { default as QuestionExcelModalBody } from "./questions/QuestionExcelModalBody";
 export { default as QuestionModalBody } from "./questions/QuestionModalBody";
 export { default as QuestionsFilter } from "./questions/QuestionsFilter";
 export { default as QuestionTableBody } from "./questions/QuestionTableBody";
@@ -38,7 +37,6 @@ export { default as SubjectTableBody } from "./subjects/SubjectTableBody";
 //users
 export { default as UserModalBody } from "./users/UserModalBody";
 export { default as UserTableBody } from "./users/UserTableBody";
-export { default as UserExcelModalBody } from "./users/UserExcelModalBody";
 
 //classes
 export { default as CreditClassModalBody } from "./creditClasses/CreditClassModalBody";

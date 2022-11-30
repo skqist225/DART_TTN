@@ -1,7 +1,8 @@
 package com.quiz.app.utils;
 
+import com.quiz.app.answer.dto.AnswerDTO;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.app.question.dto.ReadQuestionExcelDTO;
+import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import com.quiz.entity.Answer;
 import com.quiz.entity.Sex;
 import com.quiz.entity.User;
@@ -34,7 +35,7 @@ public class ExcelUtils {
         }
     }
 
-    public void readQuestionFromFile(List<ReadQuestionExcelDTO> questions) throws NotFoundException {
+    public void readQuestionFromFile(List<PostCreateQuestionDTO> questions) {
         char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
         List<String> alphabets = new ArrayList<>();
         for (char c : alphabet) {
@@ -42,7 +43,7 @@ public class ExcelUtils {
         }
 
         for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
-            ReadQuestionExcelDTO question = new ReadQuestionExcelDTO();
+            PostCreateQuestionDTO question = new PostCreateQuestionDTO();
             Row row = sheet.getRow(i);
 
             String type = row.getCell(0).getStringCellValue();
@@ -53,7 +54,7 @@ public class ExcelUtils {
             double numberOfChoices = row.getCell(1).getNumericCellValue();
 
             int answerCell = (int) (3 + numberOfChoices);
-            List<Answer> answers = new ArrayList<>();
+            List<AnswerDTO> answers = new ArrayList<>();
 
             List<Integer> ans = new ArrayList<>();
             if (type.equals("Một đáp án")) {
@@ -73,7 +74,7 @@ public class ExcelUtils {
                 }
                 boolean isAns = ans.contains(c - 2);
 
-                Answer answer = new Answer(content,
+                AnswerDTO answer = new AnswerDTO(content,
                         type.equals("Đáp án điền") || isAns, alphabets.get(c - 3).toUpperCase());
                 answers.add(answer);
             }
@@ -128,9 +129,5 @@ public class ExcelUtils {
 
             users.add(user);
         }
-    }
-
-    public void readRegisterFromFile() {
-
     }
 }

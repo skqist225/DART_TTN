@@ -1,5 +1,6 @@
 package com.quiz.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.quiz.app.question.dto.PostCreateQuestionDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -10,10 +11,12 @@ import org.apache.commons.lang.StringUtils;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -52,16 +55,27 @@ public class Question {
     @Column(name = "HINHANH")
     private String image;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MACHUONG", nullable = false)
     private Chapter chapter;
 
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "MAGV", nullable = false)
     private User teacher;
 
     @Column(name = "CONSUDUNG", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean status;
+
+//    @JsonIgnore
+//    @ManyToMany(mappedBy = "questions", fetch = FetchType.LAZY)
+//    private List<Test> tests = new ArrayList<>();
+
+//    @Transient
+//    public boolean getCanDisabled() {
+//        return this.getTests().size() == 0;
+//    }
 
     @Transient
     private String finalAnswer;
@@ -228,4 +242,27 @@ public class Question {
     public void setFinalAnswer(String finalAnswer) {
         this.finalAnswer = finalAnswer;
     }
+
+    @Transient
+    public String getTeacherName() {
+        return this.teacher.getFullName();
+    }
+
+    @Transient
+    public String getChapterName() {
+        return this.chapter.getName();
+    }
+
+    @Transient
+    public String getSubjectName() {
+        return this.chapter.getSubject().getName();
+    }
+
+//    public List<Test> getTests() {
+//        return tests;
+//    }
+//
+//    public void setTests(List<Test> tests) {
+//        this.tests = tests;
+//    }
 }

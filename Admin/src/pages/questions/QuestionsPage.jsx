@@ -37,10 +37,10 @@ function QuestionsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [image, setImage] = useState(null);
+    const [excelFile, setExcelFile] = useState(null);
 
     const {
         questions,
-        questionsExcel,
         errorObject,
         totalElements,
         totalPages,
@@ -49,7 +49,7 @@ function QuestionsPage() {
         addQuestion: { successMessage },
         editQuestion: { successMessage: eqSuccessMessage },
         deleteQuestion: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
-        addMultipleQuestions: { successMessage: amqSuccessMessage },
+        addMultipleQuestions: { successMessage: amqSuccessMessage, errorMessage: amqErrorMessage },
         enableOrDisableQuestion: { successMessage: eodqSuccessMessage },
     } = useSelector(questionState);
 
@@ -248,13 +248,22 @@ function QuestionsPage() {
     }, [amqSuccessMessage]);
 
     useEffect(() => {
+        console.log(amqErrorMessage);
+        if (amqErrorMessage) {
+            callToast("error", amqErrorMessage);
+        }
+    }, [amqErrorMessage]);
+
+    useEffect(() => {
         if (eodqSuccessMessage) {
             cleanForm(eodqSuccessMessage, "normal");
         }
     }, [eodqSuccessMessage]);
 
     const handleAddMultipleFromExcelFile = () => {
-        dispatch(addMultipleQuestions({ questions: questionsExcel }));
+        if (excelFile) {
+            dispatch(addMultipleQuestions({ file: excelFile }));
+        }
     };
 
     function onCloseForm() {
@@ -262,6 +271,7 @@ function QuestionsPage() {
         setValue("answers", []);
         clearErrors("answers");
         dispatch(setExcelAdd(false));
+        dispatch(setExcelQuestions([]));
     }
 
     return (
@@ -287,6 +297,7 @@ function QuestionsPage() {
                     onSubmit={onSubmit}
                     ModalBody={
                         <QuestionModalBody
+                            dy
                             errors={errors}
                             register={register}
                             dispatch={dispatch}
@@ -295,6 +306,7 @@ function QuestionsPage() {
                             isEdit={isEdit}
                             control={control}
                             clearErrors={clearErrors}
+                            setExcelFile={setExcelFile}
                         />
                     }
                     isEdit={isEdit}

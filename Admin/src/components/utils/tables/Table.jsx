@@ -5,15 +5,14 @@ import TableHeader from "./TableHeader";
 import TableModal from "./TableModal";
 import TableSearch from "./TableSearch";
 import { tailwindCss } from "../../../tailwind";
-import $ from "jquery";
-import { DropDownIcon, ExcelIcon } from "../../../images";
-import { setEditedQuestion, setExcelAdd } from "../../../features/questionSlice";
+import { ExcelIcon } from "../../../images";
+import { setExcelAdd } from "../../../features/questionSlice";
 import { persistUserState } from "../../../features/persistUserSlice";
 import { setUserExcelAdd } from "../../../features/userSlice";
 import { Tooltip } from "flowbite-react";
-import AddIcon from "@mui/icons-material/Add";
 import MyButton, { ButtonType } from "../../common/MyButton";
-import { height } from "@mui/system";
+import $ from "jquery";
+import { setRegisterExcelAdd } from "../../../features/registerSlice";
 
 function Table({
     searchPlaceHolder,
@@ -37,13 +36,10 @@ function Table({
     addTest,
     onCloseForm,
     Filter,
-    setError,
     excelAdd,
     recordsPerPage = 12,
 }) {
     const dispatch = useDispatch();
-
-    const [open, setOpen] = useState(false);
 
     const { userRoles } = useSelector(persistUserState);
 
@@ -87,27 +83,29 @@ function Table({
                                 </Tooltip>
                             </div>
                         )}
-
-                        <div className='mr-2'>
-                            <button
-                                type='button'
-                                className={
-                                    tailwindCss.lightButton + " bg-gray-200 hover:bg-gray-300"
-                                }
-                                onClick={() => {
-                                    if (modalLabel === "câu hỏi") {
-                                        dispatch(setExcelAdd(true));
-                                    } else if (modalLabel === "người dùng") {
-                                        dispatch(setUserExcelAdd(true));
-                                    } else {
+                        {["câu hỏi", "đăng ký", "người dùng"].includes(modalLabel) && (
+                            <div className='mr-2'>
+                                <button
+                                    type='button'
+                                    className={
+                                        tailwindCss.lightButton + " bg-gray-200 hover:bg-gray-300"
                                     }
-                                    $(`#${modalId}`).css("display", "flex");
-                                }}
-                                style={{ width: "46px", height: "46px" }}
-                            >
-                                <ExcelIcon />
-                            </button>
-                        </div>
+                                    onClick={() => {
+                                        if (modalLabel === "câu hỏi") {
+                                            dispatch(setExcelAdd(true));
+                                        } else if (modalLabel === "đăng ký") {
+                                            dispatch(setRegisterExcelAdd(true));
+                                        } else if (modalLabel === "người dùng") {
+                                            dispatch(setUserExcelAdd(true));
+                                        }
+                                        $(`#${modalId}`).css("display", "flex");
+                                    }}
+                                    style={{ width: "46px", height: "46px" }}
+                                >
+                                    <ExcelIcon />
+                                </button>
+                            </div>
+                        )}
                     </div>
                 </div>
 
