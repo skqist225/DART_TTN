@@ -33,11 +33,12 @@ function SubjectTableBody({ rows, setIsEdit }) {
                                     <MyButton
                                         type='view'
                                         onClick={() => {
-                                            $(`#chaptersViewer${index}`).css("display", "flex");
+                                            $(`#chaptersViewer${row.id}`).css("display", "flex");
                                         }}
+                                        disabled={row.chapters.length === 0}
                                     />
                                     <TableModalViewer
-                                        modalId={`chaptersViewer${index}`}
+                                        modalId={`chaptersViewer${row.id}`}
                                         modalLabel={`Danh sách chương(${row.chapters.length})`}
                                         ModalBody={<ChapterList chapters={row.chapters} />}
                                     />

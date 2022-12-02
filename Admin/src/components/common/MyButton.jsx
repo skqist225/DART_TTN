@@ -67,7 +67,7 @@ function MyButton({ type, onClick, className = "", disabled = false, label = "" 
         }
         case "view": {
             buttonClassName = "bg-violet-600 hover:bg-violet-600";
-            buttonDisableClassName += "bg-green-300 hover:bg-green-300";
+            buttonDisableClassName += "bg-violet-300 hover:bg-violet-300";
             Icon = <VisibilityIcon />;
 
             break;

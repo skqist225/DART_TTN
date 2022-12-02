@@ -161,7 +161,7 @@ function UserModalBody({ errors, register, dispatch, setValue, setImage, isEdit,
                         </div>
                     </div>
 
-                    <FileInput setImage={setImage} image={editedUser && editedUser.avatarPath} />
+                    {/* <FileInput setImage={setImage} image={editedUser && editedUser.avatarPath} /> */}
                 </div>
             ) : (
                 <ExcelModalBody setExcelFile={setExcelFile} />
