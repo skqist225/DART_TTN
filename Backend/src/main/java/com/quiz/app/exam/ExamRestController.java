@@ -46,7 +46,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Random;
 
-
 @RestController
 @RequestMapping("/api/exams")
 public class ExamRestController {
@@ -77,8 +76,7 @@ public class ExamRestController {
             @RequestParam(name = "schoolYear", required = false, defaultValue = "") String schoolYear,
             @RequestParam(name = "semester", required = false, defaultValue = "") String semester,
             @RequestParam(name = "type", required = false, defaultValue = "") String type,
-            @RequestParam(name = "taken", required = false, defaultValue = "") String taken
-    ) {
+            @RequestParam(name = "taken", required = false, defaultValue = "") String taken) {
         ExamsDTO subjectsDTO = new ExamsDTO();
         List<Exam> exams = null;
         if (page.equals("0")) {
@@ -118,11 +116,11 @@ public class ExamRestController {
     }
 
     public void catchExamInputException(CommonUtils commonUtils, Integer id, String name,
-                                        Integer creditClassId, String examDate,
-                                        Integer noticePeriod,
-                                        Integer numberOfStudents, Integer time, String type,
-                                        List<Integer> tests,
-                                        boolean isEdit) {
+            Integer creditClassId, String examDate,
+            Integer noticePeriod,
+            Integer numberOfStudents, Integer time, String type,
+            List<Integer> tests,
+            boolean isEdit) {
         if (isEdit) {
             if (Objects.isNull(id)) {
                 commonUtils.addError("id", "Mã ca thi không được để " +
@@ -146,8 +144,7 @@ public class ExamRestController {
         }
 
         if (Objects.isNull(numberOfStudents)) {
-            commonUtils.addError("numberOfStudents", "Số SV không được để trống "
-            );
+            commonUtils.addError("numberOfStudents", "Số SV không được để trống ");
         }
 
         if (Objects.isNull(time)) {
@@ -170,8 +167,7 @@ public class ExamRestController {
     public ResponseEntity<StandardJSONResponse<String>> saveExam(
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
             @RequestBody PostCreateExamDTO postCreateExamDTO,
-            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
-    ) {
+            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) {
         User teacher = userDetailsImpl.getUser();
         CommonUtils commonUtils = new CommonUtils();
         Exam exam = null;
@@ -199,7 +195,6 @@ public class ExamRestController {
             } catch (NotFoundException e) {
                 commonUtils.addError("creditClassId", e.getMessage());
             }
-
 
             if (commonUtils.getArrayNode().size() > 0) {
                 return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
@@ -265,10 +260,8 @@ public class ExamRestController {
                 test.setExam(exam);
                 test.setUsed(true);
                 testService.save(
-                        test
-                );
+                        test);
             }
-
 
             exam.setTeacher(teacher);
 
@@ -301,8 +294,7 @@ public class ExamRestController {
 
                     int tryTime = takeExamService.determineTryTime(register);
                     takeExamService.insertIntoTakeExamTable(tryTime, exam.getId(),
-                            register.getCreditClass().getId(), studentId, testId
-                    );
+                            register.getCreditClass().getId(), studentId, testId);
                     try {
                         Test test = testService.findById(testId);
                         Collections.shuffle(test.getQuestions());
@@ -334,7 +326,8 @@ public class ExamRestController {
     }
 
     @PutMapping("{id}")
-    public ResponseEntity<StandardJSONResponse<String>> enableOrDisable(@PathVariable("id") Integer id, @RequestParam(name = "action") String action) {
+    public ResponseEntity<StandardJSONResponse<String>> enableOrDisable(@PathVariable("id") Integer id,
+            @RequestParam(name = "action") String action) {
         try {
             String message = examService.enableOrDisable(id, action);
 

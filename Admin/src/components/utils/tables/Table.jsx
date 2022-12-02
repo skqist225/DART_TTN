@@ -37,6 +37,7 @@ function Table({
     onCloseForm,
     Filter,
     excelAdd,
+    testPage = false,
     recordsPerPage = 12,
 }) {
     const dispatch = useDispatch();
@@ -138,6 +139,7 @@ function Table({
                 addTest={addTest}
                 onCloseForm={onCloseForm}
                 excelAdd={excelAdd}
+                testPage={testPage}
             />
         </div>
     );

@@ -29,6 +29,16 @@ function TestsPage() {
     const [isEdit, setIsEdit] = useState(false);
 
     const { subjects } = useSelector(subjectState);
+    const {
+        tests,
+        totalElements,
+        totalPages,
+        filterObject,
+        addTest: { successMessage },
+        editTest: { successMessage: esSuccessMessage },
+        deleteTest: { successMessage: dsSuccessMessage },
+        enableOrDisableTest: { successMessage: eodTest },
+    } = useSelector(testState);
 
     const formId = "testForm";
     const modalId = "testModal";
@@ -125,16 +135,6 @@ function TestsPage() {
         }
     };
 
-    const {
-        tests,
-        totalElements,
-        totalPages,
-        filterObject,
-        addTest: { successMessage },
-        editTest: { successMessage: esSuccessMessage },
-        deleteTest: { successMessage: dsSuccessMessage },
-    } = useSelector(testState);
-
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
             fetchAllTests({
@@ -196,8 +196,16 @@ function TestsPage() {
         }
     }, [dsSuccessMessage]);
 
+    useEffect(() => {
+        if (eodTest) {
+            cleanForm(eodTest, "");
+        }
+    }, [eodTest]);
+
     function onCloseForm() {
         dispatch(setEditedTest(null));
+        setValue("criteria", []);
+        clearErrors("criteria");
     }
 
     return (
@@ -236,6 +244,7 @@ function TestsPage() {
                     onCloseForm={onCloseForm}
                     Filter={TestFilter}
                     setError={setError}
+                    testPage={true}
                 />
             }
         />

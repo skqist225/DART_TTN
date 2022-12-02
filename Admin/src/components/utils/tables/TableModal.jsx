@@ -1,14 +1,13 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Spinner } from "flowbite-react";
 import { CloseIcon } from "../../../images";
 import { tailwindCss } from "../../../tailwind";
-import $ from "jquery";
-import { useSelector } from "react-redux";
 import { questionState } from "../../../features/questionSlice";
-import { useDispatch } from "react-redux";
-import { addTest } from "../../../features/testSlice";
+import { addTest, testState } from "../../../features/testSlice";
 import { callToast } from "../../../helpers";
 import { userState } from "../../../features/userSlice";
-import { Spinner } from "flowbite-react";
+import $ from "jquery";
 
 function TableModal({
     modalId,
@@ -24,8 +23,11 @@ function TableModal({
     setError,
     addTest: addTst = false,
     excelAdd = false,
+    testPage = false,
 }) {
     const dispatch = useDispatch();
+
+    console.log(testPage);
 
     const {
         questions,
@@ -34,6 +36,7 @@ function TableModal({
     const {
         addMultipleUsers: { loading: registerLoading },
     } = useSelector(userState);
+    const { addTestDisabled } = useSelector(testState);
 
     console.log(modalLabel);
     console.log(modalId);
@@ -77,7 +80,12 @@ function TableModal({
                             <button
                                 id='loadQuestionTestPageButton'
                                 type='submit'
-                                className='text-blue-700 hover:text-white border border-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:hover:bg-blue-600 dark:focus:ring-blue-800'
+                                className={`${tailwindCss.blueOutlineButton} ${
+                                    modalLabel === "đề thi" &&
+                                    addTestDisabled &&
+                                    "cursor-not-allowed hover:text-blue-700 hover:bg-white"
+                                }`}
+                                disabled={modalLabel === "đề thi" && addTestDisabled}
                             >
                                 Tải câu hỏi
                             </button>
@@ -85,13 +93,19 @@ function TableModal({
 
                         <button
                             type={!excelAdd && !addTst ? "submit" : "button"}
-                            className={tailwindCss.modal.saveButton}
+                            className={`${tailwindCss.modal.saveButton} ${
+                                modalLabel === "đề thi" &&
+                                addTestDisabled &&
+                                "cursor-not-allowed hover:bg-blue-700"
+                            }`}
+                            disabled={modalLabel === "đề thi" && addTestDisabled}
                             onClick={() => {
                                 if (excelAdd && handleAddMultipleFromExcelFile) {
                                     handleAddMultipleFromExcelFile();
                                 }
 
                                 if (addTst) {
+                                    let haveError = false;
                                     const name = $("#testName").val();
                                     if (!name) {
                                         if (setError) {
@@ -99,13 +113,18 @@ function TableModal({
                                                 type: "custom",
                                                 message: "Tên đề thi không được để trống",
                                             });
+                                        } else {
+                                            callToast("error", "Tên đề thi không được để trống");
                                         }
-                                        if (!questions.length) {
-                                            callToast(
-                                                "error",
-                                                "Danh sách câu hỏi không được để trống"
-                                            );
-                                        }
+                                        haveError = true;
+                                    }
+
+                                    if (!questions.length) {
+                                        callToast("error", "Danh sách câu hỏi không được để trống");
+                                        haveError = true;
+                                    }
+
+                                    if (haveError) {
                                         return;
                                     }
 

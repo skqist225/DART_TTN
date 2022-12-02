@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -340,6 +341,17 @@ public class TestRestController {
         try {
             return new OkResponse<>(testService.deleteById(id)).response();
         } catch (ConstrainstViolationException ex) {
+            return new BadResponse<String>(ex.getMessage()).response();
+        }
+    }
+
+    @PutMapping("{id}")
+    public ResponseEntity<StandardJSONResponse<String>> enableOrDisable(@PathVariable("id") Integer id, @RequestParam(name = "action") String action) {
+        try {
+            String message = testService.enableOrDisable(id, action);
+
+            return new OkResponse<>(message).response();
+        } catch (NotFoundException ex) {
             return new BadResponse<String>(ex.getMessage()).response();
         }
     }

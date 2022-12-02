@@ -139,10 +139,6 @@ public class SubjectRestController {
                 commonUtils.addError("id", "Mã môn học đã tồn tại");
             }
 
-            if (subjectService.isNameDuplicated(id, name, isEdit)) {
-                commonUtils.addError("name", "Tên môn học đã tồn tại");
-            }
-
             if ((numberOfTheoreticalPeriods + numberOfPracticePeriods) % 3 != 0) {
                 commonUtils.addError("numberOfPracticePeriods", "Số tiết lý thuyết + thực " +
                         "hành phải là bội số của 3 "
@@ -154,22 +150,22 @@ public class SubjectRestController {
             }
         }
 
-        int i = 0;
-        if (chapterDTOS.size() > 0) {
-            for (ChapterDTO chapterDTO : chapterDTOS) {
-                if (chapterService.isNameDuplicated(chapterDTO.getId(), chapterDTO.getName(), isEdit)) {
-                    commonUtils.addError(String.format("chapters.%d.name", i), "Tên chương đã" +
-                            " tồn" +
-                            " " +
-                            "tại");
-                }
-                i++;
-            }
-        }
-
-        if (commonUtils.getArrayNode().size() > 0) {
-            return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
-        }
+//        int i = 0;
+//        if (chapterDTOS.size() > 0) {
+//            for (ChapterDTO chapterDTO : chapterDTOS) {
+//                if (chapterService.isNameDuplicated(chapterDTO.getId(), chapterDTO.getName(), isEdit)) {
+//                    commonUtils.addError(String.format("chapters.%d.name", i), "Tên chương đã" +
+//                            " tồn" +
+//                            " " +
+//                            "tại");
+//                }
+//                i++;
+//            }
+//        }
+//
+//        if (commonUtils.getArrayNode().size() > 0) {
+//            return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
+//        }
 
         if (isEdit) {
             try {

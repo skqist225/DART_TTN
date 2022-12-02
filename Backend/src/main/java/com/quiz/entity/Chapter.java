@@ -10,6 +10,7 @@ import lombok.Setter;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -37,7 +38,7 @@ public class Chapter {
     @Column(name = "SOCHUONG", columnDefinition = "SMALLINT", nullable = false)
     private Integer chapterNumber;
 
-    @Column(name = "TENCHUONG", nullable = false, unique = true)
+    @Column(name = "TENCHUONG", nullable = false)
     private String name;
 
     @JsonIgnore
@@ -46,7 +47,7 @@ public class Chapter {
     private Subject subject;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "chapter", orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "chapter", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Question> questions;
 
     public static Chapter build(int chapterNumber, String name, Subject subject) {
@@ -72,5 +73,10 @@ public class Chapter {
             }
             return subtotal;
         }, Integer::sum);
+    }
+
+    @Transient
+    public List<Question> getTempQuestions() {
+        return this.getQuestions();
     }
 }

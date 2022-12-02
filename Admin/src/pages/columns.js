@@ -158,7 +158,7 @@ export const subjectColumns = [
         sortable: true,
     },
     {
-        name: "Số bộ đề",
+        name: "Số đề thi",
         sortField: "numberOfTests",
         sortable: true,
     },

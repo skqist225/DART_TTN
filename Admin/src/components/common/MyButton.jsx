@@ -12,10 +12,13 @@ export const ButtonType = {
     edit: "edit",
 };
 
-function MyButton({ type, label = "", disabled = false, onClick, className }) {
+function MyButton({ type, onClick, className = "", disabled = false, label = "" }) {
     let buttonClassName = "",
-        buttonDisableClassName = "",
+        buttonDisableClassName = "cursor-not-allowed ",
         Icon = null;
+
+    // console.log(type + disabled);
+
     switch (type) {
         case "add": {
             buttonClassName = "bg-indigo-600 hover:bg-indigo-600";
@@ -32,13 +35,13 @@ function MyButton({ type, label = "", disabled = false, onClick, className }) {
         }
         case "delete": {
             buttonClassName = "bg-rose-500 hover:bg-rose-500";
-            buttonDisableClassName = "bg-rose-200 hover:bg-rose-200";
+            buttonDisableClassName = "bg-rose-300 hover:bg-rose-300";
             Icon = <DeleteIcon />;
             break;
         }
         case "disable": {
             buttonClassName = "bg-amber-500 hover:bg-amber-500";
-            buttonDisableClassName = "bg-amber-200 hover:bg-amber-200";
+            buttonDisableClassName = "bg-amber-300 hover:bg-amber-300";
             Icon = (
                 <img
                     src={DisableImage}
@@ -52,20 +55,21 @@ function MyButton({ type, label = "", disabled = false, onClick, className }) {
         }
         case "enable": {
             buttonClassName = "bg-green-500 hover:bg-green-500";
-            buttonDisableClassName = "bg-green-200 hover:bg-green-200";
+            buttonDisableClassName = "bg-green-300 hover:bg-green-300";
             Icon = <CheckIcon />;
             break;
         }
         case "edit": {
             buttonClassName = "bg-blue-600 hover:bg-blue-600";
-            buttonDisableClassName = "bg-violet-300 hover:bg-violet-300";
+            buttonDisableClassName = "bg-blue-300 hover:bg-blue-300";
             Icon = <EditIcon />;
             break;
         }
         case "view": {
             buttonClassName = "bg-violet-600 hover:bg-violet-600";
-            buttonDisableClassName = "bg-violet-300 hover:bg-violet-300";
+            buttonDisableClassName += "bg-green-300 hover:bg-green-300";
             Icon = <VisibilityIcon />;
+
             break;
         }
     }
@@ -79,6 +83,7 @@ function MyButton({ type, label = "", disabled = false, onClick, className }) {
                 if (onClick) onClick();
             }}
             type='button'
+            disabled={disabled}
         >
             {Icon} {label}
         </button>

@@ -18,7 +18,7 @@ public interface TestRepository extends CrudRepository<Test, Integer> {
 
     List<Test> findBySubject(Subject subject);
 
-    List<Test> findBySubjectAndUsed(Subject subject, boolean used);
+    List<Test> findBySubjectAndUsedAndStatus(Subject subject, boolean used, boolean status);
 
     @Query("SELECT count(*) FROM Test")
     int countTotalTests();

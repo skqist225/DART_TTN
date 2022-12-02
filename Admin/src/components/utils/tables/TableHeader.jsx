@@ -27,7 +27,7 @@ function TableHeader({ columns, handleSortChange, modalLabel, addCheckbox = fals
             : reverseSortDir(`.downer.${sortField}`);
     }
     const { userRoles } = useSelector(persistUserState);
-    console.log(modalLabel);
+    // console.log(modalLabel);
     return (
         <thead className={tailwindCss.thead}>
             <tr>
@@ -46,7 +46,8 @@ function TableHeader({ columns, handleSortChange, modalLabel, addCheckbox = fals
                                 name
                             ) : (
                                 <button
-                                    className='table--header__sortButton'
+                                    className='
+                                    '
                                     onClick={e => {
                                         sortData(e, sortField);
                                     }}

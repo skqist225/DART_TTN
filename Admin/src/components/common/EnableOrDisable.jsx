@@ -2,7 +2,14 @@ import React from "react";
 import { useDispatch } from "react-redux";
 import MyButton from "./MyButton";
 
-function EnableOrDisable({ status, enableOrDisable, id, taken = false, creditClassPage = false }) {
+function EnableOrDisable({
+    status,
+    enableOrDisable,
+    id,
+    taken = false,
+    creditClassPage = false,
+    disabled = false,
+}) {
     const dispatch = useDispatch();
 
     let tempStatus = status;
@@ -23,7 +30,7 @@ function EnableOrDisable({ status, enableOrDisable, id, taken = false, creditCla
                             })
                         );
                     }}
-                    disabled={taken}
+                    disabled={disabled}
                 />
             ) : (
                 <MyButton
@@ -31,7 +38,7 @@ function EnableOrDisable({ status, enableOrDisable, id, taken = false, creditCla
                     onClick={() => {
                         dispatch(enableOrDisable({ id, action: "enable" }));
                     }}
-                    disabled={taken}
+                    disabled={disabled}
                 />
             )}
         </div>

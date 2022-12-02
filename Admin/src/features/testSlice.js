@@ -121,11 +121,24 @@ export const editTest = createAsyncThunk("test/editTest", async (postData, { rej
     }
 });
 
+export const enableOrDisableTest = createAsyncThunk(
+    "test/enableOrDisableTest",
+    async ({ id, action }, { rejectWithValue }) => {
+        try {
+            const { data } = await api.put(`/tests/${id}?action=${action}`);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 export const deleteTest = createAsyncThunk(
     "test/deleteTest",
-    async (subjectId, { rejectWithValue }) => {
+    async (testId, { rejectWithValue }) => {
         try {
-            const { data } = await api.delete(`/tests/${subjectId}/delete`);
+            const { data } = await api.delete(`/tests/${testId}/delete`);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -158,6 +171,10 @@ const initialState = {
         successMessage: null,
         errorMessage: null,
     },
+    enableOrDisableTest: {
+        successMessage: null,
+    },
+    addTestDisabled: false,
 };
 
 const testSlice = createSlice({
@@ -172,6 +189,8 @@ const testSlice = createSlice({
 
             state.deleteTest.successMessage = null;
             state.deleteTest.errorObject = null;
+
+            state.enableOrDisableTest.successMessage = null;
         },
         setFilterObject(state, { payload }) {
             if (payload) {
@@ -188,6 +207,10 @@ const testSlice = createSlice({
         },
         setTests(state, { payload }) {
             state.tests = payload;
+        },
+        setAddTestDisabled(state, { payload }) {
+            console.log(payload);
+            state.addTestDisabled = payload;
         },
     },
     extraReducers: builder => {
@@ -264,23 +287,31 @@ const testSlice = createSlice({
                         };
                     });
                 }
-            });
+            })
 
-        // .addCase(deleteTest.pending, (state, _) => {
-        //     state.deleteTest.successMessage = null;
-        //     state.deleteTest.errorMessage = null;
-        // })
-        // .addCase(deleteTest.fulfilled, (state, { payload }) => {
-        //     state.deleteTest.successMessage = payload.data;
-        // })
-        // .addCase(deleteTest.rejected, (state, { payload }) => {
-        //     state.deleteTest.errorMessage = payload;
-        // });
+            .addCase(enableOrDisableTest.pending, (state, { payload }) => {
+                state.enableOrDisableTest.successMessage = null;
+            })
+            .addCase(enableOrDisableTest.fulfilled, (state, { payload }) => {
+                state.enableOrDisableTest.successMessage = payload.data;
+            })
+            .addCase(enableOrDisableTest.rejected, (state, { payload }) => {})
+
+            .addCase(deleteTest.pending, (state, _) => {
+                state.deleteTest.successMessage = null;
+                state.deleteTest.errorMessage = null;
+            })
+            .addCase(deleteTest.fulfilled, (state, { payload }) => {
+                state.deleteTest.successMessage = payload.data;
+            })
+            .addCase(deleteTest.rejected, (state, { payload }) => {
+                state.deleteTest.errorMessage = payload;
+            });
     },
 });
 
 export const {
-    actions: { clearTestState, setFilterObject, setEditedTest, setTests },
+    actions: { clearTestState, setFilterObject, setEditedTest, setTests, setAddTestDisabled },
 } = testSlice;
 
 export const testState = state => state.test;

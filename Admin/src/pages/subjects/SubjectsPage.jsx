@@ -170,6 +170,7 @@ function SubjectsPage() {
     function cleanForm(successMessage, type = "normal") {
         callToast("success", successMessage);
         dispatch(fetchAllSubjects(filterObject));
+        onCloseForm();
 
         $(`#${modalId}`).css("display", "none");
         if (type === "add") {
@@ -200,17 +201,17 @@ function SubjectsPage() {
         }
     }, [dsSuccessMessage]);
 
-    function onCloseForm() {
-        dispatch(setEditedSubject(null));
-        setValue("chapters", []);
-        clearErrors("chapters");
-    }
-
     useEffect(() => {
         if (dsErrorMessage) {
             callToast("error", dsErrorMessage);
         }
     }, [dsErrorMessage]);
+
+    function onCloseForm() {
+        dispatch(setEditedSubject(null));
+        setValue("chapters", []);
+        clearErrors("chapters");
+    }
 
     return (
         <Frame

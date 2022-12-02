@@ -1,25 +1,27 @@
 import React from "react";
-import { deleteTest, setEditedTest } from "../../features/testSlice";
+import { useDispatch } from "react-redux";
+import { Badge, Button, Tooltip } from "flowbite-react";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import { deleteTest, enableOrDisableTest, setEditedTest } from "../../features/testSlice";
 import { tailwindCss } from "../../tailwind";
 import MyButton, { ButtonType } from "../common/MyButton";
-import { useDispatch } from "react-redux";
-import $ from "jquery";
-import { Badge, Button, Table, Tooltip } from "flowbite-react";
 import CriteriaList from "./CriteriaList";
 import TableModalViewer from "../utils/tables/TableModalViewer";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import LevelBadge from "../common/LevelBadge";
 import EnableOrDisable from "../common/EnableOrDisable";
-import QuestionTableBody from "../questions/QuestionTableBody";
 import QuestionList from "./QuestionList";
+import $ from "jquery";
 
-function TestTableBody({ rows, setIsEdit, examPage = false }) {
+function TestTableBody({ rows, examPage = false }) {
     const dispatch = useDispatch();
-
     return (
         <tbody>
             {rows.map((row, index) => (
-                <tr className={tailwindCss.tr} key={row.id}>
+                <tr
+                    className={`${tailwindCss.tr} ${
+                        !row.status && "bg-gray-200 hover:bg-gray-200"
+                    }`}
+                    key={row.id}
+                >
                     {examPage && (
                         <th scope='col' className='p-4'>
                             <div className='flex items-center'>
@@ -42,15 +44,9 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                         {row.name}
                     </td>
                     <td className={tailwindCss.tableCell}>
-                        {row.status === "Chưa sử dụng" ? (
-                            <Badge color='indigo' size='sm'>
-                                {row.status}
-                            </Badge>
-                        ) : (
-                            <Badge color='success' size='sm'>
-                                {row.status}
-                            </Badge>
-                        )}
+                        <Badge color={!row.used ? "indigo" : "success"} size='sm'>
+                            {!row.used ? "Chưa sử dụng" : "Đã sử dụng"}
+                        </Badge>
                     </td>
                     <td className={tailwindCss.tableCell}>{row.numberOfQuestions}</td>
                     <td className={tailwindCss.tableCell} style={{ zIndex: "9999" }}>
@@ -68,19 +64,28 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                     {!examPage && (
                         <td className={`${tailwindCss.tableCell} flex items-center`}>
                             <div className='mr-2'>
-                                <MyButton
-                                    type='view'
-                                    onClick={() => {
-                                        $(`#questionsViewer${index}`).css("display", "flex");
-                                    }}
-                                />
-                                <TableModalViewer
-                                    modalId={`questionsViewer${index}`}
-                                    modalLabel='Danh sách câu hỏi'
-                                    ModalBody={<QuestionList questions={row.questions} />}
-                                />
+                                <Tooltip content='Xem danh sách câu hỏi' placement='top'>
+                                    <Button
+                                        onClick={() => {
+                                            $(`#questionsViewer${index}`).css("display", "flex");
+                                        }}
+                                        color='success'
+                                        style={{
+                                            width: "46px",
+                                            height: "42px",
+                                            backgroundColor: "#0E9F6E",
+                                        }}
+                                    >
+                                        <VisibilityIcon />
+                                    </Button>
+                                    <TableModalViewer
+                                        modalId={`questionsViewer${index}`}
+                                        modalLabel='Danh sách câu hỏi'
+                                        ModalBody={<QuestionList questions={row.questions} />}
+                                    />
+                                </Tooltip>
                             </div>
-                            <div className='mr-2'>
+                            {/* <div className='mr-2'>
                                 <MyButton
                                     type={ButtonType.edit}
                                     onClick={() => {
@@ -89,11 +94,21 @@ function TestTableBody({ rows, setIsEdit, examPage = false }) {
                                         dispatch(setEditedTest(row));
                                     }}
                                 />
+                            </div> */}
+                            <div className='mr-2'>
+                                <MyButton
+                                    type={ButtonType.delete}
+                                    onClick={() => {
+                                        dispatch(deleteTest(row.id));
+                                    }}
+                                    disabled={row.used}
+                                />
                             </div>
                             <EnableOrDisable
                                 status={row.status}
-                                // enableOrDisable={enableOrDisableTest}
+                                enableOrDisable={enableOrDisableTest}
                                 id={row.id}
+                                disabled={row.used}
                             />
                         </td>
                     )}

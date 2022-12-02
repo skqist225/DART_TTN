@@ -82,8 +82,11 @@ public class Test {
     @Column(name = "CAPNHATLUC")
     private Date updatedDate;
 
-    @Column(name = "DASUDUNG",columnDefinition = "BOOLEAN DEFAULT FALSE")
+    @Column(name = "DASUDUNG", columnDefinition = "BOOLEAN DEFAULT FALSE")
     private boolean used;
+
+    @Column(name = "CONSUDUNG", columnDefinition = "BOOLEAN DEFAULT TRUE")
+    private boolean status;
 
     public void addQuestion(Question question) {
         this.questions.add(question);
@@ -97,7 +100,6 @@ public class Test {
                              User teacher) {
         return Test.builder().name(name).questions(questions).subject(subject).teacher(teacher).build();
     }
-
 
     @Transient
     public List<Question> getQuestions() {
@@ -113,8 +115,8 @@ public class Test {
         return this.questions.size();
     }
 
-    public String getStatus() {
-        return this.exam == null ? "Chưa sử dụng" : "Đã được sử dụng";
+    public boolean getUsed() {
+        return this.exam != null;
     }
 
     public List<CriteriaDTO> getCriteria() {

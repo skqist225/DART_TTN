@@ -60,7 +60,7 @@ public class TestService {
     }
 
     public List<Test> findBySubjectAndUsed(Subject subject) {
-        return testRepository.findBySubjectAndUsed(subject, false);
+        return testRepository.findBySubjectAndUsedAndStatus(subject, false, true);
     }
 
 
@@ -103,6 +103,26 @@ public class TestService {
 
     public List<Test> findAll() {
         return (List<Test>) testRepository.findAll();
+    }
+
+    public String enableOrDisable(Integer id, String action) throws NotFoundException {
+        try {
+            Test test = findById(id);
+            String responseMessage = "";
+            if (action.equals("enable")) {
+                test.setStatus(true);
+                responseMessage = "Mở đề thi thành công";
+            } else {
+                test.setStatus(false);
+                responseMessage = "Hủy đề thi thành công";
+            }
+
+            testRepository.save(test);
+
+            return responseMessage;
+        } catch (NotFoundException ex) {
+            throw new NotFoundException(ex.getMessage());
+        }
     }
 
     public Page<Test> findAllTests(Map<String, String> filters) {
@@ -148,5 +168,4 @@ public class TestService {
 
         return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
     }
-
 }

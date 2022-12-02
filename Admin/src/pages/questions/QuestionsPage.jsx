@@ -197,6 +197,7 @@ function QuestionsPage() {
     function cleanForm(successMessage, type = "add") {
         callToast("success", successMessage);
         dispatch(fetchAllQuestions(filterObject));
+        onCloseForm();
 
         $(`#${modalId}`).css("display", "none");
         if (type === "add") {

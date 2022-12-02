@@ -72,10 +72,10 @@ public class QuestionService {
             String responseMessage = "";
             if (action.equals("enable")) {
                 question.setStatus(true);
-                responseMessage = "Kích họat câu hỏi thành công";
+                responseMessage = "Mở câu hỏi thành công";
             } else {
                 question.setStatus(false);
-                responseMessage = "Hủy kích họat câu hỏi thành công";
+                responseMessage = "Hủy câu hỏi thành công";
             }
 
             questionRepository.save(question);

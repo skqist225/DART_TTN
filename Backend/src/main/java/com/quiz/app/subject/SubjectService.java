@@ -75,26 +75,6 @@ public class SubjectService {
         throw new NotFoundException("Không tìm thấy môn học với mã " + id);
     }
 
-    public Subject findByName(String name) throws NotFoundException {
-        Subject subject = subjectRepository.findByName(name);
-
-        if (Objects.nonNull(subject)) {
-            return subject;
-        }
-
-        throw new NotFoundException("Không tìm thấy môn học với tên " + name);
-    }
-
-    public boolean isNameDuplicated(String id, String name, boolean isEdit) {
-        Subject subject = subjectRepository.findByName(name);
-
-        if (isEdit) {
-            return Objects.nonNull(subject) && !Objects.equals(subject.getId(), id);
-        } else {
-            return Objects.nonNull(subject);
-        }
-    }
-
     public boolean isIdDuplicated(String id, boolean isEdit) {
         try {
             Subject subject = findById(id);

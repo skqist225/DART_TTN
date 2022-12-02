@@ -12,8 +12,6 @@ import java.util.List;
 @Repository
 public interface SubjectRepository extends CrudRepository<Subject, String> {
 
-    Subject findByName(String name);
-
     @Query("SELECT count(*) FROM Subject")
     int countTotalSubjects();
 
