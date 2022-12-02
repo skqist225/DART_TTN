@@ -339,7 +339,7 @@ function ExamModalBody({
                     <>
                         <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
                             {/* handleSortChange={handleSortChange} */}
-                            <TableHeader columns={columns} addCheckbox />
+                            <TableHeader columns={columns} />
                             <RegisterTableBody rows={registers} type={type} addExam />
                         </table>
                         <TablePagination

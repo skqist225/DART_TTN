@@ -127,7 +127,7 @@ const roleSlice = createSlice({
             state.editRole.successMessage = null;
 
             state.deleteRole.successMessage = null;
-            state.deleteRole.errorObject = null;
+            state.deleteRole.errorMessage = null;
         },
         clearErrorField(state, { payload }) {
             if (payload) {

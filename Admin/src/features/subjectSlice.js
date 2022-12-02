@@ -132,6 +132,7 @@ const subjectSlice = createSlice({
 
             state.addSubject.successMessage = null;
             state.editSubject.successMessage = null;
+            state.editSubject.errorMessage = null;
 
             state.deleteSubject.successMessage = null;
             state.deleteSubject.errorMessage = null;

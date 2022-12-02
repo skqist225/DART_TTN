@@ -3,6 +3,7 @@ package com.quiz.app.question;
 import com.quiz.entity.Chapter;
 import com.quiz.entity.Level;
 import com.quiz.entity.Question;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -17,6 +18,10 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
 
     @Query(value = "SELECT * FROM cauhoi where noidungcauhoi = :content", nativeQuery = true)
     Question findByContent(String content);
+
+    @Modifying
+    @Query(value = "delete from cauhoi where macauhoi = :id", nativeQuery = true)
+    public void deleteQuestionById(Integer id);
 
     @Query
     List<Question> findByChapterIn(List<Chapter> subject);

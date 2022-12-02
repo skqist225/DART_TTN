@@ -2,7 +2,6 @@ package com.quiz.app.subject;
 
 import com.quiz.app.chapter.ChapterService;
 import com.quiz.app.chapter.dto.ChapterDTO;
-import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
@@ -11,6 +10,7 @@ import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.subject.dto.PostCreateSubjectDTO;
 import com.quiz.app.subject.dto.SubjectDTO;
 import com.quiz.app.subject.dto.SubjectsDTO;
+import com.quiz.app.utils.CommonUtils;
 import com.quiz.entity.Chapter;
 import com.quiz.entity.Subject;
 import org.apache.commons.lang.StringUtils;
@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -80,12 +81,6 @@ public class SubjectRestController {
         }
 
         return new OkResponse<>(subjectsDTO).response();
-    }
-
-    @GetMapping("brief")
-    public ResponseEntity<StandardJSONResponse<List<SubjectDTO>>> fetchAllSubjects() {
-//        return new OkResponse<>(subjectService.findAllSubjects()).response();
-        return null;
     }
 
     @GetMapping("{subjectId}")
@@ -175,11 +170,11 @@ public class SubjectRestController {
                 subject.setNumberOfTheoreticalPeriods(numberOfTheoreticalPeriods);
                 subject.setNumberOfPracticePeriods(numberOfPracticePeriods);
 
-                System.out.println(Objects.isNull(subject.getChapters()));
+
                 if (Objects.isNull(subject.getChapters())) {
                     subject.setChapters(new ArrayList<>());
                 }
-                System.out.println(subject.getChapters());
+
                 List<Chapter> tempChapters = subject.getChapters();
 
                 if (chapterDTOS.size() == 0) {
@@ -206,6 +201,9 @@ public class SubjectRestController {
                     System.out.println("--------------------------------------");
                     List<Chapter> removedChapters = new ArrayList<>();
                     for (Chapter chapter : tempChapters) {
+                        if (Objects.isNull(chapter.getId())) {
+                            continue;
+                        }
                         boolean shouldDelete = true;
                         for (ChapterDTO chapterDTO : chapterDTOS) {
                             if (Objects.nonNull(chapterDTO.getId())) {
@@ -213,8 +211,6 @@ public class SubjectRestController {
                                     shouldDelete = false;
                                     break;
                                 }
-                            } else {
-                                shouldDelete = false;
                             }
                         }
                         // Remove none mentioned chapter
@@ -224,11 +220,18 @@ public class SubjectRestController {
                     }
 
                     for (Chapter chapter : removedChapters) {
+                        System.out.println("delete chapter id: " + chapter.getId());
                         subject.removeChapter(chapter);
                     }
                 }
-
-                subjectService.save(subject);
+                try {
+                    subjectService.save(subject);
+                } catch (Exception e) {
+                    if (e.getCause() != null && e.getCause().getCause() instanceof SQLIntegrityConstraintViolationException) {
+                        commonUtils.addError("sqlIntegrationException", "Không thể xóa chương vì ràng buộc dữ liệu");
+                        return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
+                    }
+                }
             } catch (NotFoundException exception) {
                 return new BadResponse<String>(exception.getMessage()).response();
             }
@@ -241,6 +244,7 @@ public class SubjectRestController {
         }
 
         return new OkResponse<>("Thêm môn học thành công").response();
+
     }
 
     @DeleteMapping("{id}/delete")

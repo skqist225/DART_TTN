@@ -41,6 +41,7 @@ function RegistersPage() {
         editRegister: { successMessage: eqSuccessMessage },
         deleteRegister: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
         addMultipleRegisters: { successMessage: amuSuccessMessage, errorMessage: amuErrorMessage },
+        enableOrDisableRegister: { successMessage: eodSuccessMessage },
     } = useSelector(registerState);
 
     const formId = "registerForm";
@@ -160,6 +161,12 @@ function RegistersPage() {
             callToast("error", amuErrorMessage);
         }
     }, [amuErrorMessage]);
+
+    useEffect(() => {
+        if (eodSuccessMessage) {
+            cleanForm(eodSuccessMessage, "enable");
+        }
+    }, [eodSuccessMessage]);
 
     const handleAddMultipleFromExcelFile = () => {
         if (excelFile) {

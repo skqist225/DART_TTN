@@ -272,7 +272,6 @@ function QuestionsPage() {
         setValue("answers", []);
         clearErrors("answers");
         dispatch(setExcelAdd(false));
-        dispatch(setExcelQuestions([]));
     }
 
     return (

@@ -49,7 +49,7 @@ function RolesPage() {
         filterObject,
         addRole: { successMessage },
         editRole: { successMessage: esSuccessMessage },
-        deleteRole: { successMessage: dsSuccessMessage },
+        deleteRole: { successMessage: dsSuccessMessage, errorMessage: drErrorMessage },
     } = useSelector(roleState);
 
     const handleQueryChange = ({ target: { value: query } }) => {
@@ -111,6 +111,12 @@ function RolesPage() {
             dispatch(fetchAllRoles(filterObject));
         }
     }, [dsSuccessMessage]);
+
+    useEffect(() => {
+        if (drErrorMessage) {
+            callToast("error", drErrorMessage);
+        }
+    }, [drErrorMessage]);
 
     const dispatch = useDispatch();
     useEffect(() => {

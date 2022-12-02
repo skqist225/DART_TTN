@@ -13,7 +13,13 @@ import { ButtonType } from "../common/MyButton";
 import { AnswerList } from "../";
 import $ from "jquery";
 
-function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
+function QuestionTableBody({
+    rows,
+    setIsEdit,
+    addTest = false,
+    page = null,
+    chapterListPage = false,
+}) {
     const dispatch = useDispatch();
     if (page !== null) {
         rows = rows.slice((page - 1) * 10, page * 10);
@@ -67,7 +73,9 @@ function QuestionTableBody({ rows, setIsEdit, addTest = false, page = null }) {
                         ) : (
                             <>
                                 <td className={tailwindCss.tableCell}>{row.type}</td>
-                                <td className={tailwindCss.tableCell}>{row.chapterName}</td>
+                                {!chapterListPage && (
+                                    <td className={tailwindCss.tableCell}>{row.chapterName}</td>
+                                )}{" "}
                                 <td>
                                     <LevelBadge level={row.level} />
                                 </td>

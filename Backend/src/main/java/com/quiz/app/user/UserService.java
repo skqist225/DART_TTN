@@ -147,21 +147,15 @@ public class UserService {
         Expression<String> userId = root.get("id");
         Expression<String> firstName = root.get("firstName");
         Expression<String> lastName = root.get("lastName");
-        Expression<String> sex = root.get("sex");
-        Expression<String> address = root.get("address");
         Expression<String> email = root.get("email");
         Expression<String> birthday = root.get("birthday");
-        Expression<Boolean> status = root.get("status");
 
         if (!StringUtils.isEmpty(searchQuery)) {
+            System.out.println(searchQuery);
             Expression<String> wantedQueryField = criteriaBuilder.concat(userId, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, firstName);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, lastName);
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, sex);
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, address);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, email);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
@@ -202,7 +196,6 @@ public class UserService {
 //            predicates.add(criteriaBuilder.and(status.in(statusesID)));
 //        }
 //
-
 
         criteriaQuery
                 .where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])))

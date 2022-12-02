@@ -39,7 +39,7 @@ function SubjectTableBody({ rows, setIsEdit }) {
                                     />
                                     <TableModalViewer
                                         modalId={`chaptersViewer${row.id}`}
-                                        modalLabel={`Danh sách chương(${row.chapters.length})`}
+                                        modalLabel={`Danh sách chương của môn học ${row.name} (${row.chapters.length})`}
                                         ModalBody={<ChapterList chapters={row.chapters} />}
                                     />
                                 </Tooltip>

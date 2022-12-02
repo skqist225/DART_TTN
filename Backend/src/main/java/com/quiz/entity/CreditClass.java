@@ -156,4 +156,10 @@ public class CreditClass {
                 ", status=" + status +
                 '}';
     }
+
+//    @Transient
+//    public boolean getShouldCreateExam() {
+//        return this.getSubject()
+//                .getTests().stream().reduce((acc,sub) -> ,Integer:::add);
+//    }
 }

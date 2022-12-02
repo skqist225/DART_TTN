@@ -222,20 +222,24 @@ public class QuestionRestController {
                     question.setImage(postCreateQuestionDTO.getImage().getOriginalFilename());
                 }
 
-                for (AnswerDTO answerDTO : answers) {
-                    // Add new question
-                    if (Objects.isNull(answerDTO.getId())) {
-                        question.addAnswer(Answer.build(answerDTO.getContent(),
-                                answerDTO.getIsTempAnswer().equals("true"), question, answerDTO.getOrder()));
-                    } else {
-                        for (Answer answer : question.getAnswers()) {
-                            // Edit existed question
-                            if (answerDTO.getId().equals(answer.getId())) {
-                                answer.setContent(answerDTO.getContent());
-                                answer.setOrder(answerDTO.getOrder());
-                                answer.setAnswer(answerDTO.getIsTempAnswer().equals("true"));
-                                answerService.save(answer);
-                                break;
+                if (answers.size() == 0) {
+                    question.removeAll();
+                } else {
+                    for (AnswerDTO answerDTO : answers) {
+                        // Add new question
+                        if (Objects.isNull(answerDTO.getId())) {
+                            question.addAnswer(Answer.build(answerDTO.getContent(),
+                                    answerDTO.getIsTempAnswer().equals("true"), question, answerDTO.getOrder()));
+                        } else {
+                            for (Answer answer : question.getAnswers()) {
+                                // Edit existed question
+                                if (answerDTO.getId().equals(answer.getId())) {
+                                    answer.setContent(answerDTO.getContent());
+                                    answer.setOrder(answerDTO.getOrder());
+                                    answer.setAnswer(answerDTO.getIsTempAnswer().equals("true"));
+                                    answerService.save(answer);
+                                    break;
+                                }
                             }
                         }
                     }
@@ -243,7 +247,12 @@ public class QuestionRestController {
 
                 List<Answer> ans = new ArrayList<>();
                 for (Answer answer : question.getAnswers()) {
+                    if (Objects.isNull(answer.getId())) {
+                        continue;
+                    }
+
                     boolean shouldDelete = true;
+
 
                     for (AnswerDTO a : answers) {
                         if (Objects.nonNull(a.getId())) {
@@ -251,8 +260,6 @@ public class QuestionRestController {
                                 shouldDelete = false;
                                 break;
                             }
-                        } else {
-                            shouldDelete = false;
                         }
                     }
                     // Remove none mentioned question

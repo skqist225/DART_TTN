@@ -4,7 +4,7 @@ import TableHeader from "../utils/tables/TableHeader";
 import TablePagination from "../utils/tables/TablePagination";
 import QuestionTableBody from "../questions/QuestionTableBody";
 
-function QuestionList({ questions }) {
+function QuestionList({ questions, chapterListPage = false }) {
     const [pageNumber, setPageNumber] = useState(1);
 
     const [splitedQuestions, setSplitedQuestions] = useState([]);
@@ -32,8 +32,12 @@ function QuestionList({ questions }) {
     return (
         <>
             <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                <TableHeader columns={questionColumnsTestPage} />
-                <QuestionTableBody rows={splitedQuestions} addTest />
+                <TableHeader columns={questionColumnsTestPage} chapterListPage={chapterListPage} />
+                <QuestionTableBody
+                    rows={splitedQuestions}
+                    addTest
+                    chapterListPage={chapterListPage}
+                />
             </table>
             <TablePagination
                 totalElements={questions.length}

@@ -2,7 +2,6 @@ package com.quiz.app.register;
 
 import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.app.register.dto.PostCreateRegisterDTO;
 import com.quiz.app.register.dto.RegistersDTO;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
@@ -11,11 +10,9 @@ import com.quiz.app.role.RoleService;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.app.takeExam.TakeExamService;
 import com.quiz.app.user.UserService;
-import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.utils.ExcelUtils;
 import com.quiz.entity.CreditClass;
 import com.quiz.entity.Register;
-import com.quiz.entity.RegisterId;
 import com.quiz.entity.Role;
 import com.quiz.entity.Sex;
 import com.quiz.entity.Subject;
@@ -29,8 +26,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -123,85 +121,6 @@ public class RegisterRestController {
         }
 
         return new OkResponse<>(registersDTO).response();
-    }
-
-    @PostMapping("save")
-    public ResponseEntity<StandardJSONResponse<Register>> saveSubject(
-            @RequestBody PostCreateRegisterDTO postCreateRegisterDTO,
-            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
-    ) {
-        Register savedSubject = null;
-        CommonUtils commonUtils = new CommonUtils();
-
-        String id = postCreateRegisterDTO.getId();
-        String name = postCreateRegisterDTO.getName();
-        String numberOfTheoreticalPeriods = postCreateRegisterDTO.getNumberOfTheoreticalPeriods();
-        String numberOfPracticePeriods = postCreateRegisterDTO.getNumberOfPracticePeriods();
-
-        if (Objects.isNull(id)) {
-            commonUtils.addError("id", "Mã môn học không được để trống");
-        }
-
-        if (Objects.isNull(name)) {
-            commonUtils.addError("name", "Tên môn học không được để trống");
-        }
-
-        if (Objects.isNull(numberOfTheoreticalPeriods)) {
-            commonUtils.addError("numberOfTheoreticalPeriods", "Số tiết lý thuyết không được để trống");
-        }
-
-        if (Objects.isNull(numberOfPracticePeriods)) {
-            commonUtils.addError("numberOfPracticePeriods", "Số tiết thực hành không được để " +
-                    "trống");
-        }
-
-        if (commonUtils.getArrayNode().size() > 0) {
-            return new BadResponse<Register>(commonUtils.getArrayNode().toString()).response();
-        } else {
-    
-            int numberOfTheoreticalPeriodsInt = 0, numberOfPracticePeriodsInt = 0;
-            try {
-                numberOfTheoreticalPeriodsInt = Integer.parseInt(numberOfTheoreticalPeriods);
-            } catch (final NumberFormatException e) {
-                commonUtils.addError("numberOfTheoreticalPeriods", "Số tiết lý thuyết không hợp " +
-                        "lệ");
-            }
-
-            try {
-                numberOfPracticePeriodsInt = Integer.parseInt(numberOfPracticePeriods);
-            } catch (final NumberFormatException e) {
-                commonUtils.addError("numberOfPracticePeriods", "Số tiết thực hành không hợp " +
-                        "lệ");
-            }
-
-            if (commonUtils.getArrayNode().size() > 0) {
-                return new BadResponse<Register>(commonUtils.getArrayNode().toString()).response();
-            }
-
-            if ((numberOfPracticePeriodsInt + numberOfTheoreticalPeriodsInt) % 3 != 0) {
-                commonUtils.addError("numberOfPracticePeriods", "Số tiết lý thuyết + thực " +
-                        "hành phải là bội số của 3 "
-                );
-            }
-
-            if (commonUtils.getArrayNode().size() > 0) {
-                return new BadResponse<Register>(commonUtils.getArrayNode().toString()).response();
-            }
-        }
-
-        if (isEdit) {
-            try {
-                Register register = registerService.findById(new RegisterId());
-
-                savedSubject = registerService.save(register);
-            } catch (NotFoundException exception) {
-                return new BadResponse<Register>(exception.getMessage()).response();
-            }
-        } else {
-
-        }
-
-        return new OkResponse<>(savedSubject).response();
     }
 
     @PostMapping("save/multiple")
@@ -349,6 +268,21 @@ public class RegisterRestController {
                     registers.size())).response();
         } catch (IllegalStateException ex) {
             return new OkResponse<>("Không thể đọc file Excel").response();
+        }
+    }
+
+    @PutMapping("{creditClassId}/{studentId}")
+    public ResponseEntity<StandardJSONResponse<String>> enableOrDisable(
+            @PathVariable("creditClassId") Integer creditClassId,
+            @PathVariable("studentId") String studentId,
+            @RequestParam(name = "action") String action) {
+        try {
+            String message = registerService
+                    .enableOrDisable(creditClassId, studentId, action);
+
+            return new OkResponse<>(message).response();
+        } catch (NotFoundException ex) {
+            return new BadResponse<String>(ex.getMessage()).response();
         }
     }
 }

@@ -1,9 +1,11 @@
+import { id } from "date-fns/locale";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import { subjectState } from "../../features/subjectSlice";
+import { userState } from "../../features/userSlice";
 import Select from "../utils/userInputs/Select";
 
 function CreditClassFilter() {
@@ -13,6 +15,7 @@ function CreditClassFilter() {
     const { register, handleSubmit } = useForm();
 
     const { userRoles, user } = useSelector(persistUserState);
+    const { users } = useSelector(userState);
 
     const handleSubjectChange = event => {
         if (userRoles.includes("Quản trị viên")) {
@@ -26,6 +29,15 @@ function CreditClassFilter() {
                 })
             );
         }
+    };
+
+    const handleTeacherChange = ({ target: { value } }) => {
+        dispatch(
+            fetchAllCreditClasses({
+                ...filterObject,
+                teacher: value,
+            })
+        );
     };
 
     return (
@@ -43,14 +55,33 @@ function CreditClassFilter() {
                     name='subjectFilter'
                     register={register}
                     options={subjects.map(subject => ({
-                        title: subject.name,
+                        title: subject.id.includes("CLC")
+                            ? `${subject.name} CLC`
+                            : `${subject.name}`,
                         value: subject.id,
                     }))}
                     onChangeHandler={handleSubjectChange}
                     hiddenOption
-                    width={"w-52"}
+                    width={"w-60"}
                 />
             </div>
+            {userRoles.includes("Quản trị viên") && (
+                <div className='mr-2 w-full flex items-center justify-start'>
+                    <Select
+                        label='giảng viên'
+                        name='teacherFilter'
+                        register={register}
+                        options={users.map(user => ({
+                            title: user.fullName,
+                            value: user.id,
+                        }))}
+                        onChangeHandler={handleTeacherChange}
+                        hiddenOption
+                        width={"w-60"}
+                    />
+                </div>
+            )}
+
             <div>
                 <button
                     type='button'
@@ -75,6 +106,7 @@ function CreditClassFilter() {
                                     sortField: "id",
                                     sortDir: "desc",
                                     subject: "",
+                                    teacher: "",
                                 })
                             );
                         }

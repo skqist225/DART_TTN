@@ -86,6 +86,7 @@ public class RegisterService {
         throw new NotFoundException("Không tìm thấy môn học với mã " + id);
     }
 
+
     @Transactional
     public void updateMidTermScore(String studentId, Integer creditClassId, float mark) {
         registerRepository.updateMidTermScore(studentId, creditClassId, mark);
@@ -148,6 +149,22 @@ public class RegisterService {
         typedQuery.setMaxResults(pageable.getPageSize());
 
         return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
+    }
+
+    @Transactional
+    public String enableOrDisable(Integer creditClassId, String studentId, String action) throws NotFoundException {
+        System.out.println(creditClassId);
+        System.out.println(studentId);
+        String responseMessage = "";
+        if (action.equals("enable")) {
+            registerRepository.openRegister(creditClassId, studentId);
+            responseMessage = "Mở đăng ký thành công";
+        } else {
+            registerRepository.cancelRegister(creditClassId, studentId);
+            responseMessage = "Hủy đăng ký thành công";
+        }
+
+        return responseMessage;
     }
 
 }

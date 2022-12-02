@@ -11,12 +11,10 @@ import org.apache.commons.lang.StringUtils;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -76,6 +74,11 @@ public class Question {
 //    public boolean getCanDisabled() {
 //        return this.getTests().size() == 0;
 //    }
+
+    @Transient
+    public void removeAll() {
+        this.answers.clear();
+    }
 
     @Transient
     private String finalAnswer;

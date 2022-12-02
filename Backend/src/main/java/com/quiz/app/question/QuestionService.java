@@ -1,6 +1,6 @@
 package com.quiz.app.question;
 
-import com.quiz.app.chapter.ChapterService;
+import com.quiz.app.answer.AnswerRepository;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.subject.SubjectService;
@@ -25,6 +25,7 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -38,16 +39,16 @@ import java.util.stream.Collectors;
 public class QuestionService {
 
     @Autowired
-    QuestionRepository questionRepository;
+    private QuestionRepository questionRepository;
 
     @Autowired
-    SubjectService subjectService;
-
-    @Autowired
-    ChapterService chapterService;
+    private SubjectService subjectService;
 
     @Autowired
     private EntityManager entityManager;
+
+    @Autowired
+    private AnswerRepository answerRepository;
 
     public Question save(Question question) {
         return questionRepository.save(question);
@@ -57,9 +58,11 @@ public class QuestionService {
         return questionRepository.countTotalQuestions();
     }
 
+    @Transactional
     public String deleteById(Integer id) throws ConstrainstViolationException {
         try {
-            questionRepository.deleteById(id);
+            answerRepository.deleteByQuestionId(id);
+            questionRepository.deleteQuestionById(id);
             return "Xóa câu hỏi thành công";
         } catch (Exception ex) {
             throw new ConstrainstViolationException( "Không thể xóa câu hỏi này vì ràng buộc dữ liệu");

@@ -111,10 +111,12 @@ export const deleteRegister = createAsyncThunk(
 );
 
 export const enableOrDisableRegister = createAsyncThunk(
-    "register/enableRegister",
-    async ({ id, action }, { rejectWithValue }) => {
+    "register/enableOrDisableRegister",
+    async ({ id: { creditClassId, studentId }, action }, { rejectWithValue }) => {
         try {
-            const { data } = await api.put(`/registers/${id}?action=${action}`);
+            const { data } = await api.put(
+                `/registers/${creditClassId}/${studentId}?action=${action}`
+            );
 
             return { data };
         } catch ({ data: { error } }) {

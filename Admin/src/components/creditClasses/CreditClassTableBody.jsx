@@ -163,6 +163,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
             {rows &&
                 rows.length &&
                 rows.map((row, index) => {
+                    console.log(row);
                     return (
                         <tr
                             className={`${tailwindCss.tr} ${
@@ -188,7 +189,10 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                     <Tooltip content='Xem danh sách đăng ký' placement='top'>
                                         <Button
                                             onClick={() => {
-                                                $(`#studentsViewer${index}`).css("display", "flex");
+                                                $(`#studentsViewer${row.id}`).css(
+                                                    "display",
+                                                    "flex"
+                                                );
                                             }}
                                             color='success'
                                             disabled={row.numberOfActiveStudents === 0}
@@ -202,7 +206,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                         </Button>
                                     </Tooltip>
                                     <TableModalViewer
-                                        modalId={`studentsViewer${index}`}
+                                        modalId={`studentsViewer${row.id}`}
                                         modalLabel='Danh sách sinh viên'
                                         ModalBody={<RegisterList registers={row.tempRegisters} />}
                                     />
@@ -211,10 +215,13 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                     <Tooltip content='Xem danh sách ca thi' placement='top'>
                                         <Button
                                             onClick={() => {
-                                                $(`#examsViewer${index}`).css("display", "flex");
+                                                $(`#examsViewer${row.id}`).css("display", "flex");
                                             }}
                                             color='success'
-                                            disabled={row.numberOfActiveStudents === 0}
+                                            disabled={
+                                                row.numberOfActiveStudents === 0 ||
+                                                row.exams.length === 0
+                                            }
                                             style={{
                                                 width: "46px",
                                                 height: "42px",
@@ -225,7 +232,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                         </Button>
                                     </Tooltip>
                                     <TableModalViewer
-                                        modalId={`examsViewer${index}`}
+                                        modalId={`examsViewer${row.id}`}
                                         modalLabel='Danh sách ca thi'
                                         ModalBody={
                                             <ExamList
@@ -271,7 +278,10 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                                 setCreditClassId(row.id);
                                                 setValue("creditClassId", row.id);
                                             }}
-                                            disabled={row.numberOfActiveStudents === 0}
+                                            disabled={
+                                                row.numberOfActiveStudents === 0 ||
+                                                !row.shouldCreateExam
+                                            }
                                         >
                                             <img src={ExamIcon} width='24px' height='24px' />
                                         </Button>

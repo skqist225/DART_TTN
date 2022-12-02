@@ -25,44 +25,43 @@ function UserTableModal({ rows, setIsEdit }) {
                 >
                     <td className={tailwindCss.tableCell}>{row.id}</td>
                     <td className={tailwindCss.tableCell}>
-                        <div className='normal-flex' style={{ width: "150px" }}>
-                            <img src={getImage(row.avatarPath)} className='image' />
-                            <span className='listings__room-name'>{row.fullName}</span>
-                        </div>
-                    </td>
-                    <td className={tailwindCss.tableCell} style={{ width: "150px" }}>
-                        <div className='normal-flex'>
-                            <div className='mr-10'>
-                                {row.status === true ? (
-                                    <svg
-                                        viewBox='0 0 16 16'
-                                        xmlns='http://www.w3.org/2000/svg'
-                                        style={{
-                                            display: "block",
-                                            height: "16px",
-                                            width: "16px",
-                                            fill: "#008a05",
-                                        }}
-                                        aria-hidden='true'
-                                        role='presentation'
-                                        focusable='false'
-                                    >
-                                        <path d='M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm3.159 4.869L6.67 9.355 4.42 7.105 3.289 8.236 6.67 11.62 12.291 6z'></path>
-                                    </svg>
-                                ) : (
-                                    <img
-                                        src={getImage("/svg/reddot.svg")}
-                                        width='10px'
-                                        height='10px'
-                                        className='mr-10'
-                                    />
-                                )}
+                        <div className='flex items-center'>
+                            <div className='normal-flex' style={{ width: "200px" }}>
+                                <img src={getImage(row.avatarPath)} className='image' />
+                                <span className='listings__room-name'>{row.fullName}</span>
                             </div>
-                            <div>{row.status === true ? "Hoạt động" : "Hủy"}</div>
+                            <div className='normal-flex'>
+                                <div className='mr-10'>
+                                    {row.status === true ? (
+                                        <svg
+                                            viewBox='0 0 16 16'
+                                            xmlns='http://www.w3.org/2000/svg'
+                                            style={{
+                                                display: "block",
+                                                height: "16px",
+                                                width: "16px",
+                                                fill: "#008a05",
+                                            }}
+                                            aria-hidden='true'
+                                            role='presentation'
+                                            focusable='false'
+                                        >
+                                            <path d='M8 0a8 8 0 1 1 0 16A8 8 0 0 1 8 0zm3.159 4.869L6.67 9.355 4.42 7.105 3.289 8.236 6.67 11.62 12.291 6z'></path>
+                                        </svg>
+                                    ) : (
+                                        <img
+                                            src={getImage("/svg/reddot.svg")}
+                                            width='10px'
+                                            height='10px'
+                                            className='mr-10'
+                                        />
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     </td>
                     <td className={tailwindCss.tableCell}>{row.birthday}</td>
-                    <td className={tailwindCss.tableCell}>{row.address}</td>
+                    {/* <td className={tailwindCss.tableCell}>{row.address}</td> */}
                     <td className={tailwindCss.tableCell}>{row.email}</td>
                     <td className={tailwindCss.tableCell}>{lookupSex(row.sex)}</td>
                     <td className={tailwindCss.tableCell}>

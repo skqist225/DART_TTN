@@ -5,7 +5,13 @@ import "./css/tableHeader.css";
 import { persistUserState } from "../../../features/persistUserSlice";
 import { useSelector } from "react-redux";
 
-function TableHeader({ columns, handleSortChange, modalLabel, addCheckbox = false }) {
+function TableHeader({
+    columns,
+    handleSortChange,
+    modalLabel,
+    addCheckbox = false,
+    chapterListPage = false,
+}) {
     const [sortDir, setSortDir] = useState("asc");
 
     function reverseSortDir(selectedClassName) {
@@ -40,14 +46,17 @@ function TableHeader({ columns, handleSortChange, modalLabel, addCheckbox = fals
                     ) {
                         return null;
                     }
+
+                    if (chapterListPage && name === "Chương") {
+                        return null;
+                    }
                     return (
                         <th scope='col' className='py-2 px-3' key={name}>
                             {!sortable ? (
                                 name
                             ) : (
                                 <button
-                                    className='
-                                    '
+                                    className='table--header__sortButton'
                                     onClick={e => {
                                         sortData(e, sortField);
                                     }}

@@ -154,18 +154,12 @@ export const subjectColumns = [
     },
     {
         name: "Số chương",
-        sortField: "numberOfChapters",
-        sortable: true,
     },
     {
         name: "Số đề thi",
-        sortField: "numberOfTests",
-        sortable: true,
     },
     {
         name: "Số câu hỏi",
-        sortField: "numberOfQuestions",
-        sortable: true,
     },
 ];
 
@@ -181,19 +175,15 @@ export const userColumns = [
         sortable: true,
     },
     {
-        name: "Trạng thái",
-        sortField: "status",
-    },
-    {
         name: "Ngày sinh",
         sortField: "birthday",
         sortable: true,
     },
-    {
-        name: "Địa chỉ",
-        sortField: "address",
-        sortable: true,
-    },
+    // {
+    //     name: "Địa chỉ",
+    //     sortField: "address",
+    //     sortable: true,
+    // },
     {
         name: "Email",
         sortField: "email",
@@ -201,13 +191,9 @@ export const userColumns = [
     },
     {
         name: "Giới tính",
-        sortField: "sex",
-        sortable: true,
     },
     {
         name: "Vai trò",
-        sortField: "role",
-        sortable: true,
     },
     {
         name: "Thao tác",

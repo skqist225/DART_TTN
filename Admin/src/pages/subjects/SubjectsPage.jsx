@@ -13,13 +13,26 @@ import {
 } from "../../features/subjectSlice";
 import { subjectSchema } from "../../validation";
 import { callToast } from "../../helpers";
-import $ from "jquery";
 import { subjectColumns } from "../columns";
+import $ from "jquery";
 
 function SubjectsPage() {
     const dispatch = useDispatch();
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
+
+    const {
+        subjects,
+        editedSubject,
+        errorObject,
+        totalElements,
+        totalPages,
+        filterObject,
+        addSubject: { successMessage },
+        editSubject: { successMessage: esSuccessMessage },
+        deleteSubject: { successMessage: dsSuccessMessage, errorMessage: dsErrorMessage },
+    } = useSelector(subjectState);
 
     const formId = "subjectForm";
     const modalId = "subjectModal";
@@ -94,10 +107,10 @@ function SubjectsPage() {
             return;
         }
 
-        chapters = chapters.map(({ id, index, name }) => {
+        chapters = chapters.map(({ id, name }, index) => {
             return {
                 id,
-                chapterNumber: parseInt(index) + 1,
+                chapterNumber: index + 1,
                 name,
             };
         });
@@ -110,17 +123,6 @@ function SubjectsPage() {
             dispatch(addSubject(data));
         }
     };
-
-    const {
-        subjects,
-        errorObject,
-        totalElements,
-        totalPages,
-        filterObject,
-        addSubject: { successMessage },
-        editSubject: { successMessage: esSuccessMessage },
-        deleteSubject: { successMessage: dsSuccessMessage, errorMessage: dsErrorMessage },
-    } = useSelector(subjectState);
 
     useEffect(() => {
         if (errorObject) {
@@ -206,6 +208,15 @@ function SubjectsPage() {
             callToast("error", dsErrorMessage);
         }
     }, [dsErrorMessage]);
+
+    useEffect(() => {
+        if (errorObject && errorObject.sqlIntegrationException && isEdit) {
+            callToast("error", errorObject.sqlIntegrationException);
+
+            // setEditedSubject(editSubject);
+            dispatch(setEditedSubject(editedSubject));
+        }
+    }, [errorObject]);
 
     function onCloseForm() {
         dispatch(setEditedSubject(null));

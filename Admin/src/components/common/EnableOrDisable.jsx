@@ -6,7 +6,6 @@ function EnableOrDisable({
     status,
     enableOrDisable,
     id,
-    taken = false,
     creditClassPage = false,
     disabled = false,
 }) {

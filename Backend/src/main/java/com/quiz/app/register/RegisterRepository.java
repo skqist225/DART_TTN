@@ -16,14 +16,18 @@ public interface RegisterRepository extends CrudRepository<Register, RegisterId>
     List<Register> findByMyCreditClass(Integer creditClassId);
 
     @Modifying
-    @Query(value = "UPDATE dangky SET diemgk = :mark  where masv = :studentId and maltc = " +
-            ":creditClassId",
-            nativeQuery = true)
-    public void updateMidTermScore(String studentId, Integer creditClassId, float mark);
+    @Query(value = "UPDATE dangky SET diemgk = :mark  where masv = :studentId and maltc = " + ":creditClassId", nativeQuery = true)
+    void updateMidTermScore(String studentId, Integer creditClassId, float mark);
 
     @Modifying
-    @Query(value = "UPDATE dangky SET diemck = :mark where masv = :studentId and maltc = " +
-            ":creditClassId",
-            nativeQuery = true)
-    public void updateFinalTermScore(String studentId, Integer creditClassId, float mark);
+    @Query(value = "UPDATE dangky SET diemck = :mark where masv = :studentId and maltc = " + ":creditClassId", nativeQuery = true)
+    void updateFinalTermScore(String studentId, Integer creditClassId, float mark);
+
+    @Modifying
+    @Query(value = "update dangky set huydangky" + " = 1 where maltc = :creditClassId AND masv = :studentId", nativeQuery = true)
+    void cancelRegister(Integer creditClassId, String studentId);
+
+    @Modifying
+    @Query(value = "update dangky set huydangky" + " = 0 where maltc = :creditClassId AND masv = :studentId", nativeQuery = true)
+    void openRegister(Integer creditClassId, String studentId);
 }

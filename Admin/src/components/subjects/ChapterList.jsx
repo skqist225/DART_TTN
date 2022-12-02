@@ -17,7 +17,6 @@ function ChapterList({ chapters }) {
             </Table.Head>
             <Table.Body className='divide-y'>
                 {chapters.map(({ id, name, tempQuestions: questions }, index) => {
-                    console.log(questions);
                     return (
                         <Table.Row
                             className='bg-white dark:border-gray-700 dark:bg-gray-800'
@@ -39,8 +38,10 @@ function ChapterList({ chapters }) {
                                     />
                                     <TableModalViewer
                                         modalId={`questionsViewer${id}`}
-                                        modalLabel='Danh sách câu hỏi'
-                                        ModalBody={<QuestionList questions={questions} />}
+                                        modalLabel={`Danh sách câu hỏi của chương ${name}(${questions.length})`}
+                                        ModalBody={
+                                            <QuestionList questions={questions} chapterListPage />
+                                        }
                                     />
                                 </Tooltip>
                             </Table.Cell>

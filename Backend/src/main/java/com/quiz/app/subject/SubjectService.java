@@ -112,9 +112,16 @@ public class SubjectService {
         if (!StringUtils.isEmpty(searchQuery)) {
             Expression<String> id = root.get("id");
             Expression<String> name = root.get("name");
+            Expression<String> numberOfTheoreticalPeriods = root.get("numberOfTheoreticalPeriods");
+            Expression<String> numberOfPracticePeriods = root.get("numberOfPracticePeriods");
 
             Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, numberOfTheoreticalPeriods);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, numberOfPracticePeriods);
+
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }

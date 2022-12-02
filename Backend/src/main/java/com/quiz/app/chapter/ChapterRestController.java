@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -61,8 +60,12 @@ public class ChapterRestController {
                 chapters = chapterService.findAll();
             }
 
-            chaptersDTO.setChapters(chapters.stream().sorted(Comparator.comparing(Chapter::getName))
-                    .collect(Collectors.toList()));
+            chapters.sort(
+                    Comparator.comparing(Chapter
+                            ::getChapterNumber)
+            );
+
+            chaptersDTO.setChapters(chapters);
             chaptersDTO.setTotalElements(chapters.size());
             chaptersDTO.setTotalPages(0);
 

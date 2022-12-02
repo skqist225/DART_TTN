@@ -48,11 +48,13 @@ function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors, c
 
             // let insertedIndex = [];
 
-            editedSubject.chapters.forEach(({ id, name, chapterNumber }, index) => {
-                append({ id, name, chapterNumber });
-                // insert(chapterNumber - 1, { id, name, chapterNumber });
-                // insertedIndex.push(chapterNumber - 1);
-            });
+            editedSubject.chapters.forEach(
+                ({ id, name, chapterNumber, tempQuestions: questions }, index) => {
+                    append({ id, name, chapterNumber, active: questions.length !== 0 });
+                    // insert(chapterNumber - 1, { id, name, chapterNumber });
+                    // insertedIndex.push(chapterNumber - 1);
+                }
+            );
 
             // for (let i = 0; i < insertedIndex.length; i++) {
             //     if (!insertedIndex.includes(i)) {
@@ -148,11 +150,6 @@ function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors, c
                                         <div className='flex-1 mr-5'>
                                             <input
                                                 type='hidden'
-                                                {...register(`chapters.${index}.index`)}
-                                                value={index}
-                                            />
-                                            <input
-                                                type='hidden'
                                                 {...register(`chapters.${index}.id`)}
                                             />
                                             <Input
@@ -168,13 +165,19 @@ function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors, c
                                         </div>
                                         <button
                                             type='button'
-                                            className={tailwindCss.deleteOutlineButton}
+                                            className={`${tailwindCss.deleteOutlineButton} ${
+                                                field.active &&
+                                                "cursor-not-allowed hover:text-red-700 hover:bg-white"
+                                            }`}
                                             onClick={e => {
                                                 e.preventDefault();
+
                                                 setValue(`chapters.${index}.name`, "");
                                                 clearErrors(`chapters.${index}.name`);
+
                                                 remove(index);
                                             }}
+                                            disabled={field.active}
                                         >
                                             Xóa
                                         </button>
