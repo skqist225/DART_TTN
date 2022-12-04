@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import TablePagination from "./TablePagination";
 import TableHeader from "./TableHeader";
@@ -9,10 +9,10 @@ import { ExcelIcon } from "../../../images";
 import { setExcelAdd } from "../../../features/questionSlice";
 import { persistUserState } from "../../../features/persistUserSlice";
 import { setUserExcelAdd } from "../../../features/userSlice";
-import { Tooltip } from "flowbite-react";
+import { Spinner, Tooltip } from "flowbite-react";
 import MyButton, { ButtonType } from "../../common/MyButton";
-import $ from "jquery";
 import { setRegisterExcelAdd } from "../../../features/registerSlice";
+import $ from "jquery";
 
 function Table({
     searchPlaceHolder,
@@ -37,6 +37,7 @@ function Table({
     onCloseForm,
     Filter,
     excelAdd,
+    loading = false,
     testPage = false,
     recordsPerPage = 12,
 }) {
@@ -63,7 +64,9 @@ function Table({
                     '
                     >
                         {(modalLabel === "môn học" && !userRoles.includes("Quản trị viên")) ||
-                        (modalLabel === "ca thi" && userRoles.includes("Sinh viên")) ? (
+                        (modalLabel === "lớp tín chỉ" && !userRoles.includes("Quản trị viên")) ||
+                        (modalLabel === "ca thi" && userRoles.includes("Sinh viên")) ||
+                        modalLabel === "Bảng xếp hạng" ? (
                             <></>
                         ) : (
                             <div className='mr-2'>
@@ -110,21 +113,43 @@ function Table({
                     </div>
                 </div>
 
-                <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                    <TableHeader
-                        columns={columns}
-                        handleSortChange={handleSortChange}
-                        modalLabel={modalLabel}
-                    />
-                    <TableBody rows={rows} setIsEdit={setIsEdit} />
-                </table>
+                {loading ? (
+                    <div
+                        className='flex items-center justify-center w-full'
+                        style={{ height: "calc(100vh - 150px)" }}
+                    >
+                        <Spinner color='success' />
+                    </div>
+                ) : (
+                    <>
+                        {rows.length > 0 ? (
+                            <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
+                                <TableHeader
+                                    columns={columns}
+                                    handleSortChange={handleSortChange}
+                                    modalLabel={modalLabel}
+                                />
+                                <TableBody rows={rows} setIsEdit={setIsEdit} />{" "}
+                            </table>
+                        ) : (
+                            <div
+                                className={`text-blue-600 uppercase flex items-center justify-center w-full`}
+                                style={{ height: "calc(100vh - 150px)" }}
+                            >
+                                <div className='border-2 border-gray-400 rounded-lg p-4'>{`Danh sách ${modalLabel} trống`}</div>
+                            </div>
+                        )}
+                    </>
+                )}
             </div>
-            <TablePagination
-                totalElements={totalElements}
-                totalPages={totalPages}
-                fetchDataByPageNumber={fetchDataByPageNumber}
-                recordsPerPage={recordsPerPage}
-            />
+            {rows.length > 0 && (
+                <TablePagination
+                    totalElements={totalElements}
+                    totalPages={totalPages}
+                    fetchDataByPageNumber={fetchDataByPageNumber}
+                    recordsPerPage={recordsPerPage}
+                />
+            )}
 
             <TableModal
                 modalId={modalId}

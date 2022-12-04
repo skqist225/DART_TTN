@@ -142,7 +142,9 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                 register={register}
                                 name='testSubjectId'
                                 options={subjects.map(s => ({
-                                    title: `${s.name} (${s.numberOfActiveQuestions})`,
+                                    title: `${s.name} ${s.id.includes("CLC") ? "CLC" : ""} (${
+                                        s.numberOfActiveQuestions
+                                    })`,
                                     value: s.id,
                                 }))}
                                 setValue={setValue}

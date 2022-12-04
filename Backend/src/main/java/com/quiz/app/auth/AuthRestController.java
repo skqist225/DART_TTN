@@ -1,6 +1,5 @@
 package com.quiz.app.auth;
 
-import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.email.SendEmail;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.jwt.JwtUtils;
@@ -13,6 +12,7 @@ import com.quiz.app.user.UserService;
 import com.quiz.app.user.dto.ForgotPasswordResponse;
 import com.quiz.app.user.dto.PostCreateUserDTO;
 import com.quiz.app.user.dto.ResetPasswordDTO;
+import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.utils.ProcessImage;
 import com.quiz.entity.Role;
 import com.quiz.entity.User;
@@ -213,6 +213,11 @@ public class AuthRestController {
                 if (!StringUtils.isEmpty(password)) {
                     user.setPassword(password);
                     userService.encodePassword(user);
+                    try {
+                        SendEmail.send("n18dccn220@student.ptithcm.edu.vn", "Đổi mật khẩu",
+                                "Mật khẩu mới cuả bạn là: " + password);
+                    } catch (MessagingException e) {
+                    }
                 }
                 if (avatar != null) {
                     user.setAvatar(avatar.getOriginalFilename());

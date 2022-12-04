@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { creditClassState } from "../../features/creditClassSlice";
-import { examState, setEditedExam } from "../../features/examSlice";
+import { examState, setAddExamDisabled, setEditedExam } from "../../features/examSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
 import TestTableBody from "../tests/TestTableBody";
 import Input from "../utils/userInputs/Input";
@@ -9,10 +9,11 @@ import Select from "../utils/userInputs/Select";
 import DatePicker from "../utils/datePicker/DatePicker";
 import { Box, Tab, Tabs, Typography } from "@mui/material";
 import { fetchAllRegisters, registerState } from "../../features/registerSlice";
-import $ from "jquery";
 import RegisterTableBody from "../registers/RegisterTableBody";
 import TablePagination from "../utils/tables/TablePagination";
 import TableHeader from "../utils/tables/TableHeader";
+import $ from "jquery";
+import moment from "moment";
 
 export const examTypes = [
     {
@@ -95,11 +96,12 @@ function ExamModalBody({
     const [type, setType] = useState("");
     const [skipUpdateCreditClass, setSkipUpdateCreditClass] = useState(false);
     const [numberOfActiveStudents, setNumberOfActiveStudents] = useState(0);
+    const [localExamsType, setLocalExamsType] = useState(examTypes);
 
     const { creditClasses } = useSelector(creditClassState);
     const { editedExam, errorObject } = useSelector(examState);
     const { tests } = useSelector(testState);
-    const { registers, totalElements, totalPages } = useSelector(registerState);
+    const { registers } = useSelector(registerState);
 
     useEffect(() => {
         if (editedExam) {
@@ -142,6 +144,7 @@ function ExamModalBody({
             dispatch(
                 fetchAllTests({ page: 0, subject: creditClasses[0].subjectId, notUsedTest: true })
             );
+            handleCreditClassChange({ target: { value: creditClasses[0].id } });
         }
     }, [creditClasses]);
 
@@ -152,30 +155,64 @@ function ExamModalBody({
     }, [creditClassId]);
 
     useEffect(() => {
-        const date = new Date();
+        const tomorrow = new Date();
+        tomorrow.setTime(tomorrow.getTime() + 24 * 60 * 60 * 1000);
 
         setValue("noticePeriod", noticePeriods[0].value);
         setValue("type", examTypes[0].value);
-        setValue("examDate", `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`);
+        let date = tomorrow.getDate();
+        if (parseInt(tomorrow.getDate()) < 10) {
+            date = `0${tomorrow.getDate()}`;
+        }
+
+        setValue("examDate", `${date}/${tomorrow.getMonth() + 1}/${tomorrow.getFullYear()}`);
     }, []);
 
     const handleCreditClassChange = ({ target: { value } }) => {
         const creditClass = creditClasses.find(({ id }) => id.toString() === value.toString());
-        dispatch(fetchAllTests({ page: 0, subject: creditClass.subjectId, notUsedTest: true }));
+        dispatch(
+            fetchAllTests({
+                page: 0,
+                subject: creditClass.subjectId,
+                notUsedTest: true,
+                activeTest: true,
+            })
+        );
         setNumberOfActiveStudents(creditClass.numberOfActiveStudents);
+        const noneCreatedMidTermExamNumber =
+            creditClass.numberOfActiveStudents - creditClass.numberOfMidTermExamCreated;
+        const noneCreatedFinalTermExamNumber =
+            creditClass.numberOfActiveStudents - creditClass.numberOfFinalTermExamCreated;
 
         setValue(
             "numberOfNoneCreatedMidtermExamStudents",
-            `${creditClass.numberOfActiveStudents - creditClass.numberOfMidTermExamCreated} / ${
-                creditClass.numberOfActiveStudents
-            } sinh viên`
+            `${noneCreatedMidTermExamNumber} / ${creditClass.numberOfActiveStudents} sinh viên`
         );
         setValue(
             "numberOfNoneCreatedFinalTermExamStudents",
-            `${creditClass.numberOfActiveStudents - creditClass.numberOfFinalTermExamCreated} / ${
-                creditClass.numberOfActiveStudents
-            } sinh viên`
+            `${noneCreatedFinalTermExamNumber} / ${creditClass.numberOfActiveStudents} sinh viên`
         );
+        console.log(creditClass);
+        dispatch(setAddExamDisabled(creditClass.shouldCreateExam));
+        console.log("So sv chua duoc tao ca thi: " + noneCreatedMidTermExamNumber);
+        console.log("So sv duoc tao ca thi: " + noneCreatedFinalTermExamNumber);
+        if (noneCreatedMidTermExamNumber === 0) {
+            // const temp = localExamsType.filter(({ value }) => value !== "Giữa kỳ");
+            // setLocalExamsType(temp);
+        }
+        if (noneCreatedFinalTermExamNumber === 0) {
+            // const temp = localExamsType.filter(({ value }) => value !== "Cuối kỳ");
+            // setLocalExamsType(temp);
+        }
+        // console.log(localExamsType.length);
+        // if (localExamsType.length === 2) {
+        //     if ($("#type").val() === "Giữa kỳ") {
+        //         setValue("numberOfStudents", noneCreatedMidTermExamNumber);
+        //     } else if ($("#type").val() === "Cuối kỳ") {
+        //         setValue("numberOfStudents", noneCreatedFinalTermExamNumber);
+        //     }
+        // } else {
+        // }
     };
 
     const [tabValue, setTabValue] = React.useState(0);
@@ -195,6 +232,29 @@ function ExamModalBody({
         }
     };
 
+    const [pageNumber, setPageNumber] = useState(1);
+    const [splitedRegisters, setSplitedRegisters] = useState([]);
+
+    const recordsPerPage = 12;
+
+    useEffect(() => {
+        if (registers && registers.length) {
+            setSplitedRegisters(registers.slice(0, recordsPerPage));
+        }
+    }, [registers]);
+
+    const fetchDataByPageNumber = pageNumber => {
+        // each page will have recordsPerPage records
+        // 2: 13 -24
+        setSplitedRegisters(
+            registers.slice(
+                (pageNumber - 1) * recordsPerPage,
+                (pageNumber - 1) * recordsPerPage + recordsPerPage
+            )
+        );
+        setPageNumber(pageNumber);
+    };
+
     return (
         <div>
             <Tabs value={tabValue} onChange={handleChange} centered>
@@ -209,10 +269,10 @@ function ExamModalBody({
                             errors.numberOfActiveStudents ||
                             errors.numberOfActiveStudents
                                 ? "items-start"
-                                : "items-center"
+                                : "items-end"
                         }`}
                     >
-                        <div className='w-full mr-5'>
+                        <div className='flex-1 w-55 mr-5'>
                             <Select
                                 label='Lớp tín chỉ *'
                                 register={register}
@@ -238,35 +298,48 @@ function ExamModalBody({
                                 }
                             />
                         </div>
-                        <div className='w-full mr-5'>
-                            <Input
-                                label={`Số  SV chưa được tạo ca thi giữa kỳ`}
-                                register={register}
-                                name='numberOfNoneCreatedMidtermExamStudents'
-                                error={
-                                    errors.numberOfNoneCreatedMidTermExamStudents &&
-                                    errors.numberOfNoneCreatedMidTermExamStudents.message
-                                }
-                                readOnly
-                            />
-                        </div>
-                        <div className='w-full'>
-                            <Input
-                                label={`Số  SV chưa được tạo ca thi cuối kỳ`}
-                                register={register}
-                                name='numberOfNoneCreatedFinalTermExamStudents'
-                                error={
-                                    errors.numberOfNoneCreatedFinalTermExamStudents &&
-                                    errors.numberOfNoneCreatedFinalTermExamStudents.message
-                                }
-                                readOnly
-                            />
+                        <div className='flex-1 w-45 flex items-center'>
+                            <div className='w-full mr-5'>
+                                <Input
+                                    label={`Số  SV chưa được tạo ca thi giữa kỳ`}
+                                    register={register}
+                                    name='numberOfNoneCreatedMidtermExamStudents'
+                                    error={
+                                        errors.numberOfNoneCreatedMidTermExamStudents &&
+                                        errors.numberOfNoneCreatedMidTermExamStudents.message
+                                    }
+                                    readOnly
+                                />
+                            </div>
+                            <div className='w-full'>
+                                <Input
+                                    label={`Số  SV chưa được tạo ca thi cuối kỳ`}
+                                    register={register}
+                                    name='numberOfNoneCreatedFinalTermExamStudents'
+                                    error={
+                                        errors.numberOfNoneCreatedFinalTermExamStudents &&
+                                        errors.numberOfNoneCreatedFinalTermExamStudents.message
+                                    }
+                                    readOnly
+                                />
+                            </div>
                         </div>
                     </div>
-                    <h3 className='text-black text-base uppercase mt-3'>Danh sách đề thi</h3>
-                    <div className='w-full mt-5 border-2 rounded-sm overflow-y-auto max-h-52'>
-                        <TestTableBody rows={tests} examPage />
-                    </div>
+                    {tests.length > 0 ? (
+                        <>
+                            <h3 className='text-black text-base uppercase mt-3'>
+                                Danh sách đề thi
+                            </h3>
+                            <div className='w-full mt-5 border-2 rounded-sm overflow-y-auto max-h-52'>
+                                <TestTableBody rows={tests} examPage />
+                            </div>
+                        </>
+                    ) : (
+                        <div className='uppercase my-3 text-red-600'>
+                            Môn học của lớp tín chỉ này chưa có đề thi
+                        </div>
+                    )}
+
                     <div
                         className={`flex w-full mt-5 ${
                             errors.examDate || errors.noticePeriod ? "items-start" : "items-center"
@@ -322,7 +395,7 @@ function ExamModalBody({
                             label='Loại kỳ thi *'
                             register={register}
                             name='type'
-                            options={examTypes.map(({ title, value }) => ({
+                            options={localExamsType.map(({ title, value }) => ({
                                 title,
                                 value,
                             }))}
@@ -335,17 +408,17 @@ function ExamModalBody({
                 </div>
             </TabPanel>
             <TabPanel value={tabValue} index={1}>
-                {registers && registers.length && (
+                {registers && registers.length > 0 && (
                     <>
                         <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                            {/* handleSortChange={handleSortChange} */}
                             <TableHeader columns={columns} />
-                            <RegisterTableBody rows={registers} type={type} addExam />
+                            <RegisterTableBody rows={splitedRegisters} type={type} addExam />
                         </table>
                         <TablePagination
-                            totalElements={totalElements}
-                            totalPages={totalPages}
-                            // fetchDataByPageNumber={fetchDataByPageNumber}
+                            totalElements={registers.length}
+                            totalPages={Math.ceil(registers.length / recordsPerPage)}
+                            fetchDataByPageNumber={fetchDataByPageNumber}
+                            recordsPerPage={recordsPerPage}
                         />
                     </>
                 )}

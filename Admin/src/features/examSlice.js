@@ -160,7 +160,7 @@ export const enableOrDisableExam = createAsyncThunk(
 );
 
 const initialState = {
-    loading: true,
+    loading: false,
     exams: [],
     totalElements: 0,
     totalPages: 0,
@@ -178,6 +178,7 @@ const initialState = {
     errorObject: null,
     addExam: {
         successMessage: null,
+        loading: false,
     },
     editExam: {
         successMessage: null,
@@ -189,6 +190,7 @@ const initialState = {
     enableOrDisableExam: {
         successMessage: null,
     },
+    addExamDisabled: false,
 };
 
 const examSlice = createSlice({
@@ -241,16 +243,24 @@ const examSlice = createSlice({
                 return exam;
             });
         },
+        setAddExamDisabled(state, { payload }) {
+            state.addExamDisabled = payload;
+        },
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllExams.pending, (state, { payload }) => {})
+            .addCase(fetchAllExams.pending, (state, { payload }) => {
+                state.loading = true;
+            })
             .addCase(fetchAllExams.fulfilled, (state, { payload }) => {
                 state.exams = payload.exams;
                 state.totalElements = payload.totalElements;
                 state.totalPages = payload.totalPages;
+                state.loading = false;
             })
-            .addCase(fetchAllExams.rejected, (state, { payload }) => {})
+            .addCase(fetchAllExams.rejected, (state, { payload }) => {
+                state.loading = false;
+            })
 
             .addCase(enableOrDisableExam.pending, (state, { payload }) => {
                 state.enableOrDisableExam.successMessage = null;
@@ -269,9 +279,11 @@ const examSlice = createSlice({
             .addCase(addExam.pending, (state, _) => {
                 state.addExam.successMessage = null;
                 state.errorObject = null;
+                state.addExam.loading = true;
             })
             .addCase(addExam.fulfilled, (state, { payload }) => {
                 state.addExam.successMessage = payload.data;
+                state.addExam.loading = false;
             })
             .addCase(addExam.rejected, (state, { payload }) => {
                 if (payload) {
@@ -286,6 +298,7 @@ const examSlice = createSlice({
                         };
                     });
                 }
+                state.addExam.loading = false;
             })
 
             .addCase(editExam.pending, (state, _) => {
@@ -332,6 +345,7 @@ export const {
         setFilterObject,
         setEditedExam,
         disableOrEnableLoadedExams,
+        setAddExamDisabled,
     },
 } = examSlice;
 

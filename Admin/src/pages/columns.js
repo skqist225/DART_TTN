@@ -179,11 +179,6 @@ export const userColumns = [
         sortField: "birthday",
         sortable: true,
     },
-    // {
-    //     name: "Địa chỉ",
-    //     sortField: "address",
-    //     sortable: true,
-    // },
     {
         name: "Email",
         sortField: "email",
@@ -191,6 +186,11 @@ export const userColumns = [
     },
     {
         name: "Giới tính",
+    },
+    {
+        name: "Địa chỉ",
+        sortField: "address",
+        sortable: true,
     },
     {
         name: "Vai trò",

@@ -9,8 +9,8 @@ export const fetchAllTakeExams = createAsyncThunk(
             query = "",
             sortField = "score",
             sortDir = "desc",
-            level = "",
             subject = "",
+            student = "",
             numberOfTakeExams = 0,
         },
         { dispatch, rejectWithValue }
@@ -39,8 +39,8 @@ export const fetchAllTakeExams = createAsyncThunk(
             });
 
             filterArray.push({
-                field: "level",
-                value: level,
+                field: "student",
+                value: student,
             });
 
             filterArray.push({
@@ -53,7 +53,7 @@ export const fetchAllTakeExams = createAsyncThunk(
             const {
                 data: { takeExams, totalElements, totalPages },
             } = await api.get(
-                `/takeExams?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&level=${level}&subject=${subject}&numberOfTakeExams=${numberOfTakeExams}`
+                `/takeExams?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&student=${student}&subject=${subject}&numberOfTakeExams=${numberOfTakeExams}`
             );
 
             return { takeExams, totalElements, totalPages };
@@ -217,13 +217,18 @@ const takeExamSlice = createSlice({
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllTakeExams.pending, (state, { payload }) => {})
+            .addCase(fetchAllTakeExams.pending, (state, { payload }) => {
+                state.loading = true;
+            })
             .addCase(fetchAllTakeExams.fulfilled, (state, { payload }) => {
                 state.takeExams = payload.takeExams;
                 state.totalElements = payload.totalElements;
                 state.totalPages = payload.totalPages;
+                state.loading = false;
             })
-            .addCase(fetchAllTakeExams.rejected, (state, { payload }) => {})
+            .addCase(fetchAllTakeExams.rejected, (state, { payload }) => {
+                state.loading = false;
+            })
 
             .addCase(enableOrDisableTakeExam.pending, (state, { payload }) => {
                 state.enableOrDisableTakeExam.successMessage = null;

@@ -55,7 +55,7 @@ function ExamFilter() {
                         )}
                         onChangeHandler={handleCreditClassChange}
                         hiddenOption
-                        width={"w-52"}
+                        width={"w-80"}
                     />
                 ) : (
                     <>

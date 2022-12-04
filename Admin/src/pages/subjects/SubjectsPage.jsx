@@ -29,6 +29,7 @@ function SubjectsPage() {
         totalElements,
         totalPages,
         filterObject,
+        loading,
         addSubject: { successMessage },
         editSubject: { successMessage: esSuccessMessage },
         deleteSubject: { successMessage: dsSuccessMessage, errorMessage: dsErrorMessage },
@@ -228,10 +229,10 @@ function SubjectsPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} theo mã, tên`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={subjectColumns}
@@ -257,6 +258,7 @@ function SubjectsPage() {
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                     onCloseForm={onCloseForm}
+                    loading={loading}
                 />
             }
         />

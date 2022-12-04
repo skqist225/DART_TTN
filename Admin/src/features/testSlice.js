@@ -11,6 +11,7 @@ export const fetchAllTests = createAsyncThunk(
             sortDir = "desc",
             subject = "",
             notUsedTest = false,
+            activeTest = false,
         },
         { dispatch, rejectWithValue }
     ) => {
@@ -47,7 +48,7 @@ export const fetchAllTests = createAsyncThunk(
             const {
                 data: { tests, totalElements, totalPages },
             } = await api.get(
-                `/tests?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&notUsedTest=${notUsedTest}`
+                `/tests?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&notUsedTest=${notUsedTest}&activeTest=${activeTest}`
             );
 
             return { tests, totalElements, totalPages };
@@ -209,19 +210,23 @@ const testSlice = createSlice({
             state.tests = payload;
         },
         setAddTestDisabled(state, { payload }) {
-            console.log(payload);
             state.addTestDisabled = payload;
         },
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllTests.pending, (state, { payload }) => {})
+            .addCase(fetchAllTests.pending, (state, { payload }) => {
+                state.loading = true;
+            })
             .addCase(fetchAllTests.fulfilled, (state, { payload }) => {
                 state.tests = payload.tests;
                 state.totalElements = payload.totalElements;
                 state.totalPages = payload.totalPages;
+                state.loading = false;
             })
-            .addCase(fetchAllTests.rejected, (state, { payload }) => {})
+            .addCase(fetchAllTests.rejected, (state, { payload }) => {
+                state.loading = false;
+            })
 
             .addCase(findTest.pending, (state, { payload }) => {})
             .addCase(findTest.fulfilled, (state, { payload }) => {

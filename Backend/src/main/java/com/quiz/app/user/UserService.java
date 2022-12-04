@@ -64,6 +64,10 @@ public class UserService {
         return passwordEncoder.matches(rawPass, hashPass);
     }
 
+    public List<User> findUserIsNotStudent() {
+        return userRepository.findUserIsNotStudent();
+    }
+
     public User findByEmail(String email) throws NotFoundException {
         User user = userRepository.findByEmail(email);
         if (Objects.nonNull(user)) {

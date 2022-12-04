@@ -38,23 +38,22 @@ function CreditClassesPage() {
     const modalId = "creditClassModal";
     const modalLabel = "lớp tín chỉ";
     useEffect(() => {
-        if (userRoles.includes("Quản trị viên")) {
-            dispatch(
-                fetchAllCreditClasses({
-                    page: 1,
-                })
-            );
-        } else {
-            dispatch(
-                fetchAllCreditClasses({
-                    page: 1,
-                    teacher: user.id,
-                })
-            );
-        }
+        // if (userRoles.includes("Quản trị viên")) {
+        dispatch(
+            fetchAllCreditClasses({
+                page: 1,
+            })
+        );
+        // } else {
+        //     dispatch(
+        //         fetchAllCreditClasses({
+        //             page: 1,
+        //             teacher: user.id,
+        //         })
+        //     );
+        // }
 
         dispatch(fetchAllSubjects({ page: 0 }));
-        dispatch(fetchAllUsers({ page: 0, role: "Giảng viên" }));
     }, []);
 
     const {
@@ -63,6 +62,7 @@ function CreditClassesPage() {
         totalElements,
         totalPages,
         filterObject,
+        loading,
         addCreditClass: { successMessage },
         editCreditClass: { successMessage: eqSuccessMessage },
         deleteCreditClass: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
@@ -76,6 +76,7 @@ function CreditClassesPage() {
     useEffect(() => {
         if (aeSuccessMessage) {
             callToast("success", aeSuccessMessage);
+            $("#examModal").css("display", "none");
         }
     }, [aeSuccessMessage]);
 
@@ -205,7 +206,7 @@ function CreditClassesPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
                     searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
@@ -237,6 +238,7 @@ function CreditClassesPage() {
                     fetchDataByPageNumber={fetchDataByPageNumber}
                     onCloseForm={onCloseForm}
                     Filter={CreditClassFilter}
+                    loading={loading}
                 />
             }
         />

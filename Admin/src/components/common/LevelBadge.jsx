@@ -20,6 +20,10 @@ function LevelBadge({ level, numberOfQuestions }) {
         <Badge color='failure'>
             <div className='flex items-center justify-between'>
                 <div>{level} </div>
+                <div
+                    className='flex-1 w-full
+                '
+                ></div>
                 {numberOfQuestions && <div>{numberOfQuestions}</div>}
             </div>
         </Badge>

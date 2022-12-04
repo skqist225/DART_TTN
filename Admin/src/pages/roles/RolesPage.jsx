@@ -18,12 +18,33 @@ import { roleState } from "../../features/roleSlice";
 import { roleColumns } from "../columns";
 
 function RolesPage() {
+    const dispatch = useDispatch();
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
-    const formId = "questionForm";
-    const modalId = "questionModal";
-    const modalLabel = "câu hỏi";
+    const {
+        roles,
+        totalElements,
+        totalPages,
+        filterObject,
+        loading,
+        addRole: { successMessage },
+        editRole: { successMessage: esSuccessMessage },
+        deleteRole: { successMessage: dsSuccessMessage, errorMessage: drErrorMessage },
+    } = useSelector(roleState);
+
+    const formId = "roleForm";
+    const modalId = "roleModal";
+    const modalLabel = "vai trò";
+
+    useEffect(() => {
+        dispatch(
+            fetchAllRoles({
+                page: 1,
+            })
+        );
+    }, []);
 
     const {
         register,
@@ -41,16 +62,6 @@ function RolesPage() {
             dispatch(addRole(data));
         }
     };
-
-    const {
-        roles,
-        totalElements,
-        totalPages,
-        filterObject,
-        addRole: { successMessage },
-        editRole: { successMessage: esSuccessMessage },
-        deleteRole: { successMessage: dsSuccessMessage, errorMessage: drErrorMessage },
-    } = useSelector(roleState);
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
@@ -118,15 +129,6 @@ function RolesPage() {
         }
     }, [drErrorMessage]);
 
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(
-            fetchAllRoles({
-                page: 1,
-            })
-        );
-    }, []);
-
     function onCloseForm() {
         dispatch(setEditedRole(null));
     }
@@ -135,7 +137,7 @@ function RolesPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
                     searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
@@ -146,24 +148,23 @@ function RolesPage() {
                     totalElements={totalElements}
                     totalPages={totalPages}
                     TableBody={RoleTableBody}
-                    modalId='roleModal'
-                    formId='roleForm'
-                    modalLabel='vai trò'
+                    modalId={modalId}
+                    formId={formId}
+                    modalLabel={modalLabel}
                     handleSubmit={handleSubmit}
                     onSubmit={onSubmit}
                     ModalBody={
-                        <>
-                            <RoleModalBody
-                                errors={errors}
-                                register={register}
-                                dispatch={dispatch}
-                                setValue={setValue}
-                            />
-                        </>
+                        <RoleModalBody
+                            errors={errors}
+                            register={register}
+                            dispatch={dispatch}
+                            setValue={setValue}
+                        />
                     }
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                     onCloseForm={onCloseForm}
+                    loading={loading}
                 />
             }
         />

@@ -156,6 +156,7 @@ function UserModalBody({ errors, register, dispatch, setValue, setImage, isEdit,
                                     }
                                     setValue={setValue}
                                     multiple
+                                    readOnly={editedUser && editedUser.id.startsWith("N")}
                                 />
                             </div>
                         </div>

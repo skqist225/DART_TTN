@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -29,7 +28,8 @@ public class TakeExamRestController {
             @RequestParam("page") String page,
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
-            @RequestParam(name = "sortField", required = false, defaultValue = "score") String sortField
+            @RequestParam(name = "sortField", required = false, defaultValue = "score") String sortField,
+            @RequestParam(name = "student", required = false, defaultValue = "") String studentId
     ) {
         TakeExamsDTO subjectsDTO = new TakeExamsDTO();
 
@@ -46,9 +46,9 @@ public class TakeExamRestController {
             filters.put("query", query);
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
+            filters.put("studentId", studentId);
 
             Page<TakeExam> takeExamPage = takeExamService.findAllTakeExams(filters);
-//.stream().map(TakeExam::build).collect(Collectors.toList())
             subjectsDTO.setTakeExams(takeExamPage.getContent());
             subjectsDTO.setTotalElements(takeExamPage.getTotalElements());
             subjectsDTO.setTotalPages(takeExamPage.getTotalPages());

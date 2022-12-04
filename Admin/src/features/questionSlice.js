@@ -9,8 +9,8 @@ export const fetchAllQuestions = createAsyncThunk(
             query = "",
             sortField = "id",
             sortDir = "desc",
-            level = "",
             subject = "",
+            teacher = "",
             numberOfQuestions = 0,
         },
         { dispatch, rejectWithValue }
@@ -39,13 +39,13 @@ export const fetchAllQuestions = createAsyncThunk(
             });
 
             filterArray.push({
-                field: "level",
-                value: level,
+                field: "subject",
+                value: subject,
             });
 
             filterArray.push({
-                field: "subject",
-                value: subject,
+                field: "teacher",
+                value: teacher,
             });
 
             dispatch(setFilterObject(filterArray));
@@ -53,7 +53,7 @@ export const fetchAllQuestions = createAsyncThunk(
             const {
                 data: { questions, totalElements, totalPages },
             } = await api.get(
-                `/questions?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&level=${level}&subject=${subject}&numberOfQuestions=${numberOfQuestions}`
+                `/questions?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&teacher=${teacher}&subject=${subject}&numberOfQuestions=${numberOfQuestions}`
             );
 
             return { questions, totalElements, totalPages };
@@ -308,13 +308,18 @@ const questionSlice = createSlice({
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllQuestions.pending, (state, { payload }) => {})
+            .addCase(fetchAllQuestions.pending, (state, { payload }) => {
+                state.loading = true;
+            })
             .addCase(fetchAllQuestions.fulfilled, (state, { payload }) => {
                 state.questions = payload.questions;
                 state.totalElements = payload.totalElements;
                 state.totalPages = payload.totalPages;
+                state.loading = false;
             })
-            .addCase(fetchAllQuestions.rejected, (state, { payload }) => {})
+            .addCase(fetchAllQuestions.rejected, (state, { payload }) => {
+                state.loading = false;
+            })
 
             .addCase(loadQuestionsByCriteria.pending, (state, { payload }) => {})
             .addCase(loadQuestionsByCriteria.fulfilled, (state, { payload }) => {

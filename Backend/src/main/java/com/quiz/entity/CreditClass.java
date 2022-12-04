@@ -157,9 +157,14 @@ public class CreditClass {
                 '}';
     }
 
-//    @Transient
-//    public boolean getShouldCreateExam() {
-//        return this.getSubject()
-//                .getTests().stream().reduce((acc,sub) -> ,Integer:::add);
-//    }
+    @Transient
+    public boolean getShouldCreateExam() {
+        for (Test test : this.getSubject().getTests()) {
+            // Test that is not belonged to any exam and have status = 1
+            if (test.getExam() == null && test.isStatus()) {
+                return true;
+            }
+        }
+        return false;
+    }
 }

@@ -60,10 +60,12 @@ function UserTableModal({ rows, setIsEdit }) {
                             </div>
                         </div>
                     </td>
-                    <td className={tailwindCss.tableCell}>{row.birthday}</td>
-                    {/* <td className={tailwindCss.tableCell}>{row.address}</td> */}
+                    <td className={tailwindCss.tableCell}>{`${row.birthday.split("-")[2]}/${
+                        row.birthday.split("-")[1]
+                    }/${row.birthday.split("-")[0]}`}</td>
                     <td className={tailwindCss.tableCell}>{row.email}</td>
                     <td className={tailwindCss.tableCell}>{lookupSex(row.sex)}</td>
+                    <td className={tailwindCss.tableCell}>{row.address}</td>
                     <td className={tailwindCss.tableCell}>
                         {row.roles.map(role => (
                             <Badge color='purple'>{role.name}</Badge>

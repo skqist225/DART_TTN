@@ -34,6 +34,7 @@ function TestsPage() {
         totalElements,
         totalPages,
         filterObject,
+        loading,
         addTest: { successMessage },
         editTest: { successMessage: esSuccessMessage },
         deleteTest: { successMessage: dsSuccessMessage },
@@ -212,7 +213,7 @@ function TestsPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
                     searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
@@ -245,6 +246,7 @@ function TestsPage() {
                     Filter={TestFilter}
                     setError={setError}
                     testPage={true}
+                    loading={loading}
                 />
             }
         />

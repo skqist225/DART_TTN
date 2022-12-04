@@ -219,13 +219,18 @@ const userSlice = createSlice({
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllUsers.pending, (state, { payload }) => {})
+            .addCase(fetchAllUsers.pending, (state, { payload }) => {
+                state.loading = true;
+            })
             .addCase(fetchAllUsers.fulfilled, (state, { payload }) => {
                 state.users = payload.users;
                 state.totalElements = payload.totalElements;
                 state.totalPages = payload.totalPages;
+                state.loading = false;
             })
-            .addCase(fetchAllUsers.rejected, (state, { payload }) => {})
+            .addCase(fetchAllUsers.rejected, (state, { payload }) => {
+                state.loading = false;
+            })
 
             // .addCase(fetchUser.pending, (state, { payload }) => {
             //     state.user = null;

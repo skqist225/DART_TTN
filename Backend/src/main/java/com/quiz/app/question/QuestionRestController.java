@@ -100,7 +100,7 @@ public class QuestionRestController {
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
-            @RequestParam(name = "level", required = false, defaultValue = "") String level,
+            @RequestParam(name = "teacher", required = false, defaultValue = "") String teacherId,
             @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
             @RequestParam(name = "numberOfQuestions", required = false, defaultValue = "") Integer numberOfQuestions
     ) {
@@ -126,7 +126,7 @@ public class QuestionRestController {
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
             filters.put("subjectId", subjectId);
-            filters.put("level", level);
+            filters.put("teacherId", teacherId);
 
             Page<Question> questionPage = questionService.findAllQuestions(filters);
             questionsDTO.setQuestions(questionPage.getContent());

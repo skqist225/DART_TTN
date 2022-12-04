@@ -257,15 +257,18 @@ public class Question {
     }
 
     @Transient
+    public String getSubjectId() {
+        return this.chapter.getSubject().getId();
+    }
+
+    @Transient
+    public Integer getChapterId() {
+        return this.chapter.getId();
+    }
+
+    @Transient
     public String getSubjectName() {
         return this.chapter.getSubject().getName();
     }
 
-//    public List<Test> getTests() {
-//        return tests;
-//    }
-//
-//    public void setTests(List<Test> tests) {
-//        this.tests = tests;
-//    }
 }

@@ -20,7 +20,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const trigger = useRef(null);
     const sidebar = useRef(null);
 
-    const { user } = useSelector(persistUserState);
+    const { user, userRoles } = useSelector(persistUserState);
 
     const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
     const [sidebarExpanded, setSidebarExpanded] = useState(
@@ -62,16 +62,14 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
         }
     }, [sidebarExpanded]);
 
-    let userRoles = [];
-    if (user && user.roles) {
-        userRoles = user.roles.map(({ name }) => name);
-    }
     const navigate = useNavigate();
     useEffect(() => {
         if (!user) {
             navigate("/auth/login");
         }
     }, [user]);
+
+    console.log(userRoles.includes("Giảng viên", "Quản trị viên"));
 
     return (
         <div>
@@ -161,14 +159,16 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             </span>
                         </h3>
                         <ul className='mt-3'>
-                            {user && userRoles.includes("Quản trị viên", "Giảng viên") && (
+                            {userRoles.includes("Quản trị viên") && (
+                                <SidebarElement
+                                    pathname={pathname}
+                                    name='statistics'
+                                    title='Thống kê'
+                                    Icon={StatisticsIcon}
+                                />
+                            )}
+                            {!userRoles.includes("Sinh viên") && (
                                 <>
-                                    <SidebarElement
-                                        pathname={pathname}
-                                        name='statistics'
-                                        title='Thống kê'
-                                        Icon={StatisticsIcon}
-                                    />
                                     <SidebarElement
                                         pathname={pathname}
                                         name='questions'
@@ -186,19 +186,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                         name='subjects'
                                         title='Môn học'
                                         Icon={SubjectIcon}
-                                    />
-                                </>
-                            )}
-                            {user && userRoles.includes("Quản trị viên") && (
-                                <SidebarElement
-                                    pathname={pathname}
-                                    name='users'
-                                    title='Người dùng'
-                                    Icon={UserIcon}
-                                />
-                            )}
-                            {user && userRoles.includes("Quản trị viên", "Giảng viên") && (
-                                <>
+                                    />{" "}
                                     <SidebarElement
                                         pathname={pathname}
                                         name='exams'
@@ -213,7 +201,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                     />
                                 </>
                             )}
-                            {user && userRoles.includes("Quản trị viên") && (
+                            {userRoles.includes("Quản trị viên") && (
                                 <>
                                     <SidebarElement
                                         pathname={pathname}
@@ -229,8 +217,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                     />
                                 </>
                             )}
-
-                            {user && userRoles.includes("Sinh viên") && (
+                            {userRoles.includes("Sinh viên") && (
                                 <>
                                     <SidebarElement
                                         pathname={pathname}
@@ -246,13 +233,20 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                     />
                                 </>
                             )}
-
                             <SidebarElement
                                 pathname={pathname}
                                 name='ranks'
                                 title='Bảng xếp hạng'
                                 Icon={CreditClassIcon}
                             />
+                            {userRoles.includes("Quản trị viên") && (
+                                <SidebarElement
+                                    pathname={pathname}
+                                    name='users'
+                                    title='Người dùng'
+                                    Icon={UserIcon}
+                                />
+                            )}
                         </ul>
                     </div>
                 </div>

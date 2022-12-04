@@ -37,10 +37,16 @@ function RegistersPage() {
         totalElements,
         totalPages,
         filterObject,
+        loading,
+        registerExcelAdd,
         addRegister: { successMessage },
         editRegister: { successMessage: eqSuccessMessage },
         deleteRegister: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
-        addMultipleRegisters: { successMessage: amuSuccessMessage, errorMessage: amuErrorMessage },
+        addMultipleRegisters: {
+            successMessage: amuSuccessMessage,
+            errorMessage: amuErrorMessage,
+            loading: amuLoading,
+        },
         enableOrDisableRegister: { successMessage: eodSuccessMessage },
     } = useSelector(registerState);
 
@@ -219,6 +225,8 @@ function RegistersPage() {
                     handleAddMultipleFromExcelFile={handleAddMultipleFromExcelFile}
                     Filter={RegisterFilter}
                     recordsPerPage={15}
+                    loading={loading}
+                    excelAdd={registerExcelAdd}
                 />
             }
         />

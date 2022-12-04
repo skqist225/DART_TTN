@@ -59,6 +59,9 @@ public class TakeExam {
     @Column(name = "DIEM")
     private Float score;
 
+    @Column(name = "DATHI", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean tested;
+
     @Transient
     private String studentId;
 

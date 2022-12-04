@@ -119,7 +119,7 @@ public class QuestionService {
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
         String subjectId = filters.get("subjectId");
-        String levelStr = filters.get("level");
+        String teacherId = filters.get("teacherId");
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
@@ -163,17 +163,10 @@ public class QuestionService {
             }
         }
 
-        if (!StringUtils.isEmpty(levelStr)) {
-            Expression<Level> levelReal = root.get("level");
+        if (!StringUtils.isEmpty(teacherId)) {
+            Expression<String> teacherIdExp = root.get("teacher").get("id");
 
-            Level level = Level.EASY;
-            if (Objects.equals(levelStr, "Khó")) {
-                level = Level.HARD;
-            } else if (Objects.equals(levelStr, "Trung bình")) {
-                level = Level.MEDIUM;
-            }
-
-            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(levelReal, level)));
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(teacherIdExp, teacherId)));
         }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));

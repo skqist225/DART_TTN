@@ -180,13 +180,18 @@ const creditClassSlice = createSlice({
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllCreditClasses.pending, (state, { payload }) => {})
+            .addCase(fetchAllCreditClasses.pending, (state, { payload }) => {
+                state.loading = true;
+            })
             .addCase(fetchAllCreditClasses.fulfilled, (state, { payload }) => {
                 state.creditClasses = payload.creditClasses;
                 state.totalElements = payload.totalElements;
                 state.totalPages = payload.totalPages;
+                state.loading = false;
             })
-            .addCase(fetchAllCreditClasses.rejected, (state, { payload }) => {})
+            .addCase(fetchAllCreditClasses.rejected, (state, { payload }) => {
+                state.loading = false;
+            })
 
             .addCase(findCreditClass.pending, (state, { payload }) => {})
             .addCase(findCreditClass.fulfilled, (state, { payload }) => {

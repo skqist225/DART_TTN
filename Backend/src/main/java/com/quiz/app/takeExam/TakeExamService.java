@@ -132,6 +132,7 @@ public class TakeExamService {
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
+        String studentId = filters.get("studentId");
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
@@ -143,15 +144,24 @@ public class TakeExamService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-//        if (!StringUtils.isEmpty(searchQuery)) {
-//            Expression<String> id = root.get("id");
-//            Expression<String> name = root.get("name");
-//
-//            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
-//            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
-//
-//            predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
-//        }
+        if (!StringUtils.isEmpty(searchQuery)) {
+            Expression<String> id = root.get("id");
+            Expression<String> name = root.get("name");
+
+            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
+
+            predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
+        }
+
+        if (!StringUtils.isEmpty(studentId)) {
+            Expression<String> id = root.get("register").get("student").get(
+                    "id"
+            );
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(id,
+                    studentId
+            )));
+        }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
         criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));

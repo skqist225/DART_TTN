@@ -70,7 +70,8 @@ public class TestRestController {
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
             @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
-            @RequestParam(name = "notUsedTest", required = false, defaultValue = "false") boolean notUsedTest
+            @RequestParam(name = "notUsedTest", required = false, defaultValue = "false") boolean notUsedTest,
+            @RequestParam(name = "activeTest", required = false, defaultValue = "false") boolean activeTest
     ) {
         TestsDTO testsDTO = new TestsDTO();
 
@@ -332,6 +333,7 @@ public class TestRestController {
                     takeExam.getRegister().getCreditClass().getId(),
                     Float.parseFloat(df.format(mark)));
         }
+        takeExam.setTested(true);
 
         return new OkResponse<>(testDTO).response();
     }

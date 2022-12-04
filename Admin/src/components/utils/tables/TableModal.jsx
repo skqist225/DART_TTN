@@ -7,6 +7,8 @@ import { questionState } from "../../../features/questionSlice";
 import { addTest, testState } from "../../../features/testSlice";
 import { callToast } from "../../../helpers";
 import { userState } from "../../../features/userSlice";
+import { examState } from "../../../features/examSlice";
+import { registerState } from "../../../features/registerSlice";
 import $ from "jquery";
 
 function TableModal({
@@ -27,19 +29,28 @@ function TableModal({
 }) {
     const dispatch = useDispatch();
 
-    console.log(testPage);
-
     const {
         questions,
         addMultipleQuestions: { loading: questionLoading },
     } = useSelector(questionState);
     const {
-        addMultipleUsers: { loading: registerLoading },
+        addMultipleUsers: { loading: userLoading },
     } = useSelector(userState);
+    const {
+        addMultipleRegisters: { loading: registerLoading },
+    } = useSelector(registerState);
     const { addTestDisabled } = useSelector(testState);
+    const {
+        addExamDisabled,
+        addExam: { loading: addExamLoading },
+    } = useSelector(examState);
 
-    console.log(modalLabel);
-    console.log(modalId);
+    console.log(modalLabel, registerLoading);
+
+    const disabled =
+        (modalLabel === "đề thi" && addTestDisabled) ||
+        (modalLabel === "Thêm ca thi" && !addExamDisabled);
+
     return (
         <div
             id={modalId}
@@ -94,11 +105,9 @@ function TableModal({
                         <button
                             type={!excelAdd && !addTst ? "submit" : "button"}
                             className={`${tailwindCss.modal.saveButton} ${
-                                modalLabel === "đề thi" &&
-                                addTestDisabled &&
-                                "cursor-not-allowed hover:bg-blue-700"
+                                disabled && "cursor-not-allowed hover:bg-blue-700"
                             }`}
-                            disabled={modalLabel === "đề thi" && addTestDisabled}
+                            disabled={disabled}
                             onClick={() => {
                                 if (excelAdd && handleAddMultipleFromExcelFile) {
                                     handleAddMultipleFromExcelFile();
@@ -146,10 +155,12 @@ function TableModal({
                                 }
                             }}
                         >
-                            {modalLabel === "Thêm người dùng" && registerLoading && (
-                                <Spinner size='sm' light={true} />
-                            )}
-                            {modalLabel === "Thêm người dùng" && questionLoading && (
+                            {(modalLabel === "Thêm đăng ký" && registerLoading) ||
+                                (modalLabel === "Thêm câu hỏi" && questionLoading) ||
+                                (modalLabel === "Thêm người dùng" && userLoading && (
+                                    <Spinner size='sm' light={true} />
+                                ))}
+                            {modalLabel === "Thêm ca thi" && addExamLoading && (
                                 <Spinner size='sm' light={true} />
                             )}
                             {excelAdd ? "Thêm tất cả" : buttonLabel}

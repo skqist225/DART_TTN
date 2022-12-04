@@ -24,4 +24,9 @@ public interface UserRepository extends JpaRepository<User, String> {
     @Query(value = "SELECT * FROM nguoidung as nd JOIN nguoidung_vaitro vt ON nd.manguoidung = vt" +
             ".manguoidung WHERE vt.mavaitro = :roleId GROUP BY nd.manguoidung", nativeQuery = true)
     List<User> findByRole(Integer roleId);
+
+    @Query(value = "SELECT nd.* FROM nguoidung nd left join nguoidung_vaitro ndvt on nd" +
+            ".manguoidung = ndvt.manguoidung join vaitro vt on vt.mavaitro = ndvt.mavaitro WHERE " +
+            "vt.tenvaitro IN (\"Giảng viên\", \"Quản trị viên\") group by nd.manguoidung", nativeQuery = true)
+    List<User> findUserIsNotStudent();
 }

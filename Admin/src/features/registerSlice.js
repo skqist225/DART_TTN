@@ -235,13 +235,18 @@ const registerSlice = createSlice({
     },
     extraReducers: builder => {
         builder
-            .addCase(fetchAllRegisters.pending, (state, { payload }) => {})
+            .addCase(fetchAllRegisters.pending, (state, { payload }) => {
+                state.loading = true;
+            })
             .addCase(fetchAllRegisters.fulfilled, (state, { payload }) => {
                 state.registers = payload.registers;
                 state.totalElements = payload.totalElements;
                 state.totalPages = payload.totalPages;
+                state.loading = false;
             })
-            .addCase(fetchAllRegisters.rejected, (state, { payload }) => {})
+            .addCase(fetchAllRegisters.rejected, (state, { payload }) => {
+                state.loading = false;
+            })
 
             .addCase(enableOrDisableRegister.pending, (state, { payload }) => {
                 state.enableOrDisableRegister.successMessage = null;

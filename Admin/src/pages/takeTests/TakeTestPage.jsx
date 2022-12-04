@@ -228,7 +228,7 @@ function TakeTestPage() {
                                         </div>
                                         {!resultMode ? (
                                             <Countdown
-                                                date={now + 1 * 60 * 1000}
+                                                date={now + time * 60 * 1000}
                                                 className='text-xl'
                                                 renderer={renderer}
                                                 onComplete={() => {
@@ -575,19 +575,24 @@ function TakeTestPage() {
                         style={{ width: "100vw", height: "100vh", margin: "auto", maxWidth: "80%" }}
                         className='col-flex items-center justify-center'
                     >
-                        <div className='mb-5 w-full'>
-                            <Select
-                                label={"Chọn ca thi"}
-                                name='examSelected'
-                                register={register}
-                                options={exams.map(({ id, name }) => ({
-                                    title: name,
-                                    value: id,
-                                }))}
-                                // onChangeHandler={handleCreditClassChange}
-                            />
-                        </div>
-                        <div className='flex items-center w-full'>
+                        {exams.length === 0 ? (
+                            <>{`Sinh viên ${user.fullName}(${user.id}) chưa có ca thi`}</>
+                        ) : (
+                            <div className='mb-5 w-full'>
+                                <Select
+                                    label={"Chọn ca thi"}
+                                    name='examSelected'
+                                    register={register}
+                                    options={exams.map(({ id, name }) => ({
+                                        title: name,
+                                        value: id,
+                                    }))}
+                                    // onChangeHandler={handleCreditClassChange}
+                                />
+                            </div>
+                        )}
+
+                        <div className='flex items-center w-full mt-5'>
                             <div className='mr-5 w-full'>
                                 <Button
                                     onClick={() => {
@@ -597,22 +602,25 @@ function TakeTestPage() {
                                     Trở về trang chủ
                                 </Button>
                             </div>
-                            <div className='w-full'>
-                                <Button
-                                    onClick={() => {
-                                        const examId = $("#examSelected").val();
-                                        dispatch(getQuestions({ exam: examId }));
-                                        setDoTest(true);
-                                        setExamId(parseInt(examId));
-                                        const exam = exams.find(
-                                            ({ id }) => id.toString() === examId.toString()
-                                        );
-                                        setTime(exam.time);
-                                    }}
-                                >
-                                    Làm bài
-                                </Button>
-                            </div>
+
+                            {exams.length > 0 && (
+                                <div className='w-full'>
+                                    <Button
+                                        onClick={() => {
+                                            const examId = $("#examSelected").val();
+                                            dispatch(getQuestions({ exam: examId }));
+                                            setDoTest(true);
+                                            setExamId(parseInt(examId));
+                                            const exam = exams.find(
+                                                ({ id }) => id.toString() === examId.toString()
+                                            );
+                                            setTime(exam.time);
+                                        }}
+                                    >
+                                        Làm bài
+                                    </Button>
+                                </div>
+                            )}
                         </div>
                     </div>
                 )}

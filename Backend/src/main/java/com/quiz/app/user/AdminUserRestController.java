@@ -54,20 +54,20 @@ public class AdminUserRestController {
             @RequestParam(name = "level", required = false, defaultValue = "") String level,
             @RequestParam(name = "roles", required = false, defaultValue = "") String roles,
             @RequestParam(name = "role", required = false, defaultValue = "") String roleName,
-            @RequestParam(name = "statuses", required = false, defaultValue = "1,0") String statuses) {
+            @RequestParam(name = "statuses", required = false, defaultValue = "1,0") String statuses) throws NotFoundException {
         UsersDTO usersDTO = new UsersDTO();
         if (page.equals("0")) {
+            List<User> users = new ArrayList<>();
             if (!StringUtils.isEmpty(roleName)) {
-                Role role = null;
-                try {
-                    role = roleService.findByName(roleName);
-                    List<User> users = userService.findByRole(role.getId());
-                    usersDTO.setUsers(users);
-                    usersDTO.setTotalPages((long) Math.ceil(users.size() / 10));
-                    usersDTO.setTotalElements(users.size());
-                } catch (NotFoundException e) {
+                if (roleName.equals("!SV")) {
+                    users = userService.findUserIsNotStudent();
+                } else {
+                    users = userService.findByRole(roleService.findByName(roleName).getId());
                 }
             }
+            usersDTO.setUsers(users);
+            usersDTO.setTotalPages((long) Math.ceil(users.size() / 10));
+            usersDTO.setTotalElements(users.size());
         } else {
             Map<String, String> filters = new HashMap<>();
             filters.put("page", page);

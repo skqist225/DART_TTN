@@ -81,18 +81,20 @@ function ExamsPage() {
     });
 
     const onSubmit = data => {
-        let have;
+        let haveError = false;
         if (parseInt(data.numberOfStudents) > parseInt(data.numberOfActiveStudents)) {
             setError("numberOfStudents", {
                 type: "custom",
-                message: "Số SV thi phải ít hơn SV  đang theo học",
+                message: "Số SV thi phải ít hơn SV đang theo học",
             });
+            haveError = true;
         }
         if (data.time > 120) {
             setError("time", {
                 type: "custom",
                 message: "Thời gian làm bài phải ít hơn 120 phút",
             });
+            haveError = true;
         }
 
         let tests = [];
@@ -101,11 +103,11 @@ function ExamsPage() {
                 tests.push($(this).data("id"));
             }
         });
-
         if (tests.length === 0) {
             callToast("error", "Chọn bộ đề cho ca thi");
-            return;
+            haveError = true;
         }
+
         let { examDate } = data;
         const examDt = new Date(
             `${examDate.split("/")[1]}/${examDate.split("/")[0]}/${examDate.split("/")[2]} 00:00:00`
@@ -113,6 +115,10 @@ function ExamsPage() {
 
         if (!isEdit && examDt.getTime() <= new Date().getTime()) {
             callToast("error", "Ngày thi phải lớn hơn hiện tại");
+            haveError = true;
+        }
+
+        if (haveError) {
             return;
         }
 
@@ -147,6 +153,7 @@ function ExamsPage() {
         totalElements,
         totalPages,
         filterObject,
+        loading,
         addExam: { successMessage },
         editExam: { successMessage: esSuccessMessage },
         deleteExam: { successMessage: dsSuccessMessage },
@@ -226,7 +233,11 @@ function ExamsPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={!userRoles.includes("Sinh viên") ? "DANH SÁCH CA THI" : "DANH SÁCH LỊCH THI"}
+            title={
+                !userRoles.includes("Sinh viên")
+                    ? `DANH SÁCH CA THI (${totalElements})`
+                    : `DANH SÁCH LỊCH THI (${totalElements})`
+            }
             children={
                 <Table
                     searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
@@ -254,6 +265,7 @@ function ExamsPage() {
                     setIsEdit={setIsEdit}
                     Filter={ExamFilter}
                     onCloseForm={onCloseForm}
+                    loading={loading}
                 />
             }
         />

@@ -8,7 +8,6 @@ import javax.mail.Multipart;
 import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -16,7 +15,7 @@ import javax.mail.internet.MimeMultipart;
 
 public class SendEmail {
     private static final String username = "thuan.leminhthuan.10.2@gmail.com";
-    private static final String password = "tqgxcudjgljrhztj";
+    private static final String password = "frghfqitaehgjigd";
     private static final String smtpServer = "smtp.gmail.com";
 
     public static void send(String receipt, String subject, String msg) throws MessagingException {

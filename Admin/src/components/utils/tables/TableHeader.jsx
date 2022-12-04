@@ -1,9 +1,9 @@
 import React, { useState } from "react";
+import { useSelector } from "react-redux";
 import { tailwindCss } from "../../../tailwind";
-import $ from "jquery";
 import "./css/tableHeader.css";
 import { persistUserState } from "../../../features/persistUserSlice";
-import { useSelector } from "react-redux";
+import $ from "jquery";
 
 function TableHeader({
     columns,

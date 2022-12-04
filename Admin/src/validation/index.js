@@ -120,6 +120,7 @@ export const examSchema = yup
         numberOfStudents: yup
             .number()
             .typeError("Số SV thi phải là chữ số")
-            .required("Số  SV thi không được để trống"),
+            .required("Số  SV thi không được để trống")
+            .min(1, "Số SV thi ít nhất là 1"),
     })
     .required();

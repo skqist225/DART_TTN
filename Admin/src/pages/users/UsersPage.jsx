@@ -246,7 +246,7 @@ const UsersPage = () => {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
                     searchPlaceHolder={`Tìm kiếm ${modalLabel}`}

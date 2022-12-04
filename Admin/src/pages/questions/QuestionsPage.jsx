@@ -24,6 +24,7 @@ import {
 import { fetchAllSubjects } from "../../features/subjectSlice";
 import { questionColumns } from "../columns";
 import $ from "jquery";
+import { fetchAllUsers } from "../../features/userSlice";
 
 const Type = {
     oneAnswer: "Một đáp án",
@@ -46,6 +47,7 @@ function QuestionsPage() {
         totalPages,
         filterObject,
         excelAdd,
+        loading,
         addQuestion: { successMessage },
         editQuestion: { successMessage: eqSuccessMessage },
         deleteQuestion: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
@@ -64,6 +66,7 @@ function QuestionsPage() {
             })
         );
         dispatch(fetchAllSubjects({ page: 0, haveChapter: true }));
+        dispatch(fetchAllUsers({ page: 0, role: "!SV" }));
     }, []);
 
     const {
@@ -278,7 +281,7 @@ function QuestionsPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
+            title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
                     searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
@@ -316,6 +319,7 @@ function QuestionsPage() {
                     Filter={QuestionsFilter}
                     excelAdd={excelAdd}
                     recordsPerPage={10}
+                    loading={loading}
                 />
             }
         />

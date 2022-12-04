@@ -92,11 +92,11 @@ function QuestionModalBody({
 
     useEffect(() => {
         if (editedQuestion) {
+            console.log("edited question: ", editedQuestion);
             setValue("id", editedQuestion.id);
             setValue("content", editedQuestion.content);
-            dispatch(fetchAllChapters({ page: 0, subject: editedQuestion.chapter.subjectId }));
-            setValue("chapterId", editedQuestion.chapter.id);
-            setValue("subject", editedQuestion.chapter.subjectId);
+            setValue("subject", editedQuestion.subjectId);
+            dispatch(fetchAllChapters({ page: 0, subject: editedQuestion.subjectId }));
             handleTypeChange({ target: { value: editedQuestion.type } });
             if (editedQuestion.type === "Đáp án điền") {
                 if (editedQuestion.answers[0]) {
@@ -117,16 +117,20 @@ function QuestionModalBody({
     }, [editedQuestion]);
 
     useEffect(() => {
-        if (editedQuestion && chapters && chapters.length) {
-            setValue("chapterId", chapters[0].id);
+        if (chapters && chapters.length) {
+            if (editedQuestion) {
+                setValue("chapterId", editedQuestion.chapterId);
+            } else {
+                setValue("chapterId", chapters[0].id);
+            }
         }
     }, [editedQuestion, chapters]);
 
     useEffect(() => {
-        if (editedQuestion && subjects && subjects.length) {
-            setValue("chapterId", subjects[0].id);
+        if (!editedQuestion && subjects && subjects.length) {
+            setValue("subject", subjects[0].id);
         }
-    }, [editedQuestion, subjects]);
+    }, [subjects]);
 
     const handleSubjectChange = event => {
         event.preventDefault();

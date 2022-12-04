@@ -1,27 +1,27 @@
 import React from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
-import { useDispatch } from "react-redux";
-import { useSelector } from "react-redux";
 import { fetchAllQuestions, questionState, setResetFilter } from "../../features/questionSlice";
 import { subjectState } from "../../features/subjectSlice";
-import { tailwindCss } from "../../tailwind";
 import Select from "../utils/userInputs/Select";
 import { levelOptions } from "./QuestionModalBody";
+import { userState } from "../../features/userSlice";
 
 function QuestionsFilter() {
     const dispatch = useDispatch();
+
     const { filterObject } = useSelector(questionState);
     const { subjects } = useSelector(subjectState);
+    const { users } = useSelector(userState);
+
     const { register, handleSubmit } = useForm();
 
-    const onSubmit = data => {};
-
-    const handleLevelChange = event => {
-        dispatch(fetchAllQuestions({ ...filterObject, level: event.target.value }));
+    const handleTeacherChange = ({ target: { value } }) => {
+        dispatch(fetchAllQuestions({ ...filterObject, teacher: value }));
     };
 
-    const handleSubjectChange = event => {
-        dispatch(fetchAllQuestions({ ...filterObject, subject: event.target.value }));
+    const handleSubjectChange = ({ target: { value } }) => {
+        dispatch(fetchAllQuestions({ ...filterObject, subject: value }));
     };
 
     return (
@@ -35,13 +35,13 @@ function QuestionsFilter() {
         >
             <div className='mr-2 w-full flex items-center'>
                 <Select
-                    label='mức độ'
-                    name='levelFilter'
+                    label='người soạn'
+                    name='teacherFilter'
                     register={register}
-                    options={levelOptions}
-                    onChangeHandler={handleLevelChange}
+                    options={users.map(user => ({ title: user.fullName, value: user.id }))}
+                    onChangeHandler={handleTeacherChange}
                     hiddenOption
-                    width={"w-40"}
+                    width={"w-48"}
                 />
             </div>
             <div className='mr-2 w-full flex items-center justify-start'>
