@@ -7,7 +7,7 @@ import { persistUserState } from "../../features/persistUserSlice";
 import { fetchAllQuestions } from "../../features/questionSlice";
 import { fetchAllSubjects } from "../../features/subjectSlice";
 import { fetchAllTakeExams, takeExamState } from "../../features/takeExamSlice";
-import { rankColumns } from "../columns";
+import { rankColumns, studentRankColumns } from "../columns";
 
 function RanksPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -32,7 +32,7 @@ function RanksPage() {
         }
         dispatch(fetchAllSubjects({ page: 0, haveChapter: true }));
         dispatch(fetchAllExams({ page: 0 }));
-        dispatch(fetchAllCreditClasses({ page: 0, active: true }));
+        dispatch(fetchAllCreditClasses({ page: 0, active: true, student: user.id }));
     }, []);
     const { takeExams, totalElements, totalPages, filterObject, loading } =
         useSelector(takeExamState);
@@ -63,12 +63,12 @@ function RanksPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={`BẢNG XẾP HẠNG (${totalElements})`}
+            title={`BẢNG XẾP HẠNG`}
             children={
                 <Table
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={rankColumns}
+                    columns={studentRankColumns}
                     rows={takeExams}
                     totalElements={totalElements}
                     totalPages={totalPages}

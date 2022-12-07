@@ -381,3 +381,21 @@ export const rankColumns = [
         sortable: true,
     },
 ];
+
+export const studentRankColumns = [
+    {
+        name: "STT",
+        sortField: "index",
+        sortable: true,
+    },
+    {
+        name: "MSSV",
+        sortField: "studentId",
+        sortable: true,
+    },
+    {
+        name: "Họ và tên",
+        sortField: "studentName",
+        sortable: true,
+    },
+];

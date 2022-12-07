@@ -12,6 +12,7 @@ export const fetchAllCreditClasses = createAsyncThunk(
             subject = "",
             active = false,
             teacher = "",
+            student = "",
         },
         { dispatch, rejectWithValue }
     ) => {
@@ -48,7 +49,7 @@ export const fetchAllCreditClasses = createAsyncThunk(
             const {
                 data: { creditClasses, totalElements, totalPages },
             } = await api.get(
-                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&active=${active}&teacher=${teacher}`
+                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&active=${active}&teacher=${teacher}&student=${student}`
             );
 
             return { creditClasses, totalElements, totalPages };

@@ -1,6 +1,5 @@
 package com.quiz.app.creditClass;
 
-import com.quiz.app.utils.CommonUtils;
 import com.quiz.app.creditClass.dto.CreditClassesDTO;
 import com.quiz.app.creditClass.dto.PostCreateCreditClassDTO;
 import com.quiz.app.exam.ExamService;
@@ -13,6 +12,7 @@ import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.app.user.UserService;
+import com.quiz.app.utils.CommonUtils;
 import com.quiz.entity.CreditClass;
 import com.quiz.entity.Exam;
 import com.quiz.entity.Subject;
@@ -63,14 +63,19 @@ public class CreditClassRestController {
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
             @RequestParam(name = "active", required = false, defaultValue = "false") boolean active,
             @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
-            @RequestParam(name = "teacher", required = false, defaultValue = "") String teacherId
+            @RequestParam(name = "teacher", required = false, defaultValue = "") String teacherId,
+            @RequestParam(name = "student", required = false, defaultValue = "") String studentId
     ) {
         CreditClassesDTO creditClassesDTO = new CreditClassesDTO();
 
         if (page.equals("0")) {
             List<CreditClass> creditClasses = null;
             if (active) {
-                creditClasses = creditClassService.findAllActiveCreditClass();
+                if (!StringUtils.isEmpty(studentId)) {
+                    creditClasses = creditClassService.findAllActiveCreditClass();
+                } else {
+                    creditClasses = creditClassService.findAllActiveCreditClass();
+                }
             } else {
                 creditClasses = creditClassService.findAll();
             }
