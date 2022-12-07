@@ -6,6 +6,7 @@ import { examState } from "../../features/examSlice";
 import { subjectState } from "../../features/subjectSlice";
 import { fetchAllTakeExams, takeExamState } from "../../features/takeExamSlice";
 import Select from "../utils/userInputs/Select";
+import { examTypes } from "../exams/ExamModalBody";
 
 function QuestionsFilter() {
     const dispatch = useDispatch();
@@ -50,20 +51,6 @@ function QuestionsFilter() {
             </div>
             <div className='mr-2 w-full flex items-center justify-start'>
                 <Select
-                    label='môn học'
-                    name='subjectFilter'
-                    register={register}
-                    options={subjects.map(subject => ({
-                        title: subject.name,
-                        value: subject.id,
-                    }))}
-                    onChangeHandler={handleSubjectChange}
-                    hiddenOption
-                    width={"w-40"}
-                />
-            </div>
-            <div className='mr-2 w-full flex items-center justify-start'>
-                <Select
                     label='lớp tín chỉ'
                     name='examFilter'
                     register={register}
@@ -73,6 +60,20 @@ function QuestionsFilter() {
                             value: id,
                         })
                     )}
+                    onChangeHandler={handleSubjectChange}
+                    hiddenOption
+                    width={"w-40"}
+                />
+            </div>{" "}
+            <div className='mr-2 w-full flex items-center justify-start'>
+                <Select
+                    label='loại thi'
+                    name='examTypeFilter'
+                    register={register}
+                    options={examTypes.map(({ title, value }) => ({
+                        title,
+                        value,
+                    }))}
                     onChangeHandler={handleSubjectChange}
                     hiddenOption
                     width={"w-40"}

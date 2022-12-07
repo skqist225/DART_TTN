@@ -138,7 +138,7 @@ public class TestRestController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<StandardJSONResponse<String>> saveSubject(
+    public ResponseEntity<StandardJSONResponse<String>> saveTest(
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
             @RequestBody PostCreateTestDTO postCreateTestDTO,
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
@@ -158,7 +158,7 @@ public class TestRestController {
             return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
         } else {
             if (testService.isNameDuplicated(null, name, isEdit)) {
-                commonUtils.addError("name", "Tên bộ đề đã tồn tại");
+                commonUtils.addError("name", "Tên đề thi đã tồn tại");
             }
 
             try {

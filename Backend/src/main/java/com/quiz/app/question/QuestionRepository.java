@@ -21,7 +21,7 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
 
     @Modifying
     @Query(value = "delete from cauhoi where macauhoi = :id", nativeQuery = true)
-    public void deleteQuestionById(Integer id);
+    void deleteQuestionById(Integer id);
 
     @Query
     List<Question> findByChapterIn(List<Chapter> subject);

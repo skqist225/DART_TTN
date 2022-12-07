@@ -51,13 +51,13 @@ function ExamsPage() {
             dispatch(
                 fetchAllCreditClasses({
                     page: 0,
-                    teacher: user.id,
+                    // teacher: user.id,
                 })
             );
             dispatch(
                 fetchAllExams({
                     page: 1,
-                    teacher: user.id,
+                    // teacher: user.id,
                 })
             );
         } else {

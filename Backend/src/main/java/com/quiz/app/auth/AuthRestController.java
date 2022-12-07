@@ -72,8 +72,7 @@ public class AuthRestController {
 
     @PostMapping("login")
     public ResponseEntity<StandardJSONResponse<User>> login(
-            @RequestBody LoginDTO loginDTO,
-            @RequestParam(value = "admin", defaultValue = "false") String admin) {
+            @RequestBody LoginDTO loginDTO) {
         try {
             authenticationManager
                     .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getId(),
@@ -89,11 +88,6 @@ public class AuthRestController {
             }
 
             user.setToken(token);
-
-//            if (admin.equals("true") && user.hasRole("Sinh viên")) {
-//                return new ForbiddenResponse<User>(
-//                        "Tài khoản của bạn không đủ quyền để truy cập tài nguyên này").response();
-//            }
 
             return new OkResponse<>(user).response();
         } catch (BadCredentialsException | NotFoundException e) {

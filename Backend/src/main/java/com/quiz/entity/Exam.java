@@ -16,8 +16,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -55,11 +53,8 @@ public class Exam {
     @Column(name = "THOIGIANLAMBAI", columnDefinition = "SMALLINT", nullable = false)
     private int time;
 
-    @JsonIgnore
     @Builder.Default
-    @ManyToMany
-    @JoinTable(name = "CATHI_DETHI", joinColumns = @JoinColumn(name = "MACATHI"),
-            inverseJoinColumns = @JoinColumn(name = "MADETHI"))
+    @OneToMany(mappedBy = "exam")
     private Set<Test> tests = new HashSet<>();
 
     @Column(name = "LOAIKYTHI", columnDefinition = "NVARCHAR(50)", nullable = false)

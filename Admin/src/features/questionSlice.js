@@ -151,9 +151,9 @@ export const editQuestion = createAsyncThunk(
 
 export const deleteQuestion = createAsyncThunk(
     "question/deleteQuestion",
-    async (questionId, { rejectWithValue }) => {
+    async (id, { rejectWithValue }) => {
         try {
-            const { data } = await api.delete(`/questions/${questionId}/delete`);
+            const { data } = await api.delete(`/questions/${id}/delete`);
 
             return { data };
         } catch ({ data: { error } }) {

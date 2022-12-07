@@ -12,5 +12,5 @@ public interface AnswerRepository extends CrudRepository<Answer, Integer> {
 
     @Modifying
     @Query(value = "delete from luachon where macauhoi = :id", nativeQuery = true)
-    public void deleteByQuestionId(Integer id);
+    void deleteByQuestionId(Integer id);
 }

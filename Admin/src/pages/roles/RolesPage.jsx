@@ -9,13 +9,13 @@ import {
     fetchAllRoles,
     setEditedRole,
 } from "../../features/roleSlice";
-import $ from "jquery";
 import { roleSchema } from "../../validation";
 import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { roleState } from "../../features/roleSlice";
 import { roleColumns } from "../columns";
+import $ from "jquery";
 
 function RolesPage() {
     const dispatch = useDispatch();

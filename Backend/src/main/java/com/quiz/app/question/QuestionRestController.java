@@ -364,7 +364,7 @@ public class QuestionRestController {
             }
             return new OkResponse<>(responseMessage).response();
         } catch (IllegalStateException e) {
-            return new BadResponse<String>("Không thể đọc file Excel").response();
+            return new BadResponse<String>("Không thể đọc được nội dung từ file Excel").response();
         }
     }
 

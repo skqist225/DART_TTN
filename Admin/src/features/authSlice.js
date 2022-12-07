@@ -6,7 +6,7 @@ export const login = createAsyncThunk(
     "auth/login",
     async (loginInfo, { dispatch, rejectWithValue }) => {
         try {
-            const { data } = await api.post("/auth/login?admin=true", loginInfo);
+            const { data } = await api.post("/auth/login", loginInfo);
 
             if (data) {
                 dispatch(setUser(data));
