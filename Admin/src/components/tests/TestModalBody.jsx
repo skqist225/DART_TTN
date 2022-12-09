@@ -59,7 +59,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
         }
     }, [editedTest]);
 
-    const { fields, prepend, remove } = useFieldArray({
+    const { fields, prepend, remove, append } = useFieldArray({
         control,
         name: "criteria",
     });
@@ -68,8 +68,6 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
         if (subjects && subjects.length) {
             dispatch(fetchAllChapters({ page: 0, subject: subjects[0].id }));
             setValue("testName", `Đề thi ${subjects[0].name} ${new Date().getTime()}`);
-            console.log($("#testSubjectId").val());
-            console.log(subjects[0]);
 
             if (!subjects[0].chapters.length) {
                 dispatch(setAddTestDisabled(true));
@@ -95,25 +93,25 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
         }
     }
 
-    function onChapterChange(event) {
+    function onChapterChange(event, fieldId) {
         const index = $(event.target).data("index");
         const criteria = getValues("criteria");
         const chapter = $(event.target).val();
         const level = criteria[index].level;
 
         if (level) {
-            dispatch(queryAvailableQuestions({ chapter, level, filterIndex: index }));
+            dispatch(queryAvailableQuestions({ chapter, level, filterIndex: fieldId }));
         }
     }
 
-    function onLevelChange(event) {
+    function onLevelChange(event, fieldId) {
         const index = $(event.target).data("index");
         const criteria = getValues("criteria");
         const chapter = criteria[index].chapterId;
         const level = $(event.target).val();
 
         if (chapter) {
-            dispatch(queryAvailableQuestions({ chapter, level, filterIndex: index }));
+            dispatch(queryAvailableQuestions({ chapter, level, filterIndex: fieldId }));
         }
     }
 
@@ -121,20 +119,20 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
         <div>
             {!editedTest ? (
                 <div className='col-flex items-center justify-center w-full'>
-                    <div className='flex my-3 items-center w-full'>
-                        <div className='w-full mr-5'>
-                            <Input
-                                label='Tên đề thi *'
-                                error={
-                                    (errors.name && errors.name.message) ||
-                                    (errorObject && errorObject.name)
-                                }
-                                register={register}
-                                name='testName'
-                            />
-                        </div>
-                    </div>
                     <div className='flex items-center w-full'>
+                        <div className='flex my-3 items-center w-full'>
+                            <div className='w-full mr-5'>
+                                <Input
+                                    label='Tên đề thi *'
+                                    error={
+                                        (errors.name && errors.name.message) ||
+                                        (errorObject && errorObject.name)
+                                    }
+                                    register={register}
+                                    name='testName'
+                                />
+                            </div>
+                        </div>
                         <div className='w-full mr-5'>
                             <Select
                                 label='Môn học *'
@@ -154,7 +152,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                         </div>
                         <div className='w-full'>
                             <Input
-                                label={`Số lượng câu hỏi`}
+                                label={`Số lượng`}
                                 register={register}
                                 name='numberOfQuestions'
                                 readOnly={addTestDisabled}
@@ -162,6 +160,9 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                         </div>
                     </div>
                     <ul className='w-full'>
+                        <div className='uppercase flex items-center w-full justify-center text-blue-600 font-semibold'>
+                            Tiêu chí chọn đề thi
+                        </div>
                         {fields.map((field, index) => (
                             <li className='mt-3' key={index}>
                                 <div
@@ -173,7 +174,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                 >
                                     <div className='w-full mr-3'>
                                         <Select
-                                            label='Chương *'
+                                            label='Chương'
                                             register={register}
                                             name={`criteria.${index}.chapterId`}
                                             error={
@@ -189,12 +190,14 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                             index={index}
                                             setValue={setValue}
                                             defaultValue={chapters && chapters[0] && chapters[0].id}
-                                            onChangeHandler={onChapterChange}
+                                            onChangeHandler={e => {
+                                                onChapterChange(e, field.id);
+                                            }}
                                         />
                                     </div>
                                     <div className='w-full mr-3'>
                                         <Select
-                                            label='Độ khó *'
+                                            label='Độ khó'
                                             register={register}
                                             error={
                                                 errors.criteria &&
@@ -206,17 +209,19 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                             index={index}
                                             options={levelOptions}
                                             required
-                                            onChangeHandler={onLevelChange}
+                                            onChangeHandler={e => {
+                                                onLevelChange(e, field.id);
+                                            }}
                                         />
                                     </div>
                                     <div className='w-full mr-3'>
                                         <Input
-                                            label={`Số lượng câu hỏi * / Hiện có ${
-                                                (queryAvailableQuestionsArr.length &&
-                                                    queryAvailableQuestionsArr[index] &&
-                                                    queryAvailableQuestionsArr[index]) ||
+                                            label={`Số lượng (Hiện có: ${
+                                                (queryAvailableQuestionsArr &&
+                                                    queryAvailableQuestionsArr[field.id] &&
+                                                    queryAvailableQuestionsArr[field.id]) ||
                                                 0
-                                            }`}
+                                            })`}
                                             register={register}
                                             error={
                                                 errors.criteria &&
@@ -229,6 +234,11 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                             required
                                         />
                                     </div>
+                                    <input
+                                        type='hidden'
+                                        {...register(`criteria.${index}.fieldIndex`)}
+                                        value={field.id}
+                                    />
 
                                     <div>
                                         <button
@@ -263,8 +273,13 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                 addTestDisabled &&
                                 "cursor-not-allowed hover:text-green-700 hover:bg-white"
                             }`}
-                            onClick={() => {
-                                prepend({});
+                            onClick={e => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                prepend({
+                                    chapterId: chapters[0].id,
+                                    level: levelOptions[0].value,
+                                });
                             }}
                             disabled={addTestDisabled}
                         >

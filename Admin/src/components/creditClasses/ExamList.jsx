@@ -1,5 +1,6 @@
-import { Badge, Table } from "flowbite-react";
+import { Accordion, Badge, Card, Table } from "flowbite-react";
 import React, { useEffect, useState } from "react";
+import { viewCreditClassExamColumns } from "../../pages/columns";
 import { tailwindCss } from "../../tailwind";
 import TablePagination from "../utils/tables/TablePagination";
 
@@ -36,14 +37,17 @@ function ExamList({
 
     return (
         <div>
-            <div>Tổng số SV : {numberOfActiveStudents}</div>
+            <Card>
+                <div>Tổng số SV : {numberOfActiveStudents}</div>
+            </Card>
+
             <Table striped={true}>
                 <Table.Head>
                     <Table.HeadCell>STT</Table.HeadCell>
                     <Table.HeadCell>Loại</Table.HeadCell>
                     <Table.HeadCell>Số ca</Table.HeadCell>
-                    <Table.HeadCell>Đã thi</Table.HeadCell>
-                    <Table.HeadCell>Chưa thi</Table.HeadCell>
+                    <Table.HeadCell>Đã tạo</Table.HeadCell>
+                    <Table.HeadCell>Chưa tạo</Table.HeadCell>
                 </Table.Head>
                 <Table.Body className='divide-y'>
                     <Table.Row>
@@ -74,84 +78,154 @@ function ExamList({
                     </Table.Row>
                 </Table.Body>
             </Table>
-            <Table striped={true}>
-                <Table.Head>
-                    <Table.HeadCell>STT</Table.HeadCell>
-                    <Table.HeadCell>Tên ca thi</Table.HeadCell>
-                    <Table.HeadCell>Loại kỳ thi</Table.HeadCell>
-                    <Table.HeadCell>Trạng thái</Table.HeadCell>
-                    <Table.HeadCell>Tình trạng</Table.HeadCell>
-                    <Table.HeadCell>Số SV thi</Table.HeadCell>
-                    <Table.HeadCell>Ngày thi</Table.HeadCell>
-                    <Table.HeadCell>Tiết báo danh</Table.HeadCell>
-                </Table.Head>
-                <Table.Body className='divide-y'>
-                    {splitedExams.map(
-                        (
-                            {
-                                id,
-                                name,
-                                noticePeriod,
-                                status,
-                                taken,
-                                time,
-                                type,
-                                tests,
-                                numberOfRegisters,
-                                examDate,
-                            },
-                            index
-                        ) => (
-                            <Table.Row
-                                className='bg-white dark:border-gray-700 dark:bg-gray-800'
-                                key={id}
-                            >
-                                <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {index + 1}
-                                </Table.Cell>
-                                <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {name}
-                                </Table.Cell>
-                                <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {type}
-                                </Table.Cell>
-                                <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {!status ? (
-                                        !taken ? (
-                                            <Badge color='info'>Chưa thi</Badge>
-                                        ) : (
-                                            <Badge color='success'>Đã thi</Badge>
+            <Accordion alwaysOpen={true}>
+                <Accordion.Panel>
+                    <Accordion.Title>Thông tin ca thi giữa kỳ</Accordion.Title>
+                    <Accordion.Content>
+                        <Table striped={true}>
+                            <Table.Head>
+                                {viewCreditClassExamColumns.map(({ name }) => (
+                                    <Table.HeadCell>{name}</Table.HeadCell>
+                                ))}
+                            </Table.Head>
+                            <Table.Body className='divide-y'>
+                                {splitedExams
+                                    .filter(({ type }) => type !== "Cuối kỳ")
+                                    .map(
+                                        (
+                                            {
+                                                id,
+                                                name,
+                                                noticePeriod,
+                                                status,
+                                                taken,
+                                                time,
+                                                type,
+                                                tests,
+                                                numberOfRegisters,
+                                                examDate,
+                                            },
+                                            index
+                                        ) => (
+                                            <Table.Row
+                                                className='bg-white dark:border-gray-700 dark:bg-gray-800'
+                                                key={id}
+                                            >
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {index + 1}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {name}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {type}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {!status ? (
+                                                        !taken ? (
+                                                            <Badge color='info'>Chưa thi</Badge>
+                                                        ) : (
+                                                            <Badge color='success'>Đã thi</Badge>
+                                                        )
+                                                    ) : (
+                                                        <Badge color='failure'>Đã hủy</Badge>
+                                                    )}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {numberOfRegisters}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {examDate}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {noticePeriod}
+                                                </Table.Cell>
+                                            </Table.Row>
                                         )
-                                    ) : (
-                                        <Badge color='failure'>Đã hủy</Badge>
                                     )}
-                                </Table.Cell>
-                                <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {!status ? (
-                                        <Badge color='warning'>Chưa hủy</Badge>
-                                    ) : (
-                                        <Badge color='failure'>Đã hủy</Badge>
+                            </Table.Body>
+                        </Table>
+                        <TablePagination
+                            totalElements={exams.length}
+                            totalPages={Math.ceil(exams.length / 10)}
+                            fetchDataByPageNumber={fetchDataByPageNumber}
+                        />
+                    </Accordion.Content>
+                </Accordion.Panel>
+                <Accordion.Panel>
+                    <Accordion.Title>Thông tin ca thi cuối kỳ</Accordion.Title>
+                    <Accordion.Content>
+                        <Table striped={true}>
+                            <Table.Head>
+                                {viewCreditClassExamColumns.map(({ name }) => (
+                                    <Table.HeadCell>{name}</Table.HeadCell>
+                                ))}
+                            </Table.Head>
+                            <Table.Body className='divide-y'>
+                                {splitedExams
+                                    .filter(({ type }) => type !== "Giữa kỳ")
+                                    .map(
+                                        (
+                                            {
+                                                id,
+                                                name,
+                                                noticePeriod,
+                                                status,
+                                                taken,
+                                                time,
+                                                type,
+                                                tests,
+                                                numberOfRegisters,
+                                                examDate,
+                                            },
+                                            index
+                                        ) => (
+                                            <Table.Row
+                                                className='bg-white dark:border-gray-700 dark:bg-gray-800'
+                                                key={id}
+                                            >
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {index + 1}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {name}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {type}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {!status ? (
+                                                        !taken ? (
+                                                            <Badge color='info'>Chưa thi</Badge>
+                                                        ) : (
+                                                            <Badge color='success'>Đã thi</Badge>
+                                                        )
+                                                    ) : (
+                                                        <Badge color='failure'>Đã hủy</Badge>
+                                                    )}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {numberOfRegisters}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {examDate}
+                                                </Table.Cell>
+                                                <Table.Cell className={tailwindCss.tableViewerCell}>
+                                                    {noticePeriod}
+                                                </Table.Cell>
+                                            </Table.Row>
+                                        )
                                     )}
-                                </Table.Cell>
-                                <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {numberOfRegisters}
-                                </Table.Cell>
-                                <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {examDate}
-                                </Table.Cell>
-                                <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {noticePeriod}
-                                </Table.Cell>
-                            </Table.Row>
-                        )
-                    )}
-                </Table.Body>
-            </Table>
-            <TablePagination
-                totalElements={exams.length}
-                totalPages={Math.ceil(exams.length / 10)}
-                fetchDataByPageNumber={fetchDataByPageNumber}
-            />
+                            </Table.Body>
+                        </Table>
+                        <TablePagination
+                            totalElements={exams.length}
+                            totalPages={Math.ceil(exams.length / 10)}
+                            fetchDataByPageNumber={fetchDataByPageNumber}
+                        />
+                    </Accordion.Content>
+                </Accordion.Panel>
+            </Accordion>
         </div>
     );
 }

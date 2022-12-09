@@ -17,6 +17,8 @@ import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
 import {
     fetchAllQuestions,
     loadQuestionsByCriteria,
+    questionState,
+    setQueryAvailableQuestionsArr,
     setQuestions,
 } from "../../features/questionSlice";
 import { testColumns } from "../columns";
@@ -40,6 +42,7 @@ function TestsPage() {
         deleteTest: { successMessage: dsSuccessMessage },
         enableOrDisableTest: { successMessage: eodTest },
     } = useSelector(testState);
+    const { queryAvailableQuestionsArr } = useSelector(questionState);
 
     const formId = "testForm";
     const modalId = "testModal";
@@ -51,7 +54,7 @@ function TestsPage() {
                 page: 1,
             })
         );
-        dispatch(fetchAllSubjects({ page: 0 }));
+        dispatch(fetchAllSubjects({ page: 0, haveChapter: true, haveQuestion: true }));
         dispatch(setQuestions([]));
     }, []);
 
@@ -72,6 +75,7 @@ function TestsPage() {
     });
 
     const onSubmit = ({ criteria, numberOfQuestions, testSubjectId: subject }) => {
+        console.log(criteria);
         if (isEdit) {
             dispatch(editTest(data));
         } else {
@@ -97,7 +101,7 @@ function TestsPage() {
                 }
             } else {
                 let haveError = false;
-                criteria.forEach(({ chapterId, level, numberOfQuestions }, index) => {
+                criteria.forEach(({ chapterId, level, numberOfQuestions, fieldIndex }, index) => {
                     if (!chapterId) {
                         setError(`criteria.${index}.chapterId`, {
                             type: "custom",
@@ -121,6 +125,16 @@ function TestsPage() {
                             message: "Số lượng câu hỏi phải là chữ số",
                         });
                         haveError = true;
+                    }
+                    if (queryAvailableQuestionsArr[fieldIndex]) {
+                        if (numberOfQuestions > queryAvailableQuestionsArr[fieldIndex]) {
+                            setError(`criteria.${index}.numberOfQuestions`, {
+                                type: "custom",
+                                message: "Số lượng không thể lớn hơn hiện có",
+                            });
+
+                            haveError = true;
+                        }
                     }
                 });
                 if (haveError) {
@@ -206,7 +220,13 @@ function TestsPage() {
     function onCloseForm() {
         dispatch(setEditedTest(null));
         setValue("criteria", []);
+
+        setValue("testName", `Đề thi ${subjects[0].name} ${new Date().getTime()}`);
+        setValue("testSubjectId", subjects[0].id);
+
         clearErrors("criteria");
+
+        dispatch(setQueryAvailableQuestionsArr([]));
     }
 
     return (

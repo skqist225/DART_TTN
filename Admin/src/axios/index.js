@@ -1,9 +1,7 @@
 import axios from "axios";
-import { useSelector } from "react-redux";
-import { userState } from "../features/userSlice";
 
 const api = axios.create({
-    baseURL: `http://localhost:8080/api`,
+    baseURL: "http://localhost:8080/api",
     headers: {
         "Content-Type": "application/json",
     },
@@ -11,12 +9,9 @@ const api = axios.create({
 });
 
 api.interceptors.request.use(request => {
-    if (localStorage.getItem("persist:root")) {
-        const { user } = JSON.parse(JSON.parse(localStorage.getItem("persist:root")).persistUser);
-
-        if (user && user.token) {
-            request.headers["Authorization"] = `Bearer ${user.token}`;
-        }
+    const token = localStorage.getItem("authtoken");
+    if (token) {
+        request.headers["Authorization"] = `Bearer ${token}`;
     }
 
     return request;

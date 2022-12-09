@@ -6,7 +6,7 @@ import EnableOrDisable from "../common/EnableOrDisable";
 import { enableOrDisableRegister } from "../../features/registerSlice";
 
 function RegisterTableBody({ rows, setIsEdit, type = "", addExam = false }) {
-    const { userRoles } = useSelector(persistUserState);
+    const { user } = useSelector(persistUserState);
 
     return (
         <tbody>
@@ -63,17 +63,18 @@ function RegisterTableBody({ rows, setIsEdit, type = "", addExam = false }) {
                                 </td>
                             </>
                         )}
-                        {!addExam && userRoles.includes("Quản trị viên") && (
-                            <EnableOrDisable
-                                id={{
-                                    creditClassId: row.creditClass.id,
-                                    studentId: row.student.id,
-                                }}
-                                status={row.status}
-                                enableOrDisable={enableOrDisableRegister}
-                                creditClassPage
-                            />
-                        )}
+                        {!addExam &&
+                            user.roles.map(({ name }) => name).includes("Quản trị viên") && (
+                                <EnableOrDisable
+                                    id={{
+                                        creditClassId: row.creditClass.id,
+                                        studentId: row.student.id,
+                                    }}
+                                    status={row.status}
+                                    enableOrDisable={enableOrDisableRegister}
+                                    creditClassPage
+                                />
+                            )}
                     </tr>
                 );
             })}

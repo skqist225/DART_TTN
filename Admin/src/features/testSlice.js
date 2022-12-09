@@ -98,11 +98,10 @@ export const handIn = createAsyncThunk(
     "test/handIn",
     async ({ exam, answers }, { rejectWithValue }) => {
         try {
-            const ans = [];
+            let ans = [];
             for (let [key, value] of answers) {
                 ans.push({ questionId: key, answer: value });
             }
-
             const { data } = await api.post(`/tests/${exam}/handIn`, ans);
 
             return { data };

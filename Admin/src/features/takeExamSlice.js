@@ -9,9 +9,10 @@ export const fetchAllTakeExams = createAsyncThunk(
             query = "",
             sortField = "score",
             sortDir = "desc",
-            subject = "",
             student = "",
             numberOfTakeExams = 0,
+            creditClass = "",
+            examType = "",
         },
         { dispatch, rejectWithValue }
     ) => {
@@ -44,8 +45,13 @@ export const fetchAllTakeExams = createAsyncThunk(
             });
 
             filterArray.push({
-                field: "subject",
-                value: subject,
+                field: "creditClass",
+                value: creditClass,
+            });
+
+            filterArray.push({
+                field: "examType",
+                value: examType,
             });
 
             dispatch(setFilterObject(filterArray));
@@ -53,10 +59,51 @@ export const fetchAllTakeExams = createAsyncThunk(
             const {
                 data: { takeExams, totalElements, totalPages },
             } = await api.get(
-                `/takeExams?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&student=${student}&subject=${subject}&numberOfTakeExams=${numberOfTakeExams}`
+                `/takeExams?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&student=${student}&numberOfTakeExams=${numberOfTakeExams}&creditClass=${creditClass}&examType=${examType}`
             );
 
             return { takeExams, totalElements, totalPages };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
+export const getTestedExam = createAsyncThunk(
+    "takeExam/getTestedExam",
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get(`/takeExams/getTestedExam`);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
+export const findByStudentAndExam = createAsyncThunk(
+    "takeExam/findByStudentAndExam",
+    async ({ studentId, examId }, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get(
+                `/takeExamDetails/findByStudentAndExam?studentId=${studentId}&examId=${examId}`
+            );
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
+export const getStudentRankingPosition = createAsyncThunk(
+    "takeExam/getStudentRankingPosition",
+    async ({ creditClass, examType }, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get(
+                `/takeExams/getStudentRankingPosition?creditClass=${creditClass}&examType=${examType}`
+            );
+            return { data };
         } catch ({ data: { error } }) {
             return rejectWithValue(error);
         }
@@ -162,6 +209,10 @@ const initialState = {
     enableOrDisableTakeExam: {
         successMessage: null,
     },
+    testedExam: [],
+    viewExamDetails: false,
+    fakeHandInDTO: [],
+    studentRankingPosition: 0,
 };
 
 const takeExamSlice = createSlice({
@@ -290,6 +341,18 @@ const takeExamSlice = createSlice({
                         };
                     });
                 }
+            })
+
+            .addCase(getStudentRankingPosition.fulfilled, (state, { payload }) => {
+                state.studentRankingPosition = payload.data;
+            })
+
+            .addCase(getTestedExam.fulfilled, (state, { payload }) => {
+                state.testedExam = payload.data;
+            })
+
+            .addCase(findByStudentAndExam.fulfilled, (state, { payload }) => {
+                state.fakeHandInDTO = payload.data;
             })
 
             .addCase(deleteTakeExam.pending, (state, _) => {

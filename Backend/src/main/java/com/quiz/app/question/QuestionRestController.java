@@ -87,7 +87,7 @@ public class QuestionRestController {
     public ResponseEntity<StandardJSONResponse<AvailableQuestionDTO>> queryAvailableQuestions(
             @RequestParam(name = "chapter", required = false, defaultValue = "") Integer chapter,
             @RequestParam(name = "level", required = false, defaultValue = "") Level level,
-            @RequestParam(name = "filterIndex", required = false, defaultValue = "") Integer filterIndex) {
+            @RequestParam(name = "filterIndex", required = false, defaultValue = "") String filterIndex) {
         AvailableQuestionDTO availableQuestionDTO = new AvailableQuestionDTO();
         availableQuestionDTO.setFilterIndex(filterIndex);
         availableQuestionDTO.setData(questionService.queryAvailableQuestions(chapter, level));

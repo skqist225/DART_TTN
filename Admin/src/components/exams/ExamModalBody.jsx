@@ -192,10 +192,8 @@ function ExamModalBody({
             "numberOfNoneCreatedFinalTermExamStudents",
             `${noneCreatedFinalTermExamNumber} / ${creditClass.numberOfActiveStudents} sinh viên`
         );
-        console.log(creditClass);
         dispatch(setAddExamDisabled(creditClass.shouldCreateExam));
-        console.log("So sv chua duoc tao ca thi: " + noneCreatedMidTermExamNumber);
-        console.log("So sv duoc tao ca thi: " + noneCreatedFinalTermExamNumber);
+
         if (noneCreatedMidTermExamNumber === 0) {
             // const temp = localExamsType.filter(({ value }) => value !== "Giữa kỳ");
             // setLocalExamsType(temp);
@@ -204,7 +202,6 @@ function ExamModalBody({
             // const temp = localExamsType.filter(({ value }) => value !== "Cuối kỳ");
             // setLocalExamsType(temp);
         }
-        // console.log(localExamsType.length);
         // if (localExamsType.length === 2) {
         //     if ($("#type").val() === "Giữa kỳ") {
         //         setValue("numberOfStudents", noneCreatedMidTermExamNumber);

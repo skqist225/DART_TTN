@@ -2,28 +2,39 @@ import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { creditClassState } from "../../features/creditClassSlice";
-import { examState } from "../../features/examSlice";
-import { subjectState } from "../../features/subjectSlice";
-import { fetchAllTakeExams, takeExamState } from "../../features/takeExamSlice";
+import {
+    fetchAllTakeExams,
+    getStudentRankingPosition,
+    takeExamState,
+} from "../../features/takeExamSlice";
 import Select from "../utils/userInputs/Select";
 import { examTypes } from "../exams/ExamModalBody";
+import $ from "jquery";
 
 function QuestionsFilter() {
     const dispatch = useDispatch();
     const { filterObject } = useSelector(takeExamState);
-    const { exams } = useSelector(examState);
-    const { subjects } = useSelector(subjectState);
     const { creditClasses } = useSelector(creditClassState);
-    const { register, handleSubmit } = useForm();
+    const { register, handleSubmit, setValue } = useForm();
 
-    const onSubmit = data => {};
-
-    const handleLevelChange = event => {
-        // dispatch(fetchAllTakeExams({ ...filterObject, level: event.target.value }));
+    const handleExamTypeChange = event => {
+        dispatch(fetchAllTakeExams({ ...filterObject, examType: event.target.value }));
+        dispatch(
+            getStudentRankingPosition({
+                creditClass: $("#creditClassFilter").val(),
+                examType: event.target.value,
+            })
+        );
     };
 
-    const handleSubjectChange = event => {
-        // dispatch(fetchAllTakeExams({ ...filterObject, subject: event.target.value }));
+    const handleCreditClassChange = event => {
+        dispatch(fetchAllTakeExams({ ...filterObject, creditClass: event.target.value }));
+        dispatch(
+            getStudentRankingPosition({
+                creditClass: event.target.value,
+                examType: $("#examTypeFilter").val(),
+            })
+        );
     };
 
     return (
@@ -35,24 +46,10 @@ function QuestionsFilter() {
             }}
             className='flex items-center'
         >
-            <div className='mr-2 w-full flex items-center'>
-                <Select
-                    label='ca thi'
-                    name='examFilter'
-                    register={register}
-                    options={exams.map(({ id, name }) => ({
-                        title: name,
-                        value: id,
-                    }))}
-                    onChangeHandler={handleLevelChange}
-                    hiddenOption
-                    width={"w-40"}
-                />
-            </div>
             <div className='mr-2 w-full flex items-center justify-start'>
                 <Select
                     label='lớp tín chỉ'
-                    name='examFilter'
+                    name='creditClassFilter'
                     register={register}
                     options={creditClasses.map(
                         ({ id, schoolYear, semester, subjectName, group }) => ({
@@ -60,11 +57,12 @@ function QuestionsFilter() {
                             value: id,
                         })
                     )}
-                    onChangeHandler={handleSubjectChange}
-                    hiddenOption
-                    width={"w-40"}
+                    onChangeHandler={handleCreditClassChange}
+                    defaultValue={creditClasses && creditClasses.length && creditClasses[0].id}
+                    removeLabel={true}
+                    width={"w-80"}
                 />
-            </div>{" "}
+            </div>
             <div className='mr-2 w-full flex items-center justify-start'>
                 <Select
                     label='loại thi'
@@ -74,8 +72,9 @@ function QuestionsFilter() {
                         title,
                         value,
                     }))}
-                    onChangeHandler={handleSubjectChange}
-                    hiddenOption
+                    onChangeHandler={handleExamTypeChange}
+                    defaultValue={examTypes[0].value}
+                    removeLabel={true}
                     width={"w-40"}
                 />
             </div>
@@ -90,8 +89,12 @@ function QuestionsFilter() {
                                 query: "",
                                 sortField: "score",
                                 sortDir: "desc",
+                                creditClass: creditClasses[0].id,
+                                examType: "Giữa kỳ",
                             })
                         );
+                        setValue("creditClassFilter", creditClasses[0].id);
+                        setValue("examTypeFilter", examTypes[0].value);
                     }}
                 >
                     Xóa bộ lọc

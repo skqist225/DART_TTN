@@ -262,6 +262,85 @@ export const examColumns = [
     },
 ];
 
+export const studentColumns = [
+    {
+        name: "Tên ca thi",
+        sortField: "name",
+        sortable: true,
+    },
+    {
+        name: "Mã môn học",
+        sortField: "subjectId",
+        // sortable: true,
+    },
+    {
+        name: "Tên môn học",
+        sortField: "subjectName",
+        // sortable: true,
+    },
+    {
+        name: "Số lượng",
+        sortField: "numberOfStudents",
+        // sortable: true,
+    },
+    {
+        name: "Ngày thi",
+        sortField: "examDate",
+        sortable: true,
+    },
+    {
+        name: "Tiết báo danh",
+        sortField: "noticePeriod",
+        sortable: true,
+    },
+    {
+        name: "Thời gian thi",
+        sortField: "time",
+        sortable: true,
+    },
+    {
+        name: "Loại thi",
+        sortField: "type",
+        sortable: true,
+    },
+    {
+        name: "Giảng viên",
+        sortField: "time",
+        // sortable: true,
+    },
+    {
+        name: "Thao tác",
+        sortField: "name",
+    },
+];
+
+export const studentExamColumns = [
+    {
+        name: "Tên ca thi",
+        sortField: "name",
+        sortable: true,
+    },
+    {
+        name: "Mã môn học",
+        sortField: "subjectId",
+    },
+    {
+        name: "Tên môn học",
+        sortField: "subjectName",
+    },
+    {
+        name: "Thông tin ca thi",
+        sortField: "numberOfStudents",
+    },
+    {
+        name: "Điểm số",
+    },
+    {
+        name: "Thao tác",
+        sortField: "name",
+    },
+];
+
 export const creditClassColumns = [
     {
         name: "Mã LTC",
@@ -375,11 +454,6 @@ export const rankColumns = [
         sortField: "score",
         sortable: true,
     },
-    {
-        name: "Tên ca thi",
-        sortField: "examName",
-        sortable: true,
-    },
 ];
 
 export const studentRankColumns = [
@@ -395,6 +469,44 @@ export const studentRankColumns = [
     },
     {
         name: "Họ và tên",
+        sortField: "studentName",
+        sortable: true,
+    },
+];
+
+export const viewCreditClassExamColumns = [
+    {
+        name: "STT",
+        sortField: "studentName",
+        sortable: true,
+    },
+    {
+        name: "Tên ca thi",
+        sortField: "studentName",
+        sortable: true,
+    },
+    {
+        name: "Loại kỳ thi",
+        sortField: "studentName",
+        sortable: true,
+    },
+    {
+        name: "Trạng thái",
+        sortField: "studentName",
+        sortable: true,
+    },
+    {
+        name: "Số SV thi",
+        sortField: "studentName",
+        sortable: true,
+    },
+    {
+        name: "Ngày thi",
+        sortField: "studentName",
+        sortable: true,
+    },
+    {
+        name: "Tiết báo danh",
         sortField: "studentName",
         sortable: true,
     },

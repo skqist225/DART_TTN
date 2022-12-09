@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk, isAnyOf } from "@reduxjs/toolkit";
 import api from "../axios";
+import { removeUserFromLocalStorage, setUserToLocalStorage } from "../utils/common";
 import { setUser } from "./persistUserSlice";
 
 export const login = createAsyncThunk(
@@ -9,6 +10,7 @@ export const login = createAsyncThunk(
             const { data } = await api.post("/auth/login", loginInfo);
 
             if (data) {
+                setUserToLocalStorage(data);
                 dispatch(setUser(data));
             }
 
@@ -18,6 +20,19 @@ export const login = createAsyncThunk(
         }
     }
 );
+
+export const logout = createAsyncThunk("auth/logout", async (_, { rejectWithValue, dispatch }) => {
+    // try {
+    // const { data } = await api.get("/auth/logout");
+
+    if (true) {
+    }
+
+    return { data: true };
+    // } catch ({ data: { error } }) {
+    //     return rejectWithValue(error);
+    // }
+});
 
 export const resetPassword = createAsyncThunk(
     "auth/resetPassword",
@@ -84,6 +99,11 @@ const initialState = {
         errorMessage: null,
         successMessage: null,
     },
+    logoutAction: {
+        loading: true,
+        errorMessage: null,
+        successMessage: null,
+    },
 };
 
 const authSlice = createSlice({
@@ -138,6 +158,16 @@ const authSlice = createSlice({
             )
             .addCase(resetPassword.fulfilled, (state, { payload }) => {
                 state.successMessage = payload.data;
+            })
+
+            .addCase(logout.pending, (state, { payload }) => {
+                state.logoutAction.loading = true;
+                state.logoutAction.errorMessage = null;
+                state.logoutAction.successMessage = null;
+            })
+            .addCase(logout.fulfilled, (state, { payload }) => {
+                state.logoutAction.loading = false;
+                state.logoutAction.successMessage = "Logout successfully";
             })
 
             .addMatcher(

@@ -267,24 +267,17 @@ public class TestRestController {
             } else {
                 finalAnswer = new StringBuilder(question.getAnswers().get(0).getContent());
             }
-
-            for (HandInDTO answer : answers) {
-                if (answer.getQuestionId().equals(question.getId())) {
-                    if (question.getType().equals("Một đáp án")) {
-                        for (Answer ans : question.getAnswers()) {
-                            if (ans.isAnswer()) {
-                                if (ans.getOrder().toLowerCase().trim().equals(answer.getAnswer().toLowerCase().trim())) {
-                                    numberOfRightAnswer++;
-                                }
-                            }
-                        }
-                    } else if (question.getType().equals("Nhiều đáp án")) {
+            boolean isQuestionMatched = false;
+            for (HandInDTO handInDTO : answers) {
+                if (handInDTO.getQuestionId().equals(question.getId())) {
+                    isQuestionMatched = true;
+                    if (question.getType().equals("Nhiều đáp án")) {
                         int count = 0;
                         int numberOfAns = 0;
                         for (Answer ans : question.getAnswers()) {
                             if (ans.isAnswer()) {
                                 numberOfAns++;
-                                for (String selectedAns : answer.getAnswer().split(",")) {
+                                for (String selectedAns : handInDTO.getAnswer().split(",")) {
                                     if (ans.getOrder().equals(selectedAns)) {
                                         count++;
                                     }
@@ -295,35 +288,39 @@ public class TestRestController {
                             numberOfRightAnswer++;
                         }
                     } else {
-                        if (question.getAnswers().get(0).getContent().equals(answer.getAnswer())) {
+                        if (handInDTO.getAnswer().toLowerCase().trim().equals(finalAnswer.toString().toLowerCase().trim())) {
                             numberOfRightAnswer++;
                         }
                     }
-
-                    question.setSelectedAnswer(answer.getAnswer());
-
-                    takeExamDetailService.updateAnswerForQuestionInStudentTest(answer.getAnswer().trim(), student.getId(), examId
-                            , answer.getQuestionId());
+                    question.setSelectedAnswer(handInDTO.getAnswer());
                     break;
                 }
+                takeExamDetailService.updateAnswerForQuestionInStudentTest(handInDTO.getAnswer().trim(), student.getId(), examId
+                        , handInDTO.getQuestionId());
             }
+            if (!isQuestionMatched) {
+                takeExamDetailService.updateAnswerForQuestionInStudentTest(null, student.getId(),
+                        examId
+                        , question.getId());
+            }
+
             question.setFinalAnswer(finalAnswer.toString());
             questions.add(question);
         }
 
+        DecimalFormat df = new DecimalFormat("#.#");
         mark = (float) numberOfRightAnswer / takeExamDetails.size() * 10;
         TestDTO testDTO = new TestDTO();
-        testDTO.setMark(mark);
+        testDTO.setMark(Float.parseFloat(df.format(mark)));
         testDTO.setNumberOfQuestions(questions.size());
         testDTO.setNumberOfRightAnswer(numberOfRightAnswer);
         testDTO.setQuestions(questions);
 
-        DecimalFormat df = new DecimalFormat("#.#");
-
         takeExamService.updateTakeExamScore(student.getId(), examId, Float.parseFloat(df.format(mark)));
+        takeExamService.updateTakeExamTested(student.getId(), examId);
+
         TakeExam takeExam = takeExamService.findByStudentAndExam(student.getId(),
                 examId);
-
         if (takeExam.getExam().getType().equals("Giữa kỳ")) {
             registerService.updateMidTermScore(student.getId(),
                     takeExam.getRegister().getCreditClass().getId(),
@@ -333,7 +330,6 @@ public class TestRestController {
                     takeExam.getRegister().getCreditClass().getId(),
                     Float.parseFloat(df.format(mark)));
         }
-        takeExam.setTested(true);
 
         return new OkResponse<>(testDTO).response();
     }

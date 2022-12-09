@@ -1,41 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { Frame, RankFilter, RankTableBody, Table } from "../../components";
-import { fetchAllCreditClasses } from "../../features/creditClassSlice";
-import { fetchAllExams } from "../../features/examSlice";
+import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import { fetchAllQuestions } from "../../features/questionSlice";
 import { fetchAllSubjects } from "../../features/subjectSlice";
-import { fetchAllTakeExams, takeExamState } from "../../features/takeExamSlice";
+import {
+    fetchAllTakeExams,
+    getStudentRankingPosition,
+    takeExamState,
+} from "../../features/takeExamSlice";
 import { rankColumns, studentRankColumns } from "../columns";
 
 function RanksPage() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     const dispatch = useDispatch();
 
-    const { user, userRoles } = useSelector(persistUserState);
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const { takeExams, totalElements, totalPages, filterObject, loading } =
+        useSelector(takeExamState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
+
+    const { creditClasses } = useSelector(creditClassState);
 
     useEffect(() => {
         if (userRoles.includes("Sinh viên")) {
+            // Lấy ra danh sách tất cả lớp tín chỉ chưa hủy của sinh viên đang theo học
+            dispatch(fetchAllCreditClasses({ page: 0, active: true, student: user.id }));
+        } else {
+            dispatch(fetchAllCreditClasses({ page: 0, active: true }));
+        }
+    }, []);
+
+    useEffect(() => {
+        if (creditClasses && creditClasses.length) {
             dispatch(
                 fetchAllTakeExams({
                     page: 1,
-                    student: user.id,
+                    creditClass: creditClasses[0].id,
+                    examType: "Giữa kỳ",
                 })
             );
-        } else {
             dispatch(
-                fetchAllTakeExams({
-                    page: 1,
-                })
+                getStudentRankingPosition({ creditClass: creditClasses[0].id, examType: "Giữa kỳ" })
             );
         }
-        dispatch(fetchAllSubjects({ page: 0, haveChapter: true }));
-        dispatch(fetchAllExams({ page: 0 }));
-        dispatch(fetchAllCreditClasses({ page: 0, active: true, student: user.id }));
-    }, []);
-    const { takeExams, totalElements, totalPages, filterObject, loading } =
-        useSelector(takeExamState);
+    }, [creditClasses]);
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
@@ -56,7 +67,7 @@ function RanksPage() {
         );
     };
     const fetchDataByPageNumber = pageNumber => {
-        dispatch(fetchAllQuestions({ ...filterObject, page: pageNumber }));
+        dispatch(fetchAllTakeExams({ ...filterObject, page: pageNumber }));
     };
 
     return (
@@ -66,9 +77,10 @@ function RanksPage() {
             title={`BẢNG XẾP HẠNG`}
             children={
                 <Table
+                    searchPlaceHolder='Tìm theo tên và mã sinh viên'
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={studentRankColumns}
+                    columns={userRoles.includes("Sinh viên") ? studentRankColumns : rankColumns}
                     rows={takeExams}
                     totalElements={totalElements}
                     totalPages={totalPages}
@@ -77,6 +89,7 @@ function RanksPage() {
                     Filter={RankFilter}
                     loading={loading}
                     modalLabel='Bảng xếp hạng'
+                    ranksPage={true}
                 />
             }
         />

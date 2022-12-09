@@ -9,7 +9,7 @@ function RegisterList({ takeExams }) {
     const [pageNumber, setPageNumber] = useState(1);
     const [splitedRegisters, setSplitedRegisters] = useState([]);
 
-    const { userRoles } = useSelector(persistUserState);
+    const { user } = useSelector(persistUserState);
 
     const recordsPerPage = 12;
 
@@ -38,7 +38,7 @@ function RegisterList({ takeExams }) {
                     <Table.HeadCell>STT</Table.HeadCell>
                     <Table.HeadCell>MSSV</Table.HeadCell>
                     <Table.HeadCell>Họ tên</Table.HeadCell>
-                    {!userRoles.includes("Sinh viên") && (
+                    {!user.roles.map(({ name }) => name).includes("Sinh viên") && (
                         <>
                             <Table.HeadCell>Bộ đề</Table.HeadCell>
                             <Table.HeadCell>Điểm số</Table.HeadCell>
@@ -70,7 +70,7 @@ function RegisterList({ takeExams }) {
                                 <Table.Cell className={tailwindCss.tableViewerCell}>
                                     {fullName}
                                 </Table.Cell>
-                                {!userRoles.includes("Sinh viên") && (
+                                {!user.roles.map(({ name }) => name).includes("Sinh viên") && (
                                     <>
                                         {" "}
                                         <Table.Cell className={tailwindCss.tableViewerCell}>

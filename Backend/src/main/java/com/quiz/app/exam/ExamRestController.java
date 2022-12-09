@@ -73,18 +73,16 @@ public class ExamRestController {
             @RequestParam(name = "teacher", required = false, defaultValue = "") String teacherId,
             @RequestParam(name = "creditClass", required = false, defaultValue = "") String creditClassId,
             @RequestParam(name = "student", required = false, defaultValue = "") String studentId,
-            @RequestParam(name = "schoolYear", required = false, defaultValue = "") String schoolYear,
-            @RequestParam(name = "semester", required = false, defaultValue = "") String semester,
-            @RequestParam(name = "type", required = false, defaultValue = "") String type,
-            @RequestParam(name = "taken", required = false, defaultValue = "") String taken) {
+            @RequestParam(name = "taken", required = false, defaultValue = "") String taken,
+            @RequestParam(name = "examType", required = false, defaultValue = "") String examType) {
         ExamsDTO subjectsDTO = new ExamsDTO();
         List<Exam> exams = null;
         if (page.equals("0")) {
             if (!StringUtils.isEmpty(taken)) {
+                // Lấy ra những ca thi sinh viên chưa thi, ca thi chưa hủy, chưa thi.
                 exams = examService.findByStudentAndTaken(studentId);
             } else {
                 exams = examService.findAll();
-
             }
 
             subjectsDTO.setExams(exams);
@@ -100,10 +98,8 @@ public class ExamRestController {
             filters.put("teacherId", teacherId);
             filters.put("creditClassId", creditClassId);
             filters.put("studentId", studentId);
-            filters.put("schoolYear", schoolYear);
-            filters.put("semester", semester);
-            filters.put("type", type);
             filters.put("taken", taken);
+            filters.put("examType", examType);
 
             Page<Exam> examsPage = examService.findAllExams(filters);
 

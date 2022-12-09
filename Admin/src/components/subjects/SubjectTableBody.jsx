@@ -11,12 +11,12 @@ import $ from "jquery";
 
 function SubjectTableBody({ rows, setIsEdit }) {
     const dispatch = useDispatch();
-    const { userRoles } = useSelector(persistUserState);
+    const { user } = useSelector(persistUserState);
 
     return (
         <tbody>
             {rows.map((row, index) => {
-                console.log(row.chapters.length === 0);
+                const haveChapter = row.chapters.length > 0;
 
                 return (
                     <tr className={tailwindCss.tr} key={row.id}>
@@ -29,17 +29,22 @@ function SubjectTableBody({ rows, setIsEdit }) {
                         <td className={tailwindCss.tableCell}>{row.numberOfQuestions}</td>
                         <td class={`${tailwindCss.tableCell} flex items-center`}>
                             <div className='mr-2'>
-                                <Tooltip content='Xem danh sách chương' placement='top'>
+                                <Tooltip
+                                    content={
+                                        haveChapter ? "Xem danh sách chương" : "Không có chương"
+                                    }
+                                    placement='top'
+                                >
                                     <MyButton
                                         type='view'
                                         onClick={() => {
                                             $(`#chaptersViewer${row.id}`).css("display", "flex");
                                         }}
-                                        disabled={row.chapters.length === 0}
+                                        disabled={!haveChapter}
                                     />
                                     <TableModalViewer
                                         modalId={`chaptersViewer${row.id}`}
-                                        modalLabel={`Danh sách chương của môn học ${row.name} (${row.chapters.length})`}
+                                        modalLabel={`Danh sách chương (${row.chapters.length})`}
                                         ModalBody={<ChapterList chapters={row.chapters} />}
                                     />
                                 </Tooltip>
@@ -54,7 +59,7 @@ function SubjectTableBody({ rows, setIsEdit }) {
                                     }}
                                 />
                             </div>
-                            {userRoles.includes("Quản trị viên") && (
+                            {user.roles.map(({ name }) => name).includes("Quản trị viên") && (
                                 <div>
                                     <MyButton
                                         type='delete'

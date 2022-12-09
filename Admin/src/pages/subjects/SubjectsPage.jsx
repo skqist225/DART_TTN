@@ -214,7 +214,6 @@ function SubjectsPage() {
         if (errorObject && errorObject.sqlIntegrationException && isEdit) {
             callToast("error", errorObject.sqlIntegrationException);
 
-            // setEditedSubject(editSubject);
             dispatch(setEditedSubject(editedSubject));
         }
     }, [errorObject]);
@@ -258,7 +257,6 @@ function SubjectsPage() {
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                     onCloseForm={onCloseForm}
-                    loading={loading}
                 />
             }
         />

@@ -9,10 +9,11 @@ import { ExcelIcon } from "../../../images";
 import { setExcelAdd } from "../../../features/questionSlice";
 import { persistUserState } from "../../../features/persistUserSlice";
 import { setUserExcelAdd } from "../../../features/userSlice";
-import { Spinner, Tooltip } from "flowbite-react";
+import { Card, Spinner, Tooltip } from "flowbite-react";
 import MyButton, { ButtonType } from "../../common/MyButton";
 import { setRegisterExcelAdd } from "../../../features/registerSlice";
 import $ from "jquery";
+import { takeExamState } from "../../../features/takeExamSlice";
 
 function Table({
     searchPlaceHolder,
@@ -40,10 +41,14 @@ function Table({
     loading = false,
     testPage = false,
     recordsPerPage = 12,
+    ranksPage = false,
 }) {
     const dispatch = useDispatch();
 
-    const { userRoles } = useSelector(persistUserState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
+
+    const { studentRankingPosition } = useSelector(takeExamState);
 
     return (
         <div
@@ -53,19 +58,24 @@ function Table({
             <div>
                 <div className='flex items-center justify-between bg-white'>
                     <div className='flex items-center'>
-                        <TableSearch
-                            placeHolder={searchPlaceHolder}
-                            handleQueryChange={handleQueryChange}
-                        />
+                        {!ranksPage && (
+                            <TableSearch
+                                placeHolder={searchPlaceHolder}
+                                handleQueryChange={handleQueryChange}
+                            />
+                        )}
                         {Filter && <Filter />}
                     </div>
                     <div
                         className='flex items-center
                     '
                     >
-                        {(modalLabel === "môn học" && !userRoles.includes("Quản trị viên")) ||
-                        (modalLabel === "lớp tín chỉ" && !userRoles.includes("Quản trị viên")) ||
-                        (modalLabel === "ca thi" && userRoles.includes("Sinh viên")) ||
+                        {(modalLabel === "môn học" &&
+                            !user.roles.map(({ name }) => name).includes("Quản trị viên")) ||
+                        (modalLabel === "lớp tín chỉ" &&
+                            !user.roles.map(({ name }) => name).includes("Quản trị viên")) ||
+                        (modalLabel === "ca thi" &&
+                            user.roles.map(({ name }) => name).includes("Sinh viên")) ||
                         modalLabel === "Bảng xếp hạng" ? (
                             <></>
                         ) : (
@@ -123,20 +133,40 @@ function Table({
                 ) : (
                     <>
                         {rows.length > 0 ? (
-                            <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                                <TableHeader
-                                    columns={columns}
-                                    handleSortChange={handleSortChange}
-                                    modalLabel={modalLabel}
-                                />
-                                <TableBody rows={rows} setIsEdit={setIsEdit} />{" "}
-                            </table>
+                            <>
+                                {ranksPage && userRoles.includes("Sinh viên") && (
+                                    <Card>
+                                        <p className='font-normal text-gray-700 dark:text-gray-400'>
+                                            Vị trí của bạn trong bảng xếp hạng là:
+                                            <span className='font-bold'>
+                                                {" "}
+                                                {studentRankingPosition}
+                                            </span>
+                                        </p>
+                                    </Card>
+                                )}
+
+                                <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
+                                    <TableHeader
+                                        columns={columns}
+                                        handleSortChange={handleSortChange}
+                                        modalLabel={modalLabel}
+                                    />
+                                    <TableBody rows={rows} setIsEdit={setIsEdit} />{" "}
+                                </table>
+                            </>
                         ) : (
                             <div
                                 className={`text-blue-600 uppercase flex items-center justify-center w-full`}
                                 style={{ height: "calc(100vh - 150px)" }}
                             >
                                 <div className='border-2 border-gray-400 rounded-lg p-4'>{`Danh sách ${modalLabel} trống`}</div>
+                                {/* )}
+                                {!ranksPage ? (
+                                    <div className='border-2 border-gray-400 rounded-lg p-4'>{`Danh sách ${modalLabel} trống`}</div>
+                                ) : (
+                                    <div className='border-2 border-gray-400 rounded-lg p-4'>{`Danh sách ${modalLabel} trống`}</div>
+                                )} */}
                             </div>
                         )}
                     </>

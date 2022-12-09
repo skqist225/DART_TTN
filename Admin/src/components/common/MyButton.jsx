@@ -17,8 +17,6 @@ function MyButton({ type, onClick, className = "", disabled = false, label = "" 
         buttonDisableClassName = "cursor-not-allowed ",
         Icon = null;
 
-    // console.log(type + disabled);
-
     switch (type) {
         case "add": {
             buttonClassName = "bg-indigo-600 hover:bg-indigo-600";
@@ -55,13 +53,13 @@ function MyButton({ type, onClick, className = "", disabled = false, label = "" 
         }
         case "enable": {
             buttonClassName = "bg-green-500 hover:bg-green-500";
-            buttonDisableClassName = "bg-green-300 hover:bg-green-300";
+            buttonDisableClassName = "bg-green-300 hover:bg-green-300 cursor-not-allowed";
             Icon = <CheckIcon />;
             break;
         }
         case "edit": {
             buttonClassName = "bg-blue-600 hover:bg-blue-600";
-            buttonDisableClassName = "bg-blue-300 hover:bg-blue-300";
+            buttonDisableClassName = "bg-blue-300 hover:bg-blue-300 cursor-not-allowed";
             Icon = <EditIcon />;
             break;
         }

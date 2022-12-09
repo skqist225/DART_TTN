@@ -77,6 +77,9 @@ public class TakeExam {
     @Transient
     private String testName;
 
+    @Transient
+    private int rankOrder;
+
     public static TakeExam build(Exam exam, Register register, int tryTime, Test test) {
         return TakeExam.builder()
                 .exam(exam)

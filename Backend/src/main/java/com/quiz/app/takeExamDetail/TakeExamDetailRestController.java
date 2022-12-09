@@ -1,161 +1,150 @@
 package com.quiz.app.takeExamDetail;
 
+import com.quiz.app.exam.ExamService;
+import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.response.StandardJSONResponse;
+import com.quiz.app.response.success.OkResponse;
+import com.quiz.app.test.dto.HandInDTO;
+import com.quiz.app.test.dto.TestDTO;
+import com.quiz.entity.Answer;
+import com.quiz.entity.Exam;
+import com.quiz.entity.Question;
+import com.quiz.entity.TakeExamDetail;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.stream.Collectors;
 
 
 @RestController
-@RequestMapping("/api/subjects")
+@RequestMapping("/api/takeExamDetails")
 public class TakeExamDetailRestController {
     @Autowired
-    private TakeExamDetailService subjectService;
+    private TakeExamDetailService takeExamDetailService;
+
+    @Autowired
+    private ExamService examService;
+
+    @GetMapping("findByStudentAndExam")
+    public ResponseEntity<StandardJSONResponse<TestDTO>> findByStudentAndExam(
+            @RequestParam("studentId") String studentId,
+            @RequestParam("examId") Integer examId
+    ) throws NotFoundException {
+        int numberOfRightAnswer = 0;
+        float mark = 0;
+        List<TakeExamDetail> takeExamDetails =
+                takeExamDetailService.findByStudentAndExam(studentId, examId);
+        List<HandInDTO> answers = takeExamDetailService.findByStudentAndExam(studentId, examId).stream()
+                .map(takeExamDetail -> new HandInDTO(takeExamDetail.getQuestion().getId(),
+                        takeExamDetail.getAnswer()))
+                .collect(Collectors.toList());
+        List<Question> questions = new ArrayList<>();
+        for (TakeExamDetail detail : takeExamDetails) {
+            Question question = detail.getQuestion();
+            StringBuilder finalAnswer = new StringBuilder();
+
+            if (question.getType().equals("Một đáp án")) {
+                for (Answer ans : question.getAnswers()) {
+                    if (ans.isAnswer()) {
+                        finalAnswer = new StringBuilder(ans.getOrder());
+                    }
+                }
+            } else if (question.getType().equals("Nhiều đáp án")) {
+                int k = 0;
+                for (Answer ans : question.getAnswers()) {
+                    if (ans.isAnswer()) {
+                        if (k > 0) {
+                            finalAnswer.append(",").append(ans.getOrder());
+                        } else {
+                            finalAnswer.append(ans.getOrder());
+                        }
+                        k++;
+                    }
+                }
+            } else {
+                finalAnswer = new StringBuilder(question.getAnswers().get(0).getContent());
+            }
+
+            for (HandInDTO answer : answers) {
+                if (answer.getQuestionId().equals(question.getId())) {
+                    if (question.getType().equals("Một đáp án")) {
+                        for (Answer ans : question.getAnswers()) {
+                            if (ans.isAnswer()) {
+                                String ansss = "";
+                                if (!Objects.isNull(answer.getAnswer())) {
+                                    ansss = answer.getAnswer().toLowerCase().trim();
+                                }
+                                if (ans.getOrder().toLowerCase().trim().equals(ansss)) {
+                                    numberOfRightAnswer++;
+                                }
+                            }
+                        }
+                    } else if (question.getType().equals("Nhiều đáp án")) {
+
+                        int count = 0;
+                        int numberOfAns = 0;
+                        for (Answer ans : question.getAnswers()) {
+                            if (ans.isAnswer()) {
+                                numberOfAns++;
+                                if (!Objects.isNull(answer.getAnswer())) {
+                                    for (String selectedAns : answer.getAnswer().split(",")) {
+                                        if (ans.getOrder().toLowerCase().trim().equals(selectedAns.toLowerCase().trim()
+                                        )) {
+                                            count++;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                        if (numberOfAns == count) {
+                            numberOfRightAnswer++;
+                        }
+                    } else {
+                        String ansss = "";
+                        if (!Objects.isNull(answer.getAnswer())) {
+                            ansss = answer.getAnswer().toLowerCase().trim();
+                        }
+                        if (question.getAnswers().get(0).getContent().trim().toLowerCase().equals(ansss)) {
+                            numberOfRightAnswer++;
+                        }
+                    }
+
+                    question.setSelectedAnswer(answer.getAnswer());
 
 
-//    @GetMapping("")
-//    public ResponseEntity<StandardJSONResponse<SubjectsDTO>> fetchAllSubjects(
-//            @RequestParam("page") String page,
-//            @RequestParam(name = "query", required = false, defaultValue = "") String query,
-//            @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
-//            @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField
-//    ) {
-//        SubjectsDTO subjectsDTO = new SubjectsDTO();
-//
-//        if(page.equals("0")) {
-//            List<Subject> subjects = subjectService.findAll();
-//
-//            subjectsDTO.setSubjects(subjects);
-//            subjectsDTO.setTotalElements(subjects.size());
-//            subjectsDTO.setTotalPages(0);
-//
-//        } else {
-//            Map<String, String> filters = new HashMap<>();
-//            filters.put("page", page);
-//            filters.put("query", query);
-//            filters.put("sortDir", sortDir);
-//            filters.put("sortField", sortField);
-//
-//            Page<Subject> subjectsPage = subjectService.findAllSubjects(filters);
-//
-//            subjectsDTO.setSubjects(subjectsPage.getContent());
-//            subjectsDTO.setTotalElements(subjectsPage.getTotalElements());
-//            subjectsDTO.setTotalPages(subjectsPage.getTotalPages());
-//        }
-//
-//        return new OkResponse<>(subjectsDTO).response();
-//    }
-//
-//    @GetMapping("brief")
-//    public ResponseEntity<StandardJSONResponse<List<SubjectDTO>>> fetchAllSubjects() {
-////        return new OkResponse<>(subjectService.findAllSubjects()).response();
-//        return null;
-//    }
-//
-//    @GetMapping("{subjectId}")
-//    public ResponseEntity<StandardJSONResponse<SubjectDTO>> fetchSubject(@PathVariable(name =
-//            "subjectId") String subjectId) {
-//        try {
-//            return new OkResponse<>(SubjectDTO.build(subjectService.findById(subjectId))).response();
-//        } catch (NotFoundException e) {
-//            return new BadResponse<SubjectDTO>(e.getMessage()).response();
-//        }
-//    }
-//
-//    @PostMapping("save")
-//    public ResponseEntity<StandardJSONResponse<Subject>> saveSubject(
-//            @RequestBody PostCreateSubjectDTO postCreateSubjectDTO,
-//            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
-//    ) {
-//        Subject savedSubject = null;
-//        CommonUtils commonUtils = new CommonUtils();
-//
-//        String id = postCreateSubjectDTO.getId();
-//        String name = postCreateSubjectDTO.getName();
-//        String numberOfTheoreticalPeriods = postCreateSubjectDTO.getNumberOfTheoreticalPeriods();
-//        String numberOfPracticePeriods = postCreateSubjectDTO.getNumberOfPracticePeriods();
-//
-//        if (Objects.isNull(id)) {
-//            commonUtils.addError("id", "Mã môn học không được để trống");
-//        }
-//
-//        if (Objects.isNull(name)) {
-//            commonUtils.addError("name", "Tên môn học không được để trống");
-//        }
-//
-//        if (Objects.isNull(numberOfTheoreticalPeriods)) {
-//            commonUtils.addError("numberOfTheoreticalPeriods", "Số tiết lý thuyết không được để trống");
-//        }
-//
-//        if (Objects.isNull(numberOfPracticePeriods)) {
-//            commonUtils.addError("numberOfPracticePeriods", "Số tiết thực hành không được để " +
-//                    "trống");
-//        }
-//
-//        if (commonUtils.getArrayNode().size() > 0) {
-//            return new BadResponse<Subject>(commonUtils.getArrayNode().toString()).response();
-//        } else {
-//            if (subjectService.isIdDuplicated(id, isEdit)) {
-//                commonUtils.addError("id", "Mã môn học đã tồn tại");
-//            }
-//
-//            if (subjectService.isNameDuplicated(id, name, isEdit)) {
-//                commonUtils.addError("name", "Tên môn học đã tồn tại");
-//            }
-//
-//            int numberOfTheoreticalPeriodsInt = 0, numberOfPracticePeriodsInt = 0;
-//            try {
-//                numberOfTheoreticalPeriodsInt = Integer.parseInt(numberOfTheoreticalPeriods);
-//            } catch (final NumberFormatException e) {
-//                commonUtils.addError("numberOfTheoreticalPeriods", "Số tiết lý thuyết không hợp " +
-//                        "lệ");
-//            }
-//
-//            try {
-//                numberOfPracticePeriodsInt = Integer.parseInt(numberOfPracticePeriods);
-//            } catch (final NumberFormatException e) {
-//                commonUtils.addError("numberOfPracticePeriods", "Số tiết thực hành không hợp " +
-//                        "lệ");
-//            }
-//
-//            if (commonUtils.getArrayNode().size() > 0) {
-//                return new BadResponse<Subject>(commonUtils.getArrayNode().toString()).response();
-//            }
-//
-//            if ((numberOfPracticePeriodsInt + numberOfTheoreticalPeriodsInt) % 3 != 0) {
-//                commonUtils.addError("numberOfPracticePeriods", "Số tiết lý thuyết + thực " +
-//                        "hành phải là bội số của 3 "
-//                );
-//            }
-//
-//            if (commonUtils.getArrayNode().size() > 0) {
-//                return new BadResponse<Subject>(commonUtils.getArrayNode().toString()).response();
-//            }
-//        }
-//
-//        if (isEdit) {
-//            try {
-//                Subject subject = subjectService.findById(id);
-//                subject.setName(name);
-//                subject.setNumberOfTheoreticalPeriods(Integer.parseInt(postCreateSubjectDTO.getNumberOfTheoreticalPeriods()));
-//                subject.setNumberOfPracticePeriods(Integer.parseInt(postCreateSubjectDTO.getNumberOfPracticePeriods()));
-//
-//                savedSubject = subjectService.save(subject);
-//            } catch (NotFoundException exception) {
-//                return new BadResponse<Subject>(exception.getMessage()).response();
-//            }
-//        } else {
-//            savedSubject = subjectService.save(Subject.build(postCreateSubjectDTO));
-//        }
-//
-//        return new OkResponse<>(savedSubject).response();
-//    }
-//
-//    @DeleteMapping("{id}/delete")
-//    public ResponseEntity<StandardJSONResponse<String>> delete(@PathVariable("id") String id) {
-//        try {
-//            return new OkResponse<>(subjectService.deleteById(id)).response();
-//        } catch (ConstrainstViolationException ex) {
-//            return new BadResponse<String>(ex.getMessage()).response();
-//        }
-//    }
+                    break;
+                }
+            }
+            question.setFinalAnswer(finalAnswer.toString());
+            questions.add(question);
+        }
+        DecimalFormat df = new DecimalFormat("#.#");
+        mark = (float) numberOfRightAnswer / takeExamDetails.size() * 10;
+        TestDTO testDTO = new TestDTO();
+        testDTO.setMark(Float.parseFloat(df.format(mark)));
+        testDTO.setNumberOfQuestions(questions.size());
+        testDTO.setNumberOfRightAnswer(numberOfRightAnswer);
+        testDTO.setQuestions(questions);
+
+        Exam exam = examService.findById(examId);
+        testDTO.setSubjectName(exam.getSubjectName());
+        testDTO.setExamType(exam.getType());
+        testDTO.setExamDate(exam.getExamDate());
+        testDTO.setNoticePeriod(exam.getNoticePeriod());
+        testDTO.setExamTime(exam.getTime());
+
+
+        return new OkResponse<>(testDTO).response();
+    }
+
+
+
 }

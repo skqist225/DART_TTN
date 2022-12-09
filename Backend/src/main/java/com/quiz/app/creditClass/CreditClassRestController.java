@@ -69,17 +69,23 @@ public class CreditClassRestController {
         CreditClassesDTO creditClassesDTO = new CreditClassesDTO();
 
         if (page.equals("0")) {
-            List<CreditClass> creditClasses = null;
+            List<CreditClass> creditClasses = new ArrayList<>();
             if (active) {
                 if (!StringUtils.isEmpty(studentId)) {
-                    creditClasses = creditClassService.findAllActiveCreditClass();
+                    List<CreditClass> teCreditClasses1 =
+                            creditClassService.findAllActiveCreditClassAndStudent(studentId);
+                    for (CreditClass creditClass : teCreditClasses1) {
+                        List<Exam> teExams = examService.findAllExamsIdByCreditClass(creditClass.getId());
+                        if (teExams.size() > 0) {
+                            creditClasses.add(creditClass);
+                        }
+                    }
                 } else {
                     creditClasses = creditClassService.findAllActiveCreditClass();
                 }
             } else {
                 creditClasses = creditClassService.findAll();
             }
-            System.out.println(creditClasses);
             creditClassesDTO.setCreditClasses(creditClasses);
             creditClassesDTO.setTotalElements(creditClasses.size());
             creditClassesDTO.setTotalPages((long) Math.ceil(creditClasses.size() / 10));

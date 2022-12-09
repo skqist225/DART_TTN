@@ -252,7 +252,6 @@ function QuestionsPage() {
     }, [amqSuccessMessage]);
 
     useEffect(() => {
-        console.log(amqErrorMessage);
         if (amqErrorMessage) {
             callToast("error", amqErrorMessage);
         }
@@ -319,7 +318,6 @@ function QuestionsPage() {
                     Filter={QuestionsFilter}
                     excelAdd={excelAdd}
                     recordsPerPage={10}
-                    loading={loading}
                 />
             }
         />

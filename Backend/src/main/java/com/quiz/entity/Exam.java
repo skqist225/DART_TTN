@@ -19,6 +19,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -75,6 +76,9 @@ public class Exam {
     @Column(name = "DAHUY", columnDefinition = "BOOLEAN DEFAULT 0")
     private boolean status;
 
+    @Transient
+    private float studentScore;
+
     public static Exam build(PostCreateExamDTO postCreateExamDTO) {
         return Exam.builder()
                 .name(postCreateExamDTO.getName())
@@ -127,6 +131,11 @@ public class Exam {
     public List<Integer> getTestIds() {
         return this.getTests().stream().map(Test::getId).collect(Collectors.toList());
     }
+
+//    @Transient
+//    public List<TakeExam> getTempTakeExam() {
+//        return this.takeExams.stream().map(takeExam -> TakeExam.);
+//    }
 
     public Exam(Integer id, String name, LocalDate examDate, int noticePeriod, int time, Set<Test> tests, String type, boolean taken, boolean status) {
         this.id = id;

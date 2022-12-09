@@ -32,28 +32,31 @@ function CreditClassesPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
-    const { userRoles, user } = useSelector(persistUserState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     const formId = "creditClassForm";
     const modalId = "creditClassModal";
     const modalLabel = "lớp tín chỉ";
+
     useEffect(() => {
-        // if (userRoles.includes("Quản trị viên")) {
-        dispatch(
-            fetchAllCreditClasses({
-                page: 1,
-            })
-        );
-        // } else {
-        //     dispatch(
-        //         fetchAllCreditClasses({
-        //             page: 1,
-        //             teacher: user.id,
-        //         })
-        //     );
-        // }
+        if (userRoles.includes("Quản trị viên")) {
+            dispatch(
+                fetchAllCreditClasses({
+                    page: 1,
+                })
+            );
+        } else {
+            dispatch(
+                fetchAllCreditClasses({
+                    page: 1,
+                    teacher: user.id,
+                })
+            );
+        }
 
         dispatch(fetchAllSubjects({ page: 0 }));
+        dispatch(fetchAllUsers({ page: 0, role: "!SV" }));
     }, []);
 
     const {
@@ -97,7 +100,7 @@ function CreditClassesPage() {
     };
 
     const handleQueryChange = ({ target: { value: query } }) => {
-        if (userRoles.includes("Quản trị viên")) {
+        if (user.roles.map(({ name }) => name).includes("Quản trị viên")) {
             dispatch(
                 fetchAllCreditClasses({
                     ...filterObject,
@@ -116,7 +119,7 @@ function CreditClassesPage() {
     };
 
     const handleSortChange = (sortField, sortDir) => {
-        if (userRoles.includes("Quản trị viên")) {
+        if (user.roles.map(({ name }) => name).includes("Quản trị viên")) {
             dispatch(
                 fetchAllCreditClasses({
                     ...filterObject,
@@ -238,7 +241,7 @@ function CreditClassesPage() {
                     fetchDataByPageNumber={fetchDataByPageNumber}
                     onCloseForm={onCloseForm}
                     Filter={CreditClassFilter}
-                    loading={loading}
+                    // loading={loading}
                 />
             }
         />

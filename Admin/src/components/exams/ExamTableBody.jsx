@@ -8,12 +8,15 @@ import { enableOrDisableExam, setEditedExam } from "../../features/examSlice";
 import EnableOrDisable from "../common/EnableOrDisable";
 import { persistUserState } from "../../features/persistUserSlice";
 import RegisterList from "./RegisterList";
+import { findByStudentAndExam } from "../../features/takeExamSlice";
+import TakeTestPage from "../../pages/takeTests/TakeTestPage";
 import $ from "jquery";
 
 function ExamTableBody({ rows, setIsEdit }) {
     const dispatch = useDispatch();
 
-    const { userRoles } = useSelector(persistUserState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name) || [];
 
     return (
         <tbody>
@@ -30,25 +33,22 @@ function ExamTableBody({ rows, setIsEdit }) {
                         </td>
                         <td className={tailwindCss.tableCell}>{row.subjectId}</td>
                         <td className={tailwindCss.tableCell}>{row.subjectName}</td>
-                        <td className={tailwindCss.tableCell}>
-                            {
+                        {!userRoles.includes("Sinh viên") && (
+                            <td className={tailwindCss.tableCell}>
                                 <Badge color={row.taken ? "success" : "info"}>
                                     {row.taken ? "Đã thi" : "Chưa thi"}
                                 </Badge>
-                            }
-                        </td>
+                            </td>
+                        )}
                         <td className={tailwindCss.tableCell}>{row.numberOfRegisters}</td>
                         <td className={tailwindCss.tableCell}>{row.examDate}</td>
                         <td className={tailwindCss.tableCell}>{row.noticePeriod}</td>
                         <td className={tailwindCss.tableCell}>{row.time} phút</td>
                         <td className={tailwindCss.tableCell}>{row.type}</td>
                         <td className={tailwindCss.tableCell}>{row.teacherName}</td>
-                        {/* {userRoles.includes("Quản trị viên") && (
-                            <td className={tailwindCss.tableCell}>{row.createdBy}</td>
-                        )} */}
                         <td className={`${tailwindCss.tableCell} flex items-center`}>
                             <div className='mr-2'>
-                                <Tooltip content='Xem danh sách đăng ký' placement='top'>
+                                <Tooltip content='Xem danh sách thi' placement='top'>
                                     <MyButton
                                         type='view'
                                         onClick={() => {

@@ -11,7 +11,7 @@ import Input from "../utils/userInputs/Input";
 function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors, control }) {
     const { editedSubject, errorObject } = useSelector(subjectState);
     const { errorObject: chapterErrorObject } = useSelector(chapterState);
-    const { userRoles } = useSelector(persistUserState);
+    const { user } = useSelector(persistUserState);
     const { fields, append, remove, insert } = useFieldArray({
         control,
         name: "chapters",
@@ -102,12 +102,18 @@ function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors, c
                             register={register}
                             name='name'
                             onKeyDown={onKeyDown}
-                            readOnly={!userRoles.includes("Quản trị viên")}
+                            readOnly={!user.roles.map(({ name }) => name).includes("Quản trị viên")}
                         />
                     </div>
                 </div>
 
-                <div className='w-full my-5 flex items-center'>
+                <div
+                    className={`flex w-full my-5 ${
+                        errors.numberOfTheoreticalPeriods || errors.numberOfPracticePeriods
+                            ? "items-start"
+                            : "items-center"
+                    }`}
+                >
                     <div className='w-full mr-5'>
                         <Input
                             label='Số tiết lý thuyết *'
@@ -118,7 +124,7 @@ function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors, c
                             register={register}
                             name='numberOfTheoreticalPeriods'
                             onKeyDown={onKeyDown}
-                            readOnly={!userRoles.includes("Quản trị viên")}
+                            readOnly={!user.roles.map(({ name }) => name).includes("Quản trị viên")}
                         />
                     </div>
 
@@ -132,16 +138,16 @@ function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors, c
                             register={register}
                             name='numberOfPracticePeriods'
                             onKeyDown={onKeyDown}
-                            readOnly={!userRoles.includes("Quản trị viên")}
+                            readOnly={!user.roles.map(({ name }) => name).includes("Quản trị viên")}
                         />
                     </div>
                 </div>
-                <h3>Danh sách chương</h3>
+                <h3 className='uppercase text-blue-500 font-semibold'>Danh sách chương</h3>
                 {fields.length > 0 && (
                     <div className={`w-full grid grid-cols-2 gap-2 mt-5`}>
                         {fields.map((field, index) => {
                             return (
-                                <div className='flex items-center' key={index}>
+                                <div className='flex items-center' key={field.id}>
                                     <div
                                         className={`flex ${
                                             errors.chapters ? "items-center" : "items-end"

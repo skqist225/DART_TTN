@@ -37,7 +37,7 @@ delete from nguoidung_vaitro where manguoidung like "N18DCCN1%"
 delete from nguoidung where ngaysinh = "2022-12-30"
 
 SELECT * FROM quiz.dethi_cauhoi dtch join cauhoi ch on ch.macauhoi = dtch.macauhoi left join luachon lc on lc.macauhoi = ch.macauhoi  where madethi = 14;
-
+SELECT thi.diem, nd.ho, nd.ten FROM quiz.thi left join dangky dk on dk.masv = thi.masv left join nguoidung nd on nd.manguoidung = dk.masv where macathi = 9 order by diem desc;
 
 mvn dependency:tree
 mvn clean package

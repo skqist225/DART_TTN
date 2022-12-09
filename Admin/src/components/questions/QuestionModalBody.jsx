@@ -85,14 +85,13 @@ function QuestionModalBody({
     const { chapters } = useSelector(chapterState);
     const { subjects } = useSelector(subjectState);
 
-    const { fields, append, remove } = useFieldArray({
+    const { fields, append, remove, prepend } = useFieldArray({
         control,
         name: "answers",
     });
 
     useEffect(() => {
         if (editedQuestion) {
-            console.log("edited question: ", editedQuestion);
             setValue("id", editedQuestion.id);
             setValue("content", editedQuestion.content);
             setValue("subject", editedQuestion.subjectId);
@@ -148,10 +147,7 @@ function QuestionModalBody({
             $("#addAnswerButton").css("display", "none");
             $("#typedAnswerContainer").css("display", "block");
             $("#hide-this-for-me").css("display", "none");
-            fields.forEach((_, index) => {
-                remove(index);
-            });
-            fields.length = 0;
+            setValue("answers", []);
         } else {
             $("#addAnswerButton").css("display", "block");
             $("#typedAnswerContainer").css("display", "none");
@@ -191,7 +187,7 @@ function QuestionModalBody({
                             <div className={`w-full grid grid-cols-2 gap-2 mt-5`}>
                                 {fields.map((field, index) => {
                                     return (
-                                        <div className='flex items-center' key={index}>
+                                        <div className='flex items-center' key={field.id}>
                                             <div className='flex items-center w-full'>
                                                 <div className='flex-1 mr-5'>
                                                     <input
@@ -302,7 +298,7 @@ function QuestionModalBody({
                                 type='button'
                                 className={tailwindCss.greenOutlineButton}
                                 onClick={() => {
-                                    append();
+                                    append({});
                                 }}
                             >
                                 Thêm câu trả lời
@@ -339,7 +335,9 @@ function QuestionModalBody({
                                     register={register}
                                     name='subject'
                                     options={subjects.map(subject => ({
-                                        title: subject.name,
+                                        title: subject.id.includes("CLC")
+                                            ? `${subject.name} CLC`
+                                            : `${subject.name}`,
                                         value: subject.id,
                                     }))}
                                     setValue={setValue}

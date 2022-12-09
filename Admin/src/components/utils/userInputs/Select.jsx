@@ -15,6 +15,7 @@ function Select({
     hiddenOption = false,
     multiple = false,
     readOnly = false,
+    removeLabel = false,
     index,
 }) {
     useEffect(() => {
@@ -27,12 +28,14 @@ function Select({
 
     return (
         <>
-            <label
-                htmlFor={propName}
-                className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"}`}
-            >
-                {!hiddenOption && label}
-            </label>
+            {!removeLabel && (
+                <label
+                    htmlFor={propName}
+                    className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"}`}
+                >
+                    {!hiddenOption && label}
+                </label>
+            )}
             <select
                 id={propName}
                 className={`${tailwindCss.select} ${width} ${

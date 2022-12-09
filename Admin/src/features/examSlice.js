@@ -19,6 +19,7 @@ export const fetchAllExams = createAsyncThunk(
             semester = "",
             type = "",
             taken = "",
+            examType = "",
         },
         { dispatch, rejectWithValue }
     ) => {
@@ -81,8 +82,8 @@ export const fetchAllExams = createAsyncThunk(
             });
 
             filterArray.push({
-                field: "type",
-                value: type,
+                field: "examType",
+                value: examType,
             });
 
             dispatch(setFilterObject(filterArray));
@@ -90,7 +91,7 @@ export const fetchAllExams = createAsyncThunk(
             const {
                 data: { exams, totalElements, totalPages },
             } = await api.get(
-                `/exams?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&level=${level}&subject=${subject}&numberOfExams=${numberOfExams}&teacher=${teacher}&creditClass=${creditClass}&student=${student}&type=${type}&schoolYear=${schoolYear}&semester=${semester}&taken=${taken}`
+                `/exams?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&level=${level}&subject=${subject}&numberOfExams=${numberOfExams}&teacher=${teacher}&creditClass=${creditClass}&student=${student}&type=${type}&schoolYear=${schoolYear}&semester=${semester}&taken=${taken}&examType=${examType}`
             );
 
             return { exams, totalElements, totalPages };

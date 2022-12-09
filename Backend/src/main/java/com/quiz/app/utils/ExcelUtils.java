@@ -1,9 +1,7 @@
 package com.quiz.app.utils;
 
 import com.quiz.app.answer.dto.AnswerDTO;
-import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.question.dto.PostCreateQuestionDTO;
-import com.quiz.entity.Answer;
 import com.quiz.entity.Sex;
 import com.quiz.entity.User;
 import lombok.Getter;
@@ -47,7 +45,7 @@ public class ExcelUtils {
             Row row = sheet.getRow(i);
 
             String type = row.getCell(0).getStringCellValue();
-            if (type.equals("Kết thúc")) {
+            if (Objects.isNull(type) || StringUtils.isEmpty(type)) {
                 break;
             }
 

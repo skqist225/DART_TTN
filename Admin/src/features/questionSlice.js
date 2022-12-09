@@ -243,7 +243,7 @@ const initialState = {
     },
     loadedQuestions: [],
     resetFilter: false,
-    queryAvailableQuestionsArr: [],
+    queryAvailableQuestionsArr: {},
 };
 
 const questionSlice = createSlice({
@@ -304,6 +304,9 @@ const questionSlice = createSlice({
         },
         setExcelQuestions(state, { payload }) {
             state.testedQuestions = payload;
+        },
+        setQueryAvailableQuestionsArr(state, { payload }) {
+            state.queryAvailableQuestionsArr = payload;
         },
     },
     extraReducers: builder => {
@@ -411,9 +414,19 @@ const questionSlice = createSlice({
                 }
             })
 
-            .addCase(queryAvailableQuestions.fulfilled, (state, { payload }) => {
-                state.queryAvailableQuestionsArr[payload.data.filterIndex] = payload.data.data;
-            })
+            .addCase(
+                queryAvailableQuestions.fulfilled,
+                (
+                    state,
+                    {
+                        payload: {
+                            data: { filterIndex, data },
+                        },
+                    }
+                ) => {
+                    state.queryAvailableQuestionsArr[filterIndex] = data;
+                }
+            )
 
             .addCase(deleteQuestion.pending, (state, _) => {
                 state.deleteQuestion.successMessage = null;
@@ -439,6 +452,7 @@ export const {
         setQuestions,
         setTestedQuestions,
         setExcelQuestions,
+        setQueryAvailableQuestionsArr,
     },
 } = questionSlice;
 

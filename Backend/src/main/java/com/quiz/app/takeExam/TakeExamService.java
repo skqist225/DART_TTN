@@ -1,7 +1,9 @@
 package com.quiz.app.takeExam;
 
+import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.entity.Exam;
 import com.quiz.entity.Register;
 import com.quiz.entity.TakeExam;
 import com.quiz.entity.TakeExamId;
@@ -20,6 +22,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
@@ -36,6 +40,9 @@ public class TakeExamService {
     private TakeExamRepository takeExamRepository;
 
     @Autowired
+    private CreditClassService creditClassService;
+
+    @Autowired
     private EntityManager entityManager;
 
     public TakeExam save(TakeExam takeExam) {
@@ -45,8 +52,14 @@ public class TakeExamService {
     @Transactional
     public void insertIntoTakeExamTable(int tryTime, int examId, int creditClassId,
                                         String studentId, int testId) {
-         takeExamRepository.insertIntoTakeExamTable(tryTime, examId, creditClassId, studentId,
+        takeExamRepository.insertIntoTakeExamTable(tryTime, examId, creditClassId, studentId,
                 testId);
+    }
+
+    public int getStudentRankingPosition(String studentId, Integer creditClassId,
+                                         String examType) {
+        return takeExamRepository
+                .getStudentRankingPosition(studentId, creditClassId, examType);
     }
 
     public String deleteById(TakeExamId id) throws ConstrainstViolationException {
@@ -68,14 +81,19 @@ public class TakeExamService {
     }
 
     public List<TakeExam> findByRegister(Register register) {
-        return takeExamRepository.findByRegister(register.getCreditClass().getId(),
-                register.getStudent().getId());
+        return takeExamRepository.findByRegister(register.getCreditClass().getId(), register.getStudent().getId());
     }
 
     @Transactional
     public void updateTakeExamScore(String studentId, Integer examId, float mark) {
         takeExamRepository.updateTakeExamScore(studentId, examId, mark);
     }
+
+    @Transactional
+    public void updateTakeExamTested(String studentId, Integer examId) {
+        takeExamRepository.updateTakeExamTested(studentId, examId);
+    }
+
 
     public TakeExam findByStudentAndExam(String studentId, Integer examId) {
         return takeExamRepository.findByStudentAndExam(studentId, examId);
@@ -89,39 +107,13 @@ public class TakeExamService {
         return tryTime;
     }
 
-//    public TakeExam findByName(String name) throws NotFoundException {
-//        TakeExam takeExam = takeExamRepository.findByName(name);
-//
-//        if (Objects.nonNull(takeExam)) {
-//            return takeExam;
-//        }
-//
-//        throw new NotFoundException("Không tìm thấy môn học với tên " + name);
-//    }
-//
-//    public boolean isNameDuplicated(String id, String name, boolean isEdit) {
-//        TakeExam takeExam = takeExamRepository.findByName(name);
-//
-//        if (isEdit) {
-//            return Objects.nonNull(takeExam) && !Objects.equals(takeExam.getId(), id);
-//        } else {
-//            return Objects.nonNull(takeExam);
-//        }
-//    }
+    public List<Integer> testedExam(String studentId) {
+        return takeExamRepository.testedExam(studentId);
+    }
 
-//    public boolean isIdDuplicated(TakeExamId id, boolean isEdit) {
-//        try {
-//            TakeExam takeExam = findById(id);
-//
-//            if (isEdit) {
-//                return Objects.nonNull(takeExam) && !Objects.equals(takeExam.getId(), id);
-//            } else {
-//                return Objects.nonNull(takeExam);
-//            }
-//        } catch (NotFoundException e) {
-//            return false;
-//        }
-//    }
+    public float getStudentScoreByExamAndId(String studentId, Integer examId) {
+        return takeExamRepository.getStudentScoreByExamAndId(studentId, examId);
+    }
 
     public List<TakeExam> findAll() {
         return (List<TakeExam>) takeExamRepository.findAll();
@@ -132,35 +124,48 @@ public class TakeExamService {
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
-        String studentId = filters.get("studentId");
+        String creditClassId = filters.get("creditClassId");
+        String examType = filters.get("examType");
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+        Pageable pageable = PageRequest.of(page - 1, 15, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<TakeExam> criteriaQuery = criteriaBuilder.createQuery(TakeExam.class);
         Root<TakeExam> root = criteriaQuery.from(TakeExam.class);
 
         List<Predicate> predicates = new ArrayList<>();
+        Join<TakeExam, Register> joinOptions = root.join("register", JoinType.INNER);
 
         if (!StringUtils.isEmpty(searchQuery)) {
-            Expression<String> id = root.get("id");
-            Expression<String> name = root.get("name");
+            Expression<String> id = joinOptions.get("student").get("id");
+            Expression<String> firstName = joinOptions.get("student").get("firstName");
+            Expression<String> lastName = joinOptions.get("student").get("firstName");
 
             Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, firstName);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, lastName);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
 
-        if (!StringUtils.isEmpty(studentId)) {
-            Expression<String> id = root.get("register").get("student").get(
-                    "id"
-            );
-            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(id,
-                    studentId
-            )));
+        System.out.println(creditClassId);
+        if (!StringUtils.isEmpty(creditClassId)) {
+            Expression<Integer> creditClassIdExp = joinOptions.get("creditClass").get("id");
+
+            List<Integer> arrays = new ArrayList<>();
+            arrays.add(Integer.parseInt(creditClassId));
+
+            predicates.add(criteriaBuilder.and(creditClassIdExp.in(arrays)));
+        }
+
+        System.out.println(examType);
+        if (!StringUtils.isEmpty(examType)) {
+            Join<TakeExam, Exam> examJoinOptions = root.join("exam", JoinType.INNER);
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(examJoinOptions.get("type"), examType)));
         }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
@@ -171,6 +176,35 @@ public class TakeExamService {
         int totalRows = typedQuery.getResultList().size();
         typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
         typedQuery.setMaxResults(pageable.getPageSize());
+
+        List<TakeExam> takeExams = typedQuery.getResultList();
+        for (int i = 0; i < takeExams.size(); i++) {
+            takeExams.get(i).setRankOrder(i + 1);
+        }
+//        int j = 0;
+//        for (int i = 0; i < takeExams.size(); i++) {
+//            if (Objects.nonNull(takeExams.get(i).getScore())) {
+//                if (i >= 1) {
+//                    if (takeExams.get(i).getScore().equals(takeExams.get(i - 1).getScore())) {
+//                        takeExams.get(i).setRankOrder(j);
+//                    } else {
+//                        j++;
+//                        takeExams.get(i).setRankOrder(j);
+//                    }
+//                } else {
+//                    j++;
+//                    takeExams.get(i).setRankOrder(j);
+//                }
+//            } else {
+//                if (i >= 1) {
+//                    if (Objects.nonNull(takeExams.get(i - 1).getScore())) {
+//                        j++;
+//                    }
+//                }
+//
+//                takeExams.get(i).setRankOrder(j);
+//            }
+//        }
 
         return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
     }

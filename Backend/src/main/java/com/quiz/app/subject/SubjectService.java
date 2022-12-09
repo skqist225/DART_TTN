@@ -3,6 +3,7 @@ package com.quiz.app.subject;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.statistics.dto.CountQuestionsBySubjectDTO;
+import com.quiz.entity.Chapter;
 import com.quiz.entity.Subject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -55,6 +56,21 @@ public class SubjectService {
 
     public List<Subject> findByHaveChapter() {
         return subjectRepository.findByHaveChapter();
+    }
+
+    public List<Subject> findByHaveQuestion() {
+        List<Subject> finSubjects = new ArrayList<>();
+        List<Subject> subjects = subjectRepository.findByHaveChapter();
+        for (Subject subject : subjects) {
+            for (Chapter chapter : subject.getChapters()) {
+                if (chapter.getNumberOfActiveQuestions() > 0) {
+                    finSubjects.add(subject);
+                    break;
+                }
+            }
+        }
+
+        return finSubjects;
     }
 
     public String deleteById(String id) throws ConstrainstViolationException {

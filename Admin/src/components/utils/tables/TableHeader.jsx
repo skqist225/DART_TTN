@@ -32,8 +32,7 @@ function TableHeader({
             ? reverseSortDir(`.upper.${sortField}`)
             : reverseSortDir(`.downer.${sortField}`);
     }
-    const { userRoles } = useSelector(persistUserState);
-    // console.log(modalLabel);
+    const { user } = useSelector(persistUserState);
     return (
         <thead className={tailwindCss.thead}>
             <tr>
@@ -41,7 +40,7 @@ function TableHeader({
                 {columns.map(({ name, sortField, sortable }) => {
                     if (
                         ["ca thi", "câu hỏi"].includes(modalLabel) &&
-                        !userRoles.includes("Quản trị viên") &&
+                        !user.roles.map(({ name }) => name).includes("Quản trị viên") &&
                         name === "Giảng viên"
                     ) {
                         return null;

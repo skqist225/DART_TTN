@@ -14,12 +14,12 @@ import {
     setEditedExam,
 } from "../../features/examSlice";
 import ExamFilter from "../../components/exams/ExamFilter";
-import $ from "jquery";
 import { fetchAllSubjects } from "../../features/subjectSlice";
 import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
 import { setTests } from "../../features/testSlice";
 import { persistUserState } from "../../features/persistUserSlice";
-import { examColumns } from "../columns";
+import { examColumns, studentColumns } from "../columns";
+import $ from "jquery";
 
 function ExamsPage() {
     const dispatch = useDispatch();
@@ -27,7 +27,8 @@ function ExamsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
-    const { userRoles, user } = useSelector(persistUserState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
     const { creditClasses } = useSelector(creditClassState);
 
     const modalId = "examModal";
@@ -36,7 +37,7 @@ function ExamsPage() {
 
     useEffect(() => {
         dispatch(fetchAllSubjects({ page: 0 }));
-        if (userRoles.includes("Quản trị viên")) {
+        if (!userRoles.includes("Sinh viên")) {
             dispatch(
                 fetchAllCreditClasses({
                     page: 0,
@@ -45,19 +46,6 @@ function ExamsPage() {
             dispatch(
                 fetchAllExams({
                     page: 1,
-                })
-            );
-        } else if (userRoles.includes("Giảng viên")) {
-            dispatch(
-                fetchAllCreditClasses({
-                    page: 0,
-                    // teacher: user.id,
-                })
-            );
-            dispatch(
-                fetchAllExams({
-                    page: 1,
-                    // teacher: user.id,
                 })
             );
         } else {
@@ -65,6 +53,7 @@ function ExamsPage() {
                 fetchAllExams({
                     page: 1,
                     student: user.id,
+                    taken: false,
                 })
             );
         }
@@ -243,7 +232,7 @@ function ExamsPage() {
                     searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={examColumns}
+                    columns={userRoles.includes("Sinh viên") ? studentColumns : examColumns}
                     rows={exams}
                     totalElements={totalElements}
                     totalPages={totalPages}
@@ -265,7 +254,7 @@ function ExamsPage() {
                     setIsEdit={setIsEdit}
                     Filter={ExamFilter}
                     onCloseForm={onCloseForm}
-                    loading={loading}
+                    // loading={loading}
                 />
             }
         />

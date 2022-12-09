@@ -3,6 +3,7 @@ package com.quiz.app.exam;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.statistics.dto.CountExamByCreditClassDTO;
+import com.quiz.app.takeExam.TakeExamService;
 import com.quiz.entity.Exam;
 import com.quiz.entity.TakeExam;
 import org.apache.commons.lang.StringUtils;
@@ -35,6 +36,10 @@ public class ExamService {
 
     @Autowired
     private ExamRepository examRepository;
+
+    @Autowired
+    private TakeExamService takeExamService;
+
 
     @Autowired
     private EntityManager entityManager;
@@ -110,10 +115,11 @@ public class ExamService {
         String teacherId = filters.get("teacherId");
         String creditClassId = filters.get("creditClassId");
         String studentId = filters.get("studentId");
-        String schoolYear = filters.get("schoolYear");
-        String semester = filters.get("semester");
         String type = filters.get("type");
         String taken = filters.get("taken");
+        String examType = filters.get("examType");
+
+
         Sort sort = null;
 //        if(sortField.equals("subjectId")) {
 //            sort = Sort.by(sortField);
@@ -133,10 +139,8 @@ public class ExamService {
         List<Predicate> predicates = new ArrayList<>();
 
         if (!StringUtils.isEmpty(searchQuery)) {
-            Expression<String> id = root.get("id");
-
-            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
-//            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
+            Expression<String> name = root.get("name");
+            Expression<String> wantedQueryField = criteriaBuilder.concat(name, " ");
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
@@ -153,20 +157,28 @@ public class ExamService {
         }
 
         if (!StringUtils.isEmpty(studentId)) {
+            // Ca thi của sinh viên: SV chưa thi, chưa hủy
+            System.out.println(studentId);
             Join<Exam, TakeExam> joinOptions = root.join("takeExams", JoinType.LEFT);
             Expression<String> studentIdExp = joinOptions.get("register").get("student").get(
                     "id");
             predicates.add(criteriaBuilder.and(criteriaBuilder.equal(studentIdExp, studentId)));
+
+            Expression<Boolean> takenExp = joinOptions.get("tested");
+            Expression<Boolean> statusExp = root.get("status");
+            if (!StringUtils.isEmpty(taken)) {
+                if (taken.equals("true")) {
+                    predicates.add(criteriaBuilder.and(criteriaBuilder.equal(takenExp, true)));
+                } else if (taken.equals("false")) {
+                    predicates.add(criteriaBuilder.and(criteriaBuilder.equal(takenExp, false)));
+                }
+            }
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(statusExp, false)));
         }
 
-//        if (!StringUtils.isEmpty(schoolYear)) {
-//            Expression<String> teacher = root.get("teacher").get("id");
-//            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(teacher, teacherId)));
-//        }
-
-        if (!StringUtils.isEmpty(type)) {
+        if (!StringUtils.isEmpty(examType)) {
             Expression<String> typeExp = root.get("type");
-            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(typeExp, type)));
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(typeExp, examType)));
         }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
@@ -177,6 +189,13 @@ public class ExamService {
         int totalRows = typedQuery.getResultList().size();
         typedQuery.setFirstResult(pageable.getPageNumber() * pageable.getPageSize());
         typedQuery.setMaxResults(pageable.getPageSize());
+
+        if (!StringUtils.isEmpty(studentId)) {
+            for (Exam exam : typedQuery.getResultList()) {
+                float score = takeExamService.getStudentScoreByExamAndId(studentId, exam.getId());
+                exam.setStudentScore(score);
+            }
+        }
 
         return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
     }

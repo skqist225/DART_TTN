@@ -1102,267 +1102,232 @@ sys|schema||mysql.sys|localhost|TRIGGER|G</Grants>
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="300" parent="288" name="cathi_dethi">
+    <table id="300" parent="288" name="cauhoi">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="301" parent="288" name="cauhoi">
+    <table id="301" parent="288" name="chitietthi">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="302" parent="288" name="chitietthi">
+    <table id="302" parent="288" name="chuong">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="303" parent="288" name="chuong">
+    <table id="303" parent="288" name="dangky">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="304" parent="288" name="dangky">
+    <table id="304" parent="288" name="dethi">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="305" parent="288" name="dethi">
+    <table id="305" parent="288" name="dethi_cauhoi">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="306" parent="288" name="dethi_cauhoi">
+    <table id="306" parent="288" name="loptinchi">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="307" parent="288" name="loptinchi">
+    <table id="307" parent="288" name="luachon">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="308" parent="288" name="luachon">
+    <table id="308" parent="288" name="monhoc">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="309" parent="288" name="monhoc">
+    <table id="309" parent="288" name="nguoidung">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="310" parent="288" name="nguoidung">
+    <table id="310" parent="288" name="nguoidung_vaitro">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="311" parent="288" name="nguoidung_vaitro">
+    <table id="311" parent="288" name="thi">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="312" parent="288" name="thi">
+    <table id="312" parent="288" name="vaitro">
       <Engine>InnoDB</Engine>
       <CollationName>utf8mb4_0900_ai_ci</CollationName>
     </table>
-    <table id="313" parent="288" name="vaitro">
-      <Engine>InnoDB</Engine>
-      <CollationName>utf8mb4_0900_ai_ci</CollationName>
-    </table>
-    <column id="314" parent="299" name="macathi">
-      <AutoIncrement>22</AutoIncrement>
+    <column id="313" parent="299" name="macathi">
+      <AutoIncrement>11</AutoIncrement>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="315" parent="299" name="ngaythi">
-      <DataType>datetime(6)|0s</DataType>
+    <column id="314" parent="299" name="ngaythi">
+      <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <column id="316" parent="299" name="thoigianlambai">
-      <DataType>smallint|0s</DataType>
+    <column id="315" parent="299" name="tencathi">
+      <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>3</Position>
-    </column>
-    <column id="317" parent="299" name="magv">
-      <DataType>char(10)|0s</DataType>
-      <Position>4</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="318" parent="299" name="loaikythi">
-      <DataType>varchar(50)|0s</DataType>
+    <column id="316" parent="299" name="tietbaodanh">
+      <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
-      <Position>5</Position>
-      <CollationName>utf8mb3_general_ci</CollationName>
+      <Position>4</Position>
     </column>
-    <column id="319" parent="299" name="trangthai">
-      <DataType>bit(1)|0s</DataType>
+    <column id="317" parent="299" name="dahuy">
+      <DataType>tinyint(1)|0s</DataType>
+      <DefaultExpression>0</DefaultExpression>
+      <Position>5</Position>
+    </column>
+    <column id="318" parent="299" name="dathi">
+      <DataType>tinyint(1)|0s</DataType>
+      <DefaultExpression>0</DefaultExpression>
       <Position>6</Position>
     </column>
-    <column id="320" parent="299" name="tietbaodanh">
+    <column id="319" parent="299" name="thoigianlambai">
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <Position>7</Position>
     </column>
-    <column id="321" parent="299" name="dathi">
-      <DataType>bit(1)|0s</DataType>
+    <column id="320" parent="299" name="loaikythi">
+      <DataType>varchar(50)|0s</DataType>
+      <NotNull>1</NotNull>
       <Position>8</Position>
+      <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="322" parent="299" name="tencathi">
-      <DataType>varchar(255)|0s</DataType>
+    <column id="321" parent="299" name="magv">
+      <DataType>char(10)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>9</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <foreign-key id="323" parent="299" name="FKm23eo9mt7uradsvgfoswjjnmw">
+    <foreign-key id="322" parent="299" name="FKm23eo9mt7uradsvgfoswjjnmw">
       <ColNames>magv</ColNames>
       <RefColNames>manguoidung</RefColNames>
       <RefTableName>nguoidung</RefTableName>
     </foreign-key>
-    <index id="324" parent="299" name="PRIMARY">
+    <index id="323" parent="299" name="PRIMARY">
       <ColNames>macathi</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="325" parent="299" name="FKm23eo9mt7uradsvgfoswjjnmw">
+    <index id="324" parent="299" name="FKm23eo9mt7uradsvgfoswjjnmw">
       <ColNames>magv</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="326" parent="299" name="PRIMARY">
+    <key id="325" parent="299" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="327" parent="300" name="macathi">
+    <column id="326" parent="300" name="macauhoi">
+      <AutoIncrement>46</AutoIncrement>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="328" parent="300" name="madethi">
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-    </column>
-    <foreign-key id="329" parent="300" name="FKblvwqiecahsfuvf88dv0sh547">
-      <ColNames>macathi</ColNames>
-      <RefColNames>macathi</RefColNames>
-      <RefTableName>cathi</RefTableName>
-    </foreign-key>
-    <foreign-key id="330" parent="300" name="FKb8lkpykcgdi7t30f2rnhwc9mv">
-      <ColNames>madethi</ColNames>
-      <RefColNames>madethi</RefColNames>
-      <RefTableName>dethi</RefTableName>
-    </foreign-key>
-    <index id="331" parent="300" name="PRIMARY">
-      <ColNames>macathi
-madethi</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="332" parent="300" name="FKb8lkpykcgdi7t30f2rnhwc9mv">
-      <ColNames>madethi</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="333" parent="300" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <column id="334" parent="301" name="macauhoi">
-      <AutoIncrement>41</AutoIncrement>
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-    </column>
-    <column id="335" parent="301" name="noidungcauhoi">
+    <column id="327" parent="300" name="noidungcauhoi">
       <DataType>text|0s</DataType>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <column id="336" parent="301" name="hinhanh">
+    <column id="328" parent="300" name="hinhanh">
       <DataType>varchar(255)|0s</DataType>
       <Position>3</Position>
     </column>
-    <column id="337" parent="301" name="dokho">
+    <column id="329" parent="300" name="dokho">
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>4</Position>
     </column>
-    <column id="338" parent="301" name="status">
-      <DataType>bit(1)|0s</DataType>
+    <column id="330" parent="300" name="loaicauhoi">
+      <DataType>varchar(20)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>5</Position>
     </column>
-    <column id="339" parent="301" name="loaicauhoi">
-      <DataType>varchar(255)|0s</DataType>
-      <Position>6</Position>
-    </column>
-    <column id="340" parent="301" name="machuong">
+    <column id="331" parent="300" name="machuong">
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
-      <Position>7</Position>
+      <Position>6</Position>
     </column>
-    <column id="341" parent="301" name="magv">
+    <column id="332" parent="300" name="magv">
       <DataType>char(10)|0s</DataType>
       <NotNull>1</NotNull>
-      <Position>8</Position>
+      <Position>7</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <foreign-key id="342" parent="301" name="FKioeim97nhyiym023hj6nsai7x">
+    <column id="333" parent="300" name="consudung">
+      <DataType>tinyint(1)|0s</DataType>
+      <DefaultExpression>1</DefaultExpression>
+      <Position>8</Position>
+    </column>
+    <foreign-key id="334" parent="300" name="FKioeim97nhyiym023hj6nsai7x">
       <ColNames>machuong</ColNames>
       <RefColNames>machuong</RefColNames>
       <RefTableName>chuong</RefTableName>
     </foreign-key>
-    <foreign-key id="343" parent="301" name="FKb8olih69bysaqfrdj1evm2kxf">
+    <foreign-key id="335" parent="300" name="FKb8olih69bysaqfrdj1evm2kxf">
       <ColNames>magv</ColNames>
       <RefColNames>manguoidung</RefColNames>
       <RefTableName>nguoidung</RefTableName>
     </foreign-key>
-    <index id="344" parent="301" name="PRIMARY">
+    <index id="336" parent="300" name="PRIMARY">
       <ColNames>macauhoi</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="345" parent="301" name="FKioeim97nhyiym023hj6nsai7x">
+    <index id="337" parent="300" name="FKioeim97nhyiym023hj6nsai7x">
       <ColNames>machuong</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="346" parent="301" name="FKb8olih69bysaqfrdj1evm2kxf">
+    <index id="338" parent="300" name="FKb8olih69bysaqfrdj1evm2kxf">
       <ColNames>magv</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="347" parent="301" name="PRIMARY">
+    <key id="339" parent="300" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="348" parent="302" name="id">
-      <AutoIncrement>1</AutoIncrement>
+    <column id="340" parent="301" name="id">
+      <AutoIncrement>3489</AutoIncrement>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="349" parent="302" name="cautraloi">
+    <column id="341" parent="301" name="cautraloi">
       <DataType>varchar(255)|0s</DataType>
       <Position>2</Position>
     </column>
-    <column id="350" parent="302" name="macauhoi">
+    <column id="342" parent="301" name="macauhoi">
       <DataType>int|0s</DataType>
       <Position>3</Position>
     </column>
-    <column id="351" parent="302" name="macathi">
+    <column id="343" parent="301" name="macathi">
       <DataType>int|0s</DataType>
       <Position>4</Position>
     </column>
-    <column id="352" parent="302" name="maltc">
+    <column id="344" parent="301" name="maltc">
       <DataType>int|0s</DataType>
       <Position>5</Position>
     </column>
-    <column id="353" parent="302" name="masv">
+    <column id="345" parent="301" name="masv">
       <DataType>char(10)|0s</DataType>
       <Position>6</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="354" parent="302" name="lanthi">
+    <column id="346" parent="301" name="lanthi">
       <DataType>smallint|0s</DataType>
       <Position>7</Position>
     </column>
-    <foreign-key id="355" parent="302" name="FKis9fqky9i75ugcq291vqcbbvj">
+    <foreign-key id="347" parent="301" name="FKis9fqky9i75ugcq291vqcbbvj">
       <ColNames>macauhoi</ColNames>
       <RefColNames>macauhoi</RefColNames>
       <RefTableName>cauhoi</RefTableName>
     </foreign-key>
-    <foreign-key id="356" parent="302" name="FKj5ylioe69918r1bllg6sj4sfc">
+    <foreign-key id="348" parent="301" name="FKj5ylioe69918r1bllg6sj4sfc">
       <ColNames>macathi
 maltc
 masv
@@ -1373,20 +1338,61 @@ masv
 lanthi</RefColNames>
       <RefTableName>thi</RefTableName>
     </foreign-key>
-    <index id="357" parent="302" name="PRIMARY">
+    <index id="349" parent="301" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="358" parent="302" name="FKis9fqky9i75ugcq291vqcbbvj">
+    <index id="350" parent="301" name="FKis9fqky9i75ugcq291vqcbbvj">
       <ColNames>macauhoi</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="359" parent="302" name="FKj5ylioe69918r1bllg6sj4sfc">
+    <index id="351" parent="301" name="FKj5ylioe69918r1bllg6sj4sfc">
       <ColNames>macathi
 maltc
 masv
 lanthi</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="352" parent="301" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <column id="353" parent="302" name="machuong">
+      <AutoIncrement>50</AutoIncrement>
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+    </column>
+    <column id="354" parent="302" name="sochuong">
+      <DataType>smallint|0s</DataType>
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+    </column>
+    <column id="355" parent="302" name="tenchuong">
+      <DataType>varchar(255)|0s</DataType>
+      <NotNull>1</NotNull>
+      <Position>3</Position>
+    </column>
+    <column id="356" parent="302" name="mamh">
+      <DataType>char(12)|0s</DataType>
+      <NotNull>1</NotNull>
+      <Position>4</Position>
+      <CollationName>utf8mb3_general_ci</CollationName>
+    </column>
+    <foreign-key id="357" parent="302" name="FKrh0kbhjhvmhv7ufh60kyiexbf">
+      <ColNames>mamh</ColNames>
+      <RefColNames>mamh</RefColNames>
+      <RefTableName>monhoc</RefTableName>
+    </foreign-key>
+    <index id="358" parent="302" name="PRIMARY">
+      <ColNames>machuong</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="359" parent="302" name="FKrh0kbhjhvmhv7ufh60kyiexbf">
+      <ColNames>mamh</ColNames>
       <Type>btree</Type>
     </index>
     <key id="360" parent="302" name="PRIMARY">
@@ -1394,175 +1400,176 @@ lanthi</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="361" parent="303" name="machuong">
-      <AutoIncrement>170</AutoIncrement>
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
+    <column id="361" parent="303" name="diemcc">
+      <DataType>float|0s</DataType>
       <Position>1</Position>
     </column>
-    <column id="362" parent="303" name="tenchuong">
-      <DataType>varchar(255)|0s</DataType>
-      <NotNull>1</NotNull>
+    <column id="362" parent="303" name="diemck">
+      <DataType>float|0s</DataType>
       <Position>2</Position>
     </column>
-    <column id="363" parent="303" name="mamh">
-      <DataType>char(10)|0s</DataType>
-      <Position>3</Position>
-      <CollationName>utf8mb3_general_ci</CollationName>
-    </column>
-    <column id="364" parent="303" name="sochuong">
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>4</Position>
-    </column>
-    <foreign-key id="365" parent="303" name="FKrh0kbhjhvmhv7ufh60kyiexbf">
-      <ColNames>mamh</ColNames>
-      <RefColNames>mamh</RefColNames>
-      <RefTableName>monhoc</RefTableName>
-    </foreign-key>
-    <index id="366" parent="303" name="PRIMARY">
-      <ColNames>machuong</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="367" parent="303" name="UK_8otijpt6ymklbsawbwhed52q6">
-      <ColNames>tenchuong</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="368" parent="303" name="FKrh0kbhjhvmhv7ufh60kyiexbf">
-      <ColNames>mamh</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="369" parent="303" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <key id="370" parent="303" name="UK_8otijpt6ymklbsawbwhed52q6">
-      <UnderlyingIndexName>UK_8otijpt6ymklbsawbwhed52q6</UnderlyingIndexName>
-    </key>
-    <column id="371" parent="304" name="huydangky">
-      <DataType>bit(1)|0s</DataType>
-      <Position>1</Position>
-    </column>
-    <column id="372" parent="304" name="masv">
-      <DataType>char(10)|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-      <CollationName>utf8mb3_general_ci</CollationName>
-    </column>
-    <column id="373" parent="304" name="maltc">
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
+    <column id="363" parent="303" name="diemgk">
+      <DataType>float|0s</DataType>
       <Position>3</Position>
     </column>
-    <column id="374" parent="304" name="diemcc">
-      <DataType>float|0s</DataType>
+    <column id="364" parent="303" name="huydangky">
+      <DataType>tinyint(1)|0s</DataType>
+      <DefaultExpression>0</DefaultExpression>
       <Position>4</Position>
     </column>
-    <column id="375" parent="304" name="diemck">
-      <DataType>float|0s</DataType>
+    <column id="365" parent="303" name="masv">
+      <DataType>char(10)|0s</DataType>
+      <NotNull>1</NotNull>
       <Position>5</Position>
+      <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="376" parent="304" name="diemgk">
-      <DataType>float|0s</DataType>
+    <column id="366" parent="303" name="maltc">
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
       <Position>6</Position>
     </column>
-    <foreign-key id="377" parent="304" name="FKjkw7ggrtw9epi2klfq297b7h3">
+    <foreign-key id="367" parent="303" name="FKjkw7ggrtw9epi2klfq297b7h3">
       <ColNames>masv</ColNames>
       <RefColNames>manguoidung</RefColNames>
       <RefTableName>nguoidung</RefTableName>
     </foreign-key>
-    <foreign-key id="378" parent="304" name="FKn6r0e9lyn812muw0jd24ofufv">
+    <foreign-key id="368" parent="303" name="FKn6r0e9lyn812muw0jd24ofufv">
       <ColNames>maltc</ColNames>
       <RefColNames>maltc</RefColNames>
       <RefTableName>loptinchi</RefTableName>
     </foreign-key>
-    <index id="379" parent="304" name="PRIMARY">
+    <index id="369" parent="303" name="PRIMARY">
       <ColNames>maltc
 masv</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="380" parent="304" name="FKjkw7ggrtw9epi2klfq297b7h3">
+    <index id="370" parent="303" name="FKjkw7ggrtw9epi2klfq297b7h3">
       <ColNames>masv</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="381" parent="304" name="PRIMARY">
+    <key id="371" parent="303" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="382" parent="305" name="madethi">
-      <AutoIncrement>10</AutoIncrement>
+    <column id="372" parent="304" name="madethi">
+      <AutoIncrement>18</AutoIncrement>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="383" parent="305" name="taoluc">
+    <column id="373" parent="304" name="taoluc">
       <DataType>datetime(6)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <column id="384" parent="305" name="tendethi">
+    <column id="374" parent="304" name="tendethi">
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>3</Position>
     </column>
-    <column id="385" parent="305" name="capnhatluc">
+    <column id="375" parent="304" name="capnhatluc">
       <DataType>datetime(6)|0s</DataType>
       <Position>4</Position>
     </column>
-    <column id="386" parent="305" name="macathi">
-      <DataType>int|0s</DataType>
+    <column id="376" parent="304" name="dasudung">
+      <DataType>tinyint(1)|0s</DataType>
+      <DefaultExpression>0</DefaultExpression>
       <Position>5</Position>
     </column>
-    <column id="387" parent="305" name="mamh">
-      <DataType>char(10)|0s</DataType>
+    <column id="377" parent="304" name="macathi">
+      <DataType>int|0s</DataType>
       <Position>6</Position>
-      <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="388" parent="305" name="magv">
-      <DataType>char(10)|0s</DataType>
+    <column id="378" parent="304" name="mamh">
+      <DataType>char(12)|0s</DataType>
       <Position>7</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <foreign-key id="389" parent="305" name="FK68g6jhvq6yjo5luw47xun2fk5">
+    <column id="379" parent="304" name="magv">
+      <DataType>char(10)|0s</DataType>
+      <Position>8</Position>
+      <CollationName>utf8mb3_general_ci</CollationName>
+    </column>
+    <column id="380" parent="304" name="consudung">
+      <DataType>tinyint(1)|0s</DataType>
+      <DefaultExpression>1</DefaultExpression>
+      <Position>9</Position>
+    </column>
+    <foreign-key id="381" parent="304" name="FK68g6jhvq6yjo5luw47xun2fk5">
       <ColNames>macathi</ColNames>
       <RefColNames>macathi</RefColNames>
       <RefTableName>cathi</RefTableName>
     </foreign-key>
-    <foreign-key id="390" parent="305" name="FKc4e109jljbq6n5q790vi0coa0">
+    <foreign-key id="382" parent="304" name="FKc4e109jljbq6n5q790vi0coa0">
       <ColNames>mamh</ColNames>
       <RefColNames>mamh</RefColNames>
       <RefTableName>monhoc</RefTableName>
     </foreign-key>
-    <foreign-key id="391" parent="305" name="FKofs796ml9lb4ebnijci7bu751">
+    <foreign-key id="383" parent="304" name="FKofs796ml9lb4ebnijci7bu751">
       <ColNames>magv</ColNames>
       <RefColNames>manguoidung</RefColNames>
       <RefTableName>nguoidung</RefTableName>
     </foreign-key>
-    <index id="392" parent="305" name="PRIMARY">
+    <index id="384" parent="304" name="PRIMARY">
       <ColNames>madethi</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="393" parent="305" name="UK_f2toy0yqbsela3o2cgy4t47oa">
+    <index id="385" parent="304" name="UK_f2toy0yqbsela3o2cgy4t47oa">
       <ColNames>tendethi</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="394" parent="305" name="FK68g6jhvq6yjo5luw47xun2fk5">
+    <index id="386" parent="304" name="FK68g6jhvq6yjo5luw47xun2fk5">
       <ColNames>macathi</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="395" parent="305" name="FKc4e109jljbq6n5q790vi0coa0">
+    <index id="387" parent="304" name="FKc4e109jljbq6n5q790vi0coa0">
       <ColNames>mamh</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="396" parent="305" name="FKofs796ml9lb4ebnijci7bu751">
+    <index id="388" parent="304" name="FKofs796ml9lb4ebnijci7bu751">
       <ColNames>magv</ColNames>
+      <Type>btree</Type>
+    </index>
+    <key id="389" parent="304" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <key id="390" parent="304" name="UK_f2toy0yqbsela3o2cgy4t47oa">
+      <UnderlyingIndexName>UK_f2toy0yqbsela3o2cgy4t47oa</UnderlyingIndexName>
+    </key>
+    <column id="391" parent="305" name="madethi">
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+    </column>
+    <column id="392" parent="305" name="macauhoi">
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+    </column>
+    <foreign-key id="393" parent="305" name="FKoux7mtifundfv6k60545bmkx0">
+      <ColNames>madethi</ColNames>
+      <RefColNames>madethi</RefColNames>
+      <RefTableName>dethi</RefTableName>
+    </foreign-key>
+    <foreign-key id="394" parent="305" name="FKboufsoism44h28w03vvuayk8u">
+      <ColNames>macauhoi</ColNames>
+      <RefColNames>macauhoi</RefColNames>
+      <RefTableName>cauhoi</RefTableName>
+    </foreign-key>
+    <index id="395" parent="305" name="PRIMARY">
+      <ColNames>madethi
+macauhoi</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="396" parent="305" name="FKboufsoism44h28w03vvuayk8u">
+      <ColNames>macauhoi</ColNames>
       <Type>btree</Type>
     </index>
     <key id="397" parent="305" name="PRIMARY">
@@ -1570,97 +1577,61 @@ masv</ColNames>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="398" parent="305" name="UK_f2toy0yqbsela3o2cgy4t47oa">
-      <UnderlyingIndexName>UK_f2toy0yqbsela3o2cgy4t47oa</UnderlyingIndexName>
-    </key>
-    <column id="399" parent="306" name="madethi">
+    <column id="398" parent="306" name="maltc">
+      <AutoIncrement>15</AutoIncrement>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="400" parent="306" name="macauhoi">
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-    </column>
-    <foreign-key id="401" parent="306" name="FKoux7mtifundfv6k60545bmkx0">
-      <ColNames>madethi</ColNames>
-      <RefColNames>madethi</RefColNames>
-      <RefTableName>dethi</RefTableName>
-    </foreign-key>
-    <foreign-key id="402" parent="306" name="FKboufsoism44h28w03vvuayk8u">
-      <ColNames>macauhoi</ColNames>
-      <RefColNames>macauhoi</RefColNames>
-      <RefTableName>cauhoi</RefTableName>
-    </foreign-key>
-    <index id="403" parent="306" name="PRIMARY">
-      <ColNames>madethi
-macauhoi</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="404" parent="306" name="FKboufsoism44h28w03vvuayk8u">
-      <ColNames>macauhoi</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="405" parent="306" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <column id="406" parent="307" name="maltc">
-      <AutoIncrement>25</AutoIncrement>
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-    </column>
-    <column id="407" parent="307" name="nhom">
+    <column id="399" parent="306" name="nhom">
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <column id="408" parent="307" name="huylop">
-      <DataType>bit(1)|0s</DataType>
-      <Position>3</Position>
-    </column>
-    <column id="409" parent="307" name="nienkhoa">
+    <column id="400" parent="306" name="nienkhoa">
       <DataType>char(9)|0s</DataType>
       <NotNull>1</NotNull>
-      <Position>4</Position>
+      <Position>3</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="410" parent="307" name="hocky">
+    <column id="401" parent="306" name="hocky">
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
+      <Position>4</Position>
+    </column>
+    <column id="402" parent="306" name="huylop">
+      <DataType>tinyint(1)|0s</DataType>
+      <DefaultExpression>0</DefaultExpression>
       <Position>5</Position>
     </column>
-    <column id="411" parent="307" name="mamh">
+    <column id="403" parent="306" name="mamh">
       <DataType>char(12)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>6</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="412" parent="307" name="magv">
+    <column id="404" parent="306" name="magv">
       <DataType>char(10)|0s</DataType>
+      <NotNull>1</NotNull>
       <Position>7</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <foreign-key id="413" parent="307" name="FK37xe7n8agfnal22rw5ftil1i1">
+    <foreign-key id="405" parent="306" name="FK37xe7n8agfnal22rw5ftil1i1">
       <ColNames>mamh</ColNames>
       <RefColNames>mamh</RefColNames>
       <RefTableName>monhoc</RefTableName>
     </foreign-key>
-    <foreign-key id="414" parent="307" name="FKrrn4s6ae4pbntq2fd4x7lje84">
+    <foreign-key id="406" parent="306" name="FKrrn4s6ae4pbntq2fd4x7lje84">
       <ColNames>magv</ColNames>
       <RefColNames>manguoidung</RefColNames>
       <RefTableName>nguoidung</RefTableName>
     </foreign-key>
-    <index id="415" parent="307" name="PRIMARY">
+    <index id="407" parent="306" name="PRIMARY">
       <ColNames>maltc</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="416" parent="307" name="UKcl8y4b2r43bhixc27bevf9j29">
+    <index id="408" parent="306" name="UKcl8y4b2r43bhixc27bevf9j29">
       <ColNames>nienkhoa
 hocky
 mamh
@@ -1668,259 +1639,265 @@ nhom</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="417" parent="307" name="FK37xe7n8agfnal22rw5ftil1i1">
+    <index id="409" parent="306" name="FK37xe7n8agfnal22rw5ftil1i1">
       <ColNames>mamh</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="418" parent="307" name="FKrrn4s6ae4pbntq2fd4x7lje84">
+    <index id="410" parent="306" name="FKrrn4s6ae4pbntq2fd4x7lje84">
       <ColNames>magv</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="419" parent="307" name="PRIMARY">
+    <key id="411" parent="306" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="420" parent="307" name="UKcl8y4b2r43bhixc27bevf9j29">
+    <key id="412" parent="306" name="UKcl8y4b2r43bhixc27bevf9j29">
       <UnderlyingIndexName>UKcl8y4b2r43bhixc27bevf9j29</UnderlyingIndexName>
     </key>
-    <column id="421" parent="308" name="id">
-      <AutoIncrement>468</AutoIncrement>
+    <column id="413" parent="307" name="id">
+      <AutoIncrement>171</AutoIncrement>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="422" parent="308" name="noidung">
+    <column id="414" parent="307" name="noidung">
       <DataType>text|0s</DataType>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <column id="423" parent="308" name="macauhoi">
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
+    <column id="415" parent="307" name="ladapan">
+      <DataType>tinyint(1)|0s</DataType>
+      <DefaultExpression>0</DefaultExpression>
       <Position>3</Position>
     </column>
-    <column id="424" parent="308" name="ladapan">
-      <DataType>bit(1)|0s</DataType>
+    <column id="416" parent="307" name="thutu">
+      <DataType>char(3)|0s</DataType>
       <Position>4</Position>
+      <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <foreign-key id="425" parent="308" name="FK1l11ljg8kbtypcfrwdwn1n018">
+    <column id="417" parent="307" name="macauhoi">
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+      <Position>5</Position>
+    </column>
+    <foreign-key id="418" parent="307" name="FK1l11ljg8kbtypcfrwdwn1n018">
       <ColNames>macauhoi</ColNames>
       <RefColNames>macauhoi</RefColNames>
       <RefTableName>cauhoi</RefTableName>
     </foreign-key>
-    <index id="426" parent="308" name="PRIMARY">
+    <index id="419" parent="307" name="PRIMARY">
       <ColNames>id</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="427" parent="308" name="FK1l11ljg8kbtypcfrwdwn1n018">
+    <index id="420" parent="307" name="FK1l11ljg8kbtypcfrwdwn1n018">
       <ColNames>macauhoi</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="428" parent="308" name="PRIMARY">
+    <key id="421" parent="307" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="429" parent="309" name="mamh">
+    <column id="422" parent="308" name="mamh">
       <DataType>char(12)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="430" parent="309" name="tenmh">
+    <column id="423" parent="308" name="tenmh">
       <DataType>varchar(50)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>2</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="431" parent="309" name="sotiet_th">
+    <column id="424" parent="308" name="sotiet_th">
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <Position>3</Position>
     </column>
-    <column id="432" parent="309" name="sotiet_lt">
+    <column id="425" parent="308" name="sotiet_lt">
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <Position>4</Position>
     </column>
-    <index id="433" parent="309" name="PRIMARY">
+    <index id="426" parent="308" name="PRIMARY">
       <ColNames>mamh</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="434" parent="309" name="PRIMARY">
+    <key id="427" parent="308" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="435" parent="310" name="manguoidung">
+    <column id="428" parent="309" name="manguoidung">
       <DataType>char(10)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="436" parent="310" name="diachi">
+    <column id="429" parent="309" name="diachi">
       <DataType>varchar(255)|0s</DataType>
       <Position>2</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="437" parent="310" name="anhdaidien">
+    <column id="430" parent="309" name="anhdaidien">
       <DataType>varchar(255)|0s</DataType>
       <Position>3</Position>
     </column>
-    <column id="438" parent="310" name="ngaysinh">
+    <column id="431" parent="309" name="ngaysinh">
       <DataType>date|0s</DataType>
       <NotNull>1</NotNull>
       <Position>4</Position>
     </column>
-    <column id="439" parent="310" name="email">
+    <column id="432" parent="309" name="email">
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>5</Position>
     </column>
-    <column id="440" parent="310" name="xacthucdiachiemail">
-      <DataType>tinyint(1)|0s</DataType>
-      <DefaultExpression>0</DefaultExpression>
+    <column id="433" parent="309" name="ten">
+      <DataType>varchar(100)|0s</DataType>
+      <NotNull>1</NotNull>
       <Position>6</Position>
+      <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="441" parent="310" name="ten">
+    <column id="434" parent="309" name="ho">
       <DataType>varchar(100)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>7</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="442" parent="310" name="ho">
-      <DataType>varchar(100)|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>8</Position>
-      <CollationName>utf8mb3_general_ci</CollationName>
-    </column>
-    <column id="443" parent="310" name="matkhau">
+    <column id="435" parent="309" name="matkhau">
       <DataType>varchar(255)|0s</DataType>
       <NotNull>1</NotNull>
+      <Position>8</Position>
+    </column>
+    <column id="436" parent="309" name="madoimatkhau">
+      <DataType>int|0s</DataType>
       <Position>9</Position>
     </column>
-    <column id="444" parent="310" name="madoimatkhau">
-      <DataType>int|0s</DataType>
+    <column id="437" parent="309" name="thoihandoimatkhau">
+      <DataType>datetime(6)|0s</DataType>
       <Position>10</Position>
     </column>
-    <column id="445" parent="310" name="thoihandoimatkhau">
-      <DataType>datetime(6)|0s</DataType>
-      <Position>11</Position>
-    </column>
-    <column id="446" parent="310" name="gioitinh">
+    <column id="438" parent="309" name="gioitinh">
       <DataType>varchar(10)|0s</DataType>
       <NotNull>1</NotNull>
-      <Position>12</Position>
+      <Position>11</Position>
     </column>
-    <column id="447" parent="310" name="hoatdong">
+    <column id="439" parent="309" name="hoatdong">
       <DataType>tinyint(1)|0s</DataType>
       <DefaultExpression>0</DefaultExpression>
-      <Position>13</Position>
+      <Position>12</Position>
     </column>
-    <index id="448" parent="310" name="PRIMARY">
+    <index id="440" parent="309" name="PRIMARY">
       <ColNames>manguoidung</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="449" parent="310" name="UK_fypgm4q7hwro4gipdmwew5f33">
+    <index id="441" parent="309" name="UK_fypgm4q7hwro4gipdmwew5f33">
       <ColNames>email</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
+    </index>
+    <key id="442" parent="309" name="PRIMARY">
+      <NameSurrogate>1</NameSurrogate>
+      <Primary>1</Primary>
+      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
+    </key>
+    <key id="443" parent="309" name="UK_fypgm4q7hwro4gipdmwew5f33">
+      <UnderlyingIndexName>UK_fypgm4q7hwro4gipdmwew5f33</UnderlyingIndexName>
+    </key>
+    <column id="444" parent="310" name="manguoidung">
+      <DataType>char(10)|0s</DataType>
+      <NotNull>1</NotNull>
+      <Position>1</Position>
+      <CollationName>utf8mb3_general_ci</CollationName>
+    </column>
+    <column id="445" parent="310" name="mavaitro">
+      <DataType>int|0s</DataType>
+      <NotNull>1</NotNull>
+      <Position>2</Position>
+    </column>
+    <foreign-key id="446" parent="310" name="FKr438p0h6cpafav619kji4a2dr">
+      <ColNames>manguoidung</ColNames>
+      <RefColNames>manguoidung</RefColNames>
+      <RefTableName>nguoidung</RefTableName>
+    </foreign-key>
+    <foreign-key id="447" parent="310" name="FKmw421utubwrewgt2hu3vnq7eg">
+      <ColNames>mavaitro</ColNames>
+      <RefColNames>mavaitro</RefColNames>
+      <RefTableName>vaitro</RefTableName>
+    </foreign-key>
+    <index id="448" parent="310" name="PRIMARY">
+      <ColNames>manguoidung
+mavaitro</ColNames>
+      <Type>btree</Type>
+      <Unique>1</Unique>
+    </index>
+    <index id="449" parent="310" name="FKmw421utubwrewgt2hu3vnq7eg">
+      <ColNames>mavaitro</ColNames>
+      <Type>btree</Type>
     </index>
     <key id="450" parent="310" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="451" parent="310" name="UK_fypgm4q7hwro4gipdmwew5f33">
-      <UnderlyingIndexName>UK_fypgm4q7hwro4gipdmwew5f33</UnderlyingIndexName>
-    </key>
-    <column id="452" parent="311" name="manguoidung">
-      <DataType>char(10)|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>1</Position>
-      <CollationName>utf8mb3_general_ci</CollationName>
-    </column>
-    <column id="453" parent="311" name="mavaitro">
-      <DataType>int|0s</DataType>
-      <NotNull>1</NotNull>
-      <Position>2</Position>
-    </column>
-    <foreign-key id="454" parent="311" name="FKr438p0h6cpafav619kji4a2dr">
-      <ColNames>manguoidung</ColNames>
-      <RefColNames>manguoidung</RefColNames>
-      <RefTableName>nguoidung</RefTableName>
-    </foreign-key>
-    <foreign-key id="455" parent="311" name="FKmw421utubwrewgt2hu3vnq7eg">
-      <ColNames>mavaitro</ColNames>
-      <RefColNames>mavaitro</RefColNames>
-      <RefTableName>vaitro</RefTableName>
-    </foreign-key>
-    <index id="456" parent="311" name="PRIMARY">
-      <ColNames>manguoidung
-mavaitro</ColNames>
-      <Type>btree</Type>
-      <Unique>1</Unique>
-    </index>
-    <index id="457" parent="311" name="FKmw421utubwrewgt2hu3vnq7eg">
-      <ColNames>mavaitro</ColNames>
-      <Type>btree</Type>
-    </index>
-    <key id="458" parent="311" name="PRIMARY">
-      <NameSurrogate>1</NameSurrogate>
-      <Primary>1</Primary>
-      <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
-    </key>
-    <column id="459" parent="312" name="lanthi">
+    <column id="451" parent="311" name="lanthi">
       <DataType>smallint|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="460" parent="312" name="diem">
+    <column id="452" parent="311" name="diem">
       <DataType>float|0s</DataType>
       <Position>2</Position>
     </column>
-    <column id="461" parent="312" name="macathi">
+    <column id="453" parent="311" name="macathi">
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>3</Position>
     </column>
-    <column id="462" parent="312" name="maltc">
+    <column id="454" parent="311" name="maltc">
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>4</Position>
     </column>
-    <column id="463" parent="312" name="masv">
+    <column id="455" parent="311" name="masv">
       <DataType>char(10)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>5</Position>
       <CollationName>utf8mb3_general_ci</CollationName>
     </column>
-    <column id="464" parent="312" name="madethi">
+    <column id="456" parent="311" name="madethi">
       <DataType>int|0s</DataType>
       <Position>6</Position>
     </column>
-    <foreign-key id="465" parent="312" name="FKkoeay0ww0v8ce3l47lcejk4fp">
+    <column id="457" parent="311" name="dathi">
+      <DataType>tinyint(1)|0s</DataType>
+      <DefaultExpression>0</DefaultExpression>
+      <Position>7</Position>
+    </column>
+    <foreign-key id="458" parent="311" name="FKkoeay0ww0v8ce3l47lcejk4fp">
       <ColNames>macathi</ColNames>
       <RefColNames>macathi</RefColNames>
       <RefTableName>cathi</RefTableName>
     </foreign-key>
-    <foreign-key id="466" parent="312" name="FK560gut6o69cfoh15uargmrsla">
+    <foreign-key id="459" parent="311" name="FK560gut6o69cfoh15uargmrsla">
       <ColNames>maltc
 masv</ColNames>
       <RefColNames>maltc
 masv</RefColNames>
       <RefTableName>dangky</RefTableName>
     </foreign-key>
-    <foreign-key id="467" parent="312" name="FKihvcu43u9b8xtse44v8xlcqyb">
+    <foreign-key id="460" parent="311" name="FKihvcu43u9b8xtse44v8xlcqyb">
       <ColNames>madethi</ColNames>
       <RefColNames>madethi</RefColNames>
       <RefTableName>dethi</RefTableName>
     </foreign-key>
-    <index id="468" parent="312" name="PRIMARY">
+    <index id="461" parent="311" name="PRIMARY">
       <ColNames>macathi
 maltc
 masv
@@ -1928,47 +1905,47 @@ lanthi</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="469" parent="312" name="FK560gut6o69cfoh15uargmrsla">
+    <index id="462" parent="311" name="FK560gut6o69cfoh15uargmrsla">
       <ColNames>maltc
 masv</ColNames>
       <Type>btree</Type>
     </index>
-    <index id="470" parent="312" name="FKihvcu43u9b8xtse44v8xlcqyb">
+    <index id="463" parent="311" name="FKihvcu43u9b8xtse44v8xlcqyb">
       <ColNames>madethi</ColNames>
       <Type>btree</Type>
     </index>
-    <key id="471" parent="312" name="PRIMARY">
+    <key id="464" parent="311" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <column id="472" parent="313" name="mavaitro">
+    <column id="465" parent="312" name="mavaitro">
       <AutoIncrement>5</AutoIncrement>
       <DataType>int|0s</DataType>
       <NotNull>1</NotNull>
       <Position>1</Position>
     </column>
-    <column id="473" parent="313" name="tenvaitro">
+    <column id="466" parent="312" name="tenvaitro">
       <DataType>varchar(40)|0s</DataType>
       <NotNull>1</NotNull>
       <Position>2</Position>
     </column>
-    <index id="474" parent="313" name="PRIMARY">
+    <index id="467" parent="312" name="PRIMARY">
       <ColNames>mavaitro</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <index id="475" parent="313" name="UK_90akmj7x6di5l22dpyy52uyfa">
+    <index id="468" parent="312" name="UK_90akmj7x6di5l22dpyy52uyfa">
       <ColNames>tenvaitro</ColNames>
       <Type>btree</Type>
       <Unique>1</Unique>
     </index>
-    <key id="476" parent="313" name="PRIMARY">
+    <key id="469" parent="312" name="PRIMARY">
       <NameSurrogate>1</NameSurrogate>
       <Primary>1</Primary>
       <UnderlyingIndexName>PRIMARY</UnderlyingIndexName>
     </key>
-    <key id="477" parent="313" name="UK_90akmj7x6di5l22dpyy52uyfa">
+    <key id="470" parent="312" name="UK_90akmj7x6di5l22dpyy52uyfa">
       <UnderlyingIndexName>UK_90akmj7x6di5l22dpyy52uyfa</UnderlyingIndexName>
     </key>
   </database-model>

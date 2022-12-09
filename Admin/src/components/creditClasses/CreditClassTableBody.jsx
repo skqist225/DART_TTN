@@ -32,7 +32,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
 
     const dispatch = useDispatch(0);
 
-    const { userRoles } = useSelector(persistUserState);
+    const { user } = useSelector(persistUserState);
 
     const {
         filterObject,
@@ -163,7 +163,6 @@ function CreditClassTableBody({ rows, setIsEdit }) {
             {rows &&
                 rows.length &&
                 rows.map((row, index) => {
-                    console.log(row);
                     return (
                         <tr
                             className={`${tailwindCss.tr} ${
@@ -233,7 +232,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                     </Tooltip>
                                     <TableModalViewer
                                         modalId={`examsViewer${row.id}`}
-                                        modalLabel='Danh sách ca thi'
+                                        modalLabel='DANH SÁCH CA THI'
                                         ModalBody={
                                             <ExamList
                                                 exams={row.exams}
@@ -250,7 +249,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                         }
                                     />
                                 </div>
-                                {userRoles.includes("Quản trị viên") && (
+                                {user.roles.map(({ name }) => name).includes("Quản trị viên") && (
                                     <>
                                         <div className='mr-2'>
                                             <MyButton

@@ -19,6 +19,8 @@ import {
 } from "./pages";
 import { useSelector } from "react-redux";
 import { persistUserState } from "./features/persistUserSlice";
+import ViewExamDetailPage from "./pages/takeTests/ViewExamDetailPage";
+import ViewOldExamsPage from "./pages/exams/ViewOldExamsPage";
 
 function App() {
     const location = useLocation();
@@ -29,16 +31,22 @@ function App() {
         document.querySelector("html").style.scrollBehavior = "";
     }, [location.pathname]); // triggered on route change
 
-    const { userRoles } = useSelector(persistUserState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = (user && user.roles.map(({ name }) => name)) || [];
+
+    let HomePage = null;
+    if (userRoles.includes("Quản trị viên")) {
+        HomePage = <Dashboard />;
+    } else if (userRoles.includes("Giảng viên")) {
+        HomePage = <QuestionsPage />;
+    } else {
+        HomePage = <RanksPage />;
+    }
 
     return (
         <>
             <Routes>
-                {userRoles.includes("Giảng viên", "Quản trị viên") ? (
-                    <Route exact path='/' element={<Dashboard />} />
-                ) : (
-                    <Route exact path='/' element={<RanksPage />} />
-                )}
+                <Route path='/' element={HomePage} />
                 <Route path='/statistics' element={<Dashboard />} />
                 <Route path='/auth/login' element={<LoginPage />} />
                 <Route path='/subjects' element={<SubjectsPage />} />
@@ -52,6 +60,10 @@ function App() {
                 <Route path='/takeTest' element={<TakeTestPage />} />
                 <Route path='/ranks' element={<RanksPage />} />
                 <Route path='/viewExams' element={<ExamsPage />} />
+                <Route path='/viewOldExams' element={<ViewOldExamsPage />} />
+                <Route path='/viewExamsDetail'>
+                    <Route path=':examId' element={<ViewExamDetailPage />} />
+                </Route>
             </Routes>
         </>
     );

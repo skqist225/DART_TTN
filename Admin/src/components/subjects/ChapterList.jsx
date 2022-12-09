@@ -38,7 +38,7 @@ function ChapterList({ chapters }) {
                                     />
                                     <TableModalViewer
                                         modalId={`questionsViewer${id}`}
-                                        modalLabel={`Danh sách câu hỏi của chương ${name}(${questions.length})`}
+                                        modalLabel={`Danh sách câu hỏi (${questions.length})`}
                                         ModalBody={
                                             <QuestionList questions={questions} chapterListPage />
                                         }

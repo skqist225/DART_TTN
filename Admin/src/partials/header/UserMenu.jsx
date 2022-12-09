@@ -1,18 +1,23 @@
 import React, { useState, useRef, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import Transition from "../../utils/Transition";
 
 import { authState } from "../../features/authSlice";
 import { useSelector, useDispatch } from "react-redux";
 import { getImage } from "../../helpers";
 import { Button } from "@mui/material";
-import { persistor } from "../../main";
-import { persistUserState } from "../../features/persistUserSlice";
+import { persistUserState, setUser } from "../../features/persistUserSlice";
+import Transition from "../../utils/Transition";
+import { useNavigate } from "react-router-dom";
+import { removeUserFromLocalStorage } from "../../utils/common";
 
 function UserMenu() {
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const { user } = useSelector(persistUserState);
+    const {
+        logoutAction: { successMessage, errorMessage },
+    } = useSelector(authState);
 
     const trigger = useRef(null);
     const dropdown = useRef(null);
@@ -41,6 +46,12 @@ function UserMenu() {
         document.addEventListener("keydown", keyHandler);
         return () => document.removeEventListener("keydown", keyHandler);
     });
+
+    useEffect(() => {
+        if (successMessage) {
+            navigate("/login");
+        }
+    }, [successMessage]);
 
     return (
         <>
@@ -91,7 +102,13 @@ function UserMenu() {
                     >
                         <div className='pt-0.5 pb-2 px-3 mb-1 border-b border-slate-200'>
                             <div className='font-medium text-slate-800'></div>
-                            <div className='text-xs text-slate-500 italic'>Administrator</div>
+                            <div className='text-xs text-slate-500 italic'>
+                                {user.roles.map(({ name }) => (
+                                    <>
+                                        <li>{name}</li>
+                                    </>
+                                ))}
+                            </div>
                         </div>
                         <ul>
                             <li>
@@ -99,7 +116,7 @@ function UserMenu() {
                                     className='font-medium text-sm text-indigo-500 hover:text-indigo-600 flex items-center py-1 px-3'
                                     onClick={() => setDropdownOpen(!dropdownOpen)}
                                 >
-                                    Settings
+                                    Xem thông tin
                                 </Button>
                             </li>
                             <li>
@@ -108,12 +125,12 @@ function UserMenu() {
                                     onClick={() => {
                                         setDropdownOpen(!dropdownOpen);
                                         if (user) {
-                                            persistor.pause();
-                                            persistor.flush().then(() => {
-                                                return persistor.purge();
-                                            });
-                                        } else {
                                             window.location.href = "/auth/login";
+                                            removeUserFromLocalStorage();
+                                            dispatch(setUser(null));
+                                            dispatch(resetUserRoles());
+                                        } else {
+                                            window.location.href = "/login";
                                         }
                                     }}
                                 >

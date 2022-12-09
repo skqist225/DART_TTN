@@ -70,6 +70,10 @@ public class CreditClassService {
         return creditClassRepository.findAllActiveCreditClass();
     }
 
+    public List<CreditClass> findAllActiveCreditClassAndStudent(String studentId) {
+        return creditClassRepository.findAllActiveCreditClassAndStudent(studentId);
+    }
+
     public CreditClass findByUniqueKey(String schoolYear, double semester, String subjectId,
                                        int group) throws NotFoundException {
         CreditClass creditClass = creditClassRepository.findByUniqueKey(schoolYear, semester,

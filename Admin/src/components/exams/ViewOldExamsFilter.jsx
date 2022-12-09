@@ -7,7 +7,7 @@ import { persistUserState } from "../../features/persistUserSlice";
 import Select from "../utils/userInputs/Select";
 import { examTypes } from "./ExamModalBody";
 
-function ExamFilter() {
+function ViewOldExamsFilter() {
     const dispatch = useDispatch();
     const { creditClasses } = useSelector(creditClassState);
     const { filterObject } = useSelector(examState);
@@ -21,13 +21,7 @@ function ExamFilter() {
     };
 
     const handleExamTypesChange = ({ target: { value } }) => {
-        if (userRoles.includes("Sinh viên")) {
-            dispatch(
-                fetchAllExams({ ...filterObject, student: user.id, examType: value, taken: false })
-            );
-        } else {
-            dispatch(fetchAllExams({ ...filterObject, examType: value }));
-        }
+        dispatch(fetchAllExams({ ...filterObject, student: user.id, examType: value }));
     };
 
     return (
@@ -41,23 +35,21 @@ function ExamFilter() {
         >
             <div className='mr-2 w-full flex items-center justify-start'>
                 {!userRoles.includes("Sinh viên") ? (
-                    <div className='flex items-center'>
-                        <div className='mr-5'>
-                            <Select
-                                label='lớp tín chỉ'
-                                name='creditClassFilter'
-                                register={register}
-                                options={creditClasses.map(
-                                    ({ id, schoolYear, semester, subjectName, group }) => ({
-                                        title: `${schoolYear} ${semester} ${subjectName} ${group}`,
-                                        value: id,
-                                    })
-                                )}
-                                onChangeHandler={handleCreditClassChange}
-                                hiddenOption
-                                width={"w-80"}
-                            />
-                        </div>
+                    <>
+                        <Select
+                            label='lớp tín chỉ'
+                            name='creditClassFilter'
+                            register={register}
+                            options={creditClasses.map(
+                                ({ id, schoolYear, semester, subjectName, group }) => ({
+                                    title: `${schoolYear} ${semester} ${subjectName} ${group}`,
+                                    value: id,
+                                })
+                            )}
+                            onChangeHandler={handleCreditClassChange}
+                            hiddenOption
+                            width={"w-80"}
+                        />
                         <div>
                             <Select
                                 label='loại kỳ thi'
@@ -69,7 +61,7 @@ function ExamFilter() {
                                 width={"w-52"}
                             />
                         </div>
-                    </div>
+                    </>
                 ) : (
                     <div>
                         <Select
@@ -128,4 +120,4 @@ function ExamFilter() {
     );
 }
 
-export default ExamFilter;
+export default ViewOldExamsFilter;

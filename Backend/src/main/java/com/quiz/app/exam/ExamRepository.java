@@ -32,7 +32,9 @@ public interface ExamRepository extends CrudRepository<Exam, Integer> {
             ".maltc group by ltc.maltc) temp left join monhoc mh on mh.mamh = temp.mamh", nativeQuery = true)
     List<CountExamByCreditClassDTO> countExamByCreditClass();
 
-    @Query(value = "select ct.* from (select * from thi t where t.masv = :studentId) temp " +
+    @Query(value = "select ct.* from (select * from thi t where t.masv = :studentId and t.dathi " +
+            "= 0) temp" +
+            " " +
             "left join cathi ct on ct.macathi = temp.macathi where ct.dahuy = 0 and ct.dathi " +
             " = 0 order by ct.macathi desc",
             nativeQuery =

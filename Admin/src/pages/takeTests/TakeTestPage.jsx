@@ -10,7 +10,7 @@ import { examState, fetchAllExams } from "../../features/examSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import { Answer, Input, Select } from "../../components";
 import { useForm } from "react-hook-form";
-import { Button, Card, Progress } from "flowbite-react";
+import { Button, Card } from "flowbite-react";
 import { getQuestions, questionState } from "../../features/questionSlice";
 import { lookupIndex } from "../../components/questions/QuestionModalBody";
 import { tailwindCss } from "../../tailwind";
@@ -18,6 +18,15 @@ import MyDrawer from "../../components/takeTests/MyDrawer";
 import { Box, Divider } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
+import { callToast } from "../../helpers";
+import Toast from "../../components/notify/Toast";
+
+const noticePeriodMappings = {
+    1: "7:00-9:00",
+    3: "9:00-11:00",
+    5: "13:00-15:00",
+    7: "15:00-17:00",
+};
 
 const renderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -32,6 +41,18 @@ const renderer = ({ hours, minutes, seconds, completed }) => {
 };
 
 ChartJS.register(ArcElement, Tooltip, Legend);
+
+export function isAnswerRight(selectedAnswer, finalAnswer, type) {
+    if (!selectedAnswer) {
+        return false;
+    } else {
+        if (selectedAnswer.toString().toLowerCase() === finalAnswer.toString().toLowerCase()) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+}
 
 const now = Date.now();
 function LinearProgressWithLabel(props) {
@@ -63,6 +84,7 @@ function TakeTestPage() {
     const { exams } = useSelector(examState);
     const { test } = useSelector(testState);
     const { testedQuestions } = useSelector(questionState);
+    const [selectedExam, setSelectedExam] = useState(null);
 
     const dispatch = useDispatch();
     const questionPerPage = 4;
@@ -115,7 +137,6 @@ function TakeTestPage() {
         labels: ["Sai", "Đúng"],
         datasets: [
             {
-                label: "# of Votes",
                 data: [test.numberOfQuestions - test.numberOfRightAnswer, test.numberOfRightAnswer],
                 backgroundColor: ["rgb(255, 114, 114)", "rgb(0, 196, 140)"],
                 borderWidth: 1,
@@ -182,17 +203,17 @@ function TakeTestPage() {
         }
     }
 
-    function isAnswerRight(selectedAnswer, finalAnswer, type) {
-        if (!selectedAnswer) {
-            return false;
-        } else {
-            if (selectedAnswer.toString() === finalAnswer.toString()) {
-                return true;
-            } else {
-                return false;
-            }
+    useEffect(() => {
+        if (exams && exams.length) {
+            handleExamChange({
+                target: { value: exams[0].id },
+            });
         }
-    }
+    }, [exams]);
+
+    const handleExamChange = ({ target: { value } }) => {
+        setSelectedExam(exams.find(({ id }) => id.toString() === value.toString()));
+    };
 
     return (
         <div className='max-w-6xl m-auto'>
@@ -571,60 +592,141 @@ function TakeTestPage() {
                         </div>
                     )
                 ) : (
-                    <div
-                        style={{ width: "100vw", height: "100vh", margin: "auto", maxWidth: "80%" }}
-                        className='col-flex items-center justify-center'
-                    >
-                        {exams.length === 0 ? (
-                            <>{`Sinh viên ${user.fullName}(${user.id}) chưa có ca thi`}</>
-                        ) : (
-                            <div className='mb-5 w-full'>
-                                <Select
-                                    label={"Chọn ca thi"}
-                                    name='examSelected'
-                                    register={register}
-                                    options={exams.map(({ id, name }) => ({
-                                        title: name,
-                                        value: id,
-                                    }))}
-                                    // onChangeHandler={handleCreditClassChange}
-                                />
+                    <>
+                        <div
+                            style={{
+                                width: "100vw",
+                                height: "100vh",
+                                margin: "auto",
+                                maxWidth: "80%",
+                            }}
+                            className='col-flex items-center justify-center'
+                        >
+                            <div className='w-full mb-5'>
+                                <Card>
+                                    <div className='flex items-center justify-center w-2/4 m-auto'>
+                                        <div>
+                                            <div className='font-semibold'>
+                                                Họ và tên: {user.fullName}
+                                            </div>
+                                            <div className='font-semibold'>MSSV: {user.id}</div>
+                                        </div>
+                                    </div>
+                                </Card>
+                                {selectedExam && (
+                                    <Card>
+                                        <div className='flex items-center justify-center w-2/4 m-auto'>
+                                            <div>
+                                                <div>Môn học: {selectedExam.subjectName}</div>
+                                                <div>Loại thi: {selectedExam.type}</div>
+                                                <div>Ngày thi: {selectedExam.examDate}</div>
+                                                <div>
+                                                    Tiết báo danh: {selectedExam.noticePeriod} (
+                                                    {
+                                                        noticePeriodMappings[
+                                                            selectedExam.noticePeriod
+                                                        ].split("-")[0]
+                                                    }
+                                                    )
+                                                </div>
+                                                <div>
+                                                    Thời gian làm bài: {selectedExam.time} phút
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Card>
+                                )}
                             </div>
-                        )}
 
-                        <div className='flex items-center w-full mt-5'>
-                            <div className='mr-5 w-full'>
-                                <Button
-                                    onClick={() => {
-                                        window.location.href = "/";
-                                    }}
-                                >
-                                    Trở về trang chủ
-                                </Button>
-                            </div>
-
-                            {exams.length > 0 && (
-                                <div className='w-full'>
-                                    <Button
-                                        onClick={() => {
-                                            const examId = $("#examSelected").val();
-                                            dispatch(getQuestions({ exam: examId }));
-                                            setDoTest(true);
-                                            setExamId(parseInt(examId));
-                                            const exam = exams.find(
-                                                ({ id }) => id.toString() === examId.toString()
-                                            );
-                                            setTime(exam.time);
-                                        }}
-                                    >
-                                        Làm bài
-                                    </Button>
+                            {exams.length === 0 ? (
+                                <div>{`Chưa có ca thi`}</div>
+                            ) : (
+                                <div className='mb-5 w-full'>
+                                    <Select
+                                        label={"Chọn ca thi"}
+                                        name='examSelected'
+                                        register={register}
+                                        options={exams.map(({ id, name }) => ({
+                                            title: name,
+                                            value: id,
+                                        }))}
+                                        onChangeHandler={handleExamChange}
+                                    />
                                 </div>
                             )}
+
+                            <div className='flex items-center w-full mt-5'>
+                                <div className='mr-5 w-full'>
+                                    <Button
+                                        onClick={() => {
+                                            window.location.href = "/";
+                                        }}
+                                    >
+                                        Trở về trang chủ
+                                    </Button>
+                                </div>
+
+                                {exams.length > 0 && (
+                                    <div className='w-full'>
+                                        <Button
+                                            onClick={() => {
+                                                const examId = $("#examSelected").val();
+                                                const { examDate, noticePeriod, time } = exams.find(
+                                                    ({ id }) => id.toString() === examId.toString()
+                                                );
+
+                                                const todayTime = new Date().getTime();
+                                                const startTime = new Date(
+                                                    examDate +
+                                                        " " +
+                                                        noticePeriodMappings[noticePeriod].split(
+                                                            "-"
+                                                        )[0]
+                                                );
+                                                const endTime = new Date(
+                                                    examDate +
+                                                        " " +
+                                                        noticePeriodMappings[noticePeriod].split(
+                                                            "-"
+                                                        )[1]
+                                                );
+                                                const check = false;
+                                                if (check) {
+                                                    if (
+                                                        todayTime >= startTime &&
+                                                        todayTime <= endTime
+                                                    ) {
+                                                        dispatch(getQuestions({ exam: examId }));
+                                                        setDoTest(true);
+                                                        setExamId(parseInt(examId));
+
+                                                        setTime(time);
+                                                    } else {
+                                                        callToast(
+                                                            "warning",
+                                                            "Ngoài thời gian làm bài thi"
+                                                        );
+                                                        return;
+                                                    }
+                                                } else {
+                                                    dispatch(getQuestions({ exam: examId }));
+                                                    setDoTest(true);
+                                                    setExamId(parseInt(examId));
+
+                                                    setTime(time);
+                                                }
+                                            }}
+                                        >
+                                            Làm bài
+                                        </Button>
+                                    </div>
+                                )}
+                            </div>
                         </div>
-                    </div>
+                    </>
                 )}
             </div>
+            <Toast />
         </div>
     );
 }

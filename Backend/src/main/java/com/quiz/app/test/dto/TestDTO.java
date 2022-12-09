@@ -1,5 +1,6 @@
 package com.quiz.app.test.dto;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.quiz.entity.Question;
 import com.quiz.entity.Test;
 import lombok.AllArgsConstructor;
@@ -8,6 +9,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -25,6 +27,12 @@ public class TestDTO {
     private int numberOfRightAnswer;
     private float mark;
     private List<Question> questions;
+    private String subjectName;
+    private String examType;
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private LocalDate examDate;
+    private int noticePeriod;
+    private int examTime;
 
     public static TestDTO build(Test test, boolean includeQuestions) {
         TestDTO testDTO = TestDTO.builder()

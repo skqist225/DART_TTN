@@ -30,12 +30,14 @@ function TestFilter() {
                     name='subjectFilter'
                     register={register}
                     options={subjects.map(subject => ({
-                        title: subject.name,
+                        title: subject.id.includes("CLC")
+                            ? `${subject.name} CLC`
+                            : `${subject.name}`,
                         value: subject.id,
                     }))}
                     onChangeHandler={handleSubjectChange}
                     hiddenOption
-                    width={"w-52"}
+                    width={"w-60"}
                 />
             </div>
             <div>

@@ -45,8 +45,6 @@ function TableModal({
         addExam: { loading: addExamLoading },
     } = useSelector(examState);
 
-    console.log(modalLabel, registerLoading);
-
     const disabled =
         (modalLabel === "đề thi" && addTestDisabled) ||
         (modalLabel === "Thêm ca thi" && !addExamDisabled);

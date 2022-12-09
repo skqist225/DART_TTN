@@ -50,7 +50,8 @@ public class SubjectRestController {
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
-            @RequestParam(name = "haveChapter", required = false, defaultValue = "false") Boolean haveChapter
+            @RequestParam(name = "haveChapter", required = false, defaultValue = "false") Boolean haveChapter,
+            @RequestParam(name = "haveQuestion", required = false, defaultValue = "false") Boolean haveQuestion
     ) {
         SubjectsDTO subjectsDTO = new SubjectsDTO();
 
@@ -58,6 +59,9 @@ public class SubjectRestController {
             List<Subject> subjects = null;
             if (haveChapter) {
                 subjects = subjectService.findByHaveChapter();
+                if (haveQuestion) {
+                    subjects = subjectService.findByHaveQuestion();
+                }
             } else {
                 subjects = subjectService.findAll();
             }
@@ -144,23 +148,6 @@ public class SubjectRestController {
                 return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
             }
         }
-
-//        int i = 0;
-//        if (chapterDTOS.size() > 0) {
-//            for (ChapterDTO chapterDTO : chapterDTOS) {
-//                if (chapterService.isNameDuplicated(chapterDTO.getId(), chapterDTO.getName(), isEdit)) {
-//                    commonUtils.addError(String.format("chapters.%d.name", i), "Tên chương đã" +
-//                            " tồn" +
-//                            " " +
-//                            "tại");
-//                }
-//                i++;
-//            }
-//        }
-//
-//        if (commonUtils.getArrayNode().size() > 0) {
-//            return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
-//        }
 
         if (isEdit) {
             try {

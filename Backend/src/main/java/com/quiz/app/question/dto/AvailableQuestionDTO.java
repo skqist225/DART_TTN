@@ -10,6 +10,6 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class AvailableQuestionDTO {
-    private Integer filterIndex;
+    private String filterIndex;
     private Integer data;
 }

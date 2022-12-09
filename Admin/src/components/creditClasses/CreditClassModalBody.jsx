@@ -38,7 +38,6 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
 
     useEffect(() => {
         if (editedCreditClass) {
-            console.log(editedCreditClass);
             setValue("id", editedCreditClass.id);
             setValue("schoolYear", editedCreditClass.schoolYear);
             setValue("semester", editedCreditClass.semester);
@@ -66,6 +65,11 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
             }
         }
     }, [errorObject]);
+
+    useEffect(() => {
+        if (subjects && subjects.length) {
+        }
+    }, [subjects]);
 
     return (
         <div className='mt-5'>
@@ -110,7 +114,9 @@ function CreditClassModalBody({ errors, register, dispatch, setValue }) {
                             register={register}
                             name='subjectId'
                             options={subjects.map(subject => ({
-                                title: subject.name,
+                                title: subject.id.includes("CLC")
+                                    ? `${subject.name} CLC`
+                                    : `${subject.name}`,
                                 value: subject.id,
                             }))}
                             error={errors.subjectId && errors.subjectId.message}
