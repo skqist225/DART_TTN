@@ -7,17 +7,20 @@ function Input({
     label,
     error,
     register,
-    name,
+    name: propName,
     type = "text",
     placeholder = "",
     required = false,
     onKeyDown,
     readOnly,
+    onChangeHandler,
 }) {
+    const { onChange, onBlur, name, ref } = register(propName);
+
     return (
         <>
             <label
-                htmlFor={name}
+                htmlFor={propName}
                 className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"} ${
                     readOnly && "text-slate-400	"
                 }`}
@@ -33,13 +36,23 @@ function Input({
                 )}
                 <input
                     type={type}
-                    id={name}
+                    id={propName}
                     className={`${type === "email" ? tailwindCss.inputEmail : tailwindCss.input} ${
                         error && "bg-red-50 border border-red-500"
                     } ${readOnly && "disabled:opacity-75"}`}
                     placeholder={placeholder}
                     required={required}
-                    {...register(name)}
+                    name={name}
+                    onChange={e => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        onChange(e);
+                        if (onChangeHandler) {
+                            onChangeHandler(e);
+                        }
+                    }}
+                    onBlur={onBlur}
+                    ref={ref}
                     onKeyDown={onKeyDown}
                     readOnly={readOnly}
                     autoComplete={type === "password" ? "new-password" : "off"}

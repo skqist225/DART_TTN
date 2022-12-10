@@ -123,4 +123,12 @@ public class TakeExam {
                 .build()
                 ;
     }
+
+    public TakeExam(Float score, String studentId, String studentFullName, String testName, int rankOrder) {
+        this.score = score;
+        this.studentId = studentId;
+        this.studentFullName = studentFullName;
+        this.testName = testName;
+        this.rankOrder = rankOrder;
+    }
 }

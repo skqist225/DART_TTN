@@ -318,6 +318,7 @@ function QuestionsPage() {
                     Filter={QuestionsFilter}
                     excelAdd={excelAdd}
                     recordsPerPage={10}
+                    loading={loading}
                 />
             }
         />

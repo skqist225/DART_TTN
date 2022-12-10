@@ -119,7 +119,9 @@ public class SubjectRestController {
     }
 
     @PostMapping("save")
-    public ResponseEntity<StandardJSONResponse<String>> saveSubject(@RequestBody PostCreateSubjectDTO postCreateSubjectDTO, @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) {
+    public ResponseEntity<StandardJSONResponse<String>> saveSubject(
+            @RequestBody PostCreateSubjectDTO postCreateSubjectDTO,
+            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) {
         CommonUtils commonUtils = new CommonUtils();
 
         String id = postCreateSubjectDTO.getId();
@@ -151,12 +153,10 @@ public class SubjectRestController {
 
         if (isEdit) {
             try {
-
                 Subject subject = subjectService.findById(id);
                 subject.setName(name);
                 subject.setNumberOfTheoreticalPeriods(numberOfTheoreticalPeriods);
                 subject.setNumberOfPracticePeriods(numberOfPracticePeriods);
-
 
                 if (Objects.isNull(subject.getChapters())) {
                     subject.setChapters(new ArrayList<>());

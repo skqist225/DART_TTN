@@ -59,4 +59,8 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
             nativeQuery = true)
     List<Question> findByStudentAndExam(String studentId,
                                         Integer examId);
+
+    @Query(value = "SELECT * FROM quiz.dethi_cauhoi where madethi = :testId and macauhoi = :questionId",
+            nativeQuery = true)
+    Question getQuestionFromTest(Integer testId, Integer questionId);
 }

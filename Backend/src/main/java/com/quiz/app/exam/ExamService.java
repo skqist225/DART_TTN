@@ -1,5 +1,6 @@
 package com.quiz.app.exam;
 
+import com.quiz.app.exam.dto.TakeExamDTO;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.statistics.dto.CountExamByCreditClassDTO;
@@ -29,6 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -194,6 +196,15 @@ public class ExamService {
             for (Exam exam : typedQuery.getResultList()) {
                 float score = takeExamService.getStudentScoreByExamAndId(studentId, exam.getId());
                 exam.setStudentScore(score);
+            }
+        }
+
+        for (Exam exam : typedQuery.getResultList()) {
+            if (exam.getTakeExams().size() > 0) {
+                exam.setTempTakeExams(exam.getTakeExams().stream().map(takeExam ->
+                        new TakeExamDTO(takeExam.getRegister().getStudent().getId(),
+                                takeExam.getRegister().getStudent().getFullName(), takeExam.getScore(),
+                                takeExam.getTest().getName())).collect(Collectors.toList()));
             }
         }
 

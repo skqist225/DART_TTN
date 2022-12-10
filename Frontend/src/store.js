@@ -39,6 +39,11 @@ const localUser = localStorage.getItem("user") ? JSON.parse(localStorage.getItem
 const store = configureStore({
     reducer: rootReducer,
     devTools: process.env.NODE_ENV !== "production",
+    middleware: getDefaultMiddleware =>
+        getDefaultMiddleware({
+            immutableCheck: false,
+            serializableCheck: false,
+        }),
     preloadedState: {
         persistUser: {
             user: localUser,

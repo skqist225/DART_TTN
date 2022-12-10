@@ -27,7 +27,7 @@ function TablePagination({
     }, [currentIndex]);
 
     return (
-        <nav className='col-flex justify-between items-center mb-5' aria-label='Table navigation'>
+        <nav className='col-flex justify-between items-center my-5' aria-label='Table navigation'>
             <span className='text-sm font-normal text-gray-500 dark:text-gray-400'>
                 Hiển thị{" "}
                 <span className='font-semibold text-gray-900 dark:text-white'>

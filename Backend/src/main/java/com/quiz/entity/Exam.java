@@ -3,6 +3,7 @@ package com.quiz.entity;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.quiz.app.exam.dto.PostCreateExamDTO;
+import com.quiz.app.exam.dto.TakeExamDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -66,9 +67,8 @@ public class Exam {
     @JoinColumn(name = "MAGV", nullable = false)
     private User teacher;
 
-    @Builder.Default
-    @OneToMany(mappedBy = "exam")
-    private List<TakeExam> takeExams = new ArrayList<>();
+    @Transient
+    public List<TakeExamDTO> tempTakeExams = new ArrayList<>();
 
     @Column(name = "DATHI", columnDefinition = "BOOLEAN DEFAULT 0")
     private boolean taken;
@@ -89,6 +89,11 @@ public class Exam {
                 .status(false)
                 .build();
     }
+
+    //    @JsonIgnore
+    @Builder.Default
+    @OneToMany(mappedBy = "exam")
+    private List<TakeExam> takeExams = new ArrayList<>();
 
     public void addTest(Test test) {
         this.tests.add(test);
@@ -132,10 +137,6 @@ public class Exam {
         return this.getTests().stream().map(Test::getId).collect(Collectors.toList());
     }
 
-//    @Transient
-//    public List<TakeExam> getTempTakeExam() {
-//        return this.takeExams.stream().map(takeExam -> TakeExam.);
-//    }
 
     public Exam(Integer id, String name, LocalDate examDate, int noticePeriod, int time, Set<Test> tests, String type, boolean taken, boolean status) {
         this.id = id;

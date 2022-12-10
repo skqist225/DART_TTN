@@ -9,7 +9,9 @@ function CriteriaList({ criteria }) {
             <Table.Head>
                 <Table.HeadCell>STT</Table.HeadCell>
                 <Table.HeadCell>Chương</Table.HeadCell>
-                <Table.HeadCell>Số câu hỏi</Table.HeadCell>
+                {/* <Table.HeadCell>Số câu hỏi</Table.HeadCell> */}
+                <Table.HeadCell>Mức độ</Table.HeadCell>
+                <Table.HeadCell>Số lượng</Table.HeadCell>
             </Table.Head>
             <Table.Body className='divide-y'>
                 {criteria.map(({ chapter, levelAndNumbers }, index) => (
@@ -21,11 +23,16 @@ function CriteriaList({ criteria }) {
                         <Table.Cell className={tailwindCss.tableViewerCell}>{index + 1}</Table.Cell>
                         <Table.Cell className={tailwindCss.tableViewerCell}>{chapter}</Table.Cell>
                         <Table.Cell className={tailwindCss.tableViewerCell}>
-                            {levelAndNumbers.map(({ level, numberOfQuestions }) => (
+                            {levelAndNumbers.map(({ level }) => (
+                                <LevelBadge level={level} key={level} label={level} />
+                            ))}
+                        </Table.Cell>{" "}
+                        <Table.Cell className={tailwindCss.tableViewerCell}>
+                            {levelAndNumbers.map(({ numberOfQuestions, level }) => (
                                 <LevelBadge
                                     level={level}
-                                    numberOfQuestions={numberOfQuestions}
-                                    key={chapter + level + numberOfQuestions}
+                                    key={numberOfQuestions + level}
+                                    label={numberOfQuestions}
                                 />
                             ))}
                         </Table.Cell>

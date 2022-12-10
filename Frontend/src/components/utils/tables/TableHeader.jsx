@@ -36,7 +36,20 @@ function TableHeader({
     return (
         <thead className={tailwindCss.thead}>
             <tr>
-                {addCheckbox && <th></th>}
+                {addCheckbox && (
+                    <th scope='col' className='p-4'>
+                        <div className='flex items-center'>
+                            {/* <input
+                                type='checkbox'
+                                className={tailwindCss.checkbox}
+                                checked={true}
+                            /> */}
+                            <label htmlFor='checkbox-all' className='sr-only'>
+                                checkbox
+                            </label>
+                        </div>
+                    </th>
+                )}
                 {columns.map(({ name, sortField, sortable }) => {
                     if (
                         ["ca thi", "câu hỏi"].includes(modalLabel) &&

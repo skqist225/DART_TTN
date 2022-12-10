@@ -11,7 +11,7 @@ import EnableOrDisable from "../common/EnableOrDisable";
 import QuestionList from "./QuestionList";
 import $ from "jquery";
 
-function TestTableBody({ rows, examPage = false }) {
+function TestTableBody({ rows, examPage = false, setIsEdit }) {
     const dispatch = useDispatch();
     return (
         <tbody>
@@ -48,7 +48,9 @@ function TestTableBody({ rows, examPage = false }) {
                             {!row.used ? "Chưa sử dụng" : "Đã sử dụng"}
                         </Badge>
                     </td>
-                    <td className={tailwindCss.tableCell}>{row.numberOfQuestions}</td>
+                    <td className={tailwindCss.tableCell + " flex justify-center"}>
+                        {row.numberOfQuestions}
+                    </td>
                     <td className={tailwindCss.tableCell} style={{ zIndex: "9999" }}>
                         <Tooltip
                             content={<CriteriaList criteria={row.criteria} />}
@@ -85,16 +87,17 @@ function TestTableBody({ rows, examPage = false }) {
                                     />
                                 </Tooltip>
                             </div>
-                            {/* <div className='mr-2'>
+                            <div className='mr-2'>
                                 <MyButton
                                     type={ButtonType.edit}
                                     onClick={() => {
+                                        console.log(row);
                                         $("#testModal").css("display", "flex");
                                         setIsEdit(true);
                                         dispatch(setEditedTest(row));
                                     }}
                                 />
-                            </div> */}
+                            </div>
                             <div className='mr-2'>
                                 <MyButton
                                     type={ButtonType.delete}

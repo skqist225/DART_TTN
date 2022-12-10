@@ -254,7 +254,7 @@ function ExamsPage() {
                     setIsEdit={setIsEdit}
                     Filter={ExamFilter}
                     onCloseForm={onCloseForm}
-                    // loading={loading}
+                    loading={loading}
                 />
             }
         />

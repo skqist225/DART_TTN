@@ -17,4 +17,5 @@ public class PostCreateTestDTO {
     private String name;
     private String subjectId;
     private List<Question> questions;
+    private List<Integer> questionIds;
 }

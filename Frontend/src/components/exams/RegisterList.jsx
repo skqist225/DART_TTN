@@ -46,44 +46,33 @@ function RegisterList({ takeExams }) {
                     )}
                 </Table.Head>
                 <Table.Body className='divide-y'>
-                    {splitedRegisters.map(
-                        (
-                            {
-                                register: {
-                                    student: { fullName, id },
-                                },
-                                score,
-                                testName,
-                            },
-                            index
-                        ) => (
-                            <Table.Row
-                                className='bg-white dark:border-gray-700 dark:bg-gray-800'
-                                key={id}
-                            >
-                                <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {index + 1}
-                                </Table.Cell>
-                                <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {id}
-                                </Table.Cell>
-                                <Table.Cell className={tailwindCss.tableViewerCell}>
-                                    {fullName}
-                                </Table.Cell>
-                                {!user.roles.map(({ name }) => name).includes("Sinh viên") && (
-                                    <>
-                                        {" "}
-                                        <Table.Cell className={tailwindCss.tableViewerCell}>
-                                            {testName}
-                                        </Table.Cell>
-                                        <Table.Cell className={tailwindCss.tableViewerCell}>
-                                            {score}
-                                        </Table.Cell>
-                                    </>
-                                )}
-                            </Table.Row>
-                        )
-                    )}
+                    {splitedRegisters.map(({ studentId, studentName, score, testName }, index) => (
+                        <Table.Row
+                            className='bg-white dark:border-gray-700 dark:bg-gray-800'
+                            key={studentId}
+                        >
+                            <Table.Cell className={tailwindCss.tableViewerCell}>
+                                {index + 1}
+                            </Table.Cell>
+                            <Table.Cell className={tailwindCss.tableViewerCell}>
+                                {studentId}
+                            </Table.Cell>
+                            <Table.Cell className={tailwindCss.tableViewerCell}>
+                                {studentName}
+                            </Table.Cell>
+                            {!user.roles.map(({ name }) => name).includes("Sinh viên") && (
+                                <>
+                                    {" "}
+                                    <Table.Cell className={tailwindCss.tableViewerCell}>
+                                        {testName}
+                                    </Table.Cell>
+                                    <Table.Cell className={tailwindCss.tableViewerCell}>
+                                        {score}
+                                    </Table.Cell>
+                                </>
+                            )}
+                        </Table.Row>
+                    ))}
                 </Table.Body>
             </Table>
             <TablePagination

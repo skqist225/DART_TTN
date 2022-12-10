@@ -28,6 +28,7 @@ function TableModal({
     testPage = false,
 }) {
     const dispatch = useDispatch();
+    const { editedTest } = useSelector(testState);
 
     const {
         questions,
@@ -57,7 +58,7 @@ function TableModal({
             className={tailwindCss.modal.container}
             style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
         >
-            <div className='relative w-full max-w-4xl h-full md:h-full mt-24'>
+            <div className='relative w-full max-w-5xl h-full md:h-full mt-10'>
                 <form
                     id={formId}
                     onSubmit={e => {
@@ -101,7 +102,13 @@ function TableModal({
                         )}
 
                         <button
-                            type={!excelAdd && !addTst ? "submit" : "button"}
+                            type={
+                                !excelAdd && !addTst
+                                    ? "submit"
+                                    : addTst && editedTest
+                                    ? "submit"
+                                    : "button"
+                            }
                             className={`${tailwindCss.modal.saveButton} ${
                                 disabled && "cursor-not-allowed hover:bg-blue-700"
                             }`}

@@ -19,6 +19,9 @@ function QuestionTableBody({
     addTest = false,
     page = null,
     chapterListPage = false,
+    addCheckbox = false,
+    check = false,
+    register,
 }) {
     const dispatch = useDispatch();
     if (page !== null) {
@@ -27,7 +30,7 @@ function QuestionTableBody({
 
     return (
         <tbody>
-            {rows.map(row => {
+            {rows.map((row, index) => {
                 return (
                     <tr
                         className={`${tailwindCss.tr} ${
@@ -35,6 +38,36 @@ function QuestionTableBody({
                         }`}
                         key={row.id}
                     >
+                        {addCheckbox && (
+                            <th scope='col' className='p-4'>
+                                <div className='flex items-center'>
+                                    <input
+                                        type='hidden'
+                                        {...register(
+                                            check
+                                                ? `editedQuestions.${index}.questionId`
+                                                : `etdQsts.${index}.questionId`
+                                        )}
+                                        value={row.id}
+                                    />
+                                    <input
+                                        type='checkbox'
+                                        className={tailwindCss.checkbox}
+                                        data-id={row.id}
+                                        defaultChecked={check}
+                                        {...register(
+                                            check
+                                                ? `editedQuestions.${index}.selected`
+                                                : `etdQsts.${index}.selected`
+                                        )}
+                                    />
+                                    <label htmlFor='checkbox-all' className='sr-only'>
+                                        checkbox
+                                    </label>
+                                </div>
+                            </th>
+                        )}
+
                         <td className={tailwindCss.tableCell}>{row.id}</td>
                         <td
                             className={tailwindCss.tableCell}
@@ -58,14 +91,14 @@ function QuestionTableBody({
                                 animation='duration-300'
                                 style='light'
                             >
-                                <MyButton type={ButtonType.view} />
+                                <MyButton type={ButtonType.view} noTooltip />
                             </Tooltip>
                         </td>
                         {!addTest ? (
                             <>
                                 <td className={tailwindCss.tableCell}>{row.type}</td>
                                 <td className={tailwindCss.tableCell}>
-                                    <LevelBadge level={row.level} />
+                                    <LevelBadge level={row.level} label={row.level} />
                                 </td>
                                 <td className={tailwindCss.tableCell}>{row.chapterName}</td>
                                 <td className={tailwindCss.tableCell}>{row.subjectName}</td>
@@ -77,7 +110,7 @@ function QuestionTableBody({
                                     <td className={tailwindCss.tableCell}>{row.chapterName}</td>
                                 )}{" "}
                                 <td>
-                                    <LevelBadge level={row.level} />
+                                    <LevelBadge level={row.level} label={row.level} />
                                 </td>
                             </>
                         )}

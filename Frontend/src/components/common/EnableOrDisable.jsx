@@ -8,6 +8,7 @@ function EnableOrDisable({
     id,
     creditClassPage = false,
     disabled = false,
+    label,
 }) {
     const dispatch = useDispatch();
 
@@ -20,6 +21,7 @@ function EnableOrDisable({
         <div>
             {tempStatus ? (
                 <MyButton
+                    label={label}
                     type='disable'
                     onClick={() => {
                         dispatch(
@@ -33,6 +35,7 @@ function EnableOrDisable({
                 />
             ) : (
                 <MyButton
+                    label={label}
                     type='enable'
                     onClick={() => {
                         dispatch(enableOrDisable({ id, action: "enable" }));

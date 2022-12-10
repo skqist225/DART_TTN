@@ -2,6 +2,7 @@ package com.quiz.app.test;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.question.QuestionService;
 import com.quiz.app.register.RegisterService;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
@@ -16,6 +17,7 @@ import com.quiz.app.test.dto.TestDTO;
 import com.quiz.app.test.dto.TestsDTO;
 import com.quiz.app.utils.CommonUtils;
 import com.quiz.entity.Answer;
+import com.quiz.entity.Chapter;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
 import com.quiz.entity.TakeExam;
@@ -56,6 +58,9 @@ public class TestRestController {
 
     @Autowired
     private TakeExamService takeExamService;
+
+    @Autowired
+    private QuestionService questionService;
 
     @Autowired
     private TakeExamDetailService takeExamDetailService;
@@ -150,6 +155,7 @@ public class TestRestController {
         String name = postCreateTestDTO.getName();
         String subjectId = postCreateTestDTO.getSubjectId();
         List<Question> questions = postCreateTestDTO.getQuestions();
+        List<Integer> questionIds = postCreateTestDTO.getQuestionIds();
         User teacher = userDetailsImpl.getUser();
 
         catchTestInputException(commonUtils, isEdit, id, name, subjectId, questions);
@@ -176,31 +182,39 @@ public class TestRestController {
             try {
                 Test test = testService.findById(id);
                 test.setName(name);
-                test.setSubject(subject);
 
-                for (Question question : questions) {
+                if (Objects.isNull(test.getQuestions())) {
+                    test.setQuestions(new ArrayList<>());
+                }
+
+                for (Integer questionId : questionIds) {
                     // Add new question
-                    if (Objects.isNull(question.getId())) {
-                        test.addQuestion(question);
+                    // Check if question exists in the list.
+                    Question question = questionService.getQuestionFromTest(test.getId(),
+                            questionId);
+                    if(Objects.isNull(question)) {
+                        test.addQuestion(new Question(questionId));
                     }
                 }
 
-                List<Question> qsts = test.getQuestions();
-                for (Question question : qsts) {
+                List<Question> removedQuestions = new ArrayList<>();
+                for (Question question : test.getQuestions()) {
                     boolean shouldDelete = true;
-
-                    for (Question q : questions) {
-                        if (Objects.nonNull(q.getId())) {
-                            if (q.getId().equals(question.getId())) {
-                                shouldDelete = false;
-                                break;
-                            }
+                    for (Integer questionId : questionIds) {
+                        if (question.getId().equals(questionId)) {
+                            shouldDelete = false;
+                            break;
                         }
                     }
-                    // Remove none mentioned question
+                    // Remove none mentioned chapter
                     if (shouldDelete) {
-                        test.removeQuestion(question);
+                        removedQuestions.add(question);
                     }
+                }
+
+                for (Question question : removedQuestions) {
+                    System.out.println("delete question id: " + question.getId());
+                    test.removeQuestion(question);
                 }
 
                 testService.save(test);

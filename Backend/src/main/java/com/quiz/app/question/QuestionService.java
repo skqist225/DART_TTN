@@ -104,6 +104,10 @@ public class QuestionService {
         return questionRepository.findByStudentAndExam(studentId, examId);
     }
 
+    public Question getQuestionFromTest(Integer testId, Integer questionId) {
+        return questionRepository.getQuestionFromTest(testId, questionId);
+    }
+
     public boolean isContentDuplicated(Integer id, String content, boolean isEdit) {
         Question question = questionRepository.findByContent(content);
         if (isEdit) {

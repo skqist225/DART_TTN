@@ -271,4 +271,7 @@ public class Question {
         return this.chapter.getSubject().getName();
     }
 
+    public Question(Integer id) {
+        this.id = id;
+    }
 }

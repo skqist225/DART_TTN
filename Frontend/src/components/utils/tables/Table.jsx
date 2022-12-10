@@ -1,5 +1,6 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { Card } from "flowbite-react";
 import TablePagination from "./TablePagination";
 import TableHeader from "./TableHeader";
 import TableModal from "./TableModal";
@@ -9,11 +10,10 @@ import { ExcelIcon } from "../../../images";
 import { setExcelAdd } from "../../../features/questionSlice";
 import { persistUserState } from "../../../features/persistUserSlice";
 import { setUserExcelAdd } from "../../../features/userSlice";
-import { Card, Spinner, Tooltip } from "flowbite-react";
 import MyButton, { ButtonType } from "../../common/MyButton";
 import { setRegisterExcelAdd } from "../../../features/registerSlice";
-import $ from "jquery";
 import { takeExamState } from "../../../features/takeExamSlice";
+import $ from "jquery";
 
 function Table({
     searchPlaceHolder,
@@ -42,6 +42,7 @@ function Table({
     testPage = false,
     recordsPerPage = 12,
     ranksPage = false,
+    setError,
 }) {
     const dispatch = useDispatch();
 
@@ -80,21 +81,16 @@ function Table({
                             <></>
                         ) : (
                             <div className='mr-2'>
-                                <Tooltip
-                                    placement='left'
-                                    animation='duration-200'
-                                    style='dark'
-                                    content={<span>Thêm {modalLabel}</span>}
-                                >
-                                    <MyButton
-                                        type={ButtonType.add}
-                                        onClick={() => {
-                                            $(`#${modalId}`).css("display", "flex");
-                                            setIsEdit(false);
-                                        }}
-                                        className='px-2 py-2 rounded-lg'
-                                    />
-                                </Tooltip>
+                                <MyButton
+                                    type={ButtonType.add}
+                                    index='last'
+                                    label={modalLabel}
+                                    onClick={() => {
+                                        $(`#${modalId}`).css("display", "flex");
+                                        setIsEdit(false);
+                                    }}
+                                    className='px-2 py-2 rounded-lg'
+                                />
                             </div>
                         )}
                         {["câu hỏi", "đăng ký", "người dùng"].includes(modalLabel) && (
@@ -128,7 +124,7 @@ function Table({
                         className='flex items-center justify-center w-full'
                         style={{ height: "calc(100vh - 150px)" }}
                     >
-                        <Spinner color='success' />
+                        Đang tải...
                     </div>
                 ) : (
                     <>
@@ -156,18 +152,16 @@ function Table({
                                 </table>
                             </>
                         ) : (
-                            <div
-                                className={`text-blue-600 uppercase flex items-center justify-center w-full`}
-                                style={{ height: "calc(100vh - 150px)" }}
-                            >
-                                <div className='border-2 border-gray-400 rounded-lg p-4'>{`Danh sách ${modalLabel} trống`}</div>
-                                {/* )}
-                                {!ranksPage ? (
-                                    <div className='border-2 border-gray-400 rounded-lg p-4'>{`Danh sách ${modalLabel} trống`}</div>
-                                ) : (
-                                    <div className='border-2 border-gray-400 rounded-lg p-4'>{`Danh sách ${modalLabel} trống`}</div>
-                                )} */}
-                            </div>
+                            <>
+                                {!loading && (
+                                    <div
+                                        className={`text-blue-600 uppercase flex items-center justify-center w-full`}
+                                        style={{ height: "calc(100vh - 150px)" }}
+                                    >
+                                        <div className='border-2 border-gray-400 rounded-lg p-4'>{`Danh sách ${modalLabel} trống`}</div>
+                                    </div>
+                                )}
+                            </>
                         )}
                     </>
                 )}
@@ -195,6 +189,7 @@ function Table({
                 onCloseForm={onCloseForm}
                 excelAdd={excelAdd}
                 testPage={testPage}
+                setError={setError}
             />
         </div>
     );

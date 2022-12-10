@@ -127,7 +127,7 @@ export const questionColumnsTestPage = [
         name: "Độ khó",
     },
     {
-        name: "Giảng viên",
+        name: "Người tạo",
     },
 ];
 

@@ -5,6 +5,7 @@ import VisibilityIcon from "@mui/icons-material/Visibility";
 import CheckIcon from "@mui/icons-material/Check";
 import DisableImage from "../../images/disable-icon.png";
 import AddIcon from "@mui/icons-material/Add";
+import { Tooltip } from "flowbite-react";
 export const ButtonType = {
     add: "add",
     view: "view",
@@ -12,13 +13,22 @@ export const ButtonType = {
     edit: "edit",
 };
 
-function MyButton({ type, onClick, className = "", disabled = false, label = "" }) {
+function MyButton({
+    type,
+    onClick,
+    className = "",
+    disabled = false,
+    label = "",
+    index = "",
+    noTooltip = false,
+}) {
     let buttonClassName = "",
         buttonDisableClassName = "cursor-not-allowed ",
         Icon = null;
 
     switch (type) {
         case "add": {
+            label = "Thêm " + label;
             buttonClassName = "bg-indigo-600 hover:bg-indigo-600";
             Icon = (
                 <AddIcon
@@ -32,12 +42,14 @@ function MyButton({ type, onClick, className = "", disabled = false, label = "" 
             break;
         }
         case "delete": {
+            label = "Xóa " + label;
             buttonClassName = "bg-rose-500 hover:bg-rose-500";
             buttonDisableClassName = "bg-rose-300 hover:bg-rose-300";
             Icon = <DeleteIcon />;
             break;
         }
         case "disable": {
+            label = "Hủy " + label;
             buttonClassName = "bg-amber-500 hover:bg-amber-500";
             buttonDisableClassName = "bg-amber-300 hover:bg-amber-300";
             Icon = (
@@ -52,12 +64,14 @@ function MyButton({ type, onClick, className = "", disabled = false, label = "" 
             break;
         }
         case "enable": {
+            label = "Mở " + label;
             buttonClassName = "bg-green-500 hover:bg-green-500";
             buttonDisableClassName = "bg-green-300 hover:bg-green-300 cursor-not-allowed";
             Icon = <CheckIcon />;
             break;
         }
         case "edit": {
+            label = "Sửa " + label;
             buttonClassName = "bg-blue-600 hover:bg-blue-600";
             buttonDisableClassName = "bg-blue-300 hover:bg-blue-300 cursor-not-allowed";
             Icon = <EditIcon />;
@@ -73,18 +87,37 @@ function MyButton({ type, onClick, className = "", disabled = false, label = "" 
     }
 
     return (
-        <button
-            className={`btn ${buttonClassName} text-white ${
-                disabled && buttonDisableClassName
-            } ${className}`}
-            onClick={() => {
-                if (onClick) onClick();
-            }}
-            type='button'
-            disabled={disabled}
-        >
-            {Icon} {label}
-        </button>
+        <>
+            {noTooltip ? (
+                <button
+                    className={`btn ${buttonClassName} text-white ${
+                        disabled && buttonDisableClassName
+                    } ${className}`}
+                    onClick={() => {
+                        if (onClick) onClick();
+                    }}
+                    type='button'
+                    disabled={disabled}
+                >
+                    {Icon}
+                </button>
+            ) : (
+                <Tooltip content={label} placement={index === "last" ? "left" : "top"}>
+                    <button
+                        className={`btn ${buttonClassName} text-white ${
+                            disabled && buttonDisableClassName
+                        } ${className}`}
+                        onClick={() => {
+                            if (onClick) onClick();
+                        }}
+                        type='button'
+                        disabled={disabled}
+                    >
+                        {Icon}
+                    </button>
+                </Tooltip>
+            )}
+        </>
     );
 }
 

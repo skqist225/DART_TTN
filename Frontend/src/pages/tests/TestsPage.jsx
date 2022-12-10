@@ -71,23 +71,60 @@ function TestsPage() {
         resolver: yupResolver(testSchema),
         defaultValues: {
             criteria: [],
+            editedQuestions: [],
+            etdQsts: [],
         },
     });
 
-    const onSubmit = ({ criteria, numberOfQuestions, testSubjectId: subject }) => {
-        console.log(criteria);
+    const onSubmit = data => {
+        const {
+            criteria,
+            numberOfQuestions,
+            testSubjectId: subject,
+            testName,
+            id,
+            editedQuestions,
+            etdQsts,
+        } = data;
+
+        console.log(data);
+
+        let haveError = false;
+        console.log("aaa");
+        console.log(etdQsts);
+        console.log("bbb");
         if (isEdit) {
-            dispatch(editTest(data));
+            console.log(id, editedQuestions);
+            console.log("go go go ");
+            // dispatch(editTest(data));
         } else {
             // If there is no criteria
             if (criteria.length === 0) {
                 if (!numberOfQuestions) {
-                    callToast("warning", "Nhập số lượng câu hỏi");
-                    return;
+                    setError("numberOfQuestions", {
+                        type: "custom",
+                        message: "Nhập số lượng câu hỏi",
+                    });
+                    haveError = true;
                 } else {
                     const sb = subjects.find(({ id }) => id === subject);
                     if (sb && numberOfQuestions > sb.numberOfQuestions) {
-                        callToast("warning", "Số lượng câu hỏi không thể lớn hơn số lượng hiện có");
+                        setError("numberOfQuestions", {
+                            type: "custom",
+                            message: "Số lượng câu hỏi không thể lớn hơn số lượng hiện có",
+                        });
+                        haveError = true;
+                    }
+
+                    if (numberOfQuestions === "0") {
+                        setError("numberOfQuestions", {
+                            type: "custom",
+                            message: "Số lượng câu hỏi phải lớn hơn 0",
+                        });
+                        haveError = true;
+                    }
+
+                    if (haveError) {
                         return;
                     }
 
@@ -100,7 +137,6 @@ function TestsPage() {
                     );
                 }
             } else {
-                let haveError = false;
                 criteria.forEach(({ chapterId, level, numberOfQuestions, fieldIndex }, index) => {
                     if (!chapterId) {
                         setError(`criteria.${index}.chapterId`, {
@@ -137,9 +173,11 @@ function TestsPage() {
                         }
                     }
                 });
+
                 if (haveError) {
                     return;
                 }
+
                 dispatch(
                     loadQuestionsByCriteria({
                         subject,
