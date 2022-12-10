@@ -1,5 +1,9 @@
-# Drop all tables
 
+mysql -h airj18.cvkwid3ehrok.ap-southeast-1.rds.amazonaws.com -u admin -p12345678 quiz < quiz.sql
+
+
+
+# Drop all tables
 echo "SET FOREIGN_KEY_CHECKS = 0;" > ./temp.sql
 mysqldump --add-drop-table --no-data -u root -p quiz | grep 'DROP TABLE' >> ./temp.sql
 echo "SET FOREIGN_KEY_CHECKS = 1;" >> ./temp.sql

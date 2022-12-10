@@ -52,7 +52,7 @@ pipeline {
                 //     input message: 'Approve PRODUCTION Deployment?'
                 // }
                     sshPublisher(
-                    publishers: [sshPublisherDesc(configName: 'ubuntu@3.1.102.184',
+                    publishers: [sshPublisherDesc(configName: 'ubuntu@54.179.80.229',
                     transfers: [sshTransfer(cleanRemote: false, excludes: '',
                     execCommand: '~/airtnt-build.sh airj18.cvkwid3ehrok.ap-southeast-1.rds.amazonaws.com admin 12345678',
                     execTimeout: 120000, flatten: false, makeEmptyDirs: false, noDefaultExcludes: false,
