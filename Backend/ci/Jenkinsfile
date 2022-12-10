@@ -61,16 +61,16 @@ pipeline {
                     usePromotionTimestamp: false, useWorkspaceInPromotion: false, verbose: false)]
                 )
             }
-            // post {
-            //     success {
-            //         emailext(
-            //             body: 'build successfully.',
-            //             recipientProviders: [buildUser()],
-            //             subject: 'Build AirJ18 Successfully',
-            //             to: 'thuan.leminhthuan.10.2@gmail.com'
-            //         )
-            //     }
-            // }
+            post {
+                success {
+                    emailext(
+                        body: 'build successfully.',
+                        recipientProviders: [buildUser()],
+                        subject: 'Build AirJ18 Successfully',
+                        to: 'thuan.leminhthuan.10.2@gmail.com'
+                    )
+                }
+            }
         }
     }
 }
