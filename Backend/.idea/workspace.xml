@@ -5,8 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
+      <change beforePath="$PROJECT_DIR$/../Admin/src/axios/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/axios/index.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql /sql.txt" beforeDir="false" afterPath="$PROJECT_DIR$/sql /sql.txt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -192,7 +192,7 @@
       <workItem from="1670138704220" duration="631000" />
       <workItem from="1670416913546" duration="4587000" />
       <workItem from="1670500909502" duration="40468000" />
-      <workItem from="1670638238755" duration="2315000" />
+      <workItem from="1670638238755" duration="3903000" />
     </task>
     <servers />
   </component>
