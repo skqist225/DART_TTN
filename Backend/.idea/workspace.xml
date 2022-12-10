@@ -5,7 +5,12 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
-      <change beforePath="$PROJECT_DIR$/../Admin/src/axios/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/src/axios/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/dist/assets/index.8ee720bd.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/dist/assets/vendor.7ee03b0a.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/dist/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/dist/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Admin/vite.config.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Admin/vite.config.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

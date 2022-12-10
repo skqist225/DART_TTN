@@ -35,18 +35,22 @@ function App() {
     const userRoles = (user && user.roles.map(({ name }) => name)) || [];
 
     let HomePage = null;
-    if (userRoles.includes("Quản trị viên")) {
-        HomePage = <Dashboard />;
-    } else if (userRoles.includes("Giảng viên")) {
-        HomePage = <QuestionsPage />;
+    if (!user) {
+        HomePage = <LoginPage />;
     } else {
-        HomePage = <RanksPage />;
+        if (userRoles.includes("Quản trị viên")) {
+            HomePage = <Dashboard />;
+        } else if (userRoles.includes("Giảng viên")) {
+            HomePage = <QuestionsPage />;
+        } else {
+            HomePage = <RanksPage />;
+        }
     }
 
     return (
         <>
             <Routes>
-                <Route path='/' element={HomePage} />
+                <Route exact path='/' element={HomePage} />
                 <Route path='/statistics' element={<Dashboard />} />
                 <Route path='/auth/login' element={<LoginPage />} />
                 <Route path='/subjects' element={<SubjectsPage />} />
