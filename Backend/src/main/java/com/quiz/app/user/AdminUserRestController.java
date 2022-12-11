@@ -51,10 +51,11 @@ public class AdminUserRestController {
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
-            @RequestParam(name = "level", required = false, defaultValue = "") String level,
             @RequestParam(name = "roles", required = false, defaultValue = "") String roles,
             @RequestParam(name = "role", required = false, defaultValue = "") String roleName,
-            @RequestParam(name = "statuses", required = false, defaultValue = "1,0") String statuses) throws NotFoundException {
+            @RequestParam(name = "statuses", required = false, defaultValue = "1,0") String statuses,
+            @RequestParam(name = "limit", required = false, defaultValue = "0") Integer limit,
+            @RequestParam(name = "creditClassId", required = false, defaultValue = "0") Integer creditClassId) throws NotFoundException {
         UsersDTO usersDTO = new UsersDTO();
         if (page.equals("0")) {
             List<User> users = new ArrayList<>();
@@ -62,9 +63,17 @@ public class AdminUserRestController {
                 if (roleName.equals("!SV")) {
                     users = userService.findUserIsNotStudent();
                 } else {
-                    users = userService.findByRole(roleService.findByName(roleName).getId());
+                    if (limit > 0) {
+                        // Lấy ra danh sách sinh viên chưa đăng ký lớp tín chỉ đó
+                        users = userService.findByRole(roleService.findByName(roleName).getId(),
+                                limit, creditClassId
+                        );
+                    } else {
+                        users = userService.findByRole(roleService.findByName(roleName).getId());
+                    }
                 }
             }
+
             usersDTO.setUsers(users);
             usersDTO.setTotalPages((long) Math.ceil(users.size() / 10));
             usersDTO.setTotalElements(users.size());
@@ -128,7 +137,7 @@ public class AdminUserRestController {
         return new OkResponse<>(String.format("%d/%d người dùng được thêm thành công", i, totalRecords)).response();
     }
 
-    @GetMapping("users/{id}")
+    @GetMapping("{id}")
     public ResponseEntity<StandardJSONResponse<User>> getUser(@PathVariable(value = "id") String id) {
         try {
             User user = userService.findById(id);
@@ -157,8 +166,10 @@ public class AdminUserRestController {
             user.setStatus(action.equals("enable"));
             userService.save(user);
 
-            return new OkResponse<>(action.equals("enable") ? "Kích hoạt ND thành công" : "Hủy " +
-                    "kích hoạt ND thành công").response();
+            return new OkResponse<>(action.equals("enable") ? "Kích hoạt người dùng thành công" :
+                    "H" +
+                            "ủy " +
+                            "kích hoạt người dùng thành công").response();
         } catch (NotFoundException e) {
             return new BadResponse<String>(e.getMessage()).response();
         }

@@ -67,11 +67,7 @@ export const addRegister = createAsyncThunk(
     "register/addRegister",
     async (postData, { rejectWithValue }) => {
         try {
-            const { data } = await api.post(`/registers/save`, postData, {
-                headers: {
-                    "Content-Type": "multipart/formData",
-                },
-            });
+            const { data } = await api.post(`/registers/save`, postData);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -173,6 +169,7 @@ const initialState = {
         successMessage: null,
         errorMessage: null,
     },
+    registersByCreditClass: [],
 };
 
 const registerSlice = createSlice({

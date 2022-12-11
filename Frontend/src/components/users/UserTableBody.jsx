@@ -1,6 +1,6 @@
 import React from "react";
 import { tailwindCss } from "../../tailwind";
-import { MyButton } from "..";
+import { EnableOrDisable, MyButton } from "..";
 import $ from "jquery";
 import { getImage } from "../../helpers";
 import { deleteUser, enableOrDisableUser, setEditedUser } from "../../features/userSlice";
@@ -81,31 +81,19 @@ function UserTableModal({ rows, setIsEdit }) {
                             }}
                         />
                         <div className='mx-3'>
-                            {row.status ? (
-                                <MyButton
-                                    type='disable'
-                                    onClick={() => {
-                                        dispatch(
-                                            enableOrDisableUser({
-                                                id: row.id,
-                                                action: "disable",
-                                            })
-                                        );
-                                    }}
-                                />
-                            ) : (
-                                <MyButton
-                                    type='enable'
-                                    onClick={() => {
-                                        dispatch(
-                                            enableOrDisableUser({
-                                                id: row.id,
-                                                action: "enable",
-                                            })
-                                        );
-                                    }}
-                                />
-                            )}
+                            <EnableOrDisable
+                                id={row.id}
+                                status={row.status}
+                                enableOrDisable={enableOrDisableUser}
+                            />
+                        </div>
+                        <div className='mx-1'>
+                            <MyButton
+                                type='delete'
+                                onClick={() => {
+                                    dispatch(deleteUser(row.id));
+                                }}
+                            />
                         </div>
                     </td>
                 </tr>

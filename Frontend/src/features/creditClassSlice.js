@@ -13,6 +13,7 @@ export const fetchAllCreditClasses = createAsyncThunk(
             active = false,
             teacher = "",
             student = "",
+            haveRegister = "true",
         },
         { dispatch, rejectWithValue }
     ) => {
@@ -49,7 +50,7 @@ export const fetchAllCreditClasses = createAsyncThunk(
             const {
                 data: { creditClasses, totalElements, totalPages },
             } = await api.get(
-                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&active=${active}&teacher=${teacher}&student=${student}`
+                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&active=${active}&teacher=${teacher}&student=${student}&haveRegister=${haveRegister}`
             );
 
             return { creditClasses, totalElements, totalPages };
@@ -164,6 +165,8 @@ const creditClassSlice = createSlice({
 
             state.deleteCreditClass.successMessage = null;
             state.deleteCreditClass.errorObject = null;
+
+            state.enableOrDisableCreditClass.successMessage = null;
         },
         setFilterObject(state, { payload }) {
             if (payload) {

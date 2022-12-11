@@ -23,6 +23,7 @@ import {
 } from "../../features/registerSlice";
 import { fetchAllCreditClasses } from "../../features/creditClassSlice";
 import { registerColumns } from "../columns";
+import { fetchAllUsers } from "../../features/userSlice";
 
 function RegistersPage() {
     const dispatch = useDispatch();
@@ -60,7 +61,7 @@ function RegistersPage() {
                 page: 1,
             })
         );
-        dispatch(fetchAllCreditClasses({ page: 0 }));
+        dispatch(fetchAllCreditClasses({ page: 0, active: true, haveRegister: false }));
     }, []);
 
     const {
@@ -71,15 +72,24 @@ function RegistersPage() {
         setError,
         clearErrors,
         formState: { errors },
-    } = useForm({
-        resolver: yupResolver(questionSchema),
-        defaultValues: {
-            answers: [],
-        },
-    });
+    } = useForm({});
 
     const onSubmit = data => {
-        dispatch(isEdit ? editRegister(formData) : addRegister(formData));
+        const { creditClassId, registerList } = data;
+        if (registerList.length === 0) {
+            callToast("error", "Danh sách đăng ký không được trống");
+            return;
+        }
+
+        if (isEdit) {
+        } else {
+            dispatch(
+                addRegister({
+                    creditClassId,
+                    registerList,
+                })
+            );
+        }
     };
 
     const handleQueryChange = ({ target: { value: query } }) => {

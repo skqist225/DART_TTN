@@ -13,6 +13,8 @@ export const fetchAllUsers = createAsyncThunk(
             roles = "",
             statuses = "1,0",
             role = "",
+            limit = 0,
+            creditClass = "",
         },
         { dispatch, rejectWithValue }
     ) => {
@@ -44,7 +46,7 @@ export const fetchAllUsers = createAsyncThunk(
             const {
                 data: { users, totalElements, totalPages },
             } = await api.get(
-                `/admin/users?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&roles=${roles}&statuses=${statuses}&role=${role}`
+                `/admin/users?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&roles=${roles}&statuses=${statuses}&role=${role}&limit=${limit}&creditClass=${creditClass}`
             );
 
             return { users, totalElements, totalPages };
@@ -56,7 +58,7 @@ export const fetchAllUsers = createAsyncThunk(
 
 export const fetchUser = createAsyncThunk(
     "user/fetchUser",
-    async (id, { dispatch, rejectWithValue }) => {
+    async ({ id }, { dispatch, rejectWithValue }) => {
         try {
             const { data } = await api.get(`/admin/users/${id}`);
 
@@ -144,6 +146,8 @@ const initialState = {
     totalElements: 0,
     totalPages: 0,
     editedUser: null,
+    currentEditedUser: null,
+    currentEditedUserErrorObject: null,
     filterObject: {
         page: 1,
         query: "",
@@ -161,8 +165,9 @@ const initialState = {
     editUser: {
         successMessage: null,
     },
-    enableOrDisableUser: {
+    enableOrDisable: {
         successMessage: null,
+        errorMessage: null,
     },
     addMultipleUsers: {
         loading: false,
@@ -189,6 +194,12 @@ const userSlice = createSlice({
             state.addMultipleUsers.loading = false;
             state.addMultipleUsers.successMessage = null;
             state.addMultipleUsers.errorMessage = null;
+
+            state.enableOrDisable.successMessage = null;
+            state.enableOrDisable.errorMessage = null;
+
+            state.currentEditedUser = null;
+            state.currentEditedUserErrorObject = null;
         },
         setErrorField(state, { payload: { key, value } }) {
             state.errorObject[key] = value;
@@ -232,22 +243,20 @@ const userSlice = createSlice({
                 state.loading = false;
             })
 
-            // .addCase(fetchUser.pending, (state, { payload }) => {
-            //     state.user = null;
-            // })
-            // .addCase(fetchUser.fulfilled, (state, { payload }) => {
-            //     state.user = payload.data;
-            // })
-            // .addCase(fetchUser.rejected, (state, { payload }) => {})
+            .addCase(fetchUser.pending, (state, { payload }) => {
+                state.currentEditedUser = null;
+            })
+            .addCase(fetchUser.fulfilled, (state, { payload }) => {
+                state.currentEditedUser = payload.data;
+            })
+            .addCase(fetchUser.rejected, (state, { payload }) => {})
 
             .addCase(addUser.pending, (state, { payload }) => {
                 state.addUser.successMessage = null;
                 state.errorObject = null;
             })
             .addCase(addUser.fulfilled, (state, { payload }) => {
-                if (payload.data) {
-                    state.addUser.successMessage = "Thêm người dùng thành công";
-                }
+                state.addUser.successMessage = payload.data;
             })
             .addCase(addUser.rejected, (state, { payload }) => {
                 if (payload) {
@@ -269,9 +278,7 @@ const userSlice = createSlice({
                 state.errorObject = null;
             })
             .addCase(editUser.fulfilled, (state, { payload }) => {
-                if (payload.data) {
-                    state.editUser.successMessage = "Cập nhật người dùng thành công";
-                }
+                state.editUser.successMessage = payload.data;
             })
             .addCase(editUser.rejected, (state, { payload }) => {
                 if (payload) {
@@ -296,18 +303,21 @@ const userSlice = createSlice({
                 state.deleteUser.successMessage = payload.data;
             })
             .addCase(deleteUser.rejected, (state, { payload }) => {
-                state.deleteUser.errorMessage = payload;
+                state.deleteUser.errorMessage = "Không thể xóa người dùng vì ràng buộc dữ liệu";
             })
 
-            .addCase(enableOrDisableUser.pending, (state, { payload }) => {
-                state.enableOrDisableUser.successMessage = null;
+            .addCase(enableOrDisableUser.pending, (state, _) => {
+                state.enableOrDisable.successMessage = null;
+                state.enableOrDisable.errorMessage = null;
             })
             .addCase(enableOrDisableUser.fulfilled, (state, { payload }) => {
-                state.enableOrDisableUser.successMessage = payload.data;
+                state.enableOrDisable.successMessage = payload.data;
             })
-            .addCase(enableOrDisableUser.rejected, (state, { payload }) => {})
+            .addCase(enableOrDisableUser.rejected, (state, { payload }) => {
+                state.enableOrDisable.errorMessage = payload;
+            })
 
-            .addCase(addMultipleUsers.pending, (state, { payload }) => {
+            .addCase(addMultipleUsers.pending, (state, _) => {
                 state.addMultipleUsers.loading = true;
                 state.addMultipleUsers.successMessage = null;
                 state.addMultipleUsers.errorMessage = null;
@@ -318,7 +328,7 @@ const userSlice = createSlice({
             })
             .addCase(addMultipleUsers.rejected, (state, { payload }) => {
                 state.addMultipleUsers.loading = false;
-                state.addMultipleUsers.errorMessage = payload.data;
+                state.addMultipleUsers.errorMessage = payload;
             });
     },
 });

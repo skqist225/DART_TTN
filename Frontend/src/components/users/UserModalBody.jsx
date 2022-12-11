@@ -9,7 +9,7 @@ import { roleState } from "../../features/roleSlice";
 import ExcelModalBody from "../utils/forms/ExcelModalBody";
 import $ from "jquery";
 
-const sexOptions = [
+export const sexOptions = [
     {
         title: "Nam",
         value: "MALE",

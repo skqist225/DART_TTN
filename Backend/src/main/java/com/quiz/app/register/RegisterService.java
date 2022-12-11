@@ -86,10 +86,18 @@ public class RegisterService {
         throw new NotFoundException("Không tìm thấy môn học với mã " + id);
     }
 
+    @Transactional
+    public void addRegister(String studentId, Integer creditClassId) {
+        registerRepository.addRegister(studentId, creditClassId);
+    }
 
     @Transactional
     public void updateMidTermScore(String studentId, Integer creditClassId, float mark) {
         registerRepository.updateMidTermScore(studentId, creditClassId, mark);
+    }
+
+    public boolean isRegisterExist(String studentId, Integer creditClassId) {
+        return registerRepository.checkStudentExistInCreditClass(studentId, creditClassId) != null;
     }
 
     @Transactional

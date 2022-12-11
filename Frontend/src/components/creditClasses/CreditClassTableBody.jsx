@@ -1,27 +1,30 @@
-import React, { useEffect, useState } from "react";
-import { tailwindCss } from "../../tailwind";
-import MyButton from "../common/MyButton";
-import $ from "jquery";
-import { enableOrDisableCreditClass, setEditedCreditClass } from "../../features/creditClassSlice";
-import EnableOrDisable from "../common/EnableOrDisable";
-import { useDispatch } from "react-redux";
-import { persistUserState } from "../../features/persistUserSlice";
-import { useSelector } from "react-redux";
-import { Badge, Button, Table, Tooltip } from "flowbite-react";
-import TableModalViewer from "../utils/tables/TableModalViewer";
-import TablePagination from "../utils/tables/TablePagination";
-import TableModal from "../utils/tables/TableModal";
-import ExamModalBody from "../exams/ExamModalBody";
-import { addExam, editExam, examState, setEditedExam } from "../../features/examSlice";
-import { setTests } from "../../features/testSlice";
-import { examSchema } from "../../validation";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { useForm } from "react-hook-form";
-import { callToast } from "../../helpers";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import RegisterList from "./RegisterList";
-import ExamList from "./ExamList";
+import { Tab, Tabs } from "@mui/material";
+import { Badge, Button, Card, Tooltip } from "flowbite-react";
+import $ from "jquery";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import {
+    deleteCreditClass,
+    enableOrDisableCreditClass,
+    setEditedCreditClass,
+} from "../../features/creditClassSlice";
+import { addExam, editExam, examState, setEditedExam } from "../../features/examSlice";
+import { persistUserState } from "../../features/persistUserSlice";
+import { setTests } from "../../features/testSlice";
+import { callToast } from "../../helpers";
 import ExamIcon from "../../images/exam.png";
+import { tailwindCss } from "../../tailwind";
+import { examSchema } from "../../validation";
+import EnableOrDisable from "../common/EnableOrDisable";
+import MyButton, { ButtonType } from "../common/MyButton";
+import ExamModalBody, { a11yProps, TabPanel } from "../exams/ExamModalBody";
+import TableModal from "../utils/tables/TableModal";
+import TableModalViewer from "../utils/tables/TableModalViewer";
+import ExamList from "./ExamList";
+import RegisterList from "./RegisterList";
 
 function CreditClassTableBody({ rows, setIsEdit }) {
     const modalId = "examModal";
@@ -33,6 +36,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
     const dispatch = useDispatch(0);
 
     const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     const {
         filterObject,
@@ -138,6 +142,12 @@ function CreditClassTableBody({ rows, setIsEdit }) {
         dispatch(setTests([]));
     }
 
+    const [tabValue, setTabValue] = useState(0);
+
+    const handleChange = (event, newValue) => {
+        setTabValue(newValue);
+    };
+
     return (
         <tbody>
             <TableModal
@@ -170,7 +180,89 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                             }`}
                             key={row.id}
                         >
-                            <td className={tailwindCss.tableCell}>{row.id}</td>
+                            <td className={tailwindCss.tableCell}>
+                                <Tooltip content='Xem thông tin lớp tín chỉ'>
+                                    <Button
+                                        style={{ backgroundColor: "none" }}
+                                        onClick={() => {
+                                            $(`#viewCreditClassDetail${row.id}`).css(
+                                                "display",
+                                                "flex"
+                                            );
+                                        }}
+                                    >
+                                        {row.id}
+                                    </Button>
+                                    <TableModalViewer
+                                        modalId={`viewCreditClassDetail${row.id}`}
+                                        modalLabel='Thông tin lớp tín chỉ'
+                                        ModalBody={
+                                            <div>
+                                                <Card>
+                                                    <div
+                                                        className='flex items-center justify-between w-3/6 m-auto
+                                                        
+                                                    '
+                                                    >
+                                                        <div>
+                                                            <div>Môn học: {row.subjectName}</div>
+                                                            <div>Nhóm: {row.group}</div>
+                                                            <div>
+                                                                Tổng đăng ký:{" "}
+                                                                {row.tempRegisters.length}
+                                                            </div>
+                                                        </div>
+                                                        <div>
+                                                            <div>Niên khóa : {row.schoolYear}</div>
+                                                            <div>Học kỳ: {row.semester}</div>{" "}
+                                                            <div>
+                                                                Tổng ca thi: {row.exams.length}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </Card>
+                                                <Tabs
+                                                    value={tabValue}
+                                                    onChange={handleChange}
+                                                    centered
+                                                >
+                                                    <Tab
+                                                        label={`Danh sách đăng ký (${row.tempRegisters.length})`}
+                                                        {...a11yProps(0)}
+                                                    />
+                                                    <Tab
+                                                        label={`Danh sách ca thi (${row.exams.length})`}
+                                                        {...a11yProps(1)}
+                                                    />
+                                                </Tabs>
+                                                <TabPanel value={tabValue} index={0}>
+                                                    <RegisterList registers={row.tempRegisters} />
+                                                </TabPanel>
+                                                <TabPanel value={tabValue} index={1}>
+                                                    <ExamList
+                                                        exams={row.exams}
+                                                        numberOfActiveStudents={
+                                                            row.numberOfActiveStudents
+                                                        }
+                                                        numberOfMidTermExam={
+                                                            row.numberOfMidTermExam
+                                                        }
+                                                        numberOfMidTermExamCreated={
+                                                            row.numberOfMidTermExamCreated
+                                                        }
+                                                        numberOfFinalTermExam={
+                                                            row.numberOfFinalTermExam
+                                                        }
+                                                        numberOfFinalTermExamCreated={
+                                                            row.numberOfFinalTermExamCreated
+                                                        }
+                                                    />
+                                                </TabPanel>
+                                            </div>
+                                        }
+                                    />
+                                </Tooltip>
+                            </td>
                             <td className={tailwindCss.tableCell}>{row.schoolYear}</td>
                             <td className={tailwindCss.tableCell}>{row.semester}</td>
                             <td className={tailwindCss.tableCell}>{row.subjectName}</td>
@@ -184,76 +276,11 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                             </td>
                             <td className={tailwindCss.tableCell}>{row.teacherName}</td>
                             <td className={`${tailwindCss.tableCell} flex items-center`}>
-                                <div className='mr-3'>
-                                    <Tooltip content='Xem danh sách đăng ký' placement='top'>
-                                        <Button
-                                            onClick={() => {
-                                                $(`#studentsViewer${row.id}`).css(
-                                                    "display",
-                                                    "flex"
-                                                );
-                                            }}
-                                            color='success'
-                                            disabled={row.numberOfActiveStudents === 0}
-                                            style={{
-                                                width: "46px",
-                                                height: "42px",
-                                                backgroundColor: "#0E9F6E",
-                                            }}
-                                        >
-                                            <VisibilityIcon />
-                                        </Button>
-                                    </Tooltip>
-                                    <TableModalViewer
-                                        modalId={`studentsViewer${row.id}`}
-                                        modalLabel='Danh sách sinh viên'
-                                        ModalBody={<RegisterList registers={row.tempRegisters} />}
-                                    />
-                                </div>
-                                <div className='mr-3'>
-                                    <Tooltip content='Xem danh sách ca thi' placement='top'>
-                                        <Button
-                                            onClick={() => {
-                                                $(`#examsViewer${row.id}`).css("display", "flex");
-                                            }}
-                                            color='success'
-                                            disabled={
-                                                row.numberOfActiveStudents === 0 ||
-                                                row.exams.length === 0
-                                            }
-                                            style={{
-                                                width: "46px",
-                                                height: "42px",
-                                                backgroundColor: "#0E9F6E",
-                                            }}
-                                        >
-                                            <VisibilityIcon />
-                                        </Button>
-                                    </Tooltip>
-                                    <TableModalViewer
-                                        modalId={`examsViewer${row.id}`}
-                                        modalLabel='DANH SÁCH CA THI'
-                                        ModalBody={
-                                            <ExamList
-                                                exams={row.exams}
-                                                numberOfActiveStudents={row.numberOfActiveStudents}
-                                                numberOfMidTermExam={row.numberOfMidTermExam}
-                                                numberOfMidTermExamCreated={
-                                                    row.numberOfMidTermExamCreated
-                                                }
-                                                numberOfFinalTermExam={row.numberOfFinalTermExam}
-                                                numberOfFinalTermExamCreated={
-                                                    row.numberOfFinalTermExamCreated
-                                                }
-                                            />
-                                        }
-                                    />
-                                </div>
-                                {user.roles.map(({ name }) => name).includes("Quản trị viên") && (
+                                {userRoles.includes("Quản trị viên") && (
                                     <>
                                         <div className='mr-2'>
                                             <MyButton
-                                                type='edit'
+                                                type={ButtonType.edit}
                                                 onClick={() => {
                                                     $(`#creditClassModal`).css("display", "flex");
                                                     setIsEdit(true);
@@ -261,11 +288,24 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                                 }}
                                             />
                                         </div>
+                                        <div className='mr-2'>
+                                            <MyButton
+                                                type={ButtonType.delete}
+                                                onClick={() => {
+                                                    dispatch(deleteCreditClass(row.id));
+                                                }}
+                                                disabled={
+                                                    row.tempRegisters.length > 0 ||
+                                                    row.exams.length > 0
+                                                }
+                                            />
+                                        </div>
                                         <EnableOrDisable
                                             status={row.status}
                                             enableOrDisable={enableOrDisableCreditClass}
                                             id={row.id}
                                             creditClassPage={true}
+                                            disabled={row.exams.length > 0}
                                         />
                                     </>
                                 )}
@@ -282,7 +322,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                                 !row.shouldCreateExam
                                             }
                                         >
-                                            <img src={ExamIcon} width='24px' height='24px' />
+                                            <img src={ExamIcon} width='28px' height='28px' />
                                         </Button>
                                     </Tooltip>
                                 </div>

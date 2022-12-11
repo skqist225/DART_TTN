@@ -43,4 +43,15 @@ public interface ExamRepository extends CrudRepository<Exam, Integer> {
 
     @Query(value = "SELECT count(*) FROM cathi", nativeQuery = true)
     int countTotalExams();
+
+    @Query(value = "SELECT count(*) FROM cathi where dathi = true", nativeQuery = true)
+    int countTotalExamsUsed();
+
+    @Query(value = "SELECT count(*) FROM cathi where dathi = false and dahuy = false", nativeQuery =
+            true)
+    int countTotalExamsNotUsed();
+
+    @Query(value = "SELECT count(*) FROM cathi where dahuy = true", nativeQuery =
+            true)
+    int countTotalExamsCancelled();
 }

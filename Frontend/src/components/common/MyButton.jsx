@@ -1,11 +1,11 @@
-import React from "react";
+import AddIcon from "@mui/icons-material/Add";
+import CheckIcon from "@mui/icons-material/Check";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import VisibilityIcon from "@mui/icons-material/Visibility";
-import CheckIcon from "@mui/icons-material/Check";
-import DisableImage from "../../images/disable-icon.png";
-import AddIcon from "@mui/icons-material/Add";
 import { Tooltip } from "flowbite-react";
+import React from "react";
+import DisableImage from "../../images/disable-icon.png";
 export const ButtonType = {
     add: "add",
     view: "view",
@@ -44,14 +44,14 @@ function MyButton({
         case "delete": {
             label = "Xóa " + label;
             buttonClassName = "bg-rose-500 hover:bg-rose-500";
-            buttonDisableClassName = "bg-rose-300 hover:bg-rose-300";
+            buttonDisableClassName = "bg-rose-300 hover:bg-rose-300 cursor-not-allowed";
             Icon = <DeleteIcon />;
             break;
         }
         case "disable": {
             label = "Hủy " + label;
             buttonClassName = "bg-amber-500 hover:bg-amber-500";
-            buttonDisableClassName = "bg-amber-300 hover:bg-amber-300";
+            buttonDisableClassName = "bg-amber-300 hover:bg-amber-300 cursor-not-allowed";
             Icon = (
                 <img
                     src={DisableImage}
@@ -79,7 +79,7 @@ function MyButton({
         }
         case "view": {
             buttonClassName = "bg-violet-600 hover:bg-violet-600";
-            buttonDisableClassName += "bg-violet-300 hover:bg-violet-300";
+            buttonDisableClassName += "bg-violet-300 hover:bg-violet-300 cursor-not-allowed";
             Icon = <VisibilityIcon />;
 
             break;

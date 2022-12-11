@@ -10,3 +10,4 @@ export { default as SubjectsPage } from "./subjects/SubjectsPage";
 export { default as TakeTestPage } from "./takeTests/TakeTestPage";
 export { default as TestsPage } from "./tests/TestsPage";
 export { default as UsersPage } from "./users/UsersPage";
+export { default as RegisterUserPage } from "./auth/RegisterUserPage";

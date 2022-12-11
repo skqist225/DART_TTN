@@ -39,13 +39,7 @@ export const countTestsBySubjectAndStatus = createAsyncThunk(
 
 const initialState = {
     loading: true,
-    countTotal: {
-        totalExams: 0,
-        totalCreditClasses: 0,
-        totalSubjects: 0,
-        totalTests: 0,
-        totalQuestions: 0,
-    },
+    countTotal: {},
     doughnut: {
         countQuestionsBySubject: [],
         countExamsByCreditClass: [],
@@ -60,11 +54,7 @@ const statisticSlice = createSlice({
     extraReducers: builder => {
         builder.addCase(countTotalRecords.pending, (state, { payload }) => {});
         builder.addCase(countTotalRecords.fulfilled, (state, { payload }) => {
-            state.countTotal.totalExams = payload.data.totalExams;
-            state.countTotal.totalCreditClasses = payload.data.totalCreditClasses;
-            state.countTotal.totalSubjects = payload.data.totalSubjects;
-            state.countTotal.totalTests = payload.data.totalTests;
-            state.countTotal.totalQuestions = payload.data.totalQuestions;
+            state.countTotal = payload.data;
         });
         builder.addCase(countTotalRecords.rejected, (state, { payload }) => {});
 

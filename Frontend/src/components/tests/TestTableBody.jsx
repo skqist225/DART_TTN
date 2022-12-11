@@ -96,6 +96,7 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
                                         setIsEdit(true);
                                         dispatch(setEditedTest(row));
                                     }}
+                                    disabled={row.used}
                                 />
                             </div>
                             <div className='mr-2'>

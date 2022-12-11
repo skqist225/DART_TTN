@@ -12,6 +12,7 @@ function Select({
     setValue,
     onChangeHandler,
     width,
+    height,
     hiddenOption = false,
     multiple = false,
     readOnly = false,
@@ -38,7 +39,7 @@ function Select({
             )}
             <select
                 id={propName}
-                className={`${tailwindCss.select} ${width} ${
+                className={`${tailwindCss.select} ${width} ${height} ${
                     error && "bg-red-50 border border-red-500"
                 }`}
                 name={name}
@@ -56,6 +57,7 @@ function Select({
                 disabled={readOnly}
                 data-id={propName}
                 data-index={index}
+                style={{ height: height ? "400px" : "" }}
             >
                 {hiddenOption && (
                     <option value='' disabled selected style={{ display: "none" }}>

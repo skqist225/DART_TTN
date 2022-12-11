@@ -90,7 +90,7 @@ public class Exam {
                 .build();
     }
 
-    //    @JsonIgnore
+    @JsonIgnore
     @Builder.Default
     @OneToMany(mappedBy = "exam")
     private List<TakeExam> takeExams = new ArrayList<>();

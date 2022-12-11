@@ -48,18 +48,20 @@ function RegisterTableBody({ rows, setIsEdit, type = "", addExam = false }) {
                         <td className={tailwindCss.tableCell}>{row.student.fullName}</td>
                         {!addExam && (
                             <>
-                                <td className={tailwindCss.tableCell}>{row.creditClass.id}</td>
                                 <td className={tailwindCss.tableCell}>
-                                    {row.creditClass.schoolYear}
+                                    {row.tempCreditClass.creditClassId}
                                 </td>
                                 <td className={tailwindCss.tableCell}>
-                                    {row.creditClass.semester}
+                                    {row.tempCreditClass.schoolYear}
                                 </td>
                                 <td className={tailwindCss.tableCell}>
-                                    {row.creditClass.subjectName}
+                                    {row.tempCreditClass.semester}
                                 </td>
                                 <td className={tailwindCss.tableCell}>
-                                    {row.creditClass.teacherName}
+                                    {row.tempCreditClass.subjectName}
+                                </td>
+                                <td className={tailwindCss.tableCell}>
+                                    {row.tempCreditClass.teacherName}
                                 </td>
                             </>
                         )}
@@ -67,7 +69,7 @@ function RegisterTableBody({ rows, setIsEdit, type = "", addExam = false }) {
                             user.roles.map(({ name }) => name).includes("Quản trị viên") && (
                                 <EnableOrDisable
                                     id={{
-                                        creditClassId: row.creditClass.id,
+                                        creditClassId: row.creditClassIdLocal,
                                         studentId: row.student.id,
                                     }}
                                     status={row.status}

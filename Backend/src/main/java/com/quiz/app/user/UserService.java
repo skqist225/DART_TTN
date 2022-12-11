@@ -51,6 +51,10 @@ public class UserService {
         return userRepository.findByRole(roleId);
     }
 
+    public List<User> findByRole(Integer roleId, Integer limit, Integer creditClassId) {
+        return userRepository.findByRole(roleId, limit, creditClassId);
+    }
+
     public void encodePassword(User user) {
         String encodedPassword = passwordEncoder.encode(user.getPassword());
         user.setPassword(encodedPassword);
@@ -115,9 +119,9 @@ public class UserService {
             throws VerifiedUserException {
         try {
             userRepository.deleteById(id);
-            return "Delete user successfully";
+            return "Xóa người dùng thành công";
         } catch (Exception ex) {
-            return "Could not delete this user as constraint exception";
+            return "Không thể xóa người dùng vì ràng buộc dữ liệu";
         }
     }
 
@@ -155,7 +159,6 @@ public class UserService {
         Expression<String> birthday = root.get("birthday");
 
         if (!StringUtils.isEmpty(searchQuery)) {
-            System.out.println(searchQuery);
             Expression<String> wantedQueryField = criteriaBuilder.concat(userId, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, firstName);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");

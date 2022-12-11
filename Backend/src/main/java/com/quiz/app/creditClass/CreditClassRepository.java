@@ -16,6 +16,9 @@ public interface CreditClassRepository extends CrudRepository<CreditClass, Integ
                                 int group);
 
     @Query(value = "SELECT ltc.* FROM loptinchi ltc join dangky dk on dk.maltc = ltc.maltc WHERE huylop = false group by ltc.maltc", nativeQuery = true)
+    List<CreditClass> findAllActiveCreditClassHaveRegister();
+
+    @Query(value = "SELECT * FROM loptinchi ltc WHERE huylop = false", nativeQuery = true)
     List<CreditClass> findAllActiveCreditClass();
 
     @Query(value = "SELECT ltc.* FROM loptinchi ltc join dangky dk on dk.maltc = ltc.maltc WHERE " +
@@ -24,4 +27,10 @@ public interface CreditClassRepository extends CrudRepository<CreditClass, Integ
 
     @Query("SELECT count(*) FROM CreditClass")
     int countTotalCreditClasses();
+
+    @Query("SELECT count(*) FROM CreditClass c where c.status = false")
+    int countTotalCreditClassesOpened();
+
+    @Query("SELECT count(*) FROM CreditClass c where c.status = true")
+    int countTotalCreditClassesClosed();
 }

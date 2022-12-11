@@ -66,9 +66,14 @@ public class CreditClassService {
         return (List<CreditClass>) creditClassRepository.findAll();
     }
 
+    public List<CreditClass> findAllActiveCreditClassHaveRegister() {
+        return creditClassRepository.findAllActiveCreditClassHaveRegister();
+    }
+
     public List<CreditClass> findAllActiveCreditClass() {
         return creditClassRepository.findAllActiveCreditClass();
     }
+
 
     public List<CreditClass> findAllActiveCreditClassAndStudent(String studentId) {
         return creditClassRepository.findAllActiveCreditClassAndStudent(studentId);
@@ -155,10 +160,6 @@ public class CreditClassService {
         typedQuery.setMaxResults(pageable.getPageSize());
 
         return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
-    }
-
-    public int countTotalCreditClasses() {
-        return creditClassRepository.countTotalCreditClasses();
     }
 
     public String enableOrDisable(Integer id, String action) throws NotFoundException {

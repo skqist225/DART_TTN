@@ -64,7 +64,8 @@ public class CreditClassRestController {
             @RequestParam(name = "active", required = false, defaultValue = "false") boolean active,
             @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
             @RequestParam(name = "teacher", required = false, defaultValue = "") String teacherId,
-            @RequestParam(name = "student", required = false, defaultValue = "") String studentId
+            @RequestParam(name = "student", required = false, defaultValue = "") String studentId,
+            @RequestParam(name = "haveRegister", required = false, defaultValue = "true") boolean haveRegister
     ) {
         CreditClassesDTO creditClassesDTO = new CreditClassesDTO();
 
@@ -80,6 +81,8 @@ public class CreditClassRestController {
                             creditClasses.add(creditClass);
                         }
                     }
+                } else if (haveRegister) {
+                    creditClasses = creditClassService.findAllActiveCreditClassHaveRegister();
                 } else {
                     creditClasses = creditClassService.findAllActiveCreditClass();
                 }

@@ -5,13 +5,13 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
 public class PostCreateRegisterDTO {
-    private String id;
-    private String name;
-    private String numberOfTheoreticalPeriods;
-    private String numberOfPracticePeriods;
+    private Integer creditClassId;
+    private List<String> registerList;
 }

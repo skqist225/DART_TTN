@@ -156,11 +156,28 @@ function LoginPage() {
                                 </div>
                             </FormControl>
                         </div>
-                        <FormControl fullWidth>
-                            <Button variant='contained' type='submit'>
-                                Đăng nhập
-                            </Button>
-                        </FormControl>
+                        <div className='flex items-center'>
+                            <div className='mr-3 w-full'>
+                                <FormControl fullWidth>
+                                    <Button variant='contained' type='submit'>
+                                        Đăng nhập
+                                    </Button>
+                                </FormControl>
+                            </div>
+                            <div className='w-full'>
+                                <FormControl fullWidth>
+                                    <Button
+                                        variant='contained'
+                                        type='button'
+                                        onClick={() => {
+                                            window.location.href = "/auth/register";
+                                        }}
+                                    >
+                                        Đăng ký
+                                    </Button>
+                                </FormControl>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </div>

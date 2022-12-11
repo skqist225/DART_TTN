@@ -1,18 +1,18 @@
+import { Box, Tab, Tabs, Typography } from "@mui/material";
+import $ from "jquery";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { creditClassState } from "../../features/creditClassSlice";
-import { examState, setAddExamDisabled, setEditedExam } from "../../features/examSlice";
+import { examState, setAddExamDisabled } from "../../features/examSlice";
+import { fetchAllRegisters, registerState } from "../../features/registerSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
+import RegisterTableBody from "../registers/RegisterTableBody";
 import TestTableBody from "../tests/TestTableBody";
+import DatePicker from "../utils/datePicker/DatePicker";
+import TableHeader from "../utils/tables/TableHeader";
+import TablePagination from "../utils/tables/TablePagination";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
-import DatePicker from "../utils/datePicker/DatePicker";
-import { Box, Tab, Tabs, Typography } from "@mui/material";
-import { fetchAllRegisters, registerState } from "../../features/registerSlice";
-import RegisterTableBody from "../registers/RegisterTableBody";
-import TablePagination from "../utils/tables/TablePagination";
-import TableHeader from "../utils/tables/TableHeader";
-import $ from "jquery";
 
 export const examTypes = [
     {
@@ -93,6 +93,7 @@ function ExamModalBody({
     creditClassPage = false,
 }) {
     const [type, setType] = useState("");
+    const [tabValue, setTabValue] = useState(0);
     const [skipUpdateCreditClass, setSkipUpdateCreditClass] = useState(false);
     const [numberOfActiveStudents, setNumberOfActiveStudents] = useState(0);
     const [localExamsType, setLocalExamsType] = useState(examTypes);
@@ -210,8 +211,6 @@ function ExamModalBody({
         // } else {
         // }
     };
-
-    const [tabValue, setTabValue] = React.useState(0);
 
     const handleChange = (event, newValue) => {
         setTabValue(newValue);

@@ -1,7 +1,9 @@
 package com.quiz.app.register;
 
 import com.quiz.app.creditClass.CreditClassService;
+import com.quiz.app.creditClass.dto.CreditClassDTO;
 import com.quiz.app.exception.NotFoundException;
+import com.quiz.app.register.dto.PostCreateRegisterDTO;
 import com.quiz.app.register.dto.RegistersDTO;
 import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
@@ -29,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -80,10 +83,12 @@ public class RegisterRestController {
             @RequestParam(name = "creditClass", required = false, defaultValue = "") String creditClassId
     ) {
         RegistersDTO registersDTO = new RegistersDTO();
+        List<Register> registers = new ArrayList<>();
+        long totalElements = 0,
+                totalPages = 0;
 
-        if(page.equals("0")) {
-            List<Register> registers = new ArrayList<>();
-            if (Objects.nonNull(creditClassId)) {
+        if (page.equals("0")) {
+            if (!StringUtils.isEmpty(creditClassId)) {
                 List<Register> tempRegisters = registerService.findByCreditClass(Integer.parseInt(creditClassId));
 
                 for (Register register : tempRegisters) {
@@ -91,20 +96,19 @@ public class RegisterRestController {
                     for (TakeExam takeExam : takeExams) {
                         if (takeExam.getExam().getType().equals("Giữa kỳ")) {
                             register.setBelongToMidTerm(true);
-                        } else if(takeExam.getExam().getType().equals("Cuối kỳ")) {
+                        } else if (takeExam.getExam().getType().equals("Cuối kỳ")) {
                             register.setBelongToEndOfTerm(true);
                         }
                     }
                     registers.add(register);
                 }
-                registers.sort(Comparator.comparing(register->register.getStudent().getFullName()));
+                registers.sort(Comparator.comparing(register -> register.getStudent().getFullName()));
             } else {
                 registers = registerService.findAll();
             }
+            totalElements = registers.size();
+            totalPages = (long) Math.ceil(registers.size() / 10.0);
 
-            registersDTO.setRegisters(registers);
-            registersDTO.setTotalElements(registers.size());
-            registersDTO.setTotalPages(0);
         } else {
             Map<String, String> filters = new HashMap<>();
             filters.put("page", page);
@@ -113,12 +117,22 @@ public class RegisterRestController {
             filters.put("sortField", sortField);
             filters.put("creditClassId", creditClassId);
 
-            Page<Register> subjectsPage = registerService.findAllRegisters(filters);
+            Page<Register> registersPage = registerService.findAllRegisters(filters);
 
-            registersDTO.setRegisters(subjectsPage.getContent());
-            registersDTO.setTotalElements(subjectsPage.getTotalElements());
-            registersDTO.setTotalPages(subjectsPage.getTotalPages());
+            registers = registersPage.getContent();
+            totalElements = registersPage.getTotalElements();
+            totalPages = registersPage.getTotalPages();
         }
+
+        for (Register register : registers) {
+            CreditClass creditClass = register.getCreditClass();
+            register.setTempCreditClass(new CreditClassDTO(creditClass.getId(), creditClass.getSchoolYear(),
+                    creditClass.getSemester(), creditClass.getSubjectName(), creditClass.getTeacherName()));
+        }
+
+        registersDTO.setRegisters(registers);
+        registersDTO.setTotalElements(totalElements);
+        registersDTO.setTotalPages(totalPages);
 
         return new OkResponse<>(registersDTO).response();
     }
@@ -284,5 +298,34 @@ public class RegisterRestController {
         } catch (NotFoundException ex) {
             return new BadResponse<String>(ex.getMessage()).response();
         }
+    }
+
+    @PostMapping("save")
+    public ResponseEntity<StandardJSONResponse<String>> saveSubject(
+            @RequestBody PostCreateRegisterDTO postCreateRegisterDTO,
+            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) {
+        Integer creditClassId = postCreateRegisterDTO.getCreditClassId();
+        List<String> registerList = postCreateRegisterDTO.getRegisterList();
+        List<String> existed = new ArrayList<>();
+
+        String messageResponse = "";
+
+        if (isEdit) {
+
+        } else {
+            for (String register : registerList) {
+                if (registerService.isRegisterExist(register, creditClassId)) {
+                    existed.add(register);
+                } else {
+                    registerService.addRegister(register, creditClassId);
+                }
+            }
+        }
+
+        if (existed.size() > 0) {
+            messageResponse += String.join(",", existed);
+        }
+
+        return new OkResponse<>("Thêm đăng ký thành công").response();
     }
 }

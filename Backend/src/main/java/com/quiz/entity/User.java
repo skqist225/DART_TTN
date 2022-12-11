@@ -95,7 +95,7 @@ public class User {
 
     @Transient
     @JsonIgnore
-    public static User build(PostCreateUserDTO registerDTO) {
+    public static User build(PostCreateUserDTO registerDTO, boolean userStatus) {
         String id = registerDTO.getId();
         String firstName = registerDTO.getFirstName();
         String lastName = registerDTO.getLastName();
@@ -108,7 +108,7 @@ public class User {
         return User.builder().id(id).firstName(firstName).lastName(lastName)
                 .email(email).password(password).sex(sex)
                 .birthday(birthday)
-                .status(true)
+                .status(userStatus)
                 .address(address)
                 .build();
     }

@@ -1,6 +1,7 @@
 package com.quiz.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.quiz.app.creditClass.dto.CreditClassDTO;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -25,6 +26,7 @@ import javax.persistence.Transient;
 @Table(name = "DANGKY")
 @IdClass(RegisterId.class)
 public class Register {
+    @JsonIgnore
     @Id
     @ManyToOne
     @JoinColumn(name = "MALTC")
@@ -53,8 +55,11 @@ public class Register {
     @Transient
     private boolean belongToEndOfTerm = false;
 
+    @Transient
+    private CreditClassDTO tempCreditClass;
+
     public Register(User student, boolean status, Float attendanceScore, Float midTermScore,
-     Float               finalTermScore) {
+                    Float finalTermScore) {
         this.student = student;
         this.status = status;
         this.attendanceScore = attendanceScore;

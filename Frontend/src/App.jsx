@@ -16,6 +16,7 @@ import {
     RegistersPage,
     TakeTestPage,
     RanksPage,
+    RegisterUserPage,
 } from "./pages";
 import { useSelector } from "react-redux";
 import { persistUserState } from "./features/persistUserSlice";
@@ -53,6 +54,8 @@ function App() {
                 <Route exact path='/' element={HomePage} />
                 <Route path='/statistics' element={<Dashboard />} />
                 <Route path='/auth/login' element={<LoginPage />} />
+                <Route path='/auth/register' element={<RegisterUserPage />} />
+                <Route path='/auth/edit/:userId' element={<RegisterUserPage />} />
                 <Route path='/subjects' element={<SubjectsPage />} />
                 <Route path='/questions' element={<QuestionsPage />} />
                 <Route path='/tests' element={<TestsPage />} />

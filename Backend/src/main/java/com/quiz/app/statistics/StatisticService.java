@@ -1,8 +1,9 @@
 package com.quiz.app.statistics;
 
 
+import com.quiz.app.creditClass.CreditClassRepository;
 import com.quiz.app.creditClass.CreditClassService;
-import com.quiz.app.exam.ExamService;
+import com.quiz.app.exam.ExamRepository;
 import com.quiz.app.question.QuestionService;
 import com.quiz.app.statistics.dto.CountExamByCreditClassDTO;
 import com.quiz.app.statistics.dto.CountQuestionsBySubjectDTO;
@@ -19,10 +20,10 @@ import java.util.List;
 @Service
 public class StatisticService {
     @Autowired
-    private ExamService examService;
+    private ExamRepository examRepository;
 
     @Autowired
-    private CreditClassService creditClassService;
+    private CreditClassRepository creditClassRepository;
 
     @Autowired
     private TestService testService;
@@ -34,13 +35,36 @@ public class StatisticService {
     private QuestionService questionService;
 
     public CountTotalDTO count() {
-        int totalExams = examService.countTotalExams();
-        int totalCreditClasses = creditClassService.countTotalCreditClasses();
+        CountTotalDTO countTotalDTO = new CountTotalDTO();
+
+        int totalExams = examRepository.countTotalExams();
+        int totalExamsUsed = examRepository.countTotalExamsUsed();
+        int totalExamsNotUsed = examRepository.countTotalExamsNotUsed();
+        int totalExamsCancelled = examRepository.countTotalExamsCancelled();
+
+        int totalCreditClasses = creditClassRepository.countTotalCreditClasses();
+        int totalCreditClassesOpened = creditClassRepository.countTotalCreditClassesOpened();
+        int totalCreditClassesClosed = creditClassRepository.countTotalCreditClassesClosed();
+
         int totalSubjects = subjectService.countTotalSubjects();
         int totalTests = testService.countTotalTests();
         int totalQuestions = questionService.countTotalQuestions();
 
-        return new CountTotalDTO(totalExams, totalCreditClasses, totalSubjects, totalTests, totalQuestions);
+        countTotalDTO.setTotalExams(totalExams);
+        countTotalDTO.setTotalExamsUsed(totalExamsUsed);
+        countTotalDTO.setTotalExamsNotUsed(totalExamsNotUsed);
+        countTotalDTO.setTotalExamsCancelled(totalExamsCancelled);
+
+        countTotalDTO.setTotalCreditClasses(totalCreditClasses);
+        countTotalDTO.setTotalCreditClassesClosed(totalCreditClassesOpened);
+        countTotalDTO.setTotalCreditClassesClosed(totalCreditClassesClosed);
+
+        countTotalDTO.setTotalSubjects(totalSubjects);
+        countTotalDTO.setTotalTests(totalTests);
+        countTotalDTO.setTotalQuestions(totalQuestions);
+
+
+        return countTotalDTO;
     }
 
     public List<CountQuestionsBySubjectDTO> countQuestionsBySubject() {
@@ -48,7 +72,7 @@ public class StatisticService {
     }
 
     public List<CountExamByCreditClassDTO> countExamByCreditClass() {
-        return examService.countExamByCreditClass();
+        return examRepository.countExamByCreditClass();
     }
 
     public DoughnutChartDTO doughnut() {

@@ -30,4 +30,16 @@ public interface RegisterRepository extends CrudRepository<Register, RegisterId>
     @Modifying
     @Query(value = "update dangky set huydangky" + " = 0 where maltc = :creditClassId AND masv = :studentId", nativeQuery = true)
     void openRegister(Integer creditClassId, String studentId);
+
+    @Modifying
+    @Query(value = "insert into dangky(huydangky, masv, maltc) values(0, :studentId, " +
+            ":creditClassId)",
+            nativeQuery =
+                    true)
+    void addRegister(String studentId, Integer creditClassId);
+
+    @Query(value = "select * from dangky where maltc = :creditClassId and masv = :studentId",
+            nativeQuery =
+                    true)
+    Register checkStudentExistInCreditClass(String studentId, Integer creditClassId);
 }

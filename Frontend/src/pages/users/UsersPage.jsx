@@ -11,8 +11,6 @@ import {
     setUserExcelAdd,
     userState,
 } from "../../features/userSlice";
-
-import $ from "jquery";
 import "../../css/page/rooms.css";
 import { Frame, Table, UserModalBody, UserTableBody } from "../../components";
 import { userRegisterSchema, userSchema } from "../../validation";
@@ -20,6 +18,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { fetchAllRoles } from "../../features/roleSlice";
 import { userColumns } from "../columns";
+import $ from "jquery";
 
 const UsersPage = () => {
     const dispatch = useDispatch();
@@ -63,9 +62,9 @@ const UsersPage = () => {
         userExcelAdd,
         addUser: { successMessage },
         editUser: { successMessage: euSuccessMessage },
-        deleteUser: { successMessage: duSuccessMessage },
-        enableOrDisableUser: { successMessage: eodqSuccessMessage },
-        addMultipleUsers: { successMessage: amuSuccessMessage, errorMessage: amuErrorMessage },
+        deleteUser: { successMessage: dSuccessMessage, errorMessage: dErrorMessage },
+        enableOrDisable: { successMessage: eodSuccessMessage, errorMessage: eodErrorMessage },
+        addMultipleUsers: { successMessage: amSuccessMessage, errorMessage: amErrorMessage },
     } = useSelector(userState);
 
     useEffect(() => {
@@ -214,22 +213,42 @@ const UsersPage = () => {
     };
 
     useEffect(() => {
-        if (eodqSuccessMessage) {
-            cleanForm(eodqSuccessMessage, "normal");
+        if (eodSuccessMessage) {
+            cleanForm(eodSuccessMessage, "normal");
         }
-    }, [eodqSuccessMessage]);
+    }, [eodSuccessMessage]);
 
     useEffect(() => {
-        if (amuSuccessMessage) {
-            cleanForm(amuSuccessMessage, "add");
+        if (amSuccessMessage) {
+            cleanForm(amSuccessMessage, "add");
         }
-    }, [amuSuccessMessage]);
+    }, [amSuccessMessage]);
 
     useEffect(() => {
-        if (amuErrorMessage) {
-            callToast("error", amuErrorMessage);
+        if (amErrorMessage) {
+            callToast("error", amErrorMessage);
         }
-    }, [amuErrorMessage]);
+    }, [amErrorMessage]);
+
+    console.log(eodErrorMessage);
+
+    useEffect(() => {
+        if (eodErrorMessage) {
+            callToast("error", eodErrorMessage);
+        }
+    }, [eodErrorMessage]);
+
+    useEffect(() => {
+        if (dSuccessMessage) {
+            cleanForm(dSuccessMessage, "delete");
+        }
+    }, [dSuccessMessage]);
+
+    useEffect(() => {
+        if (dErrorMessage) {
+            callToast("error", dErrorMessage);
+        }
+    }, [dErrorMessage]);
 
     const handleAddMultipleFromExcelFile = () => {
         if (excelFile) {

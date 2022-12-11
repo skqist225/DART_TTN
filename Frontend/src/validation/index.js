@@ -58,7 +58,10 @@ export const userSchema = yup
 
 export const userRegisterSchema = yup
     .object({
-        id: yup.string().required("Mã người dùng").max(10, "Mã người dùng không được quá 10 ký tự"),
+        id: yup
+            .string()
+            .required("Mã người dùng không được để trống")
+            .max(10, "Mã người dùng không được quá 10 ký tự"),
         firstName: yup
             .string()
             .required("Tên không được để trống")
@@ -71,6 +74,33 @@ export const userRegisterSchema = yup
             .string()
             .required("Địa chỉ email không được để  trống")
             .email("Địa chỉ email không đúng định dạng"),
+        birthday: yup.string().required("Ngày sinh không được để  trống"),
+        sex: yup.string().required("Giới tính không được để  trống"),
+    })
+    .required();
+
+export const registerPageSchema = yup
+    .object({
+        id: yup
+            .string()
+            .required("Mã người dùng không được để trống")
+            .max(10, "Mã người dùng không được quá 10 ký tự"),
+        firstName: yup
+            .string()
+            .required("Tên không được để trống")
+            .max(50, "Tên không được quá 50 ký tự"),
+        lastName: yup
+            .string()
+            .required("Họ không được để  trống")
+            .max(10, "Họ không được quá 10 ký tự"),
+        email: yup
+            .string()
+            .required("Địa chỉ email không được để  trống")
+            .email("Địa chỉ email không đúng định dạng"),
+        password: yup
+            .string()
+            .required("Mật khẩu không được để trống")
+            .min(8, "Mật khẩu ít nhất 8 ký tự"),
         birthday: yup.string().required("Ngày sinh không được để  trống"),
         sex: yup.string().required("Giới tính không được để  trống"),
     })

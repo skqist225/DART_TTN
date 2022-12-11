@@ -1,15 +1,15 @@
+import { Spinner } from "flowbite-react";
+import $ from "jquery";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Spinner } from "flowbite-react";
+import { examState } from "../../../features/examSlice";
+import { questionState } from "../../../features/questionSlice";
+import { registerState } from "../../../features/registerSlice";
+import { addTest, testState } from "../../../features/testSlice";
+import { userState } from "../../../features/userSlice";
+import { callToast } from "../../../helpers";
 import { CloseIcon } from "../../../images";
 import { tailwindCss } from "../../../tailwind";
-import { questionState } from "../../../features/questionSlice";
-import { addTest, testState } from "../../../features/testSlice";
-import { callToast } from "../../../helpers";
-import { userState } from "../../../features/userSlice";
-import { examState } from "../../../features/examSlice";
-import { registerState } from "../../../features/registerSlice";
-import $ from "jquery";
 
 function TableModal({
     modalId,
@@ -58,7 +58,7 @@ function TableModal({
             className={tailwindCss.modal.container}
             style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
         >
-            <div className='relative w-full max-w-5xl h-full md:h-full mt-10'>
+            <div className='relative w-full max-w-4xl h-full md:h-full mt-10'>
                 <form
                     id={formId}
                     onSubmit={e => {

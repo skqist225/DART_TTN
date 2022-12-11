@@ -7,6 +7,7 @@ import com.quiz.app.response.StandardJSONResponse;
 import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.error.ForbiddenResponse;
 import com.quiz.app.response.success.OkResponse;
+import com.quiz.app.role.RoleService;
 import com.quiz.app.security.UserDetailsServiceImpl;
 import com.quiz.app.user.UserService;
 import com.quiz.app.user.dto.ForgotPasswordResponse;
@@ -51,12 +52,14 @@ import java.util.regex.Pattern;
 @RequestMapping("/api/auth")
 public class AuthRestController {
     public final String DEV_STATIC_DIR = "src/main/resources/static/user_images";
-    public final String PROD_STATIC_DIR = "/opt/tomcat/webapps/ROOT/WEB-INF/classes/static" +
-            "/user_images";
+    public final String PROD_STATIC_DIR = "/opt/tomcat/webapps/ROOT/WEB-INF/classes/static" + "/user_images";
     public final String PROD_STATIC_PATH = "static/user_images";
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     private AuthenticationManager authenticationManager;
@@ -83,15 +86,14 @@ public class AuthRestController {
             User user = userService.findById(loginDTO.getId());
 
             if (!user.isStatus()) {
-                return new ForbiddenResponse<User>(
-                        "Tài khoản của bạn không còn hiệu lực").response();
+                return new ForbiddenResponse<User>("Tài khoản đang bị vô hiệu hóa").response();
             }
 
             user.setToken(token);
 
             return new OkResponse<>(user).response();
         } catch (BadCredentialsException | NotFoundException e) {
-            return new BadResponse<User>(e.getMessage()).response();
+            return new BadResponse<User>("Tài khoản hoặc mật khẩu không đúng").response();
         }
     }
 
@@ -111,9 +113,9 @@ public class AuthRestController {
                                         boolean isEdit
     ) {
         if (Objects.isNull(id) || StringUtils.isEmpty(id)) {
-            commonUtils.addError("id", "Mã ND không được để trống");
+            commonUtils.addError("id", "Mã người dùng không được để trống");
         } else if (id.length() > 10) {
-            commonUtils.addError("id", "Mã ND tối đa 10 ký tự");
+            commonUtils.addError("id", "Mã người dùng tối đa 10 ký tự");
         }
 
         if (Objects.isNull(firstName) || StringUtils.isEmpty(firstName)) {
@@ -128,8 +130,8 @@ public class AuthRestController {
         if (Objects.isNull(email) || StringUtils.isEmpty(email)) {
             commonUtils.addError("email", "Email không được để trống");
         } else {
-            Matcher mat = pattern.matcher(email);
-            if (!mat.matches()) {
+            Matcher matcher = pattern.matcher(email);
+            if (!matcher.matches()) {
                 commonUtils.addError("email", "Địa chỉ email không hợp lệ");
             }
         }
@@ -156,10 +158,7 @@ public class AuthRestController {
     }
 
     @PostMapping("register")
-    public ResponseEntity<StandardJSONResponse<User>> registerUser(
-            @ModelAttribute PostCreateUserDTO postCreateUserDTO,
-            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
-    ) throws IOException {
+    public ResponseEntity<StandardJSONResponse<String>> registerUser(@ModelAttribute PostCreateUserDTO postCreateUserDTO, @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) throws IOException, NotFoundException {
         CommonUtils commonUtils = new CommonUtils();
         User user = null;
 
@@ -173,28 +172,28 @@ public class AuthRestController {
         String sexStr = postCreateUserDTO.getSex();
         Set<Integer> rolesInt = postCreateUserDTO.getRoles();
         MultipartFile avatar = postCreateUserDTO.getImage();
-        System.out.println(avatar);
-        catchUserInputException(commonUtils, id, firstName, lastName, email, password, birthdayStr, sexStr,
-                rolesInt, isEdit);
+        boolean needVerifyUser = postCreateUserDTO.isNeedVerifyUser();
+
+        catchUserInputException(commonUtils, id, firstName, lastName, email, password, birthdayStr, sexStr, rolesInt, isEdit);
 
         if (commonUtils.getArrayNode().size() > 0) {
-            return new BadResponse<User>(commonUtils.getArrayNode().toString()).response();
+            return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
         } else {
-            if(!isEdit) {
+            if (!isEdit) {
                 if (userService.isIdDuplicated(id)) {
-                    commonUtils.addError("id", "Mã ND đã tồn tại");
+                    commonUtils.addError("id", "Mã người dùng đã tồn tại");
                 }
             }
 
             if (userService.isBirthdayGreaterThanOrEqualTo18(LocalDate.parse(postCreateUserDTO.getBirthday()))) {
-                commonUtils.addError("birthday", "Tuổi của bạn phải lớn hơn 18");
+                commonUtils.addError("birthday", "Tuổi phải lớn hơn 18");
             }
 
             if (userService.isEmailDuplicated(id, email, isEdit)) {
-                commonUtils.addError("email", "Địa chỉ email đã được sử dụng");
+                commonUtils.addError("email", "Địa chỉ email đã tồn tại");
             }
             if (commonUtils.getArrayNode().size() > 0) {
-                return new BadResponse<User>(commonUtils.getArrayNode().toString()).response();
+                return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
             }
         }
 
@@ -254,10 +253,20 @@ public class AuthRestController {
 
                 user = userService.save(user);
             } catch (NotFoundException e) {
-                return new BadResponse<User>(e.getMessage()).response();
+                return new BadResponse<String>(e.getMessage()).response();
             }
         }else {
-            User tempUser = User.build(postCreateUserDTO);
+            boolean userStatus = true;
+            //Nếu vai trò là sinh viên thì không cần xác thực.
+            //Nếu vai trò là người dùng thì cần xác thực.
+            if (needVerifyUser) {
+                Role role = roleService.findById(rolesInt.iterator().next());
+                if (role.getName().equals("Giảng viên")) {
+                    userStatus = false;
+                }
+            }
+
+            User tempUser = User.build(postCreateUserDTO, userStatus);
             userService.encodePassword(tempUser);
 
             for (Integer role : rolesInt) {
@@ -274,7 +283,17 @@ public class AuthRestController {
             ProcessImage.uploadImage(devUploadDir, prodUploadDir, staticPath, avatar, environment);
         }
 
-        return new OkResponse<>(user).response();
+        String responseMessage = "";
+
+        if (isEdit) {
+            responseMessage = "Cập nhật thông tin người dùng thành công";
+        } else if (!needVerifyUser) {
+            responseMessage = "Thêm người dùng thành công";
+        } else {
+            responseMessage = "Đăng ký thành công";
+        }
+
+        return new OkResponse<>(responseMessage).response();
     }
 
     @PostMapping("forgot-password")

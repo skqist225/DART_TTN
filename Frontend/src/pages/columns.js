@@ -481,12 +481,7 @@ export const viewCreditClassExamColumns = [
         sortable: true,
     },
     {
-        name: "Tên ca thi",
-        sortField: "studentName",
-        sortable: true,
-    },
-    {
-        name: "Loại kỳ thi",
+        name: "Ca thi",
         sortField: "studentName",
         sortable: true,
     },

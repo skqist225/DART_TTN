@@ -8,6 +8,8 @@ import { persistUserState, setUser } from "../../features/persistUserSlice";
 import Transition from "../../utils/Transition";
 import { useNavigate } from "react-router-dom";
 import { removeUserFromLocalStorage } from "../../utils/common";
+import MyDrawer from "../../components/takeTests/MyDrawer";
+import { Card } from "flowbite-react";
 
 function UserMenu() {
     const dispatch = useDispatch();
@@ -103,18 +105,17 @@ function UserMenu() {
                         <div className='pt-0.5 pb-2 px-3 mb-1 border-b border-slate-200'>
                             <div className='font-medium text-slate-800'></div>
                             <div className='text-xs text-slate-500 italic'>
-                                {user.roles.map(({ name }) => (
-                                    <>
-                                        <li>{name}</li>
-                                    </>
-                                ))}
+                                {user.roles.map(({ name }) => name).join(",")}
                             </div>
                         </div>
                         <ul>
                             <li>
                                 <Button
                                     className='font-medium text-sm text-indigo-500 hover:text-indigo-600 flex items-center py-1 px-3'
-                                    onClick={() => setDropdownOpen(!dropdownOpen)}
+                                    onClick={() => {
+                                        setDropdownOpen(!dropdownOpen);
+                                        window.location.href = `/auth/edit/${user.id}`;
+                                    }}
                                 >
                                     Xem thông tin
                                 </Button>

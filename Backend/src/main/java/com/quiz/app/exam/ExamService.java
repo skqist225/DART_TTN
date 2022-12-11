@@ -3,7 +3,6 @@ package com.quiz.app.exam;
 import com.quiz.app.exam.dto.TakeExamDTO;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.app.statistics.dto.CountExamByCreditClassDTO;
 import com.quiz.app.takeExam.TakeExamService;
 import com.quiz.entity.Exam;
 import com.quiz.entity.TakeExam;
@@ -50,14 +49,9 @@ public class ExamService {
         return examRepository.save(subject);
     }
 
-    public List<CountExamByCreditClassDTO> countExamByCreditClass() {
-        return examRepository.countExamByCreditClass();
-    }
-
     public List<Exam> findByStudentAndTaken(String studentId) {
         return examRepository.findByStudentAndTaken(studentId);
     }
-
 
     public String deleteById(Integer id) throws ConstrainstViolationException {
         try {
@@ -103,10 +97,6 @@ public class ExamService {
 
     public List<Exam> findAllExamsIdByCreditClass(Integer creditClassId) {
         return examRepository.findAllExamsByCreditClass(creditClassId);
-    }
-
-    public int countTotalExams() {
-        return examRepository.countTotalExams();
     }
 
     public Page<Exam> findAllExams(Map<String, String> filters) {
@@ -199,6 +189,7 @@ public class ExamService {
             }
         }
 
+        List<Exam> tempExams = new ArrayList<>();
         for (Exam exam : typedQuery.getResultList()) {
             if (exam.getTakeExams().size() > 0) {
                 exam.setTempTakeExams(exam.getTakeExams().stream().map(takeExam ->
@@ -206,9 +197,10 @@ public class ExamService {
                                 takeExam.getRegister().getStudent().getFullName(), takeExam.getScore(),
                                 takeExam.getTest().getName())).collect(Collectors.toList()));
             }
+            tempExams.add(exam);
         }
 
-        return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
+        return new PageImpl<>(tempExams, pageable, totalRows);
     }
 
 }

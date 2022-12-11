@@ -8,8 +8,6 @@ import { enableOrDisableExam, setEditedExam } from "../../features/examSlice";
 import EnableOrDisable from "../common/EnableOrDisable";
 import { persistUserState } from "../../features/persistUserSlice";
 import RegisterList from "./RegisterList";
-import { findByStudentAndExam } from "../../features/takeExamSlice";
-import TakeTestPage from "../../pages/takeTests/TakeTestPage";
 import $ from "jquery";
 
 function ExamTableBody({ rows, setIsEdit }) {
@@ -58,7 +56,7 @@ function ExamTableBody({ rows, setIsEdit }) {
                                     <TableModalViewer
                                         modalId={`studentsViewer${index}`}
                                         modalLabel='Danh sách sinh viên'
-                                        ModalBody={<RegisterList takeExams={row.takeExams} />}
+                                        ModalBody={<RegisterList takeExams={row.tempTakeExams} />}
                                     />
                                 </Tooltip>
                             </div>
