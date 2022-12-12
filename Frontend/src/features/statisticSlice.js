@@ -37,14 +37,27 @@ export const countTestsBySubjectAndStatus = createAsyncThunk(
     }
 );
 
+export const countQuestionsByChapter = createAsyncThunk(
+    "statistic/countQuestionsByChapter",
+    async ({ subject }, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get(
+                `/admin/statistics/questions/byChapter?subject=${subject}`
+            );
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 const initialState = {
     loading: true,
     countTotal: {},
-    doughnut: {
-        countQuestionsBySubject: [],
-        countExamsByCreditClass: [],
-    },
+    doughnut: { countQuestionsBySubject: [], countExamsByCreditClass: [] },
     countTestsBySubjectAndStatuses: [],
+    countQuestionsByChapter: [],
 };
 
 const statisticSlice = createSlice({
@@ -60,10 +73,15 @@ const statisticSlice = createSlice({
 
         builder.addCase(doughnut.pending, (state, { payload }) => {});
         builder.addCase(doughnut.fulfilled, (state, { payload }) => {
-            state.doughnut.countQuestionsBySubject = payload.data.countQuestionsBySubject;
-            state.doughnut.countExamsByCreditClass = payload.data.countExamsByCreditClass;
+            state.doughnut = payload.data;
         });
         builder.addCase(doughnut.rejected, (state, { payload }) => {});
+
+        builder.addCase(countQuestionsByChapter.pending, (state, { payload }) => {});
+        builder.addCase(countQuestionsByChapter.fulfilled, (state, { payload }) => {
+            state.countQuestionsByChapter = payload.data;
+        });
+        builder.addCase(countQuestionsByChapter.rejected, (state, { payload }) => {});
 
         builder.addCase(countTestsBySubjectAndStatus.pending, (state, { payload }) => {});
         builder.addCase(countTestsBySubjectAndStatus.fulfilled, (state, { payload }) => {

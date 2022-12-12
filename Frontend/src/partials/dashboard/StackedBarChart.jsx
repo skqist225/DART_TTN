@@ -13,7 +13,7 @@ import {
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function StackedBarChart({ data, labels }) {
-    const [dataSet1, dataSet2] = data;
+    const [dataSet1, dataSet2, dataSet3] = data;
 
     const options = {
         plugins: {
@@ -49,6 +49,14 @@ function StackedBarChart({ data, labels }) {
                 data: dataSet1,
                 backgroundColor: tailwindConfig().theme.colors.blue[500],
                 hoverBackgroundColor: tailwindConfig().theme.colors.blue[600],
+                barPercentage: 0.66,
+                categoryPercentage: 0.66,
+            },
+            {
+                label: "Đã hủy",
+                data: dataSet3,
+                backgroundColor: tailwindConfig().theme.colors.red[500],
+                hoverBackgroundColor: tailwindConfig().theme.colors.red[600],
                 barPercentage: 0.66,
                 categoryPercentage: 0.66,
             },

@@ -1,30 +1,65 @@
+import {
+    BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
+    Title,
+    Tooltip,
+} from "chart.js";
+import { Card } from "flowbite-react";
 import React, { useEffect, useState } from "react";
-import { Doughnut } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { Frame } from "../../components";
+import { Frame, Select } from "../../components";
 import SimpleStatNumber from "../../components/utils/SimpleStatNumber";
 import { authState } from "../../features/authSlice";
 import {
+    countQuestionsByChapter,
     countTestsBySubjectAndStatus,
     countTotalRecords,
     doughnut,
     statisticState,
 } from "../../features/statisticSlice";
+import { fetchAllSubjects } from "../../features/subjectSlice";
 import { userState } from "../../features/userSlice";
 import Datepicker from "../../partials/actions/Datepicker";
 import PieChart from "../../partials/dashboard/PieChart";
 import StackedBarChart from "../../partials/dashboard/StackedBarChart";
 import WelcomeBanner from "../../partials/dashboard/WelcomeBanner";
+import { subjectState } from "../../features/subjectSlice";
+import { useForm } from "react-hook-form";
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+const options = {
+    responsive: true,
+    plugins: {
+        // legend: {
+        //     position: "top",
+        // },
+        title: {
+            display: true,
+            text: "Thống kê số câu hỏi theo môn học",
+        },
+    },
+};
 
 function Dashboard() {
-    const [sidebarOpen, setSidebarOpen] = useState(false);
     const dispatch = useDispatch();
-
     const navigate = useNavigate();
-
     const { pathname } = useLocation();
+
+    const [sidebarOpen, setSidebarOpen] = useState(false);
     const { user } = useSelector(userState);
+    const {
+        register,
+        setValue,
+        handleSubmit,
+        setError,
+        formState: { errors },
+    } = useForm({});
+
     const {
         countTotal,
         doughnut: { countQuestionsBySubject, countExamsByCreditClass },
@@ -33,89 +68,48 @@ function Dashboard() {
     const {
         loginAction: { loading },
     } = useSelector(authState);
+    const { subjects } = useSelector(subjectState);
 
     useEffect(() => {
         dispatch(countTotalRecords());
         dispatch(doughnut());
         dispatch(countTestsBySubjectAndStatus());
+        dispatch(fetchAllSubjects({ page: 0, haveChapter: true, haveQuestion: true }));
     }, []);
 
-    const countQuestionsBySubjectLabel = [];
-    const countQuestionsBySubjectData = [];
-    const countExamsByCreditClassLabel = [];
-    const countExamsByCreditClassData = [];
+    const bgs = ["rgb(255, 99, 132)", "rgb(75, 192, 192)", "rgb(53, 162, 235)"];
 
-    countQuestionsBySubject.forEach(({ numberOfQuestions, subjectName }) => {
-        countQuestionsBySubjectLabel.push(subjectName);
-        countQuestionsBySubjectData.push(numberOfQuestions);
-    });
-    countExamsByCreditClass.forEach(({ schoolYear, semester, grp, subjectName, numberOfExams }) => {
-        countExamsByCreditClassLabel.push(`${schoolYear}-${semester}-${grp}-${subjectName}`);
-        countExamsByCreditClassData.push(numberOfExams);
-    });
-
-    const countQuestionsBySubjectChart = {
-        labels: countQuestionsBySubjectLabel,
+    const questionBySubjectBarChartData = {
+        labels: countQuestionsBySubject.map(({ subjectName }) => subjectName),
         datasets: [
             {
-                label: "# of Votes",
-                data: countQuestionsBySubjectData,
-                backgroundColor: [
-                    "rgba(255, 99, 132, 0.2)",
-                    "rgba(54, 162, 235, 0.2)",
-                    "rgba(255, 206, 86, 0.2)",
-                    "rgba(75, 192, 192, 0.2)",
-                    "rgba(153, 102, 255, 0.2)",
-                    "rgba(255, 159, 64, 0.2)",
-                ],
-                borderColor: [
-                    "rgba(255, 99, 132, 1)",
-                    "rgba(54, 162, 235, 1)",
-                    "rgba(255, 206, 86, 1)",
-                    "rgba(75, 192, 192, 1)",
-                    "rgba(153, 102, 255, 1)",
-                    "rgba(255, 159, 64, 1)",
-                ],
-                borderWidth: 1,
-            },
-        ],
-    };
-
-    const countExamsByCreditClassChart = {
-        labels: countExamsByCreditClassLabel,
-        datasets: [
-            {
-                label: "# of Votes",
-                data: countExamsByCreditClassData,
-                backgroundColor: [
-                    "rgba(255, 99, 132, 0.2)",
-                    "rgba(54, 162, 235, 0.2)",
-                    "rgba(255, 206, 86, 0.2)",
-                    "rgba(75, 192, 192, 0.2)",
-                    "rgba(153, 102, 255, 0.2)",
-                    "rgba(255, 159, 64, 0.2)",
-                ],
-                borderColor: [
-                    "rgba(255, 99, 132, 1)",
-                    "rgba(54, 162, 235, 1)",
-                    "rgba(255, 206, 86, 1)",
-                    "rgba(75, 192, 192, 1)",
-                    "rgba(153, 102, 255, 1)",
-                    "rgba(255, 159, 64, 1)",
-                ],
-                borderWidth: 1,
+                label: "Số câu hỏi",
+                data: countQuestionsBySubject.map(({ numberOfQuestions }) => numberOfQuestions),
+                backgroundColor: bgs[2],
             },
         ],
     };
 
     const usedTests = [],
-        notUsedTests = [];
+        notUsedTests = [],
+        cancelleds = [];
     const countTestsBySubjectAndStatusesLabel = [];
-    countTestsBySubjectAndStatuses.forEach(({ subjectName, used, notUsed }) => {
+    countTestsBySubjectAndStatuses.forEach(({ subjectName, used, notUsed, cancelled }) => {
         countTestsBySubjectAndStatusesLabel.push(subjectName);
         usedTests.push(used);
         notUsedTests.push(notUsed);
+        cancelleds.push(cancelled);
     });
+
+    useEffect(() => {
+        if (subjects && subjects.length) {
+            handleSubjectChange({ target: { value: subjects[0].id } });
+        }
+    }, [subjects]);
+
+    const handleSubjectChange = ({ target: { value } }) => {
+        dispatch(countQuestionsByChapter({ subject: value }));
+    };
 
     return (
         <Frame
@@ -127,143 +121,161 @@ function Dashboard() {
                     <WelcomeBanner />
                     <div>
                         <div>
-                            {" "}
-                            <div className='flex items-center justify-between w-full'>
-                                <SimpleStatNumber
-                                    label='Tổng số  ca thi'
-                                    type='All'
-                                    backgroundColor={`bg-violet-500`}
-                                    number={countTotal.totalExams}
-                                    additionalData={[
-                                        ["Đã thi", countTotal.totalExamsUsed],
-                                        ["Chưa thi", countTotal.totalExamsNotUsed],
-                                        ["Đã hủy", countTotal.totalExamsCancelled],
-                                    ]}
-                                />
-                                <SimpleStatNumber
-                                    label='Tổng số lớp tín chỉ '
-                                    type='Approved'
-                                    backgroundColor={`bg-rose-500`}
-                                    number={countTotal.totalCreditClasses}
-                                    additionalData={[
-                                        ["Đang mở", countTotal.totalCreditClassesOpened],
-                                        ["Đã hủy", countTotal.totalCreditClassesClosed],
-                                        ["", 0],
-                                        ,
-                                    ]}
-                                />
-                                <SimpleStatNumber
-                                    label='Tổng số môn học'
-                                    type='Pending'
-                                    backgroundColor={`bg-amber-500`}
-                                    number={countTotal.totalSubjects}
-                                />
-                                <SimpleStatNumber
-                                    label='Tổng số đề thi'
-                                    type='Cancelled'
-                                    backgroundColor={`bg-green-500`}
-                                    number={countTotal.totalTests}
-                                />
-                                <SimpleStatNumber
-                                    label='Tổng số câu hỏi'
-                                    type='Cancelled'
-                                    backgroundColor={`bg-green-500`}
-                                    number={countTotal.totalQuestions}
-                                />
-                            </div>
-                        </div>
-                        <div>
                             <div>
                                 Niên khóa: <Datepicker />
                             </div>
                             <div className='flex items-center justify-between w-full'>
                                 <SimpleStatNumber
                                     label='Tổng số  ca thi'
-                                    type='All'
                                     backgroundColor={`bg-violet-500`}
                                     number={countTotal.totalExams}
                                     additionalData={[
                                         ["Đã thi", countTotal.totalExamsUsed],
                                         ["Chưa thi", countTotal.totalExamsNotUsed],
                                         ["Đã hủy", countTotal.totalExamsCancelled],
+                                        ["", 0],
                                     ]}
                                 />
                                 <SimpleStatNumber
                                     label='Tổng số lớp tín chỉ '
-                                    type='Approved'
                                     backgroundColor={`bg-rose-500`}
                                     number={countTotal.totalCreditClasses}
+                                    additionalData={[
+                                        ["Đang mở", countTotal.totalCreditClassesOpened],
+                                        ["Đã hủy", countTotal.totalCreditClassesClosed],
+                                        ["", 0],
+                                        ["", 0],
+                                    ]}
                                 />
                                 <SimpleStatNumber
                                     label='Tổng số môn học'
-                                    type='Pending'
                                     backgroundColor={`bg-amber-500`}
                                     number={countTotal.totalSubjects}
+                                    additionalData={[
+                                        ["Đang mở", countTotal.totalCreditClassesOpened],
+                                        ["Đã hủy", countTotal.totalCreditClassesClosed],
+                                        ["", 0],
+                                        ["", 0],
+                                    ]}
                                 />
+                                <a href='#testStat'>
+                                    <SimpleStatNumber
+                                        label='Tổng số đề thi'
+                                        backgroundColor={`bg-green-500`}
+                                        number={countTotal.totalTests}
+                                        additionalData={[
+                                            ["Đã SD", countTotal.totalTestsUsed],
+                                            ["Chưa SD", countTotal.totalTestsNotUsed],
+                                            ["Đã hủy", countTotal.totalTestsCancelled],
+                                            ["", 0],
+                                        ]}
+                                    />
+                                </a>
+                                <a href='#questionStat'>
+                                    <SimpleStatNumber
+                                        label='Tổng số câu hỏi'
+                                        backgroundColor={`bg-blue-500`}
+                                        number={countTotal.totalQuestions}
+                                        additionalData={[
+                                            ["Đang sử dụng", countTotal.totalQuestionsActive],
+                                            ["Đã hủy", countTotal.totalQuestionsDisabled],
+                                            ["", 0],
+                                            ["", 0],
+                                        ]}
+                                    />
+                                </a>
                                 <SimpleStatNumber
-                                    label='Tổng số đề thi'
-                                    type='Cancelled'
-                                    backgroundColor={`bg-green-500`}
-                                    number={countTotal.totalTests}
-                                />
-                                <SimpleStatNumber
-                                    label='Tổng số câu hỏi'
-                                    type='Cancelled'
-                                    backgroundColor={`bg-green-500`}
-                                    number={countTotal.totalQuestions}
+                                    label='Tổng số người dùng'
+                                    backgroundColor={`bg-fuchsia-800`}
+                                    number={countTotal.totalUsers}
+                                    additionalData={[
+                                        ["QTV", countTotal.totalUsersAdmin],
+                                        ["GV", countTotal.totalUsersTeacher],
+                                        ["QTV+GV", countTotal.totalUsersTeacherAndAdmin],
+                                        ["SV", countTotal.totalUsersStudent],
+                                    ]}
                                 />
                             </div>
                         </div>
+                        <div></div>
 
-                        <div>
-                            <div>Thống kê câu hỏi</div>
-                            <div>
-                                <div>Số câu hỏi theo môn học</div>
-                                <div>
-                                    <Doughnut
-                                        data={countQuestionsBySubjectChart}
-                                        height='400px'
-                                        width='200px'
-                                        options={{ maintainAspectRatio: false }}
+                        <div className='w-full' id='questionStat'>
+                            <Card>
+                                <div className='uppercase flex items-center justify-center w-full font-semibold text-blue-500'>
+                                    Thống kê câu hỏi
+                                </div>
+                            </Card>
+                            <div className='w-3/6'>
+                                <div className='max-w-6xl'>
+                                    <Bar data={questionBySubjectBarChartData} options={options} />
+                                </div>
+                            </div>
+                            <div className='w-3/6'>
+                                <div className='mr-5 w-full'>
+                                    <Select
+                                        label='Môn học'
+                                        register={register}
+                                        name='subject'
+                                        options={subjects.map(subject => ({
+                                            title: subject.id.includes("CLC")
+                                                ? `${subject.name} CLC`
+                                                : `${subject.name}`,
+                                            value: subject.id,
+                                        }))}
+                                        setValue={setValue}
+                                        onChangeHandler={handleSubjectChange}
+                                        defaultValue={subjects && subjects.length && subjects[0].id}
                                     />
                                 </div>
-                            </div>
-                        </div>
-
-                        <div>
-                            <div>Thống kê đề thi</div>
-                            <div>
-                                <div>Số ca thi theo lớp tín chỉ</div>
-                                <div>
-                                    <div
-                                        className='flex items-center'
-                                        style={{ maxWidth: "1000px", position: "relative" }}
-                                    >
-                                        <PieChart
-                                            data={countExamsByCreditClassData}
-                                            labels={countExamsByCreditClassLabel}
-                                            height='400px'
-                                            width='200px'
-                                        />
-                                    </div>
+                                <div className='max-w-6xl'>
+                                    <Bar data={questionBySubjectBarChartData} options={options} />
                                 </div>
                             </div>
                         </div>
 
-                        <div className='my-10'>
-                            {countTestsBySubjectAndStatuses.length && (
-                                <StackedBarChart
-                                    data={[notUsedTests, usedTests]}
-                                    labels={countTestsBySubjectAndStatusesLabel}
-                                />
-                            )}
+                        <div className='w-full' id='testStat'>
+                            <Card>
+                                <div className='uppercase flex items-center justify-center w-full font-semibold text-green-500 '>
+                                    Thống kê đề thi
+                                </div>
+                            </Card>
+                            <div className='flex items-center'>
+                                <div className='w-3/6'>
+                                    <div className='max-w-6xl'>
+                                        <div className='flex items-center max-w-xl'>
+                                            <PieChart
+                                                data={countExamsByCreditClass.map(
+                                                    ({ numberOfExams }) => numberOfExams
+                                                )}
+                                                labels={countExamsByCreditClass.map(
+                                                    ({ schoolYear, semester, grp, subjectName }) =>
+                                                        `${schoolYear}-${semester}-${grp}-${subjectName}`
+                                                )}
+                                                height='400px'
+                                                width='200px'
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>{" "}
+                            <div>
+                                <div className='my-10'>
+                                    {countTestsBySubjectAndStatuses.length && (
+                                        <StackedBarChart
+                                            data={[notUsedTests, usedTests, cancelleds]}
+                                            labels={countTestsBySubjectAndStatusesLabel}
+                                        />
+                                    )}
+                                </div>
+                            </div>
                         </div>
-                        <div className='my-10'>
-                            {/* <LineChart
+
+                        {/* <div className='my-10'>
+                            <LineChart
                                 data={[lcdataSet11, lcdataSet22]}
                                 label='Sales Over Time (all bookings)'
-                            /> */}
-                        </div>
+                            />
+                        </div> */}
                     </div>
                 </>
             }

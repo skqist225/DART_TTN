@@ -7,4 +7,6 @@ public interface CountTestsBySubjectAndStatus {
     Integer getUsed();
 
     Integer getNotUsed();
+
+    Integer getCancelled();
 }

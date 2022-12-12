@@ -50,10 +50,6 @@ public class SubjectService {
         return subjectRepository.save(subject);
     }
 
-    public List<CountQuestionsBySubjectDTO> countQuestionsBySubject() {
-        return subjectRepository.countQuestionsBySubject();
-    }
-
     public List<Subject> findByHaveChapter() {
         return subjectRepository.findByHaveChapter();
     }

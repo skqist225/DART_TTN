@@ -33,6 +33,44 @@ public interface UserRepository extends JpaRepository<User, String> {
                     true)
     List<User> findByRole(Integer roleId, Integer limit, Integer creditClassId);
 
-    @Query(value = "SELECT nd.* FROM nguoidung nd left join nguoidung_vaitro ndvt on nd" + ".manguoidung = ndvt.manguoidung join vaitro vt on vt.mavaitro = ndvt.mavaitro WHERE " + "vt.tenvaitro IN (\"Giảng viên\", \"Quản trị viên\") group by nd.manguoidung", nativeQuery = true)
+    @Query(value = "SELECT nd.* FROM nguoidung nd left join nguoidung_vaitro ndvt on nd" +
+            ".manguoidung = ndvt.manguoidung join vaitro vt on vt.mavaitro = ndvt.mavaitro WHERE "
+            + "vt.tenvaitro IN (\"Giảng viên\", \"Quản trị viên\") group by nd.manguoidung", nativeQuery = true)
     List<User> findUserIsNotStudent();
+
+    @Query(value = "SELECT COUNT(*) FROM nguoidung", nativeQuery = true)
+    int countAllUsers();
+
+    @Query(value = "SELECT count(*) FROM nguoidung nd left join nguoidung_vaitro ndvt on nd" +
+            ".manguoidung = ndvt.manguoidung" + " where ndvt.mavaitro in (select vt.mavaitro from" +
+            " vaitro vt where vt.tenvaitro = \"Quản trị viên\") " + "and nd.manguoidung not in " +
+            "(SELECT nd.manguoidung FROM nguoidung nd left join nguoidung_vaitro ndvt on nd" +
+            ".manguoidung = ndvt.manguoidung " + "where ndvt.mavaitro in (select vt.mavaitro from " +
+            "vaitro vt where vt.tenvaitro = \"Giảng viên\") group by nd.manguoidung)\n",
+            nativeQuery = true)
+    int countAllUsersAdmin();
+
+    @Query(value = "SELECT count(*) FROM nguoidung nd left join nguoidung_vaitro ndvt on nd" +
+            ".manguoidung = ndvt.manguoidung" + " where ndvt.mavaitro in (select vt.mavaitro from" +
+            " vaitro vt where vt.tenvaitro = \"Giảng viên\") " + "and nd.manguoidung not in " +
+            "(SELECT nd.manguoidung FROM nguoidung nd left join nguoidung_vaitro ndvt on nd" +
+            ".manguoidung = ndvt.manguoidung " + "where ndvt.mavaitro in (select vt.mavaitro from " +
+            "vaitro vt where vt.tenvaitro = \"Quản trị viên\") group by nd.manguoidung)\n",
+            nativeQuery = true)
+    int countAllUsersTeacher();
+
+    @Query(value ="SELECT count(*) FROM nguoidung nd left join nguoidung_vaitro ndvt on nd" +
+            ".manguoidung = ndvt.manguoidung" + " where ndvt.mavaitro in (select vt.mavaitro from" +
+            " vaitro vt where vt.tenvaitro = \"Giảng viên\") " + "and nd.manguoidung in " +
+            "(SELECT nd.manguoidung FROM nguoidung nd left join nguoidung_vaitro ndvt on nd" +
+            ".manguoidung = ndvt.manguoidung " + "where ndvt.mavaitro in (select vt.mavaitro from " +
+            "vaitro vt where vt.tenvaitro = \"Quản trị viên\") group by nd.manguoidung)\n",
+            nativeQuery = true)
+    int countAllUsersTeacherAndAdmin();
+
+    @Query(value = "SELECT COUNT(*) FROM nguoidung nd left join nguoidung_vaitro ndvt on nd" +
+            ".manguoidung = ndvt.manguoidung where ndvt.mavaitro in (select vt.mavaitro from vaitro vt " +
+            "where vt.tenvaitro = \"Sinh viên\") ",
+            nativeQuery = true)
+    int countAllUsersStudent();
 }

@@ -54,10 +54,6 @@ public class QuestionService {
         return questionRepository.save(question);
     }
 
-    public int countTotalQuestions() {
-        return questionRepository.countTotalQuestions();
-    }
-
     @Transactional
     public String deleteById(Integer id) throws ConstrainstViolationException {
         try {

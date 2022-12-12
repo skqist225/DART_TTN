@@ -51,10 +51,6 @@ public class TestService {
         }
     }
 
-    public List<CountTestsBySubjectAndStatus> countTestBySubjectAndStatus() {
-        return testRepository.countTestBySubjectAndStatus();
-    }
-
     public List<Test> findBySubject(Subject subject) {
         return testRepository.findBySubject(subject);
     }
@@ -66,10 +62,6 @@ public class TestService {
 
     public Test findByStudentAndExam(String studentId, Integer examId) {
         return testRepository.findByStudentAndExam(studentId, examId);
-    }
-
-    public int countTotalTests() {
-        return testRepository.countTotalTests();
     }
 
     public Test findById(Integer id) throws NotFoundException {

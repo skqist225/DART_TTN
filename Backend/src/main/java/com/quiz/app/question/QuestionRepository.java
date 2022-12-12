@@ -1,5 +1,7 @@
 package com.quiz.app.question;
 
+import com.quiz.app.statistics.dto.CountQuestionsByChapterDTO;
+import com.quiz.app.statistics.dto.CountQuestionsBySubjectDTO;
 import com.quiz.entity.Chapter;
 import com.quiz.entity.Level;
 import com.quiz.entity.Question;
@@ -52,6 +54,12 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
     @Query("SELECT count(*) FROM Question")
     int countTotalQuestions();
 
+    @Query("SELECT count(*) FROM Question q where q.status = true")
+    int countTotalQuestionsActive();
+
+    @Query("SELECT count(*) FROM Question q where q.status = false")
+    int countTotalQuestionsDisabled();
+
     @Query(value = "SELECT ch.* FROM chitietthi ctt left join cauhoi ch on ch.macauhoi = ctt" +
             ".macauhoi where ctt.masv = :studentId AND ctt.macathi = :examId order by ch.macauhoi" +
             " " +
@@ -63,4 +71,19 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
     @Query(value = "SELECT * FROM quiz.dethi_cauhoi where madethi = :testId and macauhoi = :questionId",
             nativeQuery = true)
     Question getQuestionFromTest(Integer testId, Integer questionId);
+
+    @Query(value = "select temp.tenmh as subjectName, count(c.macauhoi) as numberOfQuestions" +
+            " from (select mh.mamh, mh.tenmh, ch.machuong from monhoc mh" +
+            " left join chuong ch on ch.mamh = mh.mamh) as temp" +
+            " left join cauhoi c on temp.machuong = c.machuong" +
+            " group by temp.tenmh", nativeQuery = true)
+    List<CountQuestionsBySubjectDTO> countQuestionsBySubject();
+
+    @Query(value = "select c.tenchuong as chapterName, temp.numberOfQuestions from (select ch" +
+            ".machuong, count(ch.machuong) as numberOfQuestions from cauhoi ch where ch.consudung" +
+            " = true and ch.machuong in (select c.machuong from chuong c where c.mamh= :subjectId) " +
+            "group " +
+            "by ch.machuong) temp left join\n" +
+            "chuong c on c.machuong = temp.machuong", nativeQuery = true)
+    List<CountQuestionsByChapterDTO> countQuestionsByChapter(String subjectId);
 }
