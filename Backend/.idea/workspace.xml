@@ -4,31 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/statistics/dto/CountQuestionsByChapterDTO.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/statistics/dto/CountQuestionsByTestDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/statistics/StatisticRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/statistics/StatisticRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/statistics/StatisticService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/statistics/StatisticService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/statistics/dto/CountTestsBySubjectAndStatus.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/statistics/dto/CountTestsBySubjectAndStatus.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/statistics/dto/CountTotalDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/statistics/dto/CountTotalDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/subject/SubjectService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/user/UserRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/user/UserRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/.env.production" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/.env.production" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/charts/BarChart01.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/charts/BarChart02.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/charts/BarChart03.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/utils/SimpleStatNumber.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/utils/SimpleStatNumber.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/features/statisticSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/features/statisticSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/pages/dashboard/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/pages/dashboard/Dashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/PieChart.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/PieChart.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/StackedBarChart.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/StackedBarChart.jsx" afterDir="false" />
-    </list>
+    <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -221,7 +197,7 @@
       <workItem from="1670741118817" duration="12479000" />
       <workItem from="1670767861485" duration="1293000" />
       <workItem from="1670769165476" duration="4398000" />
-      <workItem from="1670845600308" duration="9596000" />
+      <workItem from="1670845600308" duration="10320000" />
     </task>
     <servers />
   </component>
