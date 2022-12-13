@@ -12,14 +12,14 @@ import {
 } from "chart.js";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-function StackedBarChart({ data, labels }) {
+function StackedBarChart({ data, labels, title = "", legends, Filter }) {
     const [dataSet1, dataSet2, dataSet3] = data;
 
     const options = {
         plugins: {
             title: {
                 display: true,
-                text: "Trạng thái đề thi theo môn học",
+                text: title,
             },
         },
         responsive: true,
@@ -37,7 +37,7 @@ function StackedBarChart({ data, labels }) {
         labels,
         datasets: [
             {
-                label: "Đã sử dụng",
+                label: legends[0],
                 data: dataSet2,
                 backgroundColor: tailwindConfig().theme.colors.green[500],
                 hoverBackgroundColor: tailwindConfig().theme.colors.green[600],
@@ -45,7 +45,7 @@ function StackedBarChart({ data, labels }) {
                 categoryPercentage: 0.66,
             },
             {
-                label: "Chưa sử dụng",
+                label: legends[1],
                 data: dataSet1,
                 backgroundColor: tailwindConfig().theme.colors.blue[500],
                 hoverBackgroundColor: tailwindConfig().theme.colors.blue[600],
@@ -53,7 +53,7 @@ function StackedBarChart({ data, labels }) {
                 categoryPercentage: 0.66,
             },
             {
-                label: "Đã hủy",
+                label: legends[2],
                 data: dataSet3,
                 backgroundColor: tailwindConfig().theme.colors.red[500],
                 hoverBackgroundColor: tailwindConfig().theme.colors.red[600],
@@ -64,13 +64,12 @@ function StackedBarChart({ data, labels }) {
     };
 
     return (
-        <div className='flex flex-col col-span-full sm:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200 max-h-96'>
+        <div className='flex flex-col col-span-full sm:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200 w-full h-full'>
             <header className='px-5 py-4 border-b border-slate-100 flex items-center'>
-                <h2 className='font-semibold text-slate-800'>Trạng thái đề thi theo môn học</h2>
+                <h2 className='font-semibold text-slate-800'>{title}</h2>
             </header>
-            <div className='grow'>
-                <Bar options={options} data={chartData} style={{ maxHeight: "300px" }} />
-            </div>
+            <div className='w-3/6 mb-5 m-auto'>{Filter}</div>
+            <Bar options={options} data={chartData} />
         </div>
     );
 }

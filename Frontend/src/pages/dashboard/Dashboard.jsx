@@ -1,15 +1,17 @@
 import {
+    ArcElement,
     BarElement,
     CategoryScale,
     Chart as ChartJS,
     Legend,
     LinearScale,
+    RadialLinearScale,
     Title,
     Tooltip,
 } from "chart.js";
 import { Card } from "flowbite-react";
 import React, { useEffect, useState } from "react";
-import { Bar } from "react-chartjs-2";
+import { Bar, PolarArea } from "react-chartjs-2";
 import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { Frame, Select } from "../../components";
@@ -30,20 +32,17 @@ import StackedBarChart from "../../partials/dashboard/StackedBarChart";
 import WelcomeBanner from "../../partials/dashboard/WelcomeBanner";
 import { subjectState } from "../../features/subjectSlice";
 import { useForm } from "react-hook-form";
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
-
-const options = {
-    responsive: true,
-    plugins: {
-        // legend: {
-        //     position: "top",
-        // },
-        title: {
-            display: true,
-            text: "Thống kê số câu hỏi theo môn học",
-        },
-    },
-};
+import BarChart from "../../partials/dashboard/BarChart";
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+    RadialLinearScale,
+    ArcElement
+);
 
 function Dashboard() {
     const dispatch = useDispatch();
@@ -64,6 +63,7 @@ function Dashboard() {
         countTotal,
         doughnut: { countQuestionsBySubject, countExamsByCreditClass },
         countTestsBySubjectAndStatuses,
+        countQuestionsByChapters,
     } = useSelector(statisticState);
     const {
         loginAction: { loading },
@@ -79,7 +79,43 @@ function Dashboard() {
 
     const bgs = ["rgb(255, 99, 132)", "rgb(75, 192, 192)", "rgb(53, 162, 235)"];
 
-    const questionBySubjectBarChartData = {
+    const usedTests = [],
+        notUsedTests = [],
+        cancelleds = [];
+    const testsStackBarChartLabels = [];
+    countTestsBySubjectAndStatuses.forEach(({ subjectName, used, notUsed, cancelled }) => {
+        testsStackBarChartLabels.push(subjectName);
+        usedTests.push(used);
+        notUsedTests.push(notUsed);
+        cancelleds.push(cancelled);
+    });
+
+    const easyQuestions = [],
+        mediumQuestions = [],
+        hardQuestions = [];
+    let totalEasyQuestions = 0,
+        totalMediumQuestions = 0,
+        totalHardQuestions = 0;
+    const questionsStackBarChartLabels = [];
+    countQuestionsByChapters.forEach(
+        ({
+            chapterName,
+            numberOfEasyQuestions,
+            numberOfMediumQuestions,
+            numberOfHardQuestions,
+        }) => {
+            totalEasyQuestions += numberOfEasyQuestions || 0;
+            totalMediumQuestions += numberOfMediumQuestions || 0;
+            totalHardQuestions += numberOfHardQuestions || 0;
+
+            questionsStackBarChartLabels.push(chapterName);
+            easyQuestions.push(numberOfEasyQuestions);
+            mediumQuestions.push(numberOfMediumQuestions);
+            hardQuestions.push(numberOfHardQuestions);
+        }
+    );
+
+    const chartData = {
         labels: countQuestionsBySubject.map(({ subjectName }) => subjectName),
         datasets: [
             {
@@ -90,17 +126,6 @@ function Dashboard() {
         ],
     };
 
-    const usedTests = [],
-        notUsedTests = [],
-        cancelleds = [];
-    const countTestsBySubjectAndStatusesLabel = [];
-    countTestsBySubjectAndStatuses.forEach(({ subjectName, used, notUsed, cancelled }) => {
-        countTestsBySubjectAndStatusesLabel.push(subjectName);
-        usedTests.push(used);
-        notUsedTests.push(notUsed);
-        cancelleds.push(cancelled);
-    });
-
     useEffect(() => {
         if (subjects && subjects.length) {
             handleSubjectChange({ target: { value: subjects[0].id } });
@@ -109,6 +134,30 @@ function Dashboard() {
 
     const handleSubjectChange = ({ target: { value } }) => {
         dispatch(countQuestionsByChapter({ subject: value }));
+    };
+
+    const polarData = {
+        labels: ["Quản trị viên", "Giảng viên", "Quản trị viên, Giảng viên", "Sinh viên"],
+        datasets: [
+            {
+                label: "# of Votes",
+                data: [
+                    countTotal.totalUsersAdmin,
+                    countTotal.totalUsersTeacher,
+                    countTotal.totalUsersTeacherAndAdmin,
+                    countTotal.totalUsersStudent,
+                ],
+                backgroundColor: [
+                    "rgba(255, 99, 132, 0.5)",
+                    "rgba(54, 162, 235, 0.5)",
+                    "rgba(255, 206, 86, 0.5)",
+                    "rgba(75, 192, 192, 0.5)",
+                    "rgba(153, 102, 255, 0.5)",
+                    "rgba(255, 159, 64, 0.5)",
+                ],
+                borderWidth: 1,
+            },
+        ],
     };
 
     return (
@@ -121,9 +170,6 @@ function Dashboard() {
                     <WelcomeBanner />
                     <div>
                         <div>
-                            <div>
-                                Niên khóa: <Datepicker />
-                            </div>
                             <div className='flex items-center justify-between w-full'>
                                 <SimpleStatNumber
                                     label='Tổng số  ca thi'
@@ -184,17 +230,19 @@ function Dashboard() {
                                         ]}
                                     />
                                 </a>
-                                <SimpleStatNumber
-                                    label='Tổng số người dùng'
-                                    backgroundColor={`bg-fuchsia-800`}
-                                    number={countTotal.totalUsers}
-                                    additionalData={[
-                                        ["QTV", countTotal.totalUsersAdmin],
-                                        ["GV", countTotal.totalUsersTeacher],
-                                        ["QTV+GV", countTotal.totalUsersTeacherAndAdmin],
-                                        ["SV", countTotal.totalUsersStudent],
-                                    ]}
-                                />
+                                <a href='#userStat'>
+                                    <SimpleStatNumber
+                                        label='Tổng số người dùng'
+                                        backgroundColor={`bg-fuchsia-800`}
+                                        number={countTotal.totalUsers}
+                                        additionalData={[
+                                            ["QTV", countTotal.totalUsersAdmin],
+                                            ["GV", countTotal.totalUsersTeacher],
+                                            ["QTV+GV", countTotal.totalUsersTeacherAndAdmin],
+                                            ["SV", countTotal.totalUsersStudent],
+                                        ]}
+                                    />
+                                </a>
                             </div>
                         </div>
                         <div></div>
@@ -205,30 +253,50 @@ function Dashboard() {
                                     Thống kê câu hỏi
                                 </div>
                             </Card>
-                            <div className='w-3/6'>
-                                <div className='max-w-6xl'>
-                                    <Bar data={questionBySubjectBarChartData} options={options} />
-                                </div>
-                            </div>
-                            <div className='w-3/6'>
-                                <div className='mr-5 w-full'>
-                                    <Select
-                                        label='Môn học'
-                                        register={register}
-                                        name='subject'
-                                        options={subjects.map(subject => ({
-                                            title: subject.id.includes("CLC")
-                                                ? `${subject.name} CLC`
-                                                : `${subject.name}`,
-                                            value: subject.id,
-                                        }))}
-                                        setValue={setValue}
-                                        onChangeHandler={handleSubjectChange}
-                                        defaultValue={subjects && subjects.length && subjects[0].id}
+                            <div className='flex items-start'>
+                                <div className='flex w-50 p-2 h-full'>
+                                    <BarChart
+                                        data={chartData}
+                                        title={"Thống kê số câu hỏi còn sử dụng theo môn học"}
                                     />
                                 </div>
-                                <div className='max-w-6xl'>
-                                    <Bar data={questionBySubjectBarChartData} options={options} />
+                                <div className='col-flex w-50 p-2'>
+                                    <StackedBarChart
+                                        data={[easyQuestions, mediumQuestions, hardQuestions]}
+                                        labels={questionsStackBarChartLabels}
+                                        title={`Thống kê câu hỏi còn sử dụng theo chương và độ khó (${
+                                            totalEasyQuestions +
+                                            totalMediumQuestions +
+                                            totalHardQuestions
+                                        })`}
+                                        legends={[
+                                            `Dễ (${totalEasyQuestions})`,
+                                            `Trung bình (${totalMediumQuestions})`,
+                                            `Khó (${totalHardQuestions})`,
+                                        ]}
+                                        Filter={
+                                            <>
+                                                <Select
+                                                    label='Môn học'
+                                                    register={register}
+                                                    name='subject'
+                                                    options={subjects.map(subject => ({
+                                                        title: subject.id.includes("CLC")
+                                                            ? `${subject.name} CLC`
+                                                            : `${subject.name}`,
+                                                        value: subject.id,
+                                                    }))}
+                                                    setValue={setValue}
+                                                    onChangeHandler={handleSubjectChange}
+                                                    defaultValue={
+                                                        subjects &&
+                                                        subjects.length &&
+                                                        subjects[0].id
+                                                    }
+                                                />
+                                            </>
+                                        }
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -240,42 +308,80 @@ function Dashboard() {
                                 </div>
                             </Card>
                             <div className='flex items-center'>
-                                <div className='w-3/6'>
-                                    <div className='max-w-6xl'>
-                                        <div className='flex items-center max-w-xl'>
-                                            <PieChart
-                                                data={countExamsByCreditClass.map(
-                                                    ({ numberOfExams }) => numberOfExams
-                                                )}
-                                                labels={countExamsByCreditClass.map(
-                                                    ({ schoolYear, semester, grp, subjectName }) =>
-                                                        `${schoolYear}-${semester}-${grp}-${subjectName}`
-                                                )}
-                                                height='400px'
-                                                width='200px'
-                                            />
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>{" "}
-                            <div>
-                                <div className='my-10'>
-                                    {countTestsBySubjectAndStatuses.length && (
-                                        <StackedBarChart
-                                            data={[notUsedTests, usedTests, cancelleds]}
-                                            labels={countTestsBySubjectAndStatusesLabel}
-                                        />
-                                    )}
+                                {/* <div className='flex w-50'>
+                                    <PieChart
+                                        data={countExamsByCreditClass.map(
+                                            ({ numberOfExams }) => numberOfExams
+                                        )}
+                                        labels={countExamsByCreditClass.map(
+                                            ({ schoolYear, semester, grp, subjectName }) =>
+                                                `${schoolYear}-${semester}-${grp}-${subjectName}`
+                                        )}
+                                        height='400px'
+                                        width='200px'
+                                    />
+                                </div> */}
+                                <div className='flex w-50'>
+                                    <StackedBarChart
+                                        data={[notUsedTests, usedTests, cancelleds]}
+                                        labels={testsStackBarChartLabels}
+                                        title='Trạng thái trạng thái đề thi theo môn học'
+                                        legends={["Đã sử dụng", "Chưa sử dụng", "Đã hủy"]}
+                                    />
                                 </div>
                             </div>
                         </div>
 
-                        {/* <div className='my-10'>
-                            <LineChart
-                                data={[lcdataSet11, lcdataSet22]}
-                                label='Sales Over Time (all bookings)'
-                            />
-                        </div> */}
+                        <div className='w-full' id='testStat'>
+                            <Card>
+                                <div className='uppercase flex items-center justify-center w-full font-semibold text-green-500 '>
+                                    Thống kê ca thi
+                                </div>
+                            </Card>
+                            <div className='flex items-center'>
+                                <div className='flex w-50'>
+                                    {/* <PieChart
+                                        data={countExamsByCreditClass.map(
+                                            ({ numberOfExams }) => numberOfExams
+                                        )}
+                                        labels={countExamsByCreditClass.map(
+                                            ({ schoolYear, semester, grp, subjectName }) =>
+                                                `${schoolYear}-${semester}-${grp}-${subjectName}`
+                                        )}
+                                        height='400px'
+                                        width='200px'
+                                    /> */}
+                                </div>
+                                <div className='flex w-50'></div>
+                            </div>
+                        </div>
+
+                        <div className='w-full' id='userStat'>
+                            <Card>
+                                <div className='uppercase flex items-center justify-center w-full font-semibold text-green-500 '>
+                                    Thống kê người dùng
+                                </div>
+                            </Card>
+                            <div className='flex items-center'>
+                                <div className='max-h-6'>
+                                    <PieChart
+                                        data={[
+                                            countTotal.totalUsersAdmin,
+                                            countTotal.totalUsersTeacher,
+                                            countTotal.totalUsersTeacherAndAdmin,
+                                            countTotal.totalUsersStudent,
+                                        ]}
+                                        labels={[
+                                            `Quản trị viên (${countTotal.totalUsersAdmin})`,
+                                            `Giảng viên (${countTotal.totalUsersTeacher})`,
+                                            `Quản trị viên, Giảng viên (${countTotal.totalUsersTeacherAndAdmin})`,
+                                            `Sinh viên (${countTotal.totalUsersStudent})`,
+                                        ]}
+                                    />
+                                </div>
+                                <div className='flex w-50'></div>
+                            </div>
+                        </div>
                     </div>
                 </>
             }

@@ -1,12 +1,14 @@
 package com.quiz.app.statistics;
 
 
+import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.response.StandardJSONResponse;
+import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
-import com.quiz.app.statistics.dto.CountQuestionsByChapterDTO;
 import com.quiz.app.statistics.dto.CountTestsBySubjectAndStatus;
 import com.quiz.app.statistics.dto.CountTotalDTO;
 import com.quiz.app.statistics.dto.DoughnutChartDTO;
+import com.quiz.app.statistics.dto.QuestionsByChapterDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,9 +35,13 @@ public class StatisticRestController {
     }
 
     @GetMapping("questions/byChapter")
-    public ResponseEntity<StandardJSONResponse<List<CountQuestionsByChapterDTO>>>
+    public ResponseEntity<StandardJSONResponse<List<QuestionsByChapterDTO>>>
     countQuestionsByChapter(@RequestParam(value = "subject", required = false, defaultValue = "") String subjectId) {
-        return new OkResponse<>(statisticService.countQuestionsByChapter(subjectId)).response();
+        try {
+            return new OkResponse<>(statisticService.countQuestionsByChapter(subjectId)).response();
+        } catch (NotFoundException e) {
+            return new BadResponse<List<QuestionsByChapterDTO>>(e.getMessage()).response();
+        }
     }
 
     @GetMapping("countTestsBySubjectAndStatus")

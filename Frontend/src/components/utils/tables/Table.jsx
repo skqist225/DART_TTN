@@ -180,7 +180,7 @@ function Table({
                     </div>
                 ) : (
                     <>
-                        {rows.length > 0 ? (
+                        {!loading && rows.length > 0 ? (
                             <>
                                 {ranksPage && userRoles.includes("Sinh viên") && (
                                     <Card>

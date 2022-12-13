@@ -54,7 +54,7 @@ public interface TakeExamRepository extends CrudRepository<TakeExam, TakeExamId>
 
     @Query(value = "select diem from thi where masv = :studentId and macathi = :examId",
             nativeQuery = true)
-    float getStudentScoreByExamAndId(String studentId, Integer examId);
+    Float getStudentScoreByExamAndId(String studentId, Integer examId);
 
 
     @Query(value = "select temp2.position from (select @rownum \\:= @rownum + 1 AS position, temp" +
@@ -63,6 +63,6 @@ public interface TakeExamRepository extends CrudRepository<TakeExam, TakeExamId>
             "BY t" +
             ".diem DESC) as temp JOIN (SELECT @rownum \\:= 0) r\n" +
             ") as temp2 where temp2.studentId = :studentId", nativeQuery = true)
-    int getStudentRankingPosition(String studentId, Integer creditClassId,
+    Integer getStudentRankingPosition(String studentId, Integer creditClassId,
                                                          String examType);
 }

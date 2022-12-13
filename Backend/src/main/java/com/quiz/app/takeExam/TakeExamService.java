@@ -56,7 +56,7 @@ public class TakeExamService {
                 testId);
     }
 
-    public int getStudentRankingPosition(String studentId, Integer creditClassId,
+    public Integer getStudentRankingPosition(String studentId, Integer creditClassId,
                                          String examType) {
         return takeExamRepository
                 .getStudentRankingPosition(studentId, creditClassId, examType);

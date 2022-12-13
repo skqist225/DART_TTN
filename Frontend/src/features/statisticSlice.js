@@ -57,7 +57,7 @@ const initialState = {
     countTotal: {},
     doughnut: { countQuestionsBySubject: [], countExamsByCreditClass: [] },
     countTestsBySubjectAndStatuses: [],
-    countQuestionsByChapter: [],
+    countQuestionsByChapters: [],
 };
 
 const statisticSlice = createSlice({
@@ -79,7 +79,7 @@ const statisticSlice = createSlice({
 
         builder.addCase(countQuestionsByChapter.pending, (state, { payload }) => {});
         builder.addCase(countQuestionsByChapter.fulfilled, (state, { payload }) => {
-            state.countQuestionsByChapter = payload.data;
+            state.countQuestionsByChapters = payload.data;
         });
         builder.addCase(countQuestionsByChapter.rejected, (state, { payload }) => {});
 

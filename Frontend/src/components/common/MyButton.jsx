@@ -21,6 +21,7 @@ function MyButton({
     label = "",
     index = "",
     noTooltip = false,
+    customTooltipMessage = "",
 }) {
     let buttonClassName = "",
         buttonDisableClassName = "cursor-not-allowed ",
@@ -42,14 +43,23 @@ function MyButton({
             break;
         }
         case "delete": {
-            label = "Xóa " + label;
+            if (!customTooltipMessage) {
+                label = "Xóa " + label;
+            } else {
+                label = customTooltipMessage;
+            }
+
             buttonClassName = "bg-rose-500 hover:bg-rose-500";
             buttonDisableClassName = "bg-rose-300 hover:bg-rose-300 cursor-not-allowed";
             Icon = <DeleteIcon />;
             break;
         }
         case "disable": {
-            label = "Hủy " + label;
+            if (!customTooltipMessage) {
+                label = "Hủy " + label;
+            } else {
+                label = customTooltipMessage;
+            }
             buttonClassName = "bg-amber-500 hover:bg-amber-500";
             buttonDisableClassName = "bg-amber-300 hover:bg-amber-300 cursor-not-allowed";
             Icon = (
@@ -64,7 +74,12 @@ function MyButton({
             break;
         }
         case "enable": {
-            label = "Mở " + label;
+            if (!customTooltipMessage) {
+                label = "Mở " + label;
+            } else {
+                label = customTooltipMessage;
+            }
+
             buttonClassName = "bg-green-500 hover:bg-green-500";
             buttonDisableClassName = "bg-green-300 hover:bg-green-300 cursor-not-allowed";
             Icon = <CheckIcon />;

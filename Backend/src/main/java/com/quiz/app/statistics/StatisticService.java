@@ -3,17 +3,22 @@ package com.quiz.app.statistics;
 
 import com.quiz.app.creditClass.CreditClassRepository;
 import com.quiz.app.exam.ExamRepository;
+import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.question.QuestionRepository;
 import com.quiz.app.statistics.dto.CountQuestionsByChapterDTO;
 import com.quiz.app.statistics.dto.CountTestsBySubjectAndStatus;
 import com.quiz.app.statistics.dto.CountTotalDTO;
 import com.quiz.app.statistics.dto.DoughnutChartDTO;
+import com.quiz.app.statistics.dto.QuestionsByChapterDTO;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.app.test.TestRepository;
 import com.quiz.app.user.UserRepository;
+import com.quiz.entity.Chapter;
+import com.quiz.entity.Subject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -96,8 +101,41 @@ public class StatisticService {
         return countTotalDTO;
     }
 
-    public List<CountQuestionsByChapterDTO> countQuestionsByChapter(String subjectId) {
-        return questionRepository.countQuestionsByChapter(subjectId);
+    public List<QuestionsByChapterDTO> countQuestionsByChapter(String subjectId) throws NotFoundException {
+        Subject subject = subjectService.findById(subjectId);
+
+        List<CountQuestionsByChapterDTO> easyQuestions =
+                questionRepository.countQuestionsByChapter(subjectId, 0);
+        List<CountQuestionsByChapterDTO> mediumQuestions =
+                questionRepository.countQuestionsByChapter(subjectId, 1);
+        List<CountQuestionsByChapterDTO> hardQuestions =
+                questionRepository.countQuestionsByChapter(subjectId, 2);
+
+        List<QuestionsByChapterDTO> questionsByChapterDTOS = new ArrayList<>();
+        for (Chapter chapter : subject.getChapters()) {
+            QuestionsByChapterDTO questionsByChapterDTO = new QuestionsByChapterDTO();
+            questionsByChapterDTO.setChapterName(chapter.getName());
+            for (CountQuestionsByChapterDTO countQuestionsByChapterDTO : easyQuestions) {
+                if (chapter.getId().equals(countQuestionsByChapterDTO.getChapterId())) {
+                    questionsByChapterDTO.setNumberOfEasyQuestions(countQuestionsByChapterDTO.getNumberOfQuestions());
+                }
+            }
+
+            for (CountQuestionsByChapterDTO countQuestionsByChapterDTO : mediumQuestions) {
+                if (chapter.getId().equals(countQuestionsByChapterDTO.getChapterId())) {
+                    questionsByChapterDTO.setNumberOfMediumQuestions(countQuestionsByChapterDTO.getNumberOfQuestions());
+                }
+            }
+
+            for (CountQuestionsByChapterDTO countQuestionsByChapterDTO : hardQuestions) {
+                if (chapter.getId().equals(countQuestionsByChapterDTO.getChapterId())) {
+                    questionsByChapterDTO.setNumberOfHardQuestions(countQuestionsByChapterDTO.getNumberOfQuestions());
+                }
+
+            }
+            questionsByChapterDTOS.add(questionsByChapterDTO);
+        }
+        return questionsByChapterDTOS;
     }
 
     public DoughnutChartDTO doughnut() {

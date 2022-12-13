@@ -9,6 +9,7 @@ function EnableOrDisable({
     creditClassPage = false,
     disabled = false,
     label,
+    customTooltipMessage = "",
 }) {
     const dispatch = useDispatch();
 
@@ -32,6 +33,7 @@ function EnableOrDisable({
                         );
                     }}
                     disabled={disabled}
+                    customTooltipMessage={customTooltipMessage}
                 />
             ) : (
                 <MyButton
@@ -41,6 +43,7 @@ function EnableOrDisable({
                         dispatch(enableOrDisable({ id, action: "enable" }));
                     }}
                     disabled={disabled}
+                    customTooltipMessage={customTooltipMessage}
                 />
             )}
         </div>

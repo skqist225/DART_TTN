@@ -7,12 +7,12 @@ import { examState, setAddExamDisabled } from "../../features/examSlice";
 import { fetchAllRegisters, registerState } from "../../features/registerSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
 import RegisterTableBody from "../registers/RegisterTableBody";
-import TestTableBody from "../tests/TestTableBody";
 import DatePicker from "../utils/datePicker/DatePicker";
 import TableHeader from "../utils/tables/TableHeader";
 import TablePagination from "../utils/tables/TablePagination";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
+import TestList from "./TestList";
 
 export const examTypes = [
     {
@@ -100,7 +100,7 @@ function ExamModalBody({
 
     const { creditClasses } = useSelector(creditClassState);
     const { editedExam, errorObject } = useSelector(examState);
-    const { tests } = useSelector(testState);
+    const { tests, loading } = useSelector(testState);
     const { registers } = useSelector(registerState);
 
     useEffect(() => {
@@ -267,6 +267,11 @@ function ExamModalBody({
                                 : "items-end"
                         }`}
                     >
+                        <input
+                            type='hidden'
+                            value={numberOfActiveStudents}
+                            {...register("numberOfActiveStudents")}
+                        />
                         <div className='flex-1 w-55 mr-5'>
                             <Select
                                 label='Lớp tín chỉ *'
@@ -320,20 +325,21 @@ function ExamModalBody({
                             </div>
                         </div>
                     </div>
-                    {tests.length > 0 ? (
-                        <>
-                            <h3 className='text-black text-base uppercase mt-3'>
-                                Danh sách đề thi
-                            </h3>
-                            <div className='w-full mt-5 border-2 rounded-sm overflow-y-auto max-h-52'>
-                                <TestTableBody rows={tests} examPage />
+                    {!loading &&
+                        (tests.length > 0 ? (
+                            <>
+                                <h3 className='text-black text-base uppercase mt-3'>
+                                    Danh sách đề thi
+                                </h3>
+                                <div className='w-full mt-5 border-2 rounded-sm overflow-y-auto max-h-52'>
+                                    <TestList rows={tests} />
+                                </div>
+                            </>
+                        ) : (
+                            <div className='uppercase my-3 text-red-600'>
+                                Môn học của lớp tín chỉ này chưa có đề thi
                             </div>
-                        </>
-                    ) : (
-                        <div className='uppercase my-3 text-red-600'>
-                            Môn học của lớp tín chỉ này chưa có đề thi
-                        </div>
-                    )}
+                        ))}
 
                     <div
                         className={`flex w-full mt-5 ${

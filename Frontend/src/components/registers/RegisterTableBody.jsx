@@ -48,9 +48,7 @@ function RegisterTableBody({ rows, setIsEdit, type = "", addExam = false }) {
                         <td className={tailwindCss.tableCell}>{row.student.fullName}</td>
                         {!addExam && (
                             <>
-                                <td className={tailwindCss.tableCell}>
-                                    {row.tempCreditClass.creditClassId}
-                                </td>
+                                <td className={tailwindCss.tableCell}>{row.tempCreditClass.id}</td>
                                 <td className={tailwindCss.tableCell}>
                                     {row.tempCreditClass.schoolYear}
                                 </td>
@@ -69,7 +67,7 @@ function RegisterTableBody({ rows, setIsEdit, type = "", addExam = false }) {
                             user.roles.map(({ name }) => name).includes("Quản trị viên") && (
                                 <EnableOrDisable
                                     id={{
-                                        creditClassId: row.creditClassIdLocal,
+                                        creditClassId: row.tempCreditClass.id,
                                         studentId: row.student.id,
                                     }}
                                     status={row.status}

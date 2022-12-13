@@ -76,14 +76,12 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
             " from (select mh.mamh, mh.tenmh, ch.machuong from monhoc mh" +
             " left join chuong ch on ch.mamh = mh.mamh) as temp" +
             " left join cauhoi c on temp.machuong = c.machuong" +
-            " group by temp.tenmh", nativeQuery = true)
+            " where c.consudung = true group by temp.tenmh", nativeQuery = true)
     List<CountQuestionsBySubjectDTO> countQuestionsBySubject();
 
-    @Query(value = "select c.tenchuong as chapterName, temp.numberOfQuestions from (select ch" +
-            ".machuong, count(ch.machuong) as numberOfQuestions from cauhoi ch where ch.consudung" +
-            " = true and ch.machuong in (select c.machuong from chuong c where c.mamh= :subjectId) " +
-            "group " +
-            "by ch.machuong) temp left join\n" +
-            "chuong c on c.machuong = temp.machuong", nativeQuery = true)
-    List<CountQuestionsByChapterDTO> countQuestionsByChapter(String subjectId);
+    @Query(value = "select temp.machuong as chapterId, temp.tenchuong as chapterName, count(temp" +
+            ".machuong) as numberOfQuestions from (select * from chuong c where c.mamh= " +
+            ":subjectId) temp join cauhoi ch on ch.machuong = temp.machuong where ch.dokho = :level " +
+            "and ch.consudung = true group by temp.machuong", nativeQuery = true)
+    List<CountQuestionsByChapterDTO> countQuestionsByChapter(String subjectId, Integer level);
 }

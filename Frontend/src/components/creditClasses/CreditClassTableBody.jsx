@@ -75,17 +75,21 @@ function CreditClassTableBody({ rows, setIsEdit }) {
     });
 
     const onSubmit = data => {
+        let haveError = false;
+        console.log(data);
         if (parseInt(data.numberOfStudents) > parseInt(data.numberOfActiveStudents)) {
             setError("numberOfStudents", {
                 type: "custom",
                 message: "Số SV thi phải ít hơn SV  đang theo học",
             });
+            haveError = true;
         }
         if (data.time > 120) {
             setError("time", {
                 type: "custom",
                 message: "Thời gian làm bài phải ít hơn 120 phút",
             });
+            haveError = true;
         }
 
         let tests = [];
@@ -97,16 +101,20 @@ function CreditClassTableBody({ rows, setIsEdit }) {
 
         if (tests.length === 0) {
             callToast("error", "Chọn bộ đề cho ca thi");
-            return;
+            haveError = true;
         }
+
         let { examDate } = data;
         const examDt = new Date(
             `${examDate.split("/")[1]}/${examDate.split("/")[0]}/${examDate.split("/")[2]} 00:00:00`
         );
 
         if (examDt.getTime() <= new Date().getTime()) {
-            callToast("error", "Ngày thi phải lớn hơn hiện tại");
-            return;
+            setError("time", {
+                type: "examDate",
+                message: "Ngày thi phải lớn hơn ngày hiện tại",
+            });
+            haveError = true;
         }
 
         data["tests"] = tests;
@@ -130,17 +138,16 @@ function CreditClassTableBody({ rows, setIsEdit }) {
 
         data["name"] = `${schoolYear}-${semester}-${subjectName}-${group}-${data.type}-${index}`;
 
-        if (isExamEdit) {
-            dispatch(editExam(data));
-        } else {
-            dispatch(addExam(data));
+        if (haveError) {
+            return;
         }
-    };
 
-    function onCloseForm() {
-        dispatch(setEditedExam(null));
-        dispatch(setTests([]));
-    }
+        // if (isExamEdit) {
+        //     dispatch(editExam(data));
+        // } else {
+        //     dispatch(addExam(data));
+        // }
+    };
 
     const [tabValue, setTabValue] = useState(0);
 
@@ -168,11 +175,54 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                 }
                 buttonLabel={isExamEdit ? `Chỉnh sửa` : `Thêm`}
                 setIsEdit={setIsExamEdit}
-                onCloseForm={onCloseForm}
             />
             {rows &&
                 rows.length &&
                 rows.map((row, index) => {
+                    let couldNotCreateExamMessage = "Thêm ca thi";
+
+                    let shouldCreateExam = true;
+
+                    if (row.numberOfActiveStudents === 0) {
+                        couldNotCreateExamMessage = "Không có danh sách đăng ký";
+                        shouldCreateExam = false;
+                    } else if (!row.shouldCreateExam) {
+                        couldNotCreateExamMessage = "Môn học của lớp tín chỉ không có đề thi";
+                        shouldCreateExam = false;
+                    } else if (
+                        row.numberOfActiveStudents - row.numberOfFinalTermExamCreated === 0 &&
+                        row.numberOfActiveStudents - row.numberOfFinalTermExamCreated === 0
+                    ) {
+                        couldNotCreateExamMessage = "Đã tạo ca thi cho tất cả sinh viên";
+                        shouldCreateExam = false;
+                    } else if (row.status) {
+                        couldNotCreateExamMessage = "Không thể tạo ca thi cho lớp tín chỉ đã hủy";
+                        shouldCreateExam = false;
+                    }
+
+                    let couldNotCancelMessage = "",
+                        couldNotDeleteMessage = "";
+                    let shouldCancel = true,
+                        shouldDelete = true;
+                    if (row.exams.length > 0) {
+                        shouldCancel = false;
+                        couldNotCancelMessage = "Có ca thi, không thể hủy";
+                        couldNotDeleteMessage = "Có ca thi, không thể xóa";
+                    }
+
+                    if (row.tempRegisters.length > 0) {
+                        shouldDelete = false;
+                        couldNotDeleteMessage = "Có danh sách đăng ký, không thể xóa";
+                    }
+
+                    let shouldShowInfoMessage = "Xem thông tin lớp tín chỉ";
+                    let shouldShowInfo = true;
+
+                    if (row.tempRegisters.length === 0 && row.exams.length === 0) {
+                        shouldShowInfoMessage = "Không có danh sách đăng ký lẫn danh sách ca thi";
+                        shouldShowInfo = false;
+                    }
+
                     return (
                         <tr
                             className={`${tailwindCss.tr} ${
@@ -181,7 +231,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                             key={row.id}
                         >
                             <td className={tailwindCss.tableCell}>
-                                <Tooltip content='Xem thông tin lớp tín chỉ'>
+                                <Tooltip content={shouldShowInfoMessage}>
                                     <Button
                                         style={{ backgroundColor: "none" }}
                                         onClick={() => {
@@ -190,6 +240,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                                 "flex"
                                             );
                                         }}
+                                        disabled={!shouldShowInfo}
                                     >
                                         {row.id}
                                     </Button>
@@ -294,10 +345,8 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                                 onClick={() => {
                                                     dispatch(deleteCreditClass(row.id));
                                                 }}
-                                                disabled={
-                                                    row.tempRegisters.length > 0 ||
-                                                    row.exams.length > 0
-                                                }
+                                                disabled={!shouldDelete || !shouldCancel}
+                                                customTooltipMessage={couldNotDeleteMessage}
                                             />
                                         </div>
                                         <EnableOrDisable
@@ -305,22 +354,20 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                             enableOrDisable={enableOrDisableCreditClass}
                                             id={row.id}
                                             creditClassPage={true}
-                                            disabled={row.exams.length > 0}
+                                            disabled={!shouldCancel}
+                                            customTooltipMessage={couldNotCancelMessage}
                                         />
                                     </>
                                 )}
                                 <div className='mx-2'>
-                                    <Tooltip content='Thêm ca thi' placement='top'>
+                                    <Tooltip content={couldNotCreateExamMessage} placement='top'>
                                         <Button
                                             onClick={() => {
                                                 $(`#examModal`).css("display", "flex");
                                                 setCreditClassId(row.id);
                                                 setValue("creditClassId", row.id);
                                             }}
-                                            disabled={
-                                                row.numberOfActiveStudents === 0 ||
-                                                !row.shouldCreateExam
-                                            }
+                                            disabled={!shouldCreateExam}
                                         >
                                             <img src={ExamIcon} width='28px' height='28px' />
                                         </Button>
