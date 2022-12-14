@@ -1,5 +1,7 @@
 [![Frontend Deploy Netlify Status](https://api.netlify.com/api/v1/badges/7c04b6fb-11dc-4b0c-bc8b-95db7e2a7d94/deploy-status)](https://app.netlify.com/sites/quiz-app-dart/deploys)
 
+Application Link: https://gh-pages--quiz-app-dart.netlify.app/
+
 Tech Stack:
 Frontend: Reactjs
 Beckend: Spring Boot
