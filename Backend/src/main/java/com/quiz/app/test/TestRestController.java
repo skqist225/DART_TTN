@@ -1,5 +1,6 @@
 package com.quiz.app.test;
 
+import com.quiz.app.exam.ExamService;
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.question.QuestionService;
@@ -17,7 +18,7 @@ import com.quiz.app.test.dto.TestDTO;
 import com.quiz.app.test.dto.TestsDTO;
 import com.quiz.app.utils.CommonUtils;
 import com.quiz.entity.Answer;
-import com.quiz.entity.Chapter;
+import com.quiz.entity.Exam;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
 import com.quiz.entity.TakeExam;
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.DecimalFormat;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -52,6 +54,9 @@ import java.util.Objects;
 public class TestRestController {
     @Autowired
     private TestService testService;
+
+    @Autowired
+    private ExamService examService;
 
     @Autowired
     private SubjectService subjectService;
@@ -248,7 +253,7 @@ public class TestRestController {
     public ResponseEntity<StandardJSONResponse<TestDTO>> handIn(
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
             @PathVariable("examId") Integer examId,
-            @RequestBody List<HandInDTO> answers) {
+            @RequestBody List<HandInDTO> answers) throws NotFoundException {
         User student = userDetailsImpl.getUser();
 
         int numberOfRightAnswer = 0;
@@ -343,6 +348,53 @@ public class TestRestController {
             registerService.updateFinalTermScore(student.getId(),
                     takeExam.getRegister().getCreditClass().getId(),
                     Float.parseFloat(df.format(mark)));
+        }
+
+        Exam exam = examService.findById(examId);
+        boolean shouldUpdateExamStatus = true;
+        for (TakeExam takeExam1 : exam.getTakeExams()) {
+            System.out.println(takeExam1.isTested());
+            System.out.println(takeExamService.isTakeExamTested(takeExam1.getStudentId(), examId));
+            // Kiểm tra tất cả sinh viên đã thi hết chưa
+            if (!takeExamService.isTakeExamTested(takeExam1.getStudentId(), examId)) {
+                shouldUpdateExamStatus = false;
+                break;
+            }
+        }
+
+        // Kiểm tra ngày giờ hiện tại của ca thi
+        LocalDateTime now = LocalDateTime.now();
+        int hour = 0, minute = 0;
+        if (exam.getNoticePeriod() == 1) {
+            hour = 7;
+            minute = 0;
+        } else if (exam.getNoticePeriod() == 3) {
+            hour = 9;
+            minute = 0;
+        } else if (exam.getNoticePeriod() == 5) {
+            hour = 13;
+            minute = 0;
+        } else {
+            hour = 15;
+            minute = 0;
+        }
+
+        int additionalHour = 0, additionalMinute = 0;
+        if (exam.getTime() / 60 == 0) {
+            additionalMinute = exam.getTime();
+        } else {
+            additionalHour = exam.getTime() / 60;
+            additionalMinute = exam.getTime() - (60 * additionalHour);
+        }
+
+        LocalDateTime examDate = exam.getExamDate().atTime(hour + additionalHour, minute + additionalMinute);
+        if (now.isAfter(examDate)) {
+            shouldUpdateExamStatus = true;
+        }
+
+        if (shouldUpdateExamStatus) {
+            exam.setTaken(true);
+            examService.save(exam);
         }
 
         return new OkResponse<>(testDTO).response();

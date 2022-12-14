@@ -1,19 +1,15 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import $ from "jquery";
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import {
     CreditClassFilter,
     CreditClassModalBody,
     CreditClassTableBody,
-    ExamModalBody,
     Frame,
     Table,
 } from "../../components";
-import $ from "jquery";
-import { creditClassSchema } from "../../validation";
-import { useForm } from "react-hook-form";
-import { callToast } from "../../helpers";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { fetchAllSubjects } from "../../features/subjectSlice";
 import {
     addCreditClass,
     clearCreditClassState,
@@ -22,9 +18,12 @@ import {
     fetchAllCreditClasses,
     setEditedCreditClass,
 } from "../../features/creditClassSlice";
-import { fetchAllUsers } from "../../features/userSlice";
-import { persistUserState } from "../../features/persistUserSlice";
 import { clearExamState, examState } from "../../features/examSlice";
+import { persistUserState } from "../../features/persistUserSlice";
+import { fetchAllSubjects } from "../../features/subjectSlice";
+import { fetchAllUsers } from "../../features/userSlice";
+import { callToast } from "../../helpers";
+import { creditClassSchema } from "../../validation";
 import { creditClassColumns } from "../columns";
 
 function CreditClassesPage() {

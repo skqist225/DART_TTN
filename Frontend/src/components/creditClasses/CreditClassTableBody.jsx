@@ -76,14 +76,16 @@ function CreditClassTableBody({ rows, setIsEdit }) {
 
     const onSubmit = data => {
         let haveError = false;
-        console.log(data);
-        if (parseInt(data.numberOfStudents) > parseInt(data.numberOfActiveStudents)) {
+        const creditClass = rows.find(({ id }) => id.toString() === data.creditClassId.toString());
+        console.log(creditClass);
+        if (parseInt(data.numberOfStudents) > parseInt(creditClass.numberOfActiveStudents)) {
             setError("numberOfStudents", {
                 type: "custom",
-                message: "Số SV thi phải ít hơn SV  đang theo học",
+                message: "Số SV thi phải ít hơn hoặc bằng số SV đang theo học",
             });
             haveError = true;
         }
+
         if (data.time > 120) {
             setError("time", {
                 type: "custom",
@@ -142,11 +144,11 @@ function CreditClassTableBody({ rows, setIsEdit }) {
             return;
         }
 
-        // if (isExamEdit) {
-        //     dispatch(editExam(data));
-        // } else {
-        //     dispatch(addExam(data));
-        // }
+        if (isExamEdit) {
+            dispatch(editExam(data));
+        } else {
+            dispatch(addExam(data));
+        }
     };
 
     const [tabValue, setTabValue] = useState(0);
@@ -175,6 +177,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                 }
                 buttonLabel={isExamEdit ? `Chỉnh sửa` : `Thêm`}
                 setIsEdit={setIsExamEdit}
+                onCloseForm={() => {}}
             />
             {rows &&
                 rows.length &&

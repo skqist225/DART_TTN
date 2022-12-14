@@ -304,7 +304,7 @@ function TestsPage() {
                     Filter={TestFilter}
                     setError={setError}
                     testPage={true}
-                    loading={loading}
+                    // loading={loading}
                 />
             }
         />

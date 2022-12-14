@@ -26,6 +26,7 @@ function ExamTableBody({ rows, setIsEdit }) {
                         }`}
                         key={row.id}
                     >
+                        <td className={tailwindCss.tableCell}>{row.id}</td>
                         <td className={tailwindCss.tableCell} style={{ maxWidth: "200px" }}>
                             {row.name}
                         </td>

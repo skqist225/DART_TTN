@@ -84,6 +84,10 @@ public class TakeExamService {
         return takeExamRepository.findByRegister(register.getCreditClass().getId(), register.getStudent().getId());
     }
 
+    public boolean isTakeExamTested(String studentId, Integer examId) {
+        return takeExamRepository.isTakeExamTested(studentId, examId);
+    }
+
     @Transactional
     public void updateTakeExamScore(String studentId, Integer examId, float mark) {
         takeExamRepository.updateTakeExamScore(studentId, examId, mark);

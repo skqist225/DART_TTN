@@ -192,6 +192,7 @@ function ExamModalBody({
             "numberOfNoneCreatedFinalTermExamStudents",
             `${noneCreatedFinalTermExamNumber} / ${creditClass.numberOfActiveStudents} sinh viên`
         );
+        setValue("creditClassId", creditClassId);
         dispatch(setAddExamDisabled(creditClass.shouldCreateExam));
 
         if (noneCreatedMidTermExamNumber === 0) {
@@ -238,6 +239,8 @@ function ExamModalBody({
         }
     }, [registers]);
 
+    console.log(errors);
+
     const fetchDataByPageNumber = pageNumber => {
         // each page will have recordsPerPage records
         // 2: 13 -24
@@ -267,11 +270,6 @@ function ExamModalBody({
                                 : "items-end"
                         }`}
                     >
-                        <input
-                            type='hidden'
-                            value={numberOfActiveStudents}
-                            {...register("numberOfActiveStudents")}
-                        />
                         <div className='flex-1 w-55 mr-5'>
                             <Select
                                 label='Lớp tín chỉ *'

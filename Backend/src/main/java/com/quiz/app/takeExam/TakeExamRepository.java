@@ -1,6 +1,5 @@
 package com.quiz.app.takeExam;
 
-import com.quiz.app.takeExam.dto.StudentRanking;
 import com.quiz.entity.TakeExam;
 import com.quiz.entity.TakeExamId;
 import org.springframework.data.jpa.repository.Modifying;
@@ -64,5 +63,10 @@ public interface TakeExamRepository extends CrudRepository<TakeExam, TakeExamId>
             ".diem DESC) as temp JOIN (SELECT @rownum \\:= 0) r\n" +
             ") as temp2 where temp2.studentId = :studentId", nativeQuery = true)
     Integer getStudentRankingPosition(String studentId, Integer creditClassId,
-                                                         String examType);
+                                      String examType);
+
+    @Query(value = "select t.dathi from thi t where masv = :studentId and macathi =:examId",
+            nativeQuery = true)
+    boolean isTakeExamTested(String studentId, Integer examId);
+
 }

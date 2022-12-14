@@ -202,6 +202,11 @@ export const userColumns = [
 
 export const examColumns = [
     {
+        name: "Mã ca thi",
+        sortField: "id",
+        sortable: true,
+    },
+    {
         name: "Tên ca thi",
         sortField: "name",
         sortable: true,
