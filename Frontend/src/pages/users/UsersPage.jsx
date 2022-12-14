@@ -1,6 +1,12 @@
-import { callToast } from "../../helpers";
-import { useDispatch, useSelector } from "react-redux";
+import { yupResolver } from "@hookform/resolvers/yup";
+import $ from "jquery";
 import { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { Frame, Table, UserModalBody, UserTableBody } from "../../components";
+import UserFilter from "../../components/users/UserFilter";
+import "../../css/page/rooms.css";
+import { fetchAllRoles } from "../../features/roleSlice";
 import {
     addMultipleUsers,
     addUser,
@@ -11,14 +17,9 @@ import {
     setUserExcelAdd,
     userState,
 } from "../../features/userSlice";
-import "../../css/page/rooms.css";
-import { Frame, Table, UserModalBody, UserTableBody } from "../../components";
+import { callToast } from "../../helpers";
 import { userRegisterSchema, userSchema } from "../../validation";
-import { useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { fetchAllRoles } from "../../features/roleSlice";
 import { userColumns } from "../columns";
-import $ from "jquery";
 
 const UsersPage = () => {
     const dispatch = useDispatch();
@@ -268,7 +269,7 @@ const UsersPage = () => {
             title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã người dùng, họ & tên, email, địa chỉ`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={userColumns}
@@ -302,6 +303,7 @@ const UsersPage = () => {
                     fetchDataByPageNumber={fetchDataByPageNumber}
                     handleAddMultipleFromExcelFile={handleAddMultipleFromExcelFile}
                     excelAdd={userExcelAdd}
+                    Filter={UserFilter}
                 />
             }
         />

@@ -229,7 +229,7 @@ function ExamsPage() {
             }
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã ca thi, tên ca thi, ngày thi, tiết báo danh`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={userRoles.includes("Sinh viên") ? studentColumns : examColumns}

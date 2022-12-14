@@ -283,7 +283,7 @@ function QuestionsPage() {
             title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã câu hỏi, nội dung câu hỏi, tên chương, tên môn học, tên người soạn`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     fetchDataByPageNumber={fetchDataByPageNumber}
@@ -319,6 +319,7 @@ function QuestionsPage() {
                     excelAdd={excelAdd}
                     recordsPerPage={10}
                     loading={loading}
+                    setValue={setValue}
                 />
             }
         />

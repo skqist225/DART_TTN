@@ -90,11 +90,6 @@ export const testColumns = [
     {
         name: "Tổng số câu hỏi",
         sortField: "numberOfQuestions",
-        sortable: true,
-    },
-    {
-        name: "Tiêu chí",
-        sortField: "criteria",
     },
     {
         name: "Môn học",
@@ -246,11 +241,11 @@ export const examColumns = [
         sortField: "time",
         sortable: true,
     },
-    {
-        name: "Loại thi",
-        sortField: "type",
-        sortable: true,
-    },
+    // {
+    //     name: "Loại thi",
+    //     sortField: "type",
+    //     sortable: true,
+    // },
     {
         name: "Giảng viên",
         sortField: "time",

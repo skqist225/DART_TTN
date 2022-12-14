@@ -51,25 +51,25 @@ public class AdminUserRestController {
             @RequestParam(name = "query", required = false, defaultValue = "") String query,
             @RequestParam(name = "sortDir", required = false, defaultValue = "desc") String sortDir,
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
-            @RequestParam(name = "roles", required = false, defaultValue = "") String roles,
-            @RequestParam(name = "role", required = false, defaultValue = "") String roleName,
+            @RequestParam(name = "role", required = false, defaultValue = "") String role,
+            @RequestParam(name = "roleName", required = false, defaultValue = "") String roleName,
             @RequestParam(name = "statuses", required = false, defaultValue = "1,0") String statuses,
             @RequestParam(name = "limit", required = false, defaultValue = "0") Integer limit,
             @RequestParam(name = "creditClassId", required = false, defaultValue = "0") Integer creditClassId) throws NotFoundException {
         UsersDTO usersDTO = new UsersDTO();
         if (page.equals("0")) {
             List<User> users = new ArrayList<>();
-            if (!StringUtils.isEmpty(roleName)) {
-                if (roleName.equals("!SV")) {
+            if (!StringUtils.isEmpty(role)) {
+                if (role.equals("!SV")) {
                     users = userService.findUserIsNotStudent();
                 } else {
                     if (limit > 0) {
                         // Lấy ra danh sách sinh viên chưa đăng ký lớp tín chỉ đó
-                        users = userService.findByRole(roleService.findByName(roleName).getId(),
+                        users = userService.findByRole(roleService.findByName(role).getId(),
                                 limit, creditClassId
                         );
                     } else {
-                        users = userService.findByRole(roleService.findByName(roleName).getId());
+                        users = userService.findByRole(roleService.findByName(role).getId());
                     }
                 }
             }
@@ -83,7 +83,7 @@ public class AdminUserRestController {
             filters.put("query", query);
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
-            filters.put("roles", roles);
+            filters.put("roleName", roleName);
             filters.put("statuses", statuses);
 
             usersDTO = userService.findAllUsers(filters);

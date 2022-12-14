@@ -86,7 +86,12 @@ function MyButton({
             break;
         }
         case "edit": {
-            label = "Sửa " + label;
+            if (!customTooltipMessage) {
+                label = "Sửa " + label;
+            } else {
+                label = customTooltipMessage;
+            }
+
             buttonClassName = "bg-blue-600 hover:bg-blue-600";
             buttonDisableClassName = "bg-blue-300 hover:bg-blue-300 cursor-not-allowed";
             Icon = <EditIcon />;

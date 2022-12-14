@@ -68,9 +68,11 @@ public class CreditClassRestController {
             @RequestParam(name = "haveRegister", required = false, defaultValue = "true") boolean haveRegister
     ) {
         CreditClassesDTO creditClassesDTO = new CreditClassesDTO();
+        List<CreditClass> creditClasses = new ArrayList<>();
+        long totalElements = 0;
+        long totalPages = 0;
 
         if (page.equals("0")) {
-            List<CreditClass> creditClasses = new ArrayList<>();
             if (active) {
                 if (!StringUtils.isEmpty(studentId)) {
                     List<CreditClass> teCreditClasses1 =
@@ -89,9 +91,9 @@ public class CreditClassRestController {
             } else {
                 creditClasses = creditClassService.findAll();
             }
-            creditClassesDTO.setCreditClasses(creditClasses);
-            creditClassesDTO.setTotalElements(creditClasses.size());
-            creditClassesDTO.setTotalPages((long) Math.ceil(creditClasses.size() / 10));
+
+            totalElements = creditClasses.size();
+            totalPages = (long) Math.ceil(creditClasses.size() / 10);
         } else {
             Map<String, String> filters = new HashMap<>();
             filters.put("page", page);
@@ -99,44 +101,48 @@ public class CreditClassRestController {
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
             filters.put("teacherId", teacherId);
-            filters.put("subjectId",subjectId);
+            filters.put("subjectId", subjectId);
 
             Page<CreditClass> creditClassesPage = creditClassService.findAllCreditClasses(filters);
+            creditClasses = creditClassesPage.getContent();
+            totalElements = creditClassesPage.getTotalElements();
+            totalPages = creditClassesPage.getTotalPages();
+        }
 
-            List<CreditClass> creditClasses = new ArrayList<>();
-            for (CreditClass creditClass : creditClassesPage.getContent()) {
-                List<Exam> exams = examService.findAllExamsIdByCreditClass(creditClass.getId());
-                creditClass.setExams(exams.stream().map(exam -> new ExamCreditClassPageDTO(exam.getId(),
-                        exam.getName(),
-                        exam.getExamDate(), exam.getNoticePeriod(), exam.getTime(), exam.getTests(),
-                        exam.getType(), exam.isTaken(), exam.isStatus(), exam.getTakeExams().size()
-                )).collect(Collectors.toList()));
-                int numberOfMidTermExam = 0,
-                        numberOfFinalTermExam = 0,
-                        numberOfMidTermExamCreated = 0,
-                        numberOfFinalTermExamCreated = 0;
 
-                for (ExamCreditClassPageDTO exam : creditClass.getExams()) {
-                    if (exam.getType().equals("Giữa kỳ") && !exam.isStatus()) {
-                        numberOfMidTermExam++;
-                        numberOfMidTermExamCreated += exam.getNumberOfRegisters();
-                    } else if (exam.getType().equals("Cuối kỳ") && !exam.isStatus()) {
-                        numberOfFinalTermExam++;
-                        numberOfFinalTermExamCreated += exam.getNumberOfRegisters();
-                    }
+        List<CreditClass> tempCreditClasses = new ArrayList<>();
+        for (CreditClass creditClass : creditClasses) {
+            List<Exam> exams = examService.findAllExamsIdByCreditClass(creditClass.getId());
+            creditClass.setExams(exams.stream().map(exam -> new ExamCreditClassPageDTO(exam.getId(),
+                    exam.getName(),
+                    exam.getExamDate(), exam.getNoticePeriod(), exam.getTime(), exam.getTests(),
+                    exam.getType(), exam.isTaken(), exam.isStatus(), exam.getTakeExams().size()
+            )).collect(Collectors.toList()));
+            int numberOfMidTermExam = 0,
+                    numberOfFinalTermExam = 0,
+                    numberOfMidTermExamCreated = 0,
+                    numberOfFinalTermExamCreated = 0;
+
+            for (ExamCreditClassPageDTO exam : creditClass.getExams()) {
+                if (exam.getType().equals("Giữa kỳ") && !exam.isStatus()) {
+                    numberOfMidTermExam++;
+                    numberOfMidTermExamCreated += exam.getNumberOfRegisters();
+                } else if (exam.getType().equals("Cuối kỳ") && !exam.isStatus()) {
+                    numberOfFinalTermExam++;
+                    numberOfFinalTermExamCreated += exam.getNumberOfRegisters();
                 }
-
-                creditClass.setNumberOfMidTermExam(numberOfMidTermExam);
-                creditClass.setNumberOfFinalTermExam(numberOfFinalTermExam);
-                creditClass.setNumberOfMidTermExamCreated(numberOfMidTermExamCreated);
-                creditClass.setNumberOfFinalTermExamCreated(numberOfFinalTermExamCreated);
-                creditClasses.add(creditClass);
             }
 
-            creditClassesDTO.setCreditClasses(creditClasses);
-            creditClassesDTO.setTotalElements(creditClassesPage.getTotalElements());
-            creditClassesDTO.setTotalPages(creditClassesPage.getTotalPages());
+            creditClass.setNumberOfMidTermExam(numberOfMidTermExam);
+            creditClass.setNumberOfFinalTermExam(numberOfFinalTermExam);
+            creditClass.setNumberOfMidTermExamCreated(numberOfMidTermExamCreated);
+            creditClass.setNumberOfFinalTermExamCreated(numberOfFinalTermExamCreated);
+            tempCreditClasses.add(creditClass);
         }
+
+        creditClassesDTO.setCreditClasses(tempCreditClasses);
+        creditClassesDTO.setTotalElements(totalElements);
+        creditClassesDTO.setTotalPages(totalPages);
 
         return new OkResponse<>(creditClassesDTO).response();
     }

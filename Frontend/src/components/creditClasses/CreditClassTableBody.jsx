@@ -1,6 +1,4 @@
 import { yupResolver } from "@hookform/resolvers/yup";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import { Tab, Tabs } from "@mui/material";
 import { Badge, Button, Card, Tooltip } from "flowbite-react";
 import $ from "jquery";
 import React, { useEffect, useState } from "react";
@@ -13,14 +11,14 @@ import {
 } from "../../features/creditClassSlice";
 import { addExam, editExam, examState, setEditedExam } from "../../features/examSlice";
 import { persistUserState } from "../../features/persistUserSlice";
-import { setTests } from "../../features/testSlice";
 import { callToast } from "../../helpers";
 import ExamIcon from "../../images/exam.png";
 import { tailwindCss } from "../../tailwind";
 import { examSchema } from "../../validation";
 import EnableOrDisable from "../common/EnableOrDisable";
 import MyButton, { ButtonType } from "../common/MyButton";
-import ExamModalBody, { a11yProps, TabPanel } from "../exams/ExamModalBody";
+import ViewDetails from "../common/ViewDetails";
+import ExamModalBody from "../exams/ExamModalBody";
 import TableModal from "../utils/tables/TableModal";
 import TableModalViewer from "../utils/tables/TableModalViewer";
 import ExamList from "./ExamList";
@@ -251,48 +249,42 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                         modalId={`viewCreditClassDetail${row.id}`}
                                         modalLabel='Thông tin lớp tín chỉ'
                                         ModalBody={
-                                            <div>
-                                                <Card>
-                                                    <div
-                                                        className='flex items-center justify-between w-3/6 m-auto
+                                            <ViewDetails
+                                                Header={
+                                                    <Card>
+                                                        <div
+                                                            className='flex items-center justify-between w-3/6 m-auto
                                                         
                                                     '
-                                                    >
-                                                        <div>
-                                                            <div>Môn học: {row.subjectName}</div>
-                                                            <div>Nhóm: {row.group}</div>
+                                                        >
                                                             <div>
-                                                                Tổng đăng ký:{" "}
-                                                                {row.tempRegisters.length}
+                                                                <div>
+                                                                    Môn học: {row.subjectName}
+                                                                </div>
+                                                                <div>Nhóm: {row.group}</div>
+                                                                <div>
+                                                                    Tổng đăng ký:{" "}
+                                                                    {row.tempRegisters.length}
+                                                                </div>
+                                                            </div>
+                                                            <div>
+                                                                <div>
+                                                                    Niên khóa : {row.schoolYear}
+                                                                </div>
+                                                                <div>Học kỳ: {row.semester}</div>{" "}
+                                                                <div>
+                                                                    Tổng ca thi: {row.exams.length}
+                                                                </div>
                                                             </div>
                                                         </div>
-                                                        <div>
-                                                            <div>Niên khóa : {row.schoolYear}</div>
-                                                            <div>Học kỳ: {row.semester}</div>{" "}
-                                                            <div>
-                                                                Tổng ca thi: {row.exams.length}
-                                                            </div>
-                                                        </div>
-                                                    </div>
-                                                </Card>
-                                                <Tabs
-                                                    value={tabValue}
-                                                    onChange={handleChange}
-                                                    centered
-                                                >
-                                                    <Tab
-                                                        label={`Danh sách đăng ký (${row.tempRegisters.length})`}
-                                                        {...a11yProps(0)}
-                                                    />
-                                                    <Tab
-                                                        label={`Danh sách ca thi (${row.exams.length})`}
-                                                        {...a11yProps(1)}
-                                                    />
-                                                </Tabs>
-                                                <TabPanel value={tabValue} index={0}>
-                                                    <RegisterList registers={row.tempRegisters} />
-                                                </TabPanel>
-                                                <TabPanel value={tabValue} index={1}>
+                                                    </Card>
+                                                }
+                                                labels={[
+                                                    `Danh sách đăng ký (${row.tempRegisters.length})`,
+                                                    `Danh sách ca thi (${row.exams.length})`,
+                                                ]}
+                                                data={[
+                                                    <RegisterList registers={row.tempRegisters} />,
                                                     <ExamList
                                                         exams={row.exams}
                                                         numberOfActiveStudents={
@@ -310,9 +302,9 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                                         numberOfFinalTermExamCreated={
                                                             row.numberOfFinalTermExamCreated
                                                         }
-                                                    />
-                                                </TabPanel>
-                                            </div>
+                                                    />,
+                                                ]}
+                                            />
                                         }
                                     />
                                 </Tooltip>

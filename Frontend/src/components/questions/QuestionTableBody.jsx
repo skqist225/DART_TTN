@@ -70,12 +70,12 @@ function QuestionTableBody({
 
                         <td className={tailwindCss.tableCell}>{row.id}</td>
                         <td
-                            className={tailwindCss.tableCell}
+                            className={"py-2 text-black text-sm"}
                             style={{
-                                maxWidth: "250px",
+                                maxWidth: "350px",
                                 display: "-webkit-box",
-                                "-webkit-line-clamp": 2,
-                                "-webkit-box-orient": "vertical",
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: "vertical",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
                                 lineHeight: 1.625,

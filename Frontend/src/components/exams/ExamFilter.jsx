@@ -6,8 +6,10 @@ import { examState, fetchAllExams } from "../../features/examSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import Select from "../utils/userInputs/Select";
 import { examTypes } from "./ExamModalBody";
+import $ from "jquery";
+import { tailwindCss } from "../../tailwind";
 
-function ExamFilter() {
+function ExamFilter({ setValue }) {
     const dispatch = useDispatch();
     const { creditClasses } = useSelector(creditClassState);
     const { filterObject } = useSelector(examState);
@@ -87,7 +89,7 @@ function ExamFilter() {
             <div>
                 <button
                     type='button'
-                    className='text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-40'
+                    className={tailwindCss.clearFilterButton}
                     onClick={() => {
                         if (user.roles.map(({ name }) => name).includes("Sinh viên")) {
                             dispatch(
@@ -118,7 +120,8 @@ function ExamFilter() {
                             );
                         }
 
-                        dispatch(setResetFilter(true));
+                        $("#creditClassFilter").val("");
+                        $("#examTypesFilter").val("");
                     }}
                 >
                     Xóa bộ lọc

@@ -108,7 +108,7 @@ public class Test {
     }
 
     public String getTeacherName() {
-        return String.format("%s %s", this.getTeacher().getFirstName(), this.getTeacher().getLastName());
+        return String.format("%s %s", this.getTeacher().getLastName(), this.getTeacher().getFirstName());
     }
 
     public int getNumberOfQuestions() {

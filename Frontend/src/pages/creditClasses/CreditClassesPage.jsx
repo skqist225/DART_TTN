@@ -211,7 +211,7 @@ function CreditClassesPage() {
             title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} ::`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={creditClassColumns}

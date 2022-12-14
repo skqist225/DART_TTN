@@ -6,8 +6,10 @@ import { subjectState } from "../../features/subjectSlice";
 import Select from "../utils/userInputs/Select";
 import { levelOptions } from "./QuestionModalBody";
 import { userState } from "../../features/userSlice";
+import $ from "jquery";
+import { tailwindCss } from "../../tailwind";
 
-function QuestionsFilter() {
+function QuestionsFilter({ setValue }) {
     const dispatch = useDispatch();
 
     const { filterObject } = useSelector(questionState);
@@ -33,17 +35,6 @@ function QuestionsFilter() {
             }}
             className='flex items-center'
         >
-            <div className='mr-2 w-full flex items-center'>
-                <Select
-                    label='người soạn'
-                    name='teacherFilter'
-                    register={register}
-                    options={users.map(user => ({ title: user.fullName, value: user.id }))}
-                    onChangeHandler={handleTeacherChange}
-                    hiddenOption
-                    width={"w-48"}
-                />
-            </div>
             <div className='mr-2 w-full flex items-center justify-start'>
                 <Select
                     label='môn học'
@@ -56,14 +47,25 @@ function QuestionsFilter() {
                         value: subject.id,
                     }))}
                     onChangeHandler={handleSubjectChange}
-                    hiddenOption
-                    width={"w-48"}
+                    hiddenOption={true}
+                    width={"w-60"}
+                />
+            </div>
+            <div className='mr-2 w-full flex items-center'>
+                <Select
+                    label='người soạn'
+                    name='teacherFilter'
+                    register={register}
+                    options={users.map(user => ({ title: user.fullName, value: user.id }))}
+                    onChangeHandler={handleTeacherChange}
+                    hiddenOption={true}
+                    width={"w-52"}
                 />
             </div>
             <div>
                 <button
                     type='button'
-                    className='text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-40'
+                    className={tailwindCss.clearFilterButton}
                     onClick={() => {
                         dispatch(
                             fetchAllQuestions({
@@ -77,6 +79,8 @@ function QuestionsFilter() {
                             })
                         );
                         dispatch(setResetFilter(true));
+                        $("#subjectFilter").val("");
+                        $("#teacherFilter").val("");
                     }}
                 >
                     Xóa bộ lọc

@@ -5,7 +5,7 @@ function AnswerList({ answers }) {
     return (
         <div className='w-full p-4 rounded-lg border-gray-400 border-2'>
             {answers.map(answer => (
-                <div className='flex items-start mb-4'>
+                <div className='flex items-start mb-4' key={answer.id}>
                     <label
                         className={`${tailwindCss.radioButtonLabel} ${
                             answer.answer && "text-green-600"

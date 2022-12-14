@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { creditClassState } from "../../features/creditClassSlice";
 import { fetchAllRegisters, registerState } from "../../features/registerSlice";
 import Select from "../utils/userInputs/Select";
+import $ from "jquery";
 
 function RegisterFilter() {
     const dispatch = useDispatch();
@@ -36,7 +37,7 @@ function RegisterFilter() {
                         })
                     )}
                     onChangeHandler={handleCreditClassChange}
-                    hiddenOption
+                    hiddenOption={true}
                     width={"w-90"}
                 />
             </div>
@@ -54,7 +55,8 @@ function RegisterFilter() {
                                 subject: "",
                             })
                         );
-                        dispatch(setResetFilter(true));
+
+                        $("#creditClassFilter").val("");
                     }}
                 >
                     Xóa bộ lọc

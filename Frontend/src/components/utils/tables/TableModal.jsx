@@ -110,7 +110,7 @@ function TableModal({
                                     : "button"
                             }
                             className={`${tailwindCss.modal.saveButton} ${
-                                disabled && "cursor-not-allowed hover:bg-blue-700"
+                                disabled && "cursor-not-allowed bg-blue-300 hover:bg-blue-300"
                             }`}
                             disabled={disabled}
                             onClick={() => {

@@ -274,7 +274,7 @@ function TestsPage() {
             title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã đề thi, tên đề thi, môn học, người tạo`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={testColumns}

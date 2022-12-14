@@ -1,11 +1,9 @@
 import React from "react";
+import Help from "../../../partials/header/Help";
 
 function TableSearch({ placeHolder, handleQueryChange, searchQuery }) {
     return (
         <div className='flex justify-between items-center py-4 bg-white dark:bg-gray-800'>
-            <label htmlFor='table-search' className='sr-only'>
-                Search
-            </label>
             <div className='relative mx-5'>
                 <div className='flex absolute inset-y-0 left-0 items-center pl-3 pointer-events-none'>
                     <svg
@@ -25,11 +23,13 @@ function TableSearch({ placeHolder, handleQueryChange, searchQuery }) {
                 <input
                     type='text'
                     id='table-search-users'
-                    className='block p-2 pl-10 w-80 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
-                    placeholder={placeHolder}
+                    className='block p-2 pl-10 pr-10 w-70 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                     onChange={handleQueryChange}
                     value={searchQuery}
                 />
+                <div className='flex absolute inset-y-0 right-0 items-center pr-3 '>
+                    <Help helperText={placeHolder} />
+                </div>
             </div>
         </div>
     );

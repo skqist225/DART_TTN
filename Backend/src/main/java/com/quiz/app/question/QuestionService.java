@@ -137,15 +137,19 @@ public class QuestionService {
             Expression<String> chapterName = root.get("chapter").get("name");
             Expression<String> teacherFirstName = root.get("teacher").get("firstName");
             Expression<String> teacherLastName = root.get("teacher").get("lastName");
+            Expression<String> subjectName = root.get("chapter").get("subject").get("name");
+
 
             Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, content);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, chapterName);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, teacherLastName);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, teacherFirstName);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, teacherLastName);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, subjectName);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }

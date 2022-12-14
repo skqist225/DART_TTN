@@ -109,8 +109,6 @@ function ViewOldExamsFilter() {
                                 })
                             );
                         }
-
-                        dispatch(setResetFilter(true));
                     }}
                 >
                     Xóa bộ lọc

@@ -40,7 +40,7 @@ function RegisterList({ takeExams }) {
                     <Table.HeadCell>Họ tên</Table.HeadCell>
                     {!user.roles.map(({ name }) => name).includes("Sinh viên") && (
                         <>
-                            <Table.HeadCell>Bộ đề</Table.HeadCell>
+                            <Table.HeadCell>Đề thi</Table.HeadCell>
                             <Table.HeadCell>Điểm số</Table.HeadCell>
                         </>
                     )}
@@ -52,7 +52,7 @@ function RegisterList({ takeExams }) {
                             key={studentId}
                         >
                             <Table.Cell className={tailwindCss.tableViewerCell}>
-                                {index + 1}
+                                {index + 1 + (pageNumber - 1) * recordsPerPage}
                             </Table.Cell>
                             <Table.Cell className={tailwindCss.tableViewerCell}>
                                 {studentId}

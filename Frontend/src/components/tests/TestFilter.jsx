@@ -4,6 +4,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { subjectState } from "../../features/subjectSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
 import Select from "../utils/userInputs/Select";
+import $ from "jquery";
 
 function TestFilter() {
     const dispatch = useDispatch();
@@ -54,6 +55,7 @@ function TestFilter() {
                                 subject: "",
                             })
                         );
+                        $("#subjectFilter").val("");
                     }}
                 >
                     Xóa bộ lọc

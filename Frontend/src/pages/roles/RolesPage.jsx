@@ -140,7 +140,7 @@ function RolesPage() {
             title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã vai trò, tên vai trò`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={roleColumns}

@@ -231,7 +231,7 @@ function SubjectsPage() {
             title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel} theo mã, tên`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: theo mã môn học, tên môn học, số tiết lý thuyết, số tiết thực hành`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={subjectColumns}

@@ -4,6 +4,7 @@ import com.quiz.app.exception.NotFoundException;
 import com.quiz.app.exception.VerifiedUserException;
 import com.quiz.app.user.dto.CountUserByRole;
 import com.quiz.app.user.dto.UsersDTO;
+import com.quiz.entity.Role;
 import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +22,8 @@ import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Expression;
+import javax.persistence.criteria.Join;
+import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.transaction.Transactional;
@@ -135,8 +138,8 @@ public class UserService {
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
-        String roles = filters.get("roles");
-        String statuses = filters.get("statuses");
+        String roleName = filters.get("roleName");
+
         Sort sort = null;
         if (sortField.equals("fullName")) {
             sort = Sort.by("lastName").by("firstName");
@@ -152,17 +155,17 @@ public class UserService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        Expression<String> userId = root.get("id");
+        Expression<String> id = root.get("id");
         Expression<String> firstName = root.get("firstName");
         Expression<String> lastName = root.get("lastName");
         Expression<String> email = root.get("email");
         Expression<String> birthday = root.get("birthday");
 
         if (!StringUtils.isEmpty(searchQuery)) {
-            Expression<String> wantedQueryField = criteriaBuilder.concat(userId, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, firstName);
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, lastName);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, firstName);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, email);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
@@ -171,38 +174,12 @@ public class UserService {
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
 
-//        List<String> userRoles = new ArrayList<>();
-//        if (roles.split(",").length > 0) {
-//            for (String role : roles.split(",")) {
-//                if (Objects.equals(role, "Student")) {
-//                    userRoles.add("Student");
-//                } else if (Objects.equals(role, "Teacher")) {
-//                    userRoles.add("Teacher");
-//                } else {
-//                    userRoles.add("Admin");
-//                }
-//            }
-//        }
-
-//        if (userRoles.size() > 0) {
-//            predicates.add(criteriaBuilder.and(roleName.in(userRoles)));
-//        }
-
-//        List<Boolean> statusesID = new ArrayList<>();
-//        if (statuses.split(",").length > 0) {
-//            for (String statuss : statuses.split(",")) {
-//                if (Objects.equals(statuss, "1")) {
-//                    statusesID.add(true);
-//                } else {
-//                    statusesID.add(false);
-//                }
-//            }
-//        }
-
-//        if (statusesID.size() > 0) {
-//            predicates.add(criteriaBuilder.and(status.in(statusesID)));
-//        }
-//
+        if (!StringUtils.isEmpty(roleName)) {
+            Join<User, Role> joinOptions = root.join("roles", JoinType.LEFT);
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(
+                    joinOptions.get("name"), roleName
+            )));
+        }
 
         criteriaQuery
                 .where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])))

@@ -2,7 +2,6 @@ package com.quiz.app.test;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.app.statistics.dto.CountTestsBySubjectAndStatus;
 import com.quiz.entity.Subject;
 import com.quiz.entity.Test;
 import org.apache.commons.lang.StringUtils;
@@ -124,7 +123,13 @@ public class TestService {
         String sortField = filters.get("sortField");
         String subjectId = filters.get("subjectId");
 
-        Sort sort = Sort.by(sortField);
+        Sort sort = null;
+        if (sortField.equals("numberOfQuestions")) {
+
+        } else {
+            sort = Sort.by(sortField);
+        }
+
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
         Pageable pageable = PageRequest.of(page - 1, 10, sort);
 
@@ -137,9 +142,18 @@ public class TestService {
         if (!StringUtils.isEmpty(searchQuery)) {
             Expression<String> id = root.get("id");
             Expression<String> name = root.get("name");
+            Expression<String> teacherFirstName = root.get("teacher").get("firstName");
+            Expression<String> teacherLastName = root.get("teacher").get("lastName");
+            Expression<String> subjectName = root.get("subject").get("name");
 
             Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, teacherLastName);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, teacherFirstName);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, subjectName);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }

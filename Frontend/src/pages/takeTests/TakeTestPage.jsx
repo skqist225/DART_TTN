@@ -20,13 +20,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import { callToast } from "../../helpers";
 import Toast from "../../components/notify/Toast";
-
-const noticePeriodMappings = {
-    1: "7:00-9:00",
-    3: "9:00-11:00",
-    5: "13:00-15:00",
-    7: "15:00-17:00",
-};
+import checkExamTime from "../../utils/checkExamTime";
 
 const renderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -675,31 +669,20 @@ function TakeTestPage() {
                                                     ({ id }) => id.toString() === examId.toString()
                                                 );
 
-                                                const todayTime = new Date().getTime();
-                                                const startTime = new Date(
-                                                    examDate +
-                                                        " " +
-                                                        noticePeriodMappings[noticePeriod].split(
-                                                            "-"
-                                                        )[0]
-                                                );
-                                                const endTime = new Date(
-                                                    examDate +
-                                                        " " +
-                                                        noticePeriodMappings[noticePeriod].split(
-                                                            "-"
-                                                        )[1]
-                                                );
-                                                const check = false;
+                                                // should check time before doing test.
+                                                const check = true;
+
                                                 if (check) {
                                                     if (
-                                                        todayTime >= startTime &&
-                                                        todayTime <= endTime
+                                                        checkExamTime({
+                                                            examDate,
+                                                            noticePeriod,
+                                                            type: "checkBetween",
+                                                        })
                                                     ) {
                                                         dispatch(getQuestions({ exam: examId }));
                                                         setDoTest(true);
                                                         setExamId(parseInt(examId));
-
                                                         setTime(time);
                                                     } else {
                                                         callToast(

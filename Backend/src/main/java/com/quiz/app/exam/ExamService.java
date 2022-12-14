@@ -131,8 +131,18 @@ public class ExamService {
         List<Predicate> predicates = new ArrayList<>();
 
         if (!StringUtils.isEmpty(searchQuery)) {
+            Expression<String> id = root.get("id");
             Expression<String> name = root.get("name");
+            Expression<String> examDate = root.get("examDate");
+            Expression<String> noticePeriod = root.get("noticePeriod");
+
             Expression<String> wantedQueryField = criteriaBuilder.concat(name, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, id);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, examDate);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, noticePeriod);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }

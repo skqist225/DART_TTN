@@ -1,14 +1,16 @@
+import { Badge, Tooltip } from "flowbite-react";
+import $ from "jquery";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Badge, Tooltip } from "flowbite-react";
+import { enableOrDisableExam, setEditedExam } from "../../features/examSlice";
+import { persistUserState } from "../../features/persistUserSlice";
 import { tailwindCss } from "../../tailwind";
+import EnableOrDisable from "../common/EnableOrDisable";
 import MyButton from "../common/MyButton";
 import TableModalViewer from "../utils/tables/TableModalViewer";
-import { enableOrDisableExam, setEditedExam } from "../../features/examSlice";
-import EnableOrDisable from "../common/EnableOrDisable";
-import { persistUserState } from "../../features/persistUserSlice";
 import RegisterList from "./RegisterList";
-import $ from "jquery";
+// import { noticePeriodMappings } from "../../pages/takeTests/TakeTestPage";
+import checkExamTime, { noticePeriodMappings } from "../../utils/checkExamTime";
 
 function ExamTableBody({ rows, setIsEdit }) {
     const dispatch = useDispatch();
@@ -19,6 +21,29 @@ function ExamTableBody({ rows, setIsEdit }) {
     return (
         <tbody>
             {rows.map((row, index) => {
+                let shouldCancel = true,
+                    shouldEdit = true;
+                let shouldCancelMessage = "",
+                    shouldEditMessage = "";
+
+                if (row.taken) {
+                    shouldCancel = false;
+                    shouldEdit = false;
+                    shouldCancelMessage = "Ca thi đã thi";
+                    shouldEditMessage = "Ca thi đã thi";
+                } else if (
+                    !checkExamTime({
+                        examDate: row.examDate,
+                        noticePeriod: row.noticePeriod,
+                        type: "checkLesser",
+                    })
+                ) {
+                    shouldEdit = false;
+                    shouldCancel = false;
+                    shouldCancelMessage = "Qua thời gian thi của ca thi";
+                    shouldEditMessage = "Qua thời gian thi của ca thi";
+                }
+
                 return (
                     <tr
                         className={`${tailwindCss.tr} ${
@@ -28,7 +53,7 @@ function ExamTableBody({ rows, setIsEdit }) {
                     >
                         <td className={tailwindCss.tableCell}>{row.id}</td>
                         <td className={tailwindCss.tableCell} style={{ maxWidth: "200px" }}>
-                            {row.name}
+                            {row.name.split("-")[5] + "-" + row.name.split("-")[6]}
                         </td>
                         <td className={tailwindCss.tableCell}>{row.subjectId}</td>
                         <td className={tailwindCss.tableCell}>{row.subjectName}</td>
@@ -41,9 +66,11 @@ function ExamTableBody({ rows, setIsEdit }) {
                         )}
                         <td className={tailwindCss.tableCell}>{row.numberOfRegisters}</td>
                         <td className={tailwindCss.tableCell}>{row.examDate}</td>
-                        <td className={tailwindCss.tableCell}>{row.noticePeriod}</td>
+                        <td className={tailwindCss.tableCell}>
+                            {row.noticePeriod} (
+                            {noticePeriodMappings[row.noticePeriod].split("-")[0]})
+                        </td>
                         <td className={tailwindCss.tableCell}>{row.time} phút</td>
-                        <td className={tailwindCss.tableCell}>{row.type}</td>
                         <td className={tailwindCss.tableCell}>{row.teacherName}</td>
                         <td className={`${tailwindCss.tableCell} flex items-center`}>
                             <div className='mr-2'>
@@ -56,7 +83,7 @@ function ExamTableBody({ rows, setIsEdit }) {
                                     />
                                     <TableModalViewer
                                         modalId={`studentsViewer${index}`}
-                                        modalLabel='Danh sách sinh viên'
+                                        modalLabel={`Danh sách sinh viên (${row.tempTakeExams.length})`}
                                         ModalBody={<RegisterList takeExams={row.tempTakeExams} />}
                                     />
                                 </Tooltip>
@@ -71,14 +98,17 @@ function ExamTableBody({ rows, setIsEdit }) {
                                                 setIsEdit(true);
                                                 dispatch(setEditedExam(row));
                                             }}
+                                            disabled={!shouldEdit}
+                                            customTooltipMessage={shouldEditMessage}
                                         />
                                     </div>
                                     <EnableOrDisable
                                         status={row.status}
                                         enableOrDisable={enableOrDisableExam}
                                         id={row.id}
-                                        disabled={row.taken}
+                                        disabled={!shouldCancel}
                                         creditClassPage={true}
+                                        customTooltipMessage={shouldCancelMessage}
                                     />
                                 </>
                             )}

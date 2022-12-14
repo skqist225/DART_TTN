@@ -66,15 +66,6 @@ public class Question {
     @Column(name = "CONSUDUNG", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean status;
 
-//    @JsonIgnore
-//    @ManyToMany(mappedBy = "questions", fetch = FetchType.LAZY)
-//    private List<Test> tests = new ArrayList<>();
-
-//    @Transient
-//    public boolean getCanDisabled() {
-//        return this.getTests().size() == 0;
-//    }
-
     @Transient
     public void removeAll() {
         this.answers.clear();

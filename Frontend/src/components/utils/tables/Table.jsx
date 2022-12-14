@@ -14,6 +14,7 @@ import MyButton, { ButtonType } from "../../common/MyButton";
 import { setRegisterExcelAdd } from "../../../features/registerSlice";
 import { takeExamState } from "../../../features/takeExamSlice";
 import $ from "jquery";
+import Help from "../../../partials/header/Help";
 
 function Table({
     searchPlaceHolder,
@@ -43,6 +44,7 @@ function Table({
     recordsPerPage = 12,
     ranksPage = false,
     setError,
+    setValue,
 }) {
     const dispatch = useDispatch();
 
@@ -65,7 +67,8 @@ function Table({
                                 handleQueryChange={handleQueryChange}
                             />
                         )}
-                        {Filter && <Filter />}
+
+                        {Filter && <Filter setValue={setValue} />}
                     </div>
                     <div
                         className='flex items-center

@@ -10,9 +10,9 @@ export const fetchAllUsers = createAsyncThunk(
             query = "",
             sortField = "id",
             sortDir = "desc",
-            roles = "",
-            statuses = "1,0",
             role = "",
+            statuses = "1,0",
+            roleName = "",
             limit = 0,
             creditClass = "",
         },
@@ -41,12 +41,17 @@ export const fetchAllUsers = createAsyncThunk(
                 value: sortDir,
             });
 
+            filterArray.push({
+                field: "roleName",
+                value: roleName,
+            });
+
             dispatch(setFilterObject(filterArray));
 
             const {
                 data: { users, totalElements, totalPages },
             } = await api.get(
-                `/admin/users?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&roles=${roles}&statuses=${statuses}&role=${role}&limit=${limit}&creditClass=${creditClass}`
+                `/admin/users?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&roleName=${roleName}&statuses=${statuses}&role=${role}&limit=${limit}&creditClass=${creditClass}`
             );
 
             return { users, totalElements, totalPages };

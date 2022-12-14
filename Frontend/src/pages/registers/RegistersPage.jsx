@@ -203,7 +203,7 @@ function RegistersPage() {
             title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel}`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} ::`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={registerColumns}

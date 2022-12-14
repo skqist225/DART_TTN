@@ -60,11 +60,11 @@ function Select({
                 style={{ height: height ? "400px" : "" }}
             >
                 {hiddenOption && (
-                    <option value='' disabled selected style={{ display: "none" }}>
+                    <option value='' disabled>
                         Chọn {label}
                     </option>
                 )}
-
+                {/* disabled selected style={{ display: "none" }} */}
                 {options.map(({ value, title }) => (
                     <option
                         value={value}
