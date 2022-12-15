@@ -1,6 +1,6 @@
 import { Spinner } from "flowbite-react";
 import $ from "jquery";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { examState } from "../../../features/examSlice";
 import { questionState } from "../../../features/questionSlice";
@@ -10,6 +10,22 @@ import { userState } from "../../../features/userSlice";
 import { callToast } from "../../../helpers";
 import { CloseIcon } from "../../../images";
 import { tailwindCss } from "../../../tailwind";
+import RegisterTableBody from "../../registers/RegisterTableBody";
+import TableHeader from "./TableHeader";
+import TableModalViewer from "./TableModalViewer";
+import TablePagination from "./TablePagination";
+
+const columns = [
+    {
+        name: "STT",
+    },
+    {
+        name: "Mã SV",
+    },
+    {
+        name: "Họ tên",
+    },
+];
 
 function TableModal({
     modalId,
@@ -26,6 +42,7 @@ function TableModal({
     addTest: addTst = false,
     excelAdd = false,
     testPage = false,
+    examPage = false,
 }) {
     const dispatch = useDispatch();
     const { editedTest } = useSelector(testState);
@@ -39,6 +56,7 @@ function TableModal({
     } = useSelector(userState);
     const {
         addMultipleRegisters: { loading: registerLoading },
+        registers,
     } = useSelector(registerState);
     const { addTestDisabled } = useSelector(testState);
     const {
@@ -49,6 +67,29 @@ function TableModal({
     const disabled =
         (modalLabel === "đề thi" && addTestDisabled) ||
         (modalLabel === "Thêm ca thi" && !addExamDisabled);
+
+    const [pageNumber, setPageNumber] = useState(1);
+    const [splitedRegisters, setSplitedRegisters] = useState([]);
+
+    const recordsPerPage = 12;
+
+    useEffect(() => {
+        if (registers && registers.length) {
+            setSplitedRegisters(registers.slice(0, recordsPerPage));
+        }
+    }, [registers]);
+
+    const fetchDataByPageNumber = pageNumber => {
+        // each page will have recordsPerPage records
+        // 2: 13 -24
+        setSplitedRegisters(
+            registers.slice(
+                (pageNumber - 1) * recordsPerPage,
+                (pageNumber - 1) * recordsPerPage + recordsPerPage
+            )
+        );
+        setPageNumber(pageNumber);
+    };
 
     return (
         <div
@@ -170,8 +211,47 @@ function TableModal({
                             )}
                             {excelAdd ? "Thêm tất cả" : buttonLabel}
                         </button>
+                        {examPage && (
+                            <button
+                                type='button'
+                                onClick={() => {
+                                    $(`#registerModalViewerExamPage`).css("display", "flex");
+                                }}
+                                style={{ maxWidth: "250px" }}
+                                className={`${tailwindCss.blueOutlineButton} `}
+                            >
+                                Xem danh sách đăng ký
+                            </button>
+                        )}
                     </div>
                 </form>
+                {examPage && (
+                    <div className='w-full'>
+                        <TableModalViewer
+                            modalId={`registerModalViewerExamPage`}
+                            modalLabel={`Danh sách đăng ký (${registers.length})`}
+                            ModalBody={
+                                <>
+                                    <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
+                                        <TableHeader columns={columns} />
+                                        <RegisterTableBody
+                                            rows={splitedRegisters}
+                                            type={$("#examType").val()}
+                                            addExam
+                                            page={pageNumber}
+                                        />
+                                    </table>
+                                    <TablePagination
+                                        totalElements={registers.length}
+                                        totalPages={Math.ceil(registers.length / recordsPerPage)}
+                                        fetchDataByPageNumber={fetchDataByPageNumber}
+                                        recordsPerPage={recordsPerPage}
+                                    />
+                                </>
+                            }
+                        />
+                    </div>
+                )}
             </div>
         </div>
     );

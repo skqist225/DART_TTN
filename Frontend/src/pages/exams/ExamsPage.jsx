@@ -255,6 +255,7 @@ function ExamsPage() {
                     Filter={ExamFilter}
                     onCloseForm={onCloseForm}
                     loading={loading}
+                    examPage
                 />
             }
         />

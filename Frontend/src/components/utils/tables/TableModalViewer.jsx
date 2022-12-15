@@ -1,7 +1,7 @@
-import React from "react";
-import { tailwindCss } from "../../../tailwind";
-import { CloseIcon } from "../../../images";
 import $ from "jquery";
+import React from "react";
+import { CloseIcon } from "../../../images";
+import { tailwindCss } from "../../../tailwind";
 
 function TableModalViewer({ modalId, modalLabel, ModalBody }) {
     return (

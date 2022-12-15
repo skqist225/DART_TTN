@@ -1,15 +1,12 @@
-import { Box, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import $ from "jquery";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { creditClassState } from "../../features/creditClassSlice";
 import { examState } from "../../features/examSlice";
-import { fetchAllRegisters, registerState } from "../../features/registerSlice";
+import { fetchAllRegisters } from "../../features/registerSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
-import RegisterTableBody from "../registers/RegisterTableBody";
 import DatePicker from "../utils/datePicker/DatePicker";
-import TableHeader from "../utils/tables/TableHeader";
-import TablePagination from "../utils/tables/TablePagination";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
 import TestList from "./TestList";
@@ -41,19 +38,6 @@ const noticePeriods = [
     {
         title: "7(15:00)",
         value: "7",
-    },
-];
-
-const columns = [
-    {
-        name: "Mã SV",
-        sortField: "fullName",
-        sortable: true,
-    },
-    {
-        name: "Họ tên",
-        sortField: "creditClass",
-        sortable: true,
     },
 ];
 
@@ -93,14 +77,11 @@ function ExamModalBody({
     creditClassPage = false,
 }) {
     const [type, setType] = useState("");
-    const [tabValue, setTabValue] = useState(0);
-    const [skipUpdateCreditClass, setSkipUpdateCreditClass] = useState(false);
     const [localExamsType, setLocalExamsType] = useState(examTypes);
 
     const { creditClasses } = useSelector(creditClassState);
     const { editedExam, errorObject } = useSelector(examState);
     const { tests, loading } = useSelector(testState);
-    const { registers } = useSelector(registerState);
 
     useEffect(() => {
         if (editedExam) {
@@ -159,7 +140,7 @@ function ExamModalBody({
         tomorrow.setTime(tomorrow.getTime() + 24 * 60 * 60 * 1000);
 
         setValue("noticePeriod", noticePeriods[0].value);
-        setValue("type", examTypes[0].value);
+        setValue("examType", examTypes[0].value);
         let date = tomorrow.getDate();
         if (parseInt(tomorrow.getDate()) < 10) {
             date = `0${tomorrow.getDate()}`;
@@ -188,219 +169,157 @@ function ExamModalBody({
                 activeTest: true,
             })
         );
-    };
 
-    const handleChange = (event, newValue) => {
-        setTabValue(newValue);
-        if (newValue === 1) {
-            dispatch(
-                fetchAllRegisters({
-                    page: 0,
-                    creditClass: $("#creditClassId").val(),
-                })
-            );
-
-            setType($("#type").val());
-            setSkipUpdateCreditClass(true);
-        }
-    };
-
-    const [pageNumber, setPageNumber] = useState(1);
-    const [splitedRegisters, setSplitedRegisters] = useState([]);
-
-    const recordsPerPage = 12;
-
-    useEffect(() => {
-        if (registers && registers.length) {
-            setSplitedRegisters(registers.slice(0, recordsPerPage));
-        }
-    }, [registers]);
-
-    console.log(errors);
-
-    const fetchDataByPageNumber = pageNumber => {
-        // each page will have recordsPerPage records
-        // 2: 13 -24
-        setSplitedRegisters(
-            registers.slice(
-                (pageNumber - 1) * recordsPerPage,
-                (pageNumber - 1) * recordsPerPage + recordsPerPage
-            )
+        dispatch(
+            fetchAllRegisters({
+                page: 0,
+                creditClass: $("#creditClassId").val(),
+            })
         );
-        setPageNumber(pageNumber);
     };
-
-    console.log(skipUpdateCreditClass);
 
     return (
         <div>
-            <Tabs value={tabValue} onChange={handleChange} centered>
-                <Tab label='Thông tin ca thi' {...a11yProps(0)} />
-                <Tab label='Danh sách sinh viên' {...a11yProps(1)} />
-            </Tabs>
-            <TabPanel value={tabValue} index={0}>
-                <div className='col-flex items-center justify-center w-full'>
-                    <div className='w-full'>
-                        <Select
-                            label='Lớp tín chỉ *'
-                            register={register}
-                            name='creditClassId'
-                            options={creditClasses.map(
-                                ({ id, schoolYear, semester, subjectName, group }) => ({
-                                    title: `${schoolYear} ${semester} ${subjectName} ${group}`,
-                                    value: id,
-                                })
-                            )}
-                            error={errors.creditClassId && errors.creditClassId.message}
-                            setValue={setValue}
-                            defaultValue={
-                                !skipUpdateCreditClass &&
-                                !creditClassPage &&
-                                creditClasses &&
-                                creditClasses.length &&
-                                creditClasses[0].id
-                            }
-                            onChangeHandler={!creditClassPage && handleCreditClassChange}
-                            readOnly={(editedExam && editedExam.creditClassId) || creditClassPage}
-                        />
-                    </div>
-                    <div
-                        className={`flex w-full mt-5 ${
-                            errors.numberOfActiveStudents || errors.numberOfActiveStudents
-                                ? "items-start"
-                                : "items-end"
-                        }`}
-                    >
-                        <div className='w-full mr-5'>
-                            <Input
-                                label={`Số  SV chưa được tạo ca thi giữa kỳ`}
-                                register={register}
-                                name='numberOfNoneCreatedMidtermExamStudents'
-                                error={
-                                    errors.numberOfNoneCreatedMidTermExamStudents &&
-                                    errors.numberOfNoneCreatedMidTermExamStudents.message
-                                }
-                                readOnly
-                            />
-                        </div>
-                        <div className='w-full mr-5'>
-                            <Input
-                                label={`Số  SV chưa được tạo ca thi cuối kỳ`}
-                                register={register}
-                                name='numberOfNoneCreatedFinalTermExamStudents'
-                                error={
-                                    errors.numberOfNoneCreatedFinalTermExamStudents &&
-                                    errors.numberOfNoneCreatedFinalTermExamStudents.message
-                                }
-                                readOnly
-                            />
-                        </div>
-                        <div className='w-full'>
-                            <Input
-                                label={`Tổng số sinh viên`}
-                                register={register}
-                                name='numberOfActiveStudents'
-                                readOnly
-                            />
-                        </div>
-                    </div>
-                    {tests.length > 0 ? (
-                        <>
-                            <h3 className='text-black text-base uppercase mt-3'>
-                                Danh sách đề thi
-                            </h3>
-                            <div className='w-full mt-5 border-2 rounded-sm overflow-y-auto max-h-52'>
-                                <TestList rows={tests} />
-                            </div>
-                        </>
-                    ) : (
-                        <div className='uppercase my-3 text-red-600'>
-                            Môn học của lớp tín chỉ này chưa có đề thi
-                        </div>
-                    )}
-                    <div
-                        className={`flex w-full mt-5 ${
-                            errors.examDate || errors.noticePeriod ? "items-start" : "items-center"
-                        }`}
-                    >
-                        <div className='mr-5 w-full'>
-                            <DatePicker
-                                register={register}
-                                name='examDate'
-                                error={errors.examDate && errors.examDate.message}
-                                label='Ngày thi *'
-                            />
-                        </div>
-                        <div className='w-full'>
-                            <Select
-                                label='Tiết báo danh *'
-                                register={register}
-                                name='noticePeriod'
-                                options={noticePeriods}
-                                // error={errors.creditClassId && errors.creditClassId.message}
-                                setValue={setValue}
-                                defaultValue={noticePeriods[0].value}
-                            />
-                        </div>
-                    </div>
-                    <div
-                        className={`flex w-full mt-5 ${
-                            errors.time || errors.numberOfStudents ? "items-start" : "items-center"
-                        }`}
-                    >
-                        <div className='w-full mr-5'>
-                            <div className='w-full'>
-                                <Input
-                                    label='Thời gian làm bài (phút) *'
-                                    error={errors.time && errors.time.message}
-                                    register={register}
-                                    name='time'
-                                />
-                            </div>
-                        </div>{" "}
-                        <div className='w-full'>
-                            <Input
-                                label='Số  sinh viên thi *'
-                                error={errors.numberOfStudents && errors.numberOfStudents.message}
-                                register={register}
-                                name='numberOfStudents'
-                                readOnly={editedExam && editedExam.numberOfRegisters}
-                            />
-                        </div>
-                    </div>
-                    <div className='w-full mt-5'>
-                        <Select
-                            label='Loại kỳ thi *'
-                            register={register}
-                            name='type'
-                            options={localExamsType.map(({ title, value }) => ({
-                                title,
-                                value,
-                            }))}
-                            // error={errors.testId && errors.testId.message}
-                            setValue={setValue}
-                            defaultValue={examTypes[0].value}
-                            readOnly={editedExam && editedExam.type}
-                        />
-                    </div>
+            <div className='col-flex items-center justify-center w-full'>
+                <div className='w-full'>
+                    <Select
+                        label='Lớp tín chỉ *'
+                        register={register}
+                        name='creditClassId'
+                        options={creditClasses.map(
+                            ({ id, schoolYear, semester, subjectName, group }) => ({
+                                title: `${schoolYear} ${semester} ${subjectName} ${group}`,
+                                value: id,
+                            })
+                        )}
+                        error={errors.creditClassId && errors.creditClassId.message}
+                        setValue={setValue}
+                        defaultValue={
+                            !creditClassPage &&
+                            creditClasses &&
+                            creditClasses.length &&
+                            creditClasses[0].id
+                        }
+                        onChangeHandler={!creditClassPage && handleCreditClassChange}
+                        readOnly={(editedExam && editedExam.creditClassId) || creditClassPage}
+                    />
                 </div>
-            </TabPanel>
-            <TabPanel value={tabValue} index={1}>
-                {registers && registers.length > 0 && (
-                    <>
-                        <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                            <TableHeader columns={columns} />
-                            <RegisterTableBody rows={splitedRegisters} type={type} addExam />
-                        </table>
-                        <TablePagination
-                            totalElements={registers.length}
-                            totalPages={Math.ceil(registers.length / recordsPerPage)}
-                            fetchDataByPageNumber={fetchDataByPageNumber}
-                            recordsPerPage={recordsPerPage}
+            </div>
+            <div
+                className={`flex w-full mt-5 ${
+                    errors.numberOfActiveStudents ? "items-start" : "items-end"
+                }`}
+            >
+                <div className='w-full mr-5'>
+                    <Input
+                        label={`Số  SV chưa được tạo ca thi giữa kỳ`}
+                        register={register}
+                        name='numberOfNoneCreatedMidtermExamStudents'
+                        error={
+                            errors.numberOfNoneCreatedMidTermExamStudents &&
+                            errors.numberOfNoneCreatedMidTermExamStudents.message
+                        }
+                        readOnly
+                    />
+                </div>
+                <div className='w-full mr-5'>
+                    <Input
+                        label={`Số  SV chưa được tạo ca thi cuối kỳ`}
+                        register={register}
+                        name='numberOfNoneCreatedFinalTermExamStudents'
+                        error={
+                            errors.numberOfNoneCreatedFinalTermExamStudents &&
+                            errors.numberOfNoneCreatedFinalTermExamStudents.message
+                        }
+                        readOnly
+                    />
+                </div>
+                <div className='w-full'>
+                    <Input
+                        label={`Tổng số sinh viên`}
+                        register={register}
+                        name='numberOfActiveStudents'
+                        readOnly
+                    />
+                </div>
+            </div>
+
+            {tests.length > 0 ? (
+                <>
+                    <h3 className='text-black text-base uppercase mt-3'>Danh sách đề thi</h3>
+                    <div className='w-full mt-5 border-2 rounded-sm overflow-y-auto max-h-52'>
+                        <TestList rows={tests} />
+                    </div>
+                </>
+            ) : (
+                <div className='uppercase my-3 text-red-600 w-full text-center'>
+                    Môn học của lớp tín chỉ này chưa có đề thi
+                </div>
+            )}
+            <div
+                className={`flex w-full mt-5 ${
+                    errors.examDate || errors.noticePeriod ? "items-start" : "items-center"
+                }`}
+            >
+                <div className='mr-5 w-full'>
+                    <DatePicker
+                        register={register}
+                        name='examDate'
+                        error={errors.examDate && errors.examDate.message}
+                        label='Ngày thi *'
+                    />
+                </div>
+                <div className='w-full'>
+                    <Select
+                        label='Tiết báo danh *'
+                        register={register}
+                        name='noticePeriod'
+                        options={noticePeriods}
+                        // error={errors.creditClassId && errors.creditClassId.message}
+                        setValue={setValue}
+                        defaultValue={noticePeriods[0].value}
+                    />
+                </div>
+            </div>
+            <div
+                className={`flex w-full mt-5 ${
+                    errors.time || errors.numberOfStudents ? "items-start" : "items-center"
+                }`}
+            >
+                <div className='w-full mr-5'>
+                    <div className='w-full'>
+                        <Input
+                            label='Thời gian làm bài (phút) *'
+                            error={errors.time && errors.time.message}
+                            register={register}
+                            name='time'
                         />
-                    </>
-                )}
-            </TabPanel>
+                    </div>
+                </div>{" "}
+                <div className='w-full'>
+                    <Input
+                        label='Số  sinh viên thi *'
+                        error={errors.numberOfStudents && errors.numberOfStudents.message}
+                        register={register}
+                        name='numberOfStudents'
+                        readOnly={editedExam && editedExam.numberOfRegisters}
+                    />
+                </div>
+            </div>
+            <div className='w-full mt-5'>
+                <Select
+                    label='Loại kỳ thi *'
+                    register={register}
+                    name='examType'
+                    options={localExamsType.map(({ title, value }) => ({
+                        title,
+                        value,
+                    }))}
+                    setValue={setValue}
+                    defaultValue={examTypes[0].value}
+                    readOnly={editedExam && editedExam.type}
+                />
+            </div>
         </div>
     );
 }

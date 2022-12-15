@@ -45,6 +45,7 @@ function Table({
     ranksPage = false,
     setError,
     setValue,
+    examPage,
 }) {
     const dispatch = useDispatch();
 
@@ -245,6 +246,7 @@ function Table({
                 excelAdd={excelAdd}
                 testPage={testPage}
                 setError={setError}
+                examPage={examPage}
             />
         </div>
     );
