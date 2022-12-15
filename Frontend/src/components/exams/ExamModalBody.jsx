@@ -121,11 +121,7 @@ function ExamModalBody({
 
     useEffect(() => {
         if (creditClasses && creditClasses.length && !creditClassPage) {
-            dispatch(
-                fetchAllTests({ page: 0, subject: creditClasses[0].subjectId, notUsedTest: true })
-            );
             handleCreditClassChange({ target: { value: creditClasses[0].id } });
-            // setValue("creditClassId", creditClassId);
         }
     }, [creditClasses]);
 
@@ -150,9 +146,13 @@ function ExamModalBody({
     }, []);
 
     const handleCreditClassChange = ({ target: { value } }) => {
+        if(creditClassPage) {
+            return;
+        }
+
         const creditClass = creditClasses.find(({ id }) => id.toString() === value.toString());
 
-        console.log(creditClass);
+        setValue("creditClassId", value);
         $("#numberOfNoneCreatedMidtermExamStudents").val(
             creditClass.numberOfActiveStudents - creditClass.numberOfMidTermExamCreated
         );
@@ -200,7 +200,7 @@ function ExamModalBody({
                             creditClasses.length &&
                             creditClasses[0].id
                         }
-                        onChangeHandler={!creditClassPage && handleCreditClassChange}
+                        onChangeHandler={handleCreditClassChange}
                         readOnly={(editedExam && editedExam.creditClassId) || creditClassPage}
                     />
                 </div>
