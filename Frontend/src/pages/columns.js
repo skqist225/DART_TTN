@@ -104,6 +104,9 @@ export const testColumns = [
 
 export const questionColumnsTestPage = [
     {
+        name: "STT",
+    },
+    {
         name: "Mã câu hỏi",
     },
     {

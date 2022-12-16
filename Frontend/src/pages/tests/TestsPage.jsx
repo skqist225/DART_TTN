@@ -90,12 +90,9 @@ function TestsPage() {
         console.log(data);
 
         let haveError = false;
-        console.log("aaa");
-        console.log(etdQsts);
-        console.log("bbb");
+
         if (isEdit) {
             console.log(id, editedQuestions);
-            console.log("go go go ");
             // dispatch(editTest(data));
         } else {
             // If there is no criteria
@@ -108,7 +105,7 @@ function TestsPage() {
                     haveError = true;
                 } else {
                     const sb = subjects.find(({ id }) => id === subject);
-                    if (sb && numberOfQuestions > sb.numberOfQuestions) {
+                    if (sb && numberOfQuestions > sb.numberOfActiveQuestions) {
                         setError("numberOfQuestions", {
                             type: "custom",
                             message: "Số lượng câu hỏi không thể lớn hơn số lượng hiện có",
@@ -116,7 +113,7 @@ function TestsPage() {
                         haveError = true;
                     }
 
-                    if (numberOfQuestions === "0") {
+                    if (parseInt(numberOfQuestions) === 0) {
                         setError("numberOfQuestions", {
                             type: "custom",
                             message: "Số lượng câu hỏi phải lớn hơn 0",
@@ -125,6 +122,7 @@ function TestsPage() {
                     }
 
                     if (haveError) {
+                        dispatch(setQuestions([]));
                         return;
                     }
 
@@ -154,27 +152,31 @@ function TestsPage() {
                         haveError = true;
                     }
 
-                    const number = parseInt(numberOfQuestions);
-                    if (isNaN(number)) {
+                    if (parseInt(numberOfQuestions) == 0) {
                         setError(`criteria.${index}.numberOfQuestions`, {
                             type: "custom",
-                            message: "Số lượng câu hỏi phải là chữ số",
+                            message: "Số lượng phải lớn hơn 0",
                         });
-                        haveError = true;
-                    }
-                    if (queryAvailableQuestionsArr[fieldIndex]) {
-                        if (numberOfQuestions > queryAvailableQuestionsArr[fieldIndex]) {
-                            setError(`criteria.${index}.numberOfQuestions`, {
-                                type: "custom",
-                                message: "Số lượng không thể lớn hơn hiện có",
-                            });
 
-                            haveError = true;
+                        haveError = true;
+                    } else {
+                        if (queryAvailableQuestionsArr[fieldIndex] !== null) {
+                            if (
+                                parseInt(numberOfQuestions) > queryAvailableQuestionsArr[fieldIndex]
+                            ) {
+                                setError(`criteria.${index}.numberOfQuestions`, {
+                                    type: "custom",
+                                    message: "Số lượng không thể lớn hơn hiện có",
+                                });
+
+                                haveError = true;
+                            }
                         }
                     }
                 });
 
                 if (haveError) {
+                    dispatch(setQuestions([]));
                     return;
                 }
 

@@ -115,7 +115,7 @@ public class TakeExamService {
         return takeExamRepository.testedExam(studentId);
     }
 
-    public float getStudentScoreByExamAndId(String studentId, Integer examId) {
+    public Float getStudentScoreByExamAndId(String studentId, Integer examId) {
         return takeExamRepository.getStudentScoreByExamAndId(studentId, examId);
     }
 

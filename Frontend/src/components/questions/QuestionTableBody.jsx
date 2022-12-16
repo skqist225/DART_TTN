@@ -18,6 +18,7 @@ function QuestionTableBody({
     setIsEdit,
     addTest = false,
     page = null,
+    pageNumber = null,
     chapterListPage = false,
     addCheckbox = false,
     check = false,
@@ -67,26 +68,35 @@ function QuestionTableBody({
                                 </div>
                             </th>
                         )}
-
+                        {addTest && (
+                            <td className={tailwindCss.tableCell}>
+                                {index + 1 + (pageNumber - 1) * 10}
+                            </td>
+                        )}
                         <td className={tailwindCss.tableCell}>{row.id}</td>
                         <td
                             className={"py-2 text-black text-sm"}
                             style={{
-                                maxWidth: "350px",
+                                maxWidth: "300px",
                                 display: "-webkit-box",
                                 WebkitLineClamp: 2,
                                 WebkitBoxOrient: "vertical",
                                 overflow: "hidden",
                                 textOverflow: "ellipsis",
-                                lineHeight: 1.625,
-                                height: "full-content",
+                                lineHeight: 1.6,
+                                height: "50px",
                             }}
                         >
                             {row.content}
                         </td>
                         <td className={tailwindCss.tableCell} style={{ zIndex: "9999" }}>
                             <Tooltip
-                                content={<AnswerList answers={row.answers} />}
+                                content={
+                                    <AnswerList
+                                        answers={row.answers}
+                                        quesitonContent={row.content}
+                                    />
+                                }
                                 placement='bottom'
                                 animation='duration-300'
                                 style='light'

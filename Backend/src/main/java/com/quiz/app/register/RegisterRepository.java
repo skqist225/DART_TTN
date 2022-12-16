@@ -12,7 +12,8 @@ import java.util.List;
 
 @Repository
 public interface RegisterRepository extends CrudRepository<Register, RegisterId> {
-    @Query(value = "select * from dangky where maltc = :creditClassId", nativeQuery = true)
+    @Query(value = "select * from dangky where maltc = :creditClassId and huydangky = false",
+            nativeQuery = true)
     List<Register> findByMyCreditClass(Integer creditClassId);
 
     @Modifying

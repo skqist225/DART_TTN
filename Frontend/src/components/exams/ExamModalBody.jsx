@@ -93,7 +93,7 @@ function ExamModalBody({
             setValue("noticePeriod", editedExam.noticePeriod);
             setValue("time", editedExam.time);
             setValue("numberOfStudents", editedExam.numberOfRegisters);
-            setValue("type", editedExam.type);
+            setValue("examType", editedExam.type);
         } else {
             setValue("id", "");
             setValue("creditClassId", "");
@@ -101,7 +101,7 @@ function ExamModalBody({
             setValue("noticePeriod", "");
             setValue("time", "");
             setValue("numberOfStudents", "");
-            setValue("type", "");
+            setValue("examType", "");
 
             $(".tests-checkbox").each(function () {
                 $(this).prop("checked", false);
@@ -146,7 +146,7 @@ function ExamModalBody({
     }, []);
 
     const handleCreditClassChange = ({ target: { value } }) => {
-        if(creditClassPage) {
+        if (creditClassPage) {
             return;
         }
 
@@ -293,6 +293,7 @@ function ExamModalBody({
                             error={errors.time && errors.time.message}
                             register={register}
                             name='time'
+                            type='number'
                         />
                     </div>
                 </div>{" "}
@@ -303,6 +304,7 @@ function ExamModalBody({
                         register={register}
                         name='numberOfStudents'
                         readOnly={editedExam && editedExam.numberOfRegisters}
+                        type='number'
                     />
                 </div>
             </div>
@@ -318,6 +320,7 @@ function ExamModalBody({
                     setValue={setValue}
                     defaultValue={examTypes[0].value}
                     readOnly={editedExam && editedExam.type}
+                    error={errors.examType && errors.examType.message}
                 />
             </div>
         </div>

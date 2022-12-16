@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useForm } from "react-hook-form";
 import { fetchAllQuestions, questionState, setResetFilter } from "../../features/questionSlice";
@@ -25,6 +25,11 @@ function QuestionsFilter({ setValue }) {
     const handleSubjectChange = ({ target: { value } }) => {
         dispatch(fetchAllQuestions({ ...filterObject, subject: value }));
     };
+
+    useEffect(() => {
+        $("#subjectFilter").val("");
+        $("#teacherFilter").val("");
+    }, []);
 
     return (
         <form

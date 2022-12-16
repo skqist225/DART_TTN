@@ -67,12 +67,14 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
                                             Header={
                                                 <Card>
                                                     <div
-                                                        className='flex items-center justify-between w-3/6 m-auto
-
+                                                        className=' justify-between w-4/6 m-auto
                                                     '
                                                     >
                                                         <div>Mã đề thi: {row.id}</div>
                                                         <div>Tên đề thi: {row.name}</div>
+                                                        <div>
+                                                            Số lượng câu hỏi: {row.questions.length}
+                                                        </div>
                                                     </div>
                                                 </Card>
                                             }
@@ -107,7 +109,7 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
                         <td className={tailwindCss.tableCell}>{row.teacherName}</td>
                         {!examPage && (
                             <td className={`${tailwindCss.tableCell} flex items-center`}>
-                                <div className='mr-2'>
+                                {/* <div className='mr-2'>
                                     <MyButton
                                         type={ButtonType.edit}
                                         onClick={() => {
@@ -119,7 +121,7 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
                                         disabled={!shouldCancel}
                                         customTooltipMessage={shouldEditMessage}
                                     />
-                                </div>
+                                </div> */}
                                 <div className='mr-2'>
                                     <MyButton
                                         type={ButtonType.delete}

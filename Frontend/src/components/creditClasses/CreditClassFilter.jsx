@@ -1,5 +1,4 @@
-import { id } from "date-fns/locale";
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
@@ -7,6 +6,7 @@ import { persistUserState } from "../../features/persistUserSlice";
 import { subjectState } from "../../features/subjectSlice";
 import { userState } from "../../features/userSlice";
 import Select from "../utils/userInputs/Select";
+import $ from "jquery";
 
 function CreditClassFilter() {
     const dispatch = useDispatch();
@@ -39,6 +39,11 @@ function CreditClassFilter() {
             })
         );
     };
+
+    useEffect(() => {
+        $("#subjectFilter").val("");
+        $("#teacherFilter").val("");
+    }, []);
 
     return (
         <form
@@ -110,6 +115,8 @@ function CreditClassFilter() {
                                 })
                             );
                         }
+                        $("#subjectFilter").val("");
+                        $("#teacherFilter").val("");
                     }}
                 >
                     Xóa bộ lọc

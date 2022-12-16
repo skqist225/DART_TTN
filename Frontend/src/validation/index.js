@@ -5,7 +5,7 @@ export const subjectSchema = yup
         id: yup
             .string()
             .required("Mã môn học không được để trống")
-            .max(10, "Mã môn học không được quá 10 ký tự"),
+            .max(12, "Mã môn học không được quá 12 ký tự"),
         name: yup
             .string()
             .required("Tên môn học không được để trống.")

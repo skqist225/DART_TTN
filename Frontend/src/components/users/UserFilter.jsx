@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { roleState } from "../../features/roleSlice";
 import { fetchAllUsers, userState } from "../../features/userSlice";
@@ -17,6 +17,10 @@ function UserFilter() {
     const handleRoleChange = ({ target: { value } }) => {
         dispatch(fetchAllUsers({ ...filterObject, roleName: value }));
     };
+
+    useEffect(() => {
+        $("#rolesFilter").val("");
+    }, []);
 
     return (
         <form

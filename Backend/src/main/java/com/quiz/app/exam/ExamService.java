@@ -99,7 +99,7 @@ public class ExamService {
         return examRepository.findAllExamsByCreditClass(creditClassId);
     }
 
-    public Page<Exam> findAllExams(Map<String, String> filters) {
+    public Page<Exam> ,findAllExams(Map<String, String> filters) {
         int page = Integer.parseInt(filters.get("page"));
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
@@ -135,6 +135,7 @@ public class ExamService {
             Expression<String> name = root.get("name");
             Expression<String> examDate = root.get("examDate");
             Expression<String> noticePeriod = root.get("noticePeriod");
+            Expression<String> taken2 = root.get("taken");
 
             Expression<String> wantedQueryField = criteriaBuilder.concat(name, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, id);
@@ -143,6 +144,21 @@ public class ExamService {
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, noticePeriod);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
+
+//            System.out.println(searchQuery);
+//            String taken3 = "";
+//            if (searchQuery.contains("Chưa thi") || searchQuery.equals("Chưa thi")) {
+//                predicates.add(criteriaBuilder.and(criteriaBuilder.equal(taken2,
+//                        false)));
+//                taken3 = "false";
+//            } else if (searchQuery.contains("Đã thi") || searchQuery.equals("Đã thi")) {
+//                predicates.add(criteriaBuilder.and(criteriaBuilder.equal(taken2,
+//                        true)));
+//                taken3 = "true";
+//            }
+//            System.out.println(taken3);
+//            wantedQueryField = criteriaBuilder.concat(wantedQueryField, taken2);
+//            searchQuery += " " + taken3;
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
@@ -194,7 +210,7 @@ public class ExamService {
 
         if (!StringUtils.isEmpty(studentId)) {
             for (Exam exam : typedQuery.getResultList()) {
-                float score = takeExamService.getStudentScoreByExamAndId(studentId, exam.getId());
+                Float score = takeExamService.getStudentScoreByExamAndId(studentId, exam.getId());
                 exam.setStudentScore(score);
             }
         }

@@ -51,6 +51,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
     const [page2, setPage2] = useState(1);
     const [tabValue, setTabValue] = useState(0);
     const [allQuestions, setAllQuestions] = useState([]);
+    const [disableCurrentQuestionInput, setDisableCurrentQuestionInput] = useState(false);
 
     const { editedTest, errorObject, addTestDisabled } = useSelector(testState);
     const { subjects } = useSelector(subjectState);
@@ -112,6 +113,10 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
         }
     }, [subjects]);
 
+    useEffect(() => {
+        setValue("totalSelected", 0);
+    }, []);
+
     function onSubjectChange({ target: { value } }) {
         dispatch(fetchAllChapters({ page: 0, subject: value }));
         setValue(
@@ -155,6 +160,11 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
         setTabValue(newValue);
     };
 
+    const recordsPerPage = 10;
+    const fetchDataByPageNumber = pageNumber => {
+        setPage(pageNumber);
+    };
+
     const recordsPerPage2 = 10;
     const fetchDataByPageNumber2 = pageNumber => {
         if (editedTest) {
@@ -169,6 +179,22 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
             setPage2(pageNumber);
         }
     };
+
+    const handleCurrentQuestionInputChange = ({ target: { value } }) => {
+        if (parseInt(value) > 0) setValue("totalSelected", value);
+    };
+
+    const handleFilterChange = () => {
+        const criteria = getValues("criteria");
+        const totalSelectedQuestion = criteria.reduce(
+            (acc, { numberOfQuestions }) => acc + parseInt(numberOfQuestions) || 0,
+            0
+        );
+
+        setValue("totalSelected", parseInt(totalSelectedQuestion));
+    };
+
+    console.log(errors);
 
     return (
         <div>
@@ -218,8 +244,10 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                 error={errors.numberOfQuestions && errors.numberOfQuestions.message}
                                 register={register}
                                 name='numberOfQuestions'
-                                readOnly={addTestDisabled}
+                                readOnly={addTestDisabled || disableCurrentQuestionInput}
                                 placeholder='Nếu không chọn tiêu chí tui lòng điền số câu hỏi'
+                                onChangeHandler={handleCurrentQuestionInputChange}
+                                type='number'
                             />
                         </div>
                         <div className='w-full'>
@@ -227,15 +255,26 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                 label='Số câu hỏi đã chọn'
                                 register={register}
                                 name='totalSelected'
+                                readOnly={true}
                             />
                         </div>
                     </div>
                     <ul className='w-full'>
                         <div className='uppercase flex items-center w-full justify-center text-blue-600 font-semibold'>
-                            Tiêu chí chọn đề thi
+                            Tiêu chí chọn đề thi ({fields.length})
                         </div>
                         {fields.map((field, index) => (
-                            <li className='mt-3' key={index}>
+                            <li
+                                className={`mt-3 flex items-end ${
+                                    errors &&
+                                    errors.criteria &&
+                                    errors.criteria.length &&
+                                    errors.criteria[index]
+                                        ? "items-center"
+                                        : "items-end"
+                                }`}
+                                key={index}
+                            >
                                 <div
                                     className={`flex ${
                                         errors && errors.criteria && errors.criteria.length
@@ -255,7 +294,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                                 errors.criteria[`${index}`].chapterId.message
                                             }
                                             options={chapters.map(s => ({
-                                                title: s.name,
+                                                title: s.name + ` (${s.numberOfActiveQuestions})`,
                                                 value: s.id,
                                             }))}
                                             index={index}
@@ -303,6 +342,8 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                             }
                                             name={`criteria.${index}.numberOfQuestions`}
                                             required
+                                            type='number'
+                                            onChangeHandler={handleFilterChange}
                                         />
                                     </div>
                                     <input
@@ -310,30 +351,31 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                         {...register(`criteria.${index}.fieldIndex`)}
                                         value={field.id}
                                     />
-
-                                    <div>
-                                        <button
-                                            type='button'
-                                            className={tailwindCss.deleteOutlineButton}
-                                            onClick={() => {
-                                                remove(index);
-                                                if (index === 0) {
-                                                    dispatch(setQuestions([]));
-                                                    setValue("numberOfQuestions", selectedNumber);
-                                                } else {
-                                                    const criteria = getValues("criteria");
-                                                    dispatch(
-                                                        loadQuestionsByCriteria({
-                                                            subject: $("#testSubjectId").val(),
-                                                            criteria,
-                                                        })
-                                                    );
-                                                }
-                                            }}
-                                        >
-                                            Xóa
-                                        </button>
-                                    </div>
+                                </div>
+                                <div>
+                                    <button
+                                        type='button'
+                                        className={tailwindCss.deleteOutlineButton}
+                                        onClick={() => {
+                                            remove(index);
+                                            if (index === 0) {
+                                                dispatch(setQuestions([]));
+                                                setValue("numberOfQuestions", selectedNumber);
+                                                setDisableCurrentQuestionInput(false);
+                                            } else {
+                                                const criteria = getValues("criteria");
+                                                dispatch(
+                                                    loadQuestionsByCriteria({
+                                                        subject: $("#testSubjectId").val(),
+                                                        criteria,
+                                                    })
+                                                );
+                                            }
+                                            handleFilterChange();
+                                        }}
+                                    >
+                                        Xóa
+                                    </button>
                                 </div>
                             </li>
                         ))}
@@ -356,20 +398,26 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                 prepend({
                                     chapterId: chapters[0].id,
                                     level: levelOptions[0].value,
+                                    numberOfQuestions: 0,
                                 });
+                                setDisableCurrentQuestionInput(true);
+                                clearErrors("numberOfQuestions");
                             }}
                             disabled={addTestDisabled}
                         >
-                            Thêm tiêu chí
+                            Thêm tiêu chí {fields.length + 1}
                         </button>
                     </div>
                     {questions && questions.length > 0 && (
                         <div className='w-full'>
+                            <div className='uppercase text-center font-semibold text-green-700 w-full'>
+                                Danh sách câu hỏi
+                            </div>
                             <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
                                 <TableHeader columns={questionColumnsTestPage} />
                                 <QuestionTableBody
                                     rows={questions}
-                                    page={page}
+                                    pageNumber={page}
                                     addTest
                                     dispatch={dispatch}
                                 />
@@ -378,6 +426,8 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                 totalElements={totalElements}
                                 totalPages={totalPages}
                                 setPage={setPage}
+                                recordsPerPage={recordsPerPage}
+                                fetchDataByPageNumber={fetchDataByPageNumber}
                             />
                         </div>
                     )}
@@ -426,7 +476,8 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                     </TabPanel>
                     <TabPanel value={tabValue} index={1}>
                         {allQuestions && allQuestions.length > 0 && (
-                            <div className='w-full'>
+                            <div>
+                                <div className='uppercase'>Danh sách câu hỏi</div>
                                 <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
                                     <TableHeader columns={questionColumnsTestPage} addCheckbox />
                                     <QuestionTableBody

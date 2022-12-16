@@ -37,6 +37,7 @@ function QuestionList({ questions, chapterListPage = false }) {
                     rows={splitedQuestions}
                     addTest
                     chapterListPage={chapterListPage}
+                    pageNumber={pageNumber}
                 />
             </table>
             <TablePagination

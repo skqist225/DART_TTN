@@ -92,6 +92,7 @@ function Input({
                     readOnly={readOnly}
                     autoComplete={type === "password" ? "new-password" : "off"}
                     disabled={readOnly}
+                    min={0}
                 />
             </div>
             {error && <ErrorMessage message={error} />}

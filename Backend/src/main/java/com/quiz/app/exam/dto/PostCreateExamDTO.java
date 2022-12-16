@@ -19,6 +19,6 @@ public class PostCreateExamDTO {
     private Integer noticePeriod;
     private Integer numberOfStudents;
     private Integer time;
-    private String type;
+    private String examType;
     private List<Integer> tests;
 }

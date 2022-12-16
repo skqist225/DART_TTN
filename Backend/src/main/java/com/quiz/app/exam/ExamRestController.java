@@ -176,7 +176,7 @@ public class ExamRestController {
         Integer numberOfStudents = postCreateExamDTO.getNumberOfStudents();
         Integer noticePeriod = postCreateExamDTO.getNoticePeriod();
         Integer time = postCreateExamDTO.getTime();
-        String type = postCreateExamDTO.getType();
+        String type = postCreateExamDTO.getExamType();
         List<Integer> tests = postCreateExamDTO.getTests();
 
         catchExamInputException(commonUtils, id, name, creditClassId, examDate, noticePeriod,

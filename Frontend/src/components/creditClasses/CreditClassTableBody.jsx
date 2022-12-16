@@ -75,7 +75,6 @@ function CreditClassTableBody({ rows, setIsEdit }) {
     const onSubmit = data => {
         let haveError = false;
         const creditClass = rows.find(({ id }) => id.toString() === data.creditClassId.toString());
-        console.log(creditClass);
         if (parseInt(data.numberOfStudents) > parseInt(creditClass.numberOfActiveStudents)) {
             setError("numberOfStudents", {
                 type: "custom",
@@ -100,7 +99,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
         });
 
         if (tests.length === 0) {
-            callToast("error", "Chọn bộ đề cho ca thi");
+            callToast("error", "Chọn đề thi cho ca thi");
             haveError = true;
         }
 
@@ -110,8 +109,8 @@ function CreditClassTableBody({ rows, setIsEdit }) {
         );
 
         if (examDt.getTime() <= new Date().getTime()) {
-            setError("time", {
-                type: "examDate",
+            setError("examDate", {
+                type: "custom",
                 message: "Ngày thi phải lớn hơn ngày hiện tại",
             });
             haveError = true;

@@ -77,14 +77,14 @@ public class Exam {
     private boolean status;
 
     @Transient
-    private float studentScore;
+    private Float studentScore;
 
     public static Exam build(PostCreateExamDTO postCreateExamDTO) {
         return Exam.builder()
                 .name(postCreateExamDTO.getName())
                 .time(postCreateExamDTO.getTime())
                 .noticePeriod(postCreateExamDTO.getNoticePeriod())
-                .type(postCreateExamDTO.getType())
+                .type(postCreateExamDTO.getExamType())
                 .taken(false)
                 .status(false)
                 .build();

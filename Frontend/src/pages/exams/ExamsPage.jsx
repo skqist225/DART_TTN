@@ -71,7 +71,8 @@ function ExamsPage() {
 
     const onSubmit = data => {
         let haveError = false;
-        if (parseInt(data.numberOfStudents) > parseInt(data.numberOfActiveStudents)) {
+
+        if (parseInt(data.numberOfStudents) > parseInt($("#numberOfActiveStudents").val())) {
             setError("numberOfStudents", {
                 type: "custom",
                 message: "Số SV thi phải ít hơn SV đang theo học",
@@ -93,7 +94,7 @@ function ExamsPage() {
             }
         });
         if (tests.length === 0) {
-            callToast("error", "Chọn bộ đề cho ca thi");
+            callToast("error", "Chọn đề thi cho ca thi");
             haveError = true;
         }
 
@@ -103,8 +104,30 @@ function ExamsPage() {
         );
 
         if (!isEdit && examDt.getTime() <= new Date().getTime()) {
-            callToast("error", "Ngày thi phải lớn hơn hiện tại");
+            setError("examDate", {
+                type: "custom",
+                message: "Ngày thi phải lớn hơn ngày hiện tại",
+            });
+            // callToast("error", "Ngày thi phải lớn hơn hiện tại");
             haveError = true;
+        }
+
+        if (data.examType === "Giữa kỳ") {
+            if (parseInt($("#numberOfNoneCreatedMidtermExamStudents").val()) === 0) {
+                setError("examType", {
+                    type: "custom",
+                    message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
+                });
+                haveError = true;
+            }
+        } else if (data.examType === "Cuối kỳ") {
+            if (parseInt($("#numberOfNoneCreatedFinalTermExamStudents").val()) === 0) {
+                setError("examType", {
+                    type: "custom",
+                    message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
+                });
+                haveError = true;
+            }
         }
 
         if (haveError) {
@@ -123,12 +146,14 @@ function ExamsPage() {
         let index = 1;
         if (exams && exams.length) {
             exams.forEach(exam => {
-                if (exam.type === data.type) {
+                if (exam.type === data.examType) {
                     index += 1;
                 }
             });
         }
-        data["name"] = `${schoolYear}-${semester}-${subjectName}-${group}-${data.type}-${index}`;
+        data[
+            "name"
+        ] = `${schoolYear}-${semester}-${subjectName}-${group}-${data.examType}-${index}`;
 
         if (isEdit) {
             dispatch(editExam(data));
@@ -181,11 +206,21 @@ function ExamsPage() {
         $(`#${modalId}`).css("display", "none");
         if (type === "add") {
             $(`#${formId}`)[0].reset();
+            dispatch(
+                fetchAllCreditClasses({
+                    page: 0,
+                })
+            );
         }
 
         if (type === "edit") {
             setIsEdit(false);
             dispatch(setEditedExam(null));
+            dispatch(
+                fetchAllCreditClasses({
+                    page: 0,
+                })
+            );
         }
     }
 

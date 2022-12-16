@@ -46,21 +46,11 @@ function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors, c
             setValue("numberOfTheoreticalPeriods", editedSubject.numberOfTheoreticalPeriods);
             setValue("numberOfPracticePeriods", editedSubject.numberOfPracticePeriods);
 
-            // let insertedIndex = [];
-
             editedSubject.chapters.forEach(
                 ({ id, name, chapterNumber, tempQuestions: questions }, index) => {
                     append({ id, name, chapterNumber, active: questions.length !== 0 });
-                    // insert(chapterNumber - 1, { id, name, chapterNumber });
-                    // insertedIndex.push(chapterNumber - 1);
                 }
             );
-
-            // for (let i = 0; i < insertedIndex.length; i++) {
-            //     if (!insertedIndex.includes(i)) {
-            //         insert(i, {});
-            //     }
-            // }
         } else {
             setValue("id", "");
             setValue("name", "");
@@ -125,6 +115,7 @@ function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors, c
                             name='numberOfTheoreticalPeriods'
                             onKeyDown={onKeyDown}
                             readOnly={!user.roles.map(({ name }) => name).includes("Quản trị viên")}
+                            type='number'
                         />
                     </div>
 
@@ -139,6 +130,7 @@ function SubjectModalBody({ errors, register, dispatch, setValue, clearErrors, c
                             name='numberOfPracticePeriods'
                             onKeyDown={onKeyDown}
                             readOnly={!user.roles.map(({ name }) => name).includes("Quản trị viên")}
+                            type='number'
                         />
                     </div>
                 </div>

@@ -48,7 +48,7 @@ function ViewOldExamTableBody({ rows }) {
                                 animation='duration-300'
                                 style='light'
                             >
-                                <MyButton type={ButtonType.view} />
+                                <MyButton type={ButtonType.view} noTooltip />
                             </Tooltip>
                         </td>
                         <td className={tailwindCss.tableCell}>{row.studentScore}</td>

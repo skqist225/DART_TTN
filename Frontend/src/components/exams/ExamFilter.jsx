@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { creditClassState } from "../../features/creditClassSlice";
@@ -31,6 +31,11 @@ function ExamFilter({ setValue }) {
             dispatch(fetchAllExams({ ...filterObject, examType: value }));
         }
     };
+
+    useEffect(() => {
+        $("#creditClassFilter").val("");
+        $("#examTypesFilter").val("");
+    }, []);
 
     return (
         <form

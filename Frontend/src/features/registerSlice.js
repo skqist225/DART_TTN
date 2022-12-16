@@ -265,7 +265,7 @@ const registerSlice = createSlice({
             })
             .addCase(addRegister.fulfilled, (state, { payload }) => {
                 if (payload) {
-                    state.addRegister.successMessage = "Thêm câu hỏi thành công";
+                    state.addRegister.successMessage = "Thêm đăng ký thành công";
                 }
             })
             .addCase(addRegister.rejected, (state, { payload }) => {

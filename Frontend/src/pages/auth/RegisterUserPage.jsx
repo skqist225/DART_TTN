@@ -130,6 +130,7 @@ function RegisterUserPage() {
     useEffect(() => {
         if (eSuccessMessage) {
             callToast("success", eSuccessMessage);
+
             dispatch(fetchUser({ id: userId }));
         }
     }, [eSuccessMessage]);
@@ -164,7 +165,9 @@ function RegisterUserPage() {
                             </Button>
                         </Tooltip>
                     </div>
-                    <div className='flex-1 w-full flex justify-center'>Đăng ký</div>
+                    <div className='flex-1 w-full flex justify-center'>
+                        {userId ? "Cập nhật thông tin người dùng" : "Đăng ký"}
+                    </div>
                 </div>
                 <form
                     onSubmit={e => {

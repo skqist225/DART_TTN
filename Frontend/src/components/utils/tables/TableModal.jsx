@@ -64,9 +64,9 @@ function TableModal({
         addExam: { loading: addExamLoading },
     } = useSelector(examState);
 
-    const disabled =
-        (modalLabel === "đề thi" && addTestDisabled) ||
-        (modalLabel === "Thêm ca thi" && !addExamDisabled);
+    const disabled = false;
+    // (modalLabel === "đề thi" && addTestDisabled) ||
+    // (modalLabel === "Thêm ca thi" && !addExamDisabled);
 
     const [pageNumber, setPageNumber] = useState(1);
     const [splitedRegisters, setSplitedRegisters] = useState([]);

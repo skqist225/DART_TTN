@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { creditClassState } from "../../features/creditClassSlice";
@@ -15,6 +15,10 @@ function RegisterFilter() {
     const handleCreditClassChange = event => {
         dispatch(fetchAllRegisters({ ...filterObject, creditClass: event.target.value }));
     };
+
+    useEffect(() => {
+        $("#creditClassFilter").val("");
+    }, []);
 
     return (
         <form

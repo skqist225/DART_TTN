@@ -20,7 +20,7 @@ import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import { callToast } from "../../helpers";
 import Toast from "../../components/notify/Toast";
-import checkExamTime from "../../utils/checkExamTime";
+import checkExamTime, { noticePeriodMappings } from "../../utils/checkExamTime";
 
 const renderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -670,7 +670,7 @@ function TakeTestPage() {
                                                 );
 
                                                 // should check time before doing test.
-                                                const check = true;
+                                                const check = false;
 
                                                 if (check) {
                                                     if (

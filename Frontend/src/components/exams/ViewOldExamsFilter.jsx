@@ -93,6 +93,7 @@ function ViewOldExamsFilter() {
                                     schoolYears: "",
                                     semester: "",
                                     type: "",
+                                    taken: true,
                                 })
                             );
                         } else {

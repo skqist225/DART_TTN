@@ -161,7 +161,7 @@ public class SubjectRestController {
                 if (Objects.isNull(subject.getChapters())) {
                     subject.setChapters(new ArrayList<>());
                 }
-
+                System.out.println(subject.getChapters());
                 List<Chapter> tempChapters = subject.getChapters();
 
                 if (chapterDTOS.size() == 0) {
@@ -169,10 +169,12 @@ public class SubjectRestController {
                 } else {
                     for (ChapterDTO chapterDTO : chapterDTOS) {
                         // Add new chapter
+                        System.out.println(chapterDTO.getId());
                         if (Objects.isNull(chapterDTO.getId())) {
                             subject.addChapter(Chapter.build(chapterDTO.getChapterNumber(),
                                     chapterDTO.getName(),
                                     subject));
+                            System.out.println("add");
                         } else {
                             for (Chapter chapter : tempChapters) {
                                 // Edit existed chapter
@@ -212,6 +214,8 @@ public class SubjectRestController {
                     }
                 }
                 try {
+
+                    System.out.println(subject.getChapters());
                     subjectService.save(subject);
                 } catch (Exception e) {
                     if (e.getCause() != null && e.getCause().getCause() instanceof SQLIntegrityConstraintViolationException) {

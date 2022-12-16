@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { subjectState } from "../../features/subjectSlice";
@@ -15,6 +15,10 @@ function TestFilter() {
     const handleSubjectChange = event => {
         dispatch(fetchAllTests({ ...filterObject, subject: event.target.value }));
     };
+
+    useEffect(() => {
+        $("#subjectFilter").val("");
+    }, []);
 
     return (
         <form
