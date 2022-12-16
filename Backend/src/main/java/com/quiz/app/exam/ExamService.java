@@ -99,7 +99,7 @@ public class ExamService {
         return examRepository.findAllExamsByCreditClass(creditClassId);
     }
 
-    public Page<Exam> ,findAllExams(Map<String, String> filters) {
+    public Page<Exam> findAllExams(Map<String, String> filters) {
         int page = Integer.parseInt(filters.get("page"));
         String searchQuery = filters.get("query");
         String sortDir = filters.get("sortDir");
