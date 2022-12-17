@@ -60,6 +60,21 @@ export const fetchAllCreditClasses = createAsyncThunk(
     }
 );
 
+export const fetchCreditClassesForExamAdded = createAsyncThunk(
+    "creditClass/fetchCreditClassesForExamAdded",
+    async (_, { rejectWithValue }) => {
+        try {
+            const {
+                data: { creditClasses },
+            } = await api.get(`/creditClasses?page=0&active=true&haveRegister=true`);
+
+            return { creditClasses };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 export const findCreditClass = createAsyncThunk(
     "creditClass/findCreditClass",
     async ({ id }, { rejectWithValue }) => {
@@ -128,6 +143,7 @@ export const enableOrDisableCreditClass = createAsyncThunk(
 const initialState = {
     loading: true,
     creditClasses: [],
+    creditClassesForExamAdded: [],
     totalElements: 0,
     totalPages: 0,
     editedCreditClass: null,
@@ -196,6 +212,12 @@ const creditClassSlice = createSlice({
             .addCase(fetchAllCreditClasses.rejected, (state, { payload }) => {
                 state.loading = false;
             })
+
+            .addCase(fetchCreditClassesForExamAdded.pending, (state, { payload }) => {})
+            .addCase(fetchCreditClassesForExamAdded.fulfilled, (state, { payload }) => {
+                state.creditClassesForExamAdded = payload.creditClasses;
+            })
+            .addCase(fetchCreditClassesForExamAdded.rejected, (state, { payload }) => {})
 
             .addCase(findCreditClass.pending, (state, { payload }) => {})
             .addCase(findCreditClass.fulfilled, (state, { payload }) => {

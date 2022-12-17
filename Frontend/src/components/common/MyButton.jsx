@@ -29,8 +29,13 @@ function MyButton({
 
     switch (type) {
         case "add": {
-            label = "Thêm " + label;
+            if (!customTooltipMessage) {
+                label = "Thêm " + label;
+            } else {
+                label = customTooltipMessage;
+            }
             buttonClassName = "bg-indigo-600 hover:bg-indigo-600";
+            buttonDisableClassName = "bg-indigo-300 hover:bg-indigo-300 cursor-not-allowed";
             Icon = (
                 <AddIcon
                     style={{

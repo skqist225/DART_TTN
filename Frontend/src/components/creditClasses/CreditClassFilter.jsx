@@ -117,6 +117,7 @@ function CreditClassFilter() {
                         }
                         $("#subjectFilter").val("");
                         $("#teacherFilter").val("");
+                        $("#table-search-users").val("");
                     }}
                 >
                     Xóa bộ lọc

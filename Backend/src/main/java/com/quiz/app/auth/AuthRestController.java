@@ -78,8 +78,8 @@ public class AuthRestController {
             @RequestBody LoginDTO loginDTO) {
         try {
             authenticationManager
-                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getId(),
-                            loginDTO.getPassword()));
+                    .authenticate(new UsernamePasswordAuthenticationToken(loginDTO.getId().trim(),
+                            loginDTO.getPassword().trim()));
 
             final UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(loginDTO.getId());
             final String token = jwtUtils.generateToken(userDetails);

@@ -153,7 +153,7 @@ public class ExamRestController {
                     "trống");
         }
 
-        if (tests.size() == 0) {
+        if (!isEdit && tests.size() == 0) {
             commonUtils.addError("tests", "Đề thi không được để " +
                     "trống");
         }
@@ -208,30 +208,30 @@ public class ExamRestController {
                 exm.setTime(time);
                 exm.setType(type);
 
-                for (Integer testId : tests) {
-                    // Add new test
-                    exm.addTest(new Test(testId));
-                }
-
-                List<Test> removedTests = new ArrayList<>();
-                for (Test test : exm.getTests()) {
-                    boolean shouldDelete = true;
-
-                    for (Integer a : tests) {
-                        if (a.equals(test.getId())) {
-                            shouldDelete = false;
-                            break;
-                        }
-                    }
-                    // Remove none mentioned test
-                    if (shouldDelete) {
-                        removedTests.add(test);
-                    }
-                }
-
-                for (Test test : removedTests) {
-                    exm.removeTest(test);
-                }
+//                for (Integer testId : tests) {
+//                    // Add new test
+//                    exm.addTest(new Test(testId));
+//                }
+//
+//                List<Test> removedTests = new ArrayList<>();
+//                for (Test test : exm.getTests()) {
+//                    boolean shouldDelete = true;
+//
+//                    for (Integer a : tests) {
+//                        if (a.equals(test.getId())) {
+//                            shouldDelete = false;
+//                            break;
+//                        }
+//                    }
+//                    // Remove none mentioned test
+//                    if (shouldDelete) {
+//                        removedTests.add(test);
+//                    }
+//                }
+//
+//                for (Test test : removedTests) {
+//                    exm.removeTest(test);
+//                }
 
                 exam = examService.save(exm);
             } catch (NotFoundException e) {

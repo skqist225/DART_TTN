@@ -15,6 +15,7 @@ import { setRegisterExcelAdd } from "../../../features/registerSlice";
 import { takeExamState } from "../../../features/takeExamSlice";
 import $ from "jquery";
 import Help from "../../../partials/header/Help";
+import { creditClassState } from "../../../features/creditClassSlice";
 
 function Table({
     searchPlaceHolder,
@@ -53,6 +54,14 @@ function Table({
     const userRoles = user.roles.map(({ name }) => name);
 
     const { studentRankingPosition } = useSelector(takeExamState);
+    const { creditClassesForExamAdded: creditClasses } = useSelector(creditClassState);
+
+    let addButtonDisbaled = false,
+        addButtonDisabledMessage = "";
+    if (modalLabel === "ca thi" && creditClasses.length === 0) {
+        addButtonDisbaled = true;
+        addButtonDisabledMessage = "Không có lớp tín chỉ nào cần tạo ca thi";
+    }
 
     return (
         <div
@@ -94,6 +103,8 @@ function Table({
                                         setIsEdit(false);
                                     }}
                                     className='px-2 py-2 rounded-lg'
+                                    disabled={addButtonDisbaled}
+                                    customTooltipMessage={addButtonDisabledMessage}
                                 />
                             </div>
                         )}

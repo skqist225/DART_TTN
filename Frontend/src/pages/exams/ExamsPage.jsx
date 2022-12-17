@@ -15,7 +15,11 @@ import {
 } from "../../features/examSlice";
 import ExamFilter from "../../components/exams/ExamFilter";
 import { fetchAllSubjects } from "../../features/subjectSlice";
-import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
+import {
+    creditClassState,
+    fetchAllCreditClasses,
+    fetchCreditClassesForExamAdded,
+} from "../../features/creditClassSlice";
 import { setTests } from "../../features/testSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import { examColumns, studentColumns } from "../columns";
@@ -38,6 +42,12 @@ function ExamsPage() {
     useEffect(() => {
         dispatch(fetchAllSubjects({ page: 0 }));
         if (!userRoles.includes("Sinh viên")) {
+            // Lấy ra danh sách lớp tín chỉ thoả điều kiện sau:
+            // 1. Môn học của lớp tín chỉ phải có đề thi chưa được sử dụng.
+            // 2. Có số SV chưa được tạo ca thi giữa kỳ hoặc cuối kỳ > 0
+            // 3. Lớp tín chỉ chưa hủy : active: true,
+            // 4. Lớp tín chỉ có danh sách đăng ký : haveRegister: true,
+            dispatch(fetchCreditClassesForExamAdded());
             dispatch(
                 fetchAllCreditClasses({
                     page: 0,
@@ -49,6 +59,7 @@ function ExamsPage() {
                 })
             );
         } else {
+            // Lấy ra danh sách ca thi chưa thi của sinh viên
             dispatch(
                 fetchAllExams({
                     page: 1,
@@ -65,10 +76,11 @@ function ExamsPage() {
         handleSubmit,
         setError,
         formState: { errors },
+        clearErrors,
     } = useForm({
         resolver: yupResolver(examSchema),
     });
-
+    console.log(errors);
     const onSubmit = data => {
         let haveError = false;
 
@@ -82,7 +94,7 @@ function ExamsPage() {
         if (data.time > 120) {
             setError("time", {
                 type: "custom",
-                message: "Thời gian làm bài phải ít hơn 120 phút",
+                message: "Thời gian làm bài phải ít hơn hoặc bằng 120 phút",
             });
             haveError = true;
         }
@@ -93,7 +105,7 @@ function ExamsPage() {
                 tests.push($(this).data("id"));
             }
         });
-        if (tests.length === 0) {
+        if (!isEdit && tests.length === 0) {
             callToast("error", "Chọn đề thi cho ca thi");
             haveError = true;
         }
@@ -151,15 +163,20 @@ function ExamsPage() {
                 }
             });
         }
+
+        console.log(data);
+
         data[
             "name"
         ] = `${schoolYear}-${semester}-${subjectName}-${group}-${data.examType}-${index}`;
 
-        if (isEdit) {
-            dispatch(editExam(data));
-        } else {
-            dispatch(addExam(data));
-        }
+        console.log(data);
+
+        // if (isEdit) {
+        //     dispatch(editExam(data));
+        // } else {
+        //     dispatch(addExam(data));
+        // }
     };
 
     const {
@@ -199,28 +216,23 @@ function ExamsPage() {
         };
     }, []);
 
+    useEffect(() => {
+        dispatch(clearExamState());
+    }, []);
+
     function cleanForm(successMessage, type = "add") {
         callToast("success", successMessage);
         dispatch(fetchAllExams(filterObject));
+        dispatch(fetchCreditClassesForExamAdded());
 
         $(`#${modalId}`).css("display", "none");
         if (type === "add") {
             $(`#${formId}`)[0].reset();
-            dispatch(
-                fetchAllCreditClasses({
-                    page: 0,
-                })
-            );
         }
 
         if (type === "edit") {
             setIsEdit(false);
             dispatch(setEditedExam(null));
-            dispatch(
-                fetchAllCreditClasses({
-                    page: 0,
-                })
-            );
         }
     }
 
@@ -251,6 +263,7 @@ function ExamsPage() {
     function onCloseForm() {
         dispatch(setEditedExam(null));
         dispatch(setTests([]));
+        clearErrors();
     }
 
     return (

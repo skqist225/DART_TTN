@@ -16,6 +16,7 @@ import {
     creditClassState,
     editCreditClass,
     fetchAllCreditClasses,
+    fetchCreditClassesForExamAdded,
     setEditedCreditClass,
 } from "../../features/creditClassSlice";
 import { clearExamState, examState } from "../../features/examSlice";
@@ -38,13 +39,15 @@ function CreditClassesPage() {
     const modalId = "creditClassModal";
     const modalLabel = "lớp tín chỉ";
 
-    useEffect(() => {
+    const fetchCreditClases = () => {
         if (userRoles.includes("Quản trị viên")) {
             dispatch(
                 fetchAllCreditClasses({
                     page: 1,
                 })
             );
+
+            // dispatch(fetchCreditClassesForExamAdded());
         } else {
             dispatch(
                 fetchAllCreditClasses({
@@ -52,7 +55,17 @@ function CreditClassesPage() {
                     teacher: user.id,
                 })
             );
+            // Lấy ra danh sách lớp tín chỉ thoả điều kiện sau:
+            // 1. Môn học của lớp tín chỉ phải có đề thi chưa được sử dụng.
+            // 2. Có số SV chưa được tạo ca thi giữa kỳ hoặc cuối kỳ > 0
+            // 3. Lớp tín chỉ chưa hủy : active: true,
+            // 4. Lớp tín chỉ có danh sách đăng ký : haveRegister: true,
         }
+        dispatch(fetchCreditClassesForExamAdded());
+    };
+
+    useEffect(() => {
+        fetchCreditClases();
 
         dispatch(fetchAllSubjects({ page: 0 }));
         dispatch(fetchAllUsers({ page: 0, role: "!SV" }));
@@ -78,7 +91,10 @@ function CreditClassesPage() {
     useEffect(() => {
         if (aeSuccessMessage) {
             callToast("success", aeSuccessMessage);
+            $(`#examForm`)[0].reset();
             $("#examModal").css("display", "none");
+
+            fetchCreditClases();
         }
     }, [aeSuccessMessage]);
 
@@ -211,7 +227,7 @@ function CreditClassesPage() {
             title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel} ::`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã lớp tín chỉ, niên khóa, học kỳ, nhóm, môn học`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={creditClassColumns}

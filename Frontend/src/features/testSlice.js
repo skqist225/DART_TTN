@@ -191,6 +191,8 @@ const testSlice = createSlice({
             state.deleteTest.errorObject = null;
 
             state.enableOrDisableTest.successMessage = null;
+
+            state.tests = [];
         },
         setFilterObject(state, { payload }) {
             if (payload) {

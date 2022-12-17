@@ -74,19 +74,18 @@ function CreditClassTableBody({ rows, setIsEdit }) {
 
     const onSubmit = data => {
         let haveError = false;
-        const creditClass = rows.find(({ id }) => id.toString() === data.creditClassId.toString());
-        if (parseInt(data.numberOfStudents) > parseInt(creditClass.numberOfActiveStudents)) {
+
+        if (parseInt(data.numberOfStudents) > parseInt($("#numberOfActiveStudents").val())) {
             setError("numberOfStudents", {
                 type: "custom",
-                message: "Số SV thi phải ít hơn hoặc bằng số SV đang theo học",
+                message: "Số SV thi phải ít hơn SV đang theo học",
             });
             haveError = true;
         }
-
         if (data.time > 120) {
             setError("time", {
                 type: "custom",
-                message: "Thời gian làm bài phải ít hơn 120 phút",
+                message: "Thời gian làm bài phải ít hơn hoặc bằng 120 phút",
             });
             haveError = true;
         }
@@ -97,8 +96,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                 tests.push($(this).data("id"));
             }
         });
-
-        if (tests.length === 0) {
+        if (!isEdit && tests.length === 0) {
             callToast("error", "Chọn đề thi cho ca thi");
             haveError = true;
         }
@@ -108,12 +106,35 @@ function CreditClassTableBody({ rows, setIsEdit }) {
             `${examDate.split("/")[1]}/${examDate.split("/")[0]}/${examDate.split("/")[2]} 00:00:00`
         );
 
-        if (examDt.getTime() <= new Date().getTime()) {
+        if (!isEdit && examDt.getTime() <= new Date().getTime()) {
             setError("examDate", {
                 type: "custom",
                 message: "Ngày thi phải lớn hơn ngày hiện tại",
             });
+            // callToast("error", "Ngày thi phải lớn hơn hiện tại");
             haveError = true;
+        }
+
+        if (data.examType === "Giữa kỳ") {
+            if (parseInt($("#numberOfNoneCreatedMidtermExamStudents").val()) === 0) {
+                setError("examType", {
+                    type: "custom",
+                    message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
+                });
+                haveError = true;
+            }
+        } else if (data.examType === "Cuối kỳ") {
+            if (parseInt($("#numberOfNoneCreatedFinalTermExamStudents").val()) === 0) {
+                setError("examType", {
+                    type: "custom",
+                    message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
+                });
+                haveError = true;
+            }
+        }
+
+        if (haveError) {
+            return;
         }
 
         data["tests"] = tests;
@@ -122,30 +143,31 @@ function CreditClassTableBody({ rows, setIsEdit }) {
         examDate = examDate[2] + "-" + examDate[1] + "-" + examDate[0];
         data["examDate"] = examDate;
 
-        const { schoolYear, semester, subjectName, group, exams } = rows.find(
+        const { schoolYear, semester, subjectName, group, exams } = creditClasses.find(
             ({ id }) => id.toString() === data.creditClassId.toString()
         );
-
         let index = 1;
         if (exams && exams.length) {
             exams.forEach(exam => {
-                if (exam.type === data.type) {
+                if (exam.type === data.examType) {
                     index += 1;
                 }
             });
         }
 
-        data["name"] = `${schoolYear}-${semester}-${subjectName}-${group}-${data.type}-${index}`;
+        console.log(data);
 
-        if (haveError) {
-            return;
-        }
+        data[
+            "name"
+        ] = `${schoolYear}-${semester}-${subjectName}-${group}-${data.examType}-${index}`;
 
-        if (isExamEdit) {
-            dispatch(editExam(data));
-        } else {
-            dispatch(addExam(data));
-        }
+        console.log(data);
+
+        // if (isEdit) {
+        //     dispatch(editExam(data));
+        // } else {
+        //     dispatch(addExam(data));
+        // }
     };
 
     const [tabValue, setTabValue] = useState(0);
@@ -205,9 +227,23 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                     let shouldCancel = true,
                         shouldDelete = true;
                     if (row.exams.length > 0) {
-                        shouldCancel = false;
-                        couldNotCancelMessage = "Có ca thi, không thể hủy";
-                        couldNotDeleteMessage = "Có ca thi, không thể xóa";
+                        // Có ca thi mà phải là ca thi chưa hủy
+                        // Chỉ cần có 1 ca thi còn đang thi thì không thể hủy lớp.
+                        let shouldRealCancel = true;
+                        row.exams.forEach(exam => {
+                            console.log(exam.status);
+                            if (!exam.status) {
+                                // console.log(exam);
+                                shouldRealCancel = false;
+                                // break;
+                            }
+                        });
+
+                        if (shouldRealCancel) {
+                            shouldCancel = false;
+                            couldNotCancelMessage = "Có ca thi, không thể hủy";
+                            couldNotDeleteMessage = "Có ca thi, không thể xóa";
+                        }
                     }
 
                     if (row.tempRegisters.length > 0) {

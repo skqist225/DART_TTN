@@ -16,6 +16,7 @@ import com.quiz.app.utils.CommonUtils;
 import com.quiz.entity.CreditClass;
 import com.quiz.entity.Exam;
 import com.quiz.entity.Subject;
+import com.quiz.entity.Test;
 import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,7 +85,19 @@ public class CreditClassRestController {
                         }
                     }
                 } else if (haveRegister) {
-                    creditClasses = creditClassService.findAllActiveCreditClassHaveRegister();
+                    // Active and have register
+                    List<CreditClass> tempCreditClass =
+                            creditClassService.findAllActiveCreditClassHaveRegister();
+                    // Have test
+                    for (CreditClass creditClass : tempCreditClass) {
+                        if (creditClass.getSubject().getTests().size() > 0) {
+                            for (Test test : creditClass.getSubject().getTests()) {
+                                if (test.isStatus() && !test.getUsed()) {
+                                    creditClasses.add(creditClass);
+                                }
+                            }
+                        }
+                    }
                 } else {
                     creditClasses = creditClassService.findAllActiveCreditClass();
                 }
@@ -108,7 +121,6 @@ public class CreditClassRestController {
             totalElements = creditClassesPage.getTotalElements();
             totalPages = creditClassesPage.getTotalPages();
         }
-
 
         List<CreditClass> tempCreditClasses = new ArrayList<>();
         for (CreditClass creditClass : creditClasses) {
@@ -137,7 +149,16 @@ public class CreditClassRestController {
             creditClass.setNumberOfFinalTermExam(numberOfFinalTermExam);
             creditClass.setNumberOfMidTermExamCreated(numberOfMidTermExamCreated);
             creditClass.setNumberOfFinalTermExamCreated(numberOfFinalTermExamCreated);
-            tempCreditClasses.add(creditClass);
+
+            if (page.equals("0") && active && haveRegister) {
+                // Có sinh viên chưa được tạo ca thi cuối kỳ hoặc giữa kỳ
+                if (creditClass.getNumberOfActiveStudents() - numberOfMidTermExamCreated > 0 ||
+                        creditClass.getNumberOfActiveStudents() - numberOfFinalTermExamCreated > 0) {
+                    tempCreditClasses.add(creditClass);
+                }
+            } else {
+                tempCreditClasses.add(creditClass);
+            }
         }
 
         creditClassesDTO.setCreditClasses(tempCreditClasses);
