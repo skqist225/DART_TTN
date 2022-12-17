@@ -57,7 +57,7 @@ public class TakeExamService {
     }
 
     public Integer getStudentRankingPosition(String studentId, Integer creditClassId,
-                                         String examType) {
+                                             String examType) {
         return takeExamRepository
                 .getStudentRankingPosition(studentId, creditClassId, examType);
     }
@@ -97,7 +97,6 @@ public class TakeExamService {
     public void updateTakeExamTested(String studentId, Integer examId) {
         takeExamRepository.updateTakeExamTested(studentId, examId);
     }
-
 
     public TakeExam findByStudentAndExam(String studentId, Integer examId) {
         return takeExamRepository.findByStudentAndExam(studentId, examId);

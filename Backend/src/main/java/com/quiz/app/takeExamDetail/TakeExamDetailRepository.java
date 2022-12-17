@@ -20,6 +20,12 @@ public interface TakeExamDetailRepository extends CrudRepository<TakeExamDetail,
                                   String studentId);
 
     @Modifying
+    @Query(value = "delete from chitietthi where masv= :studentId and maltc = :creditClassId and macathi =" +
+            " :examId and lanthi = :tryTime", nativeQuery = true)
+    void deleteTakeExamDetail(int examId, int creditClassId,
+                              String studentId, int tryTime);
+
+    @Modifying
     @Query(value = "update chitietthi set cautraloi = :userAnswer where masv = :studentId AND " +
             "macathi = :examId AND macauhoi = :questionId", nativeQuery = true)
     void updateAnswerForQuestionInStudentTest(String userAnswer, String studentId,

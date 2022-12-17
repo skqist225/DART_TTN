@@ -28,6 +28,13 @@ public interface TakeExamRepository extends CrudRepository<TakeExam, TakeExamId>
                                  String studentId, Integer testId);
 
     @Modifying
+    @Query(value = "update thi set madethi = :testId where masv = :studentId and maltc = :creditClassId and " +
+            "macathi = :examId and lanthi = :tryTime",
+            nativeQuery = true)
+    void updateTakeExamTest(int examId, int creditClassId,
+                            String studentId, Integer testId, int tryTime);
+
+    @Modifying
     @Query(value = "UPDATE thi SET diem = :mark where masv = :studentId and " +
             "macathi" +
             " " +

@@ -1,16 +1,14 @@
 import { Button, Card, Table, Tooltip } from "flowbite-react";
 import React from "react";
 import { tailwindCss } from "../../tailwind";
-import MyButton, { ButtonType } from "../common/MyButton";
 import CriteriaList from "../tests/CriteriaList";
 import QuestionList from "../tests/QuestionList";
 import TableModalViewer from "../utils/tables/TableModalViewer";
-import VisibilityIcon from "@mui/icons-material/Visibility";
 
 import $ from "jquery";
 import ViewDetails from "../common/ViewDetails";
 
-function TestList({ rows }) {
+function TestList({ rows, addCheckbox = false }) {
     return (
         <Table striped={true}>
             <Table.Head>
@@ -24,15 +22,17 @@ function TestList({ rows }) {
             <Table.Body className='divide-y max-h-3 overflow-scroll'>
                 {rows.map((row, index) => (
                     <Table.Row className={`${tailwindCss.tr}`} key={row.id}>
-                        <Table.Cell scope='col' className='p-4'>
-                            <div className='flex items-center'>
-                                <input
-                                    type='checkbox'
-                                    className='w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 tests-checkbox'
-                                    data-id={row.id}
-                                />
-                            </div>
-                        </Table.Cell>
+                        {addCheckbox && (
+                            <Table.Cell scope='col' className='p-4'>
+                                <div className='flex items-center'>
+                                    <input
+                                        type='checkbox'
+                                        className='w-4 h-4 text-blue-600 bg-gray-100 rounded border-gray-300 focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-800 focus:ring-2 dark:bg-gray-700 dark:border-gray-600 tests-checkbox'
+                                        data-id={row.id}
+                                    />
+                                </div>
+                            </Table.Cell>
+                        )}
 
                         <Table.Cell className={tailwindCss.tableCell}>
                             <Tooltip content={"Xem chi tiết đề thi"}>

@@ -50,6 +50,15 @@ public class Chapter {
     @OneToMany(mappedBy = "chapter", orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.EAGER)
     private List<Question> questions;
 
+    @Transient
+    private int numberOfEasyQuestions;
+
+    @Transient
+    private int numberOfMediumQuestions;
+
+    @Transient
+    private int numberOfHardQuestions;
+
     public static Chapter build(int chapterNumber, String name, Subject subject) {
         return Chapter.builder().chapterNumber(chapterNumber).name(name).subject(subject).build();
     }

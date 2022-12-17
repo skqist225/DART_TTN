@@ -153,7 +153,7 @@ public class ExamRestController {
                     "trống");
         }
 
-        if (!isEdit && tests.size() == 0) {
+        if (tests.size() == 0) {
             commonUtils.addError("tests", "Đề thi không được để " +
                     "trống");
         }
@@ -206,34 +206,43 @@ public class ExamRestController {
                 exm.setExamDate(tempExamDate);
                 exm.setNoticePeriod(noticePeriod);
                 exm.setTime(time);
-                exm.setType(type);
 
-//                for (Integer testId : tests) {
-//                    // Add new test
-//                    exm.addTest(new Test(testId));
-//                }
-//
-//                List<Test> removedTests = new ArrayList<>();
-//                for (Test test : exm.getTests()) {
-//                    boolean shouldDelete = true;
-//
-//                    for (Integer a : tests) {
-//                        if (a.equals(test.getId())) {
-//                            shouldDelete = false;
-//                            break;
-//                        }
-//                    }
-//                    // Remove none mentioned test
-//                    if (shouldDelete) {
-//                        removedTests.add(test);
-//                    }
-//                }
-//
-//                for (Test test : removedTests) {
-//                    exm.removeTest(test);
-//                }
+                for (Test test : exm.getTests()) {
+                    test.setExam(null);
+                    test.setUsed(false);
+                    testService.save(test);
+                }
 
-                exam = examService.save(exm);
+                for (Integer testId : tests) {
+                    Test test = testService.findById(testId);
+                    test.setExam(exm);
+                    test.setUsed(true);
+                    testService.save(test);
+                }
+
+                for (TakeExam takeExam : exm.getTakeExams()) {
+                    Random ran = new Random();
+                    int randomTest = ran.nextInt(tests.size());
+                    int testId = tests.get(randomTest);
+                    Register register = takeExam.getRegister();
+                    String studentId = register.getStudent().getId();
+                    System.out.printf("Student %s use %d%n", studentId, testId);
+
+                    Test test = testService.findById(testId);
+
+                    List<Question> questions = test.getQuestions();
+                    System.out.println("before suffle");
+                    questions.forEach(System.out::println);
+                    Collections.shuffle(questions);
+                    System.out.println("after suffle");
+                    questions.forEach(System.out::println);
+                    System.out.println("try time: " + takeExam.getTryTime());
+                    takeExamDetailService.updateTakeExamDetail(questions,
+                            takeExam.getTryTime(), exm.getId(), register.getCreditClass().getId(),
+                            studentId, testId);
+                }
+
+                examService.save(exm);
             } catch (NotFoundException e) {
                 return new BadResponse<String>(e.getMessage()).response();
             }
@@ -293,8 +302,9 @@ public class ExamRestController {
                             register.getCreditClass().getId(), studentId, testId);
                     try {
                         Test test = testService.findById(testId);
-                        Collections.shuffle(test.getQuestions());
-                        for (Question question : test.getQuestions()) {
+                        List<Question> questions = test.getQuestions();
+                        Collections.shuffle(questions);
+                        for (Question question : questions) {
                             takeExamDetailService.insertIntoTakeExamDetail(question.getId(), tryTime, exam.getId(),
                                     register.getCreditClass().getId(), register.getStudent().getId());
                         }

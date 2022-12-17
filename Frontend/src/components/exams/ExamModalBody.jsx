@@ -2,9 +2,9 @@ import { Box, Typography } from "@mui/material";
 import $ from "jquery";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { creditClassState } from "../../features/creditClassSlice";
+import { creditClassState, findCreditClass } from "../../features/creditClassSlice";
 import { examState } from "../../features/examSlice";
-import { fetchAllRegisters } from "../../features/registerSlice";
+import { fetchAllRegisters, setRegisters } from "../../features/registerSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
 import DatePicker from "../utils/datePicker/DatePicker";
 import Input from "../utils/userInputs/Input";
@@ -76,28 +76,26 @@ function ExamModalBody({
     creditClassId,
     creditClassPage = false,
 }) {
-    const [type, setType] = useState("");
     const [localExamsType, setLocalExamsType] = useState(examTypes);
     const { creditClassesForExamAdded: creditClasses } = useSelector(creditClassState);
     const { editedExam, errorObject } = useSelector(examState);
-    const { tests, loading } = useSelector(testState);
+    const { tests } = useSelector(testState);
+    const { creditClass } = useSelector(creditClassState);
 
     useEffect(() => {
+        console.log(editedExam);
         if (editedExam) {
             setValue("id", editedExam.id);
-            setValue("creditClassId", editedExam.creditClassId);
-            dispatch(fetchAllTests({ page: 0, subject: editedExam.subjectId, notUsedTest: true }));
-
             setValue("examDate", editedExam.examDate);
             setValue("noticePeriod", editedExam.noticePeriod);
             setValue("time", editedExam.time);
             setValue("numberOfStudents", editedExam.numberOfRegisters);
             setValue("examType", editedExam.type);
+
+            dispatch(findCreditClass({ id: editedExam.creditClassId }));
         } else {
             setValue("id", "");
-            console.log(creditClasses);
-
-            // setValue("creditClassId", creditClasses[0].id);
+            setValue("creditClassName", "");
             setValue("examDate", "");
             setValue("noticePeriod", "");
             setValue("time", "");
@@ -119,6 +117,41 @@ function ExamModalBody({
     }, [editedExam, creditClasses]);
 
     useEffect(() => {
+        if (creditClass && editedExam) {
+            const { schoolYear, semester, subjectName, group } = creditClass;
+            setValue("creditClassName", `${schoolYear} ${semester} ${subjectName} ${group}`);
+
+            const numberOfNoneCreatedMidtermExamStudents =
+                creditClass.numberOfActiveStudents - creditClass.numberOfMidTermExamCreated;
+            const numberOfNoneCreatedFinalTermExamStudents =
+                creditClass.numberOfActiveStudents - creditClass.numberOfFinalTermExamCreated;
+            $("#numberOfNoneCreatedMidtermExamStudents").val(
+                numberOfNoneCreatedMidtermExamStudents
+            );
+            $("#numberOfNoneCreatedFinalTermExamStudents").val(
+                numberOfNoneCreatedFinalTermExamStudents
+            );
+            $("#numberOfActiveStudents").val(creditClass.numberOfActiveStudents);
+
+            dispatch(
+                fetchAllTests({
+                    page: 0,
+                    subject: creditClass.subjectId,
+                    notUsedTest: true,
+                    examId: editedExam.id,
+                })
+            );
+
+            dispatch(
+                fetchAllRegisters({
+                    page: 0,
+                    creditClass: creditClass.id,
+                })
+            );
+        }
+    }, [creditClass, editedExam]);
+
+    useEffect(() => {
         if (tests && tests.length && editedExam) {
             $(".tests-checkbox").each(function () {
                 if (editedExam.testIds.includes($(this).data("id"))) {
@@ -129,7 +162,7 @@ function ExamModalBody({
     }, [tests]);
 
     useEffect(() => {
-        if (creditClasses && creditClasses.length && !creditClassPage) {
+        if (creditClasses && creditClasses.length && !creditClassPage && !editedExam) {
             handleCreditClassChange({ target: { value: creditClasses[0].id } });
         }
     }, [creditClasses]);
@@ -159,21 +192,30 @@ function ExamModalBody({
     }, []);
 
     const handleCreditClassChange = ({ target: { value } }) => {
-        // if (creditClassPage) {
-        //     return;
-        // }
-        console.log(creditClasses);
         const creditClass = creditClasses.find(({ id }) => id.toString() === value.toString());
 
         setValue("creditClassId", value);
-        $("#numberOfNoneCreatedMidtermExamStudents").val(
-            creditClass.numberOfActiveStudents - creditClass.numberOfMidTermExamCreated
-        );
+        const numberOfNoneCreatedMidtermExamStudents =
+            creditClass.numberOfActiveStudents - creditClass.numberOfMidTermExamCreated;
+        const numberOfNoneCreatedFinalTermExamStudents =
+            creditClass.numberOfActiveStudents - creditClass.numberOfFinalTermExamCreated;
+        $("#numberOfNoneCreatedMidtermExamStudents").val(numberOfNoneCreatedMidtermExamStudents);
         $("#numberOfNoneCreatedFinalTermExamStudents").val(
-            creditClass.numberOfActiveStudents - creditClass.numberOfFinalTermExamCreated
+            numberOfNoneCreatedFinalTermExamStudents
         );
         $("#numberOfActiveStudents").val(creditClass.numberOfActiveStudents);
 
+        if (numberOfNoneCreatedMidtermExamStudents === 0) {
+            setLocalExamsType(prevState => [
+                ...prevState.filter(({ value }) => value !== "Giữa kỳ"),
+            ]);
+        }
+
+        if (numberOfNoneCreatedFinalTermExamStudents === 0) {
+            setLocalExamsType(prevState => [
+                ...prevState.filter(({ value }) => value !== "Cuối kỳ"),
+            ]);
+        }
         dispatch(
             fetchAllTests({
                 page: 0,
@@ -196,76 +238,80 @@ function ExamModalBody({
             <div>
                 <div className='col-flex items-center justify-center w-full'>
                     <div className='w-full'>
-                        <Select
-                            label='Lớp tín chỉ *'
+                        {!editedExam ? (
+                            <Select
+                                label='Lớp tín chỉ *'
+                                register={register}
+                                name='creditClassId'
+                                options={creditClasses.map(
+                                    ({ id, schoolYear, semester, subjectName, group }) => ({
+                                        title: `${schoolYear} ${semester} ${subjectName} ${group}`,
+                                        value: id,
+                                    })
+                                )}
+                                error={errors.creditClassId && errors.creditClassId.message}
+                                setValue={setValue}
+                                defaultValue={
+                                    !creditClassPage &&
+                                    creditClasses &&
+                                    creditClasses.length &&
+                                    creditClasses[0].id
+                                }
+                                onChangeHandler={handleCreditClassChange}
+                                readOnly={
+                                    (editedExam && editedExam.creditClassId) || creditClassPage
+                                }
+                            />
+                        ) : (
+                            <Input readOnly={true} register={register} name='creditClassName' />
+                        )}
+                    </div>
+                </div>
+                <div
+                    className={`flex w-full mt-5 ${
+                        errors.numberOfActiveStudents ? "items-start" : "items-end"
+                    }`}
+                >
+                    <div className='w-full mr-5'>
+                        <Input
+                            label={`Số  SV chưa được tạo ca thi giữa kỳ`}
                             register={register}
-                            name='creditClassId'
-                            options={creditClasses.map(
-                                ({ id, schoolYear, semester, subjectName, group }) => ({
-                                    title: `${schoolYear} ${semester} ${subjectName} ${group}`,
-                                    value: id,
-                                })
-                            )}
-                            error={errors.creditClassId && errors.creditClassId.message}
-                            setValue={setValue}
-                            defaultValue={
-                                !creditClassPage &&
-                                creditClasses &&
-                                creditClasses.length &&
-                                creditClasses[0].id
+                            name='numberOfNoneCreatedMidtermExamStudents'
+                            error={
+                                errors.numberOfNoneCreatedMidTermExamStudents &&
+                                errors.numberOfNoneCreatedMidTermExamStudents.message
                             }
-                            onChangeHandler={handleCreditClassChange}
-                            readOnly={(editedExam && editedExam.creditClassId) || creditClassPage}
+                            readOnly
+                        />
+                    </div>
+                    <div className='w-full mr-5'>
+                        <Input
+                            label={`Số  SV chưa được tạo ca thi cuối kỳ`}
+                            register={register}
+                            name='numberOfNoneCreatedFinalTermExamStudents'
+                            error={
+                                errors.numberOfNoneCreatedFinalTermExamStudents &&
+                                errors.numberOfNoneCreatedFinalTermExamStudents.message
+                            }
+                            readOnly
+                        />
+                    </div>
+                    <div className='w-full'>
+                        <Input
+                            label={`Tổng số sinh viên`}
+                            register={register}
+                            name='numberOfActiveStudents'
+                            readOnly
                         />
                     </div>
                 </div>
-                {!editedExam && (
-                    <div
-                        className={`flex w-full mt-5 ${
-                            errors.numberOfActiveStudents ? "items-start" : "items-end"
-                        }`}
-                    >
-                        <div className='w-full mr-5'>
-                            <Input
-                                label={`Số  SV chưa được tạo ca thi giữa kỳ`}
-                                register={register}
-                                name='numberOfNoneCreatedMidtermExamStudents'
-                                error={
-                                    errors.numberOfNoneCreatedMidTermExamStudents &&
-                                    errors.numberOfNoneCreatedMidTermExamStudents.message
-                                }
-                                readOnly
-                            />
-                        </div>
-                        <div className='w-full mr-5'>
-                            <Input
-                                label={`Số  SV chưa được tạo ca thi cuối kỳ`}
-                                register={register}
-                                name='numberOfNoneCreatedFinalTermExamStudents'
-                                error={
-                                    errors.numberOfNoneCreatedFinalTermExamStudents &&
-                                    errors.numberOfNoneCreatedFinalTermExamStudents.message
-                                }
-                                readOnly
-                            />
-                        </div>
-                        <div className='w-full'>
-                            <Input
-                                label={`Tổng số sinh viên`}
-                                register={register}
-                                name='numberOfActiveStudents'
-                                readOnly
-                            />
-                        </div>
-                    </div>
-                )}
                 {tests.length > 0 ? (
                     <div>
                         <div className='text-black text-base uppercase mt-3 text-center font-semibold text-blue-500'>
                             Danh sách đề thi
                         </div>
                         <div className='w-full mt-5 border-2 rounded-sm overflow-y-auto max-h-52'>
-                            <TestList rows={tests} />
+                            <TestList rows={tests} addCheckbox />
                         </div>
                     </div>
                 ) : (
@@ -333,7 +379,6 @@ function ExamModalBody({
                         options={localExamsType.map(({ title, value }) => ({
                             title,
                             value,
-                            // shoudDisabled:
                         }))}
                         setValue={setValue}
                         defaultValue={examTypes[0].value}

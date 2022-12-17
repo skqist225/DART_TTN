@@ -123,8 +123,8 @@ public class Test {
         TreeMap<String, Integer> crMap = new TreeMap<>();
 
         for (Question question : this.questions) {
-            String mapKey = String.format("%s##%s", question.getChapter().getName(),
-                    question.getLevel());
+            String mapKey = String.format("%s##%s##%d", question.getChapter().getName(),
+                    question.getLevel(), question.getChapter().getId());
             if (crMap.containsKey(mapKey)) {
                 crMap.put(mapKey, crMap.get(mapKey) + 1);
             } else {
@@ -136,6 +136,7 @@ public class Test {
         for (Map.Entry<String, Integer> entry : crMap.entrySet()) {
             String chapter = entry.getKey().split("##")[0];
             String level = entry.getKey().split("##")[1];
+            int chapterId = Integer.parseInt(entry.getKey().split("##")[2]);
             int numberOfQuestions = entry.getValue();
 
             List<CriteriaSubDTO> criteriaSubDTOS;
@@ -144,17 +145,44 @@ public class Test {
             } else {
                 criteriaSubDTOS = new ArrayList<>();
             }
-            criteriaSubDTOS.add(new CriteriaSubDTO(level, numberOfQuestions));
+            criteriaSubDTOS.add(new CriteriaSubDTO(level, numberOfQuestions, chapterId));
             crMap2.put(chapter, criteriaSubDTOS);
         }
 
         return crMap2.entrySet().stream().map(entry -> new CriteriaDTO(entry.getKey(),
                 entry.getValue())).collect(Collectors.toList());
+    }
 
+    public List<Chapter> getSubjectChapters() {
+        List<Chapter> chapters = new ArrayList<>();
+        for (Chapter chapter : this.subject.getChapters()) {
+            int numberOfEasyQuestions = 0;
+            int numberOfMediumQuestions = 0;
+            int numberOfHardQuestions = 0;
+            for (Question question : chapter.getQuestions()) {
+                if (question.getLevel().equals("Dễ")) {
+                    numberOfEasyQuestions++;
+                } else if (question.getLevel().equals("Trung bình")) {
+                    numberOfMediumQuestions++;
+                } else {
+                    numberOfHardQuestions++;
+                }
+            }
+            chapter.setNumberOfEasyQuestions(numberOfEasyQuestions);
+            chapter.setNumberOfMediumQuestions(numberOfMediumQuestions);
+            chapter.setNumberOfHardQuestions(numberOfHardQuestions);
+            chapters.add(chapter);
+        }
+
+        return chapters;
     }
 
     public String getSubjectName() {
         return this.subject.getName();
+    }
+
+    public String getSubjectId() {
+        return this.subject.getId();
     }
 
     public Test(Integer id) {

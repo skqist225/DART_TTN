@@ -5,7 +5,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { examState } from "../../../features/examSlice";
 import { questionState } from "../../../features/questionSlice";
 import { registerState } from "../../../features/registerSlice";
-import { addTest, testState } from "../../../features/testSlice";
+import { addTest, editTest, testState } from "../../../features/testSlice";
 import { userState } from "../../../features/userSlice";
 import { callToast } from "../../../helpers";
 import { CloseIcon } from "../../../images";
@@ -45,7 +45,6 @@ function TableModal({
     examPage = false,
 }) {
     const dispatch = useDispatch();
-    const { editedTest } = useSelector(testState);
 
     const {
         questions,
@@ -58,10 +57,11 @@ function TableModal({
         addMultipleRegisters: { loading: registerLoading },
         registers,
     } = useSelector(registerState);
-    const { addTestDisabled } = useSelector(testState);
+    const { addTestDisabled, editedTest } = useSelector(testState);
     const {
         addExamDisabled,
         addExam: { loading: addExamLoading },
+        editExam: { loading: editExamLoading },
     } = useSelector(examState);
 
     const disabled = false;
@@ -183,33 +183,55 @@ function TableModal({
                                         return;
                                     }
 
-                                    dispatch(
-                                        addTest({
-                                            name,
-                                            subjectId: $("#testSubjectId").val(),
-                                            questions: questions.map(question => ({
-                                                ...question,
-                                                level:
-                                                    question.level === "Dễ "
-                                                        ? "EASY"
-                                                        : question.level === "Trung bình"
-                                                        ? "MEDIUM"
-                                                        : "HARD",
-                                            })),
-                                        })
-                                    );
+                                    if (editedTest) {
+                                        dispatch(
+                                            editTest({
+                                                id: $("#testId").val(),
+                                                name,
+                                                subjectId: $("#testSubjectId").val(),
+                                                questions: questions.map(question => ({
+                                                    ...question,
+                                                    level:
+                                                        question.level === "Dễ "
+                                                            ? "EASY"
+                                                            : question.level === "Trung bình"
+                                                            ? "MEDIUM"
+                                                            : "HARD",
+                                                })),
+                                            })
+                                        );
+                                    } else {
+                                        dispatch(
+                                            addTest({
+                                                name,
+                                                subjectId: $("#testSubjectId").val(),
+                                                questions: questions.map(question => ({
+                                                    ...question,
+                                                    level:
+                                                        question.level === "Dễ "
+                                                            ? "EASY"
+                                                            : question.level === "Trung bình"
+                                                            ? "MEDIUM"
+                                                            : "HARD",
+                                                })),
+                                            })
+                                        );
+                                    }
                                 }
                             }}
                         >
                             {(modalLabel === "Thêm đăng ký" && registerLoading) ||
                                 (modalLabel === "Thêm câu hỏi" && questionLoading) ||
                                 (modalLabel === "Thêm người dùng" && userLoading && (
-                                    <Spinner size='sm' light={true} />
+                                    <Spinner size='sm' light={true} className='mr-2' />
                                 ))}
                             {modalLabel === "Thêm ca thi" && addExamLoading && (
-                                <Spinner size='sm' light={true} />
+                                <Spinner size='sm' light={true} className='mr-2' />
+                            )}{" "}
+                            {modalLabel === "Chỉnh sửa ca thi" && editExamLoading && (
+                                <Spinner size='sm' light={true} className='mr-2' />
                             )}
-                            {excelAdd ? "Thêm tất cả" : buttonLabel}
+                            {excelAdd ? "Thêm tất cả" : <span>{buttonLabel}</span>}
                         </button>
                         {examPage && (
                             <button

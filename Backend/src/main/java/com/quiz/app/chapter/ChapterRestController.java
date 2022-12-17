@@ -8,6 +8,7 @@ import com.quiz.app.response.error.BadResponse;
 import com.quiz.app.response.success.OkResponse;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.entity.Chapter;
+import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 
 @RestController
@@ -48,11 +48,30 @@ public class ChapterRestController {
         ChaptersDTO chaptersDTO = new ChaptersDTO();
 
         if(page.equals("0")) {
-            List<Chapter> chapters = null;
+            List<Chapter> chapters = new ArrayList<>();
             if (!StringUtils.isEmpty(subjectId)) {
                 try {
                     Subject subject = subjectService.findById(subjectId);
                     chapters = chapterService.findBySubject(subject);
+
+                    for (Chapter chapter : chapters) {
+                        int numberOfEasyQuestions = 0;
+                        int numberOfMediumQuestions = 0;
+                        int numberOfHardQuestions = 0;
+                        for (Question question : chapter.getQuestions()) {
+                            if (question.getLevel().equals("Dễ")) {
+                                numberOfEasyQuestions++;
+                            } else if (question.getLevel().equals("Trung bình")) {
+                                numberOfMediumQuestions++;
+                            } else {
+                                numberOfHardQuestions++;
+                            }
+                        }
+                        chapter.setNumberOfEasyQuestions(numberOfEasyQuestions);
+                        chapter.setNumberOfMediumQuestions(numberOfMediumQuestions);
+                        chapter.setNumberOfHardQuestions(numberOfHardQuestions);
+                    }
+
                 } catch (NotFoundException e) {
                     chapters = new ArrayList<>();
                 }

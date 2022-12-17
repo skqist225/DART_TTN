@@ -211,9 +211,6 @@ const registerSlice = createSlice({
         setEditedRegister(state, { payload }) {
             state.editedRegister = payload;
         },
-        resetLoadedRegisters(state, _) {
-            state.loadedRegisters = [];
-        },
         disableOrEnableLoadedRegisters(state, { payload }) {
             state.registers = state.registers.map(register => {
                 if (register.id === payload) {
@@ -228,6 +225,9 @@ const registerSlice = createSlice({
         },
         setRegisterExcelAdd(state, { payload }) {
             state.registerExcelAdd = payload;
+        },
+        setRegisters(state, { payload }) {
+            state.registers = payload;
         },
     },
     extraReducers: builder => {
@@ -342,6 +342,7 @@ export const {
         setEditedRegister,
         disableOrEnableLoadedRegisters,
         setRegisterExcelAdd,
+        setRegisters,
     },
 } = registerSlice;
 

@@ -12,4 +12,5 @@ import lombok.Setter;
 public class CriteriaSubDTO {
     private String level;
     private int numberOfQuestions;
+    private int chapterId;
 }

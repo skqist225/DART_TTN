@@ -27,7 +27,6 @@ function Input({
                 const password = $("#" + propName);
                 const passwordLabel = $(".js-password-label");
 
-                console.log(password.prop("type"));
                 if (password.prop("type") === "password") {
                     password.prop("type", "text");
                     passwordLabel.text("hide");
@@ -46,7 +45,7 @@ function Input({
             <label
                 htmlFor={propName}
                 className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"} ${
-                    readOnly && "text-slate-400	cursor-not-allowed"
+                    readOnly && "text-slate-400	cursor-not-allowed disabled:opacity-75"
                 }`}
             >
                 {label}

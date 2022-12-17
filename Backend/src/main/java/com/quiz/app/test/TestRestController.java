@@ -81,21 +81,21 @@ public class TestRestController {
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
             @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
             @RequestParam(name = "notUsedTest", required = false, defaultValue = "false") boolean notUsedTest,
-            @RequestParam(name = "activeTest", required = false, defaultValue = "false") boolean activeTest
-    ) {
+            @RequestParam(name = "examId", required = false, defaultValue = "") Integer examId
+    ) throws NotFoundException {
         TestsDTO testsDTO = new TestsDTO();
 
         if (page.equals("0")) {
-            List<Test> tests = null;
+            List<Test> tests = new ArrayList<>();
             if (!StringUtils.isEmpty(subjectId)) {
-                Subject subject = null;
-                try {
-                    subject = subjectService.findById(subjectId);
-                } catch (NotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+                Subject subject = subjectService.findById(subjectId);
+
                 if (notUsedTest) {
                     tests = testService.findBySubjectAndUsed(subject);
+                    if (Objects.nonNull(examId)) {
+                        Exam exam = examService.findById(examId);
+                        tests.addAll(exam.getTests());
+                    }
                 } else {
                     tests = testService.findBySubject(subject);
                 }
@@ -160,7 +160,6 @@ public class TestRestController {
         String name = postCreateTestDTO.getName();
         String subjectId = postCreateTestDTO.getSubjectId();
         List<Question> questions = postCreateTestDTO.getQuestions();
-        List<Integer> questionIds = postCreateTestDTO.getQuestionIds();
         User teacher = userDetailsImpl.getUser();
 
         catchTestInputException(commonUtils, isEdit, id, name, subjectId, questions);
@@ -168,7 +167,7 @@ public class TestRestController {
         if (commonUtils.getArrayNode().size() > 0) {
             return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
         } else {
-            if (testService.isNameDuplicated(null, name, isEdit)) {
+            if (testService.isNameDuplicated(id, name, isEdit)) {
                 commonUtils.addError("name", "Tên đề thi đã tồn tại");
             }
 
@@ -192,21 +191,21 @@ public class TestRestController {
                     test.setQuestions(new ArrayList<>());
                 }
 
-                for (Integer questionId : questionIds) {
-                    // Add new question
+                for (Question qst : questions) {
                     // Check if question exists in the list.
                     Question question = questionService.getQuestionFromTest(test.getId(),
-                            questionId);
-                    if(Objects.isNull(question)) {
-                        test.addQuestion(new Question(questionId));
+                            qst.getId()
+                    );
+                    if (Objects.isNull(question)) {
+                        test.addQuestion(qst);
                     }
                 }
 
                 List<Question> removedQuestions = new ArrayList<>();
                 for (Question question : test.getQuestions()) {
                     boolean shouldDelete = true;
-                    for (Integer questionId : questionIds) {
-                        if (question.getId().equals(questionId)) {
+                    for (Question qst : questions) {
+                        if (question.getId().equals(qst.getId())) {
                             shouldDelete = false;
                             break;
                         }

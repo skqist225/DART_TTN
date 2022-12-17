@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { tailwindCss } from "../../tailwind";
 import Transition from "../../utils/Transition";
 
-function Help({ helperText = "" }) {
+function Help({ helperText = "", children }) {
     const [dropdownOpen, setDropdownOpen] = useState(false);
 
     const trigger = useRef(null);
@@ -43,6 +43,7 @@ function Help({ helperText = "" }) {
                 aria-haspopup='true'
                 onClick={() => setDropdownOpen(!dropdownOpen)}
                 aria-expanded={dropdownOpen}
+                type='button'
             >
                 <span className='sr-only'>Need help?</span>
                 <svg className='w-4 h-4' viewBox='0 0 16 16' xmlns='http://www.w3.org/2000/svg'>
@@ -65,7 +66,7 @@ function Help({ helperText = "" }) {
                         ref={dropdown}
                         onFocus={() => setDropdownOpen(true)}
                         onBlur={() => setDropdownOpen(false)}
-                        className='w-72'
+                        className='w-80'
                     >
                         {helperText && (
                             <>
@@ -88,6 +89,7 @@ function Help({ helperText = "" }) {
                                 </ul>
                             </>
                         )}
+                        {children && children}
                     </div>
                 </Transition>
             </button>

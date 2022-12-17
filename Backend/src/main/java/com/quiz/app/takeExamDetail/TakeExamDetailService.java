@@ -1,10 +1,11 @@
 package com.quiz.app.takeExamDetail;
 
+import com.quiz.app.takeExam.TakeExamRepository;
+import com.quiz.entity.Question;
 import com.quiz.entity.TakeExamDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.persistence.EntityManager;
 import javax.transaction.Transactional;
 import java.util.List;
 
@@ -16,7 +17,7 @@ public class TakeExamDetailService {
     private TakeExamDetailRepository takeExamDetailRepository;
 
     @Autowired
-    private EntityManager entityManager;
+    private TakeExamRepository takeExamRepository;
 
     public TakeExamDetail save(TakeExamDetail takeExamDetail) {
         return takeExamDetailRepository.save(takeExamDetail);
@@ -45,5 +46,21 @@ public class TakeExamDetailService {
                                          String studentId) {
         takeExamDetailRepository.insertIntoTakeExamDetail(questionId, tryTime, examId,
                 creditClassId, studentId);
+    }
+
+    @Transactional
+    public void updateTakeExamDetail(List<Question> questions, int tryTime, int examId,
+                                     int creditClassId,
+                                     String studentId, int testId) {
+        takeExamRepository.updateTakeExamTest(examId,
+                creditClassId, studentId, testId, tryTime);
+        takeExamDetailRepository.deleteTakeExamDetail(examId,
+                creditClassId, studentId, tryTime);
+
+        for (Question question : questions) {
+            insertIntoTakeExamDetail(question.getId(), tryTime, examId,
+                    creditClassId,
+                    studentId);
+        }
     }
 }

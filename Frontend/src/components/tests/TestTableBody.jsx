@@ -106,11 +106,10 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
                         <td className={tailwindCss.tableCell}>{row.teacherName}</td>
                         {!examPage && (
                             <td className={`${tailwindCss.tableCell} flex items-center`}>
-                                {/* <div className='mr-2'>
+                                <div className='mr-2'>
                                     <MyButton
                                         type={ButtonType.edit}
                                         onClick={() => {
-                                            console.log(row);
                                             $("#testModal").css("display", "flex");
                                             setIsEdit(true);
                                             dispatch(setEditedTest(row));
@@ -118,7 +117,7 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
                                         disabled={!shouldCancel}
                                         customTooltipMessage={shouldEditMessage}
                                     />
-                                </div> */}
+                                </div>
                                 <div className='mr-2'>
                                     <MyButton
                                         type={ButtonType.delete}

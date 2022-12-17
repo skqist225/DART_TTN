@@ -38,6 +38,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
 
     const {
         filterObject,
+        editedExam,
         addExam: { addExamsuccessMessage },
     } = useSelector(examState);
 
@@ -96,7 +97,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                 tests.push($(this).data("id"));
             }
         });
-        if (!isEdit && tests.length === 0) {
+        if (tests.length === 0) {
             callToast("error", "Chọn đề thi cho ca thi");
             haveError = true;
         }
@@ -106,12 +107,11 @@ function CreditClassTableBody({ rows, setIsEdit }) {
             `${examDate.split("/")[1]}/${examDate.split("/")[0]}/${examDate.split("/")[2]} 00:00:00`
         );
 
-        if (!isEdit && examDt.getTime() <= new Date().getTime()) {
+        if (examDt.getTime() <= new Date().getTime()) {
             setError("examDate", {
                 type: "custom",
                 message: "Ngày thi phải lớn hơn ngày hiện tại",
             });
-            // callToast("error", "Ngày thi phải lớn hơn hiện tại");
             haveError = true;
         }
 
@@ -155,19 +155,11 @@ function CreditClassTableBody({ rows, setIsEdit }) {
             });
         }
 
-        console.log(data);
-
         data[
             "name"
         ] = `${schoolYear}-${semester}-${subjectName}-${group}-${data.examType}-${index}`;
 
-        console.log(data);
-
-        // if (isEdit) {
-        //     dispatch(editExam(data));
-        // } else {
-        //     dispatch(addExam(data));
-        // }
+        dispatch(addExam(data));
     };
 
     const [tabValue, setTabValue] = useState(0);

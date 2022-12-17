@@ -80,7 +80,7 @@ function ExamsPage() {
     } = useForm({
         resolver: yupResolver(examSchema),
     });
-    console.log(errors);
+
     const onSubmit = data => {
         let haveError = false;
 
@@ -105,7 +105,7 @@ function ExamsPage() {
                 tests.push($(this).data("id"));
             }
         });
-        if (!isEdit && tests.length === 0) {
+        if (tests.length === 0) {
             callToast("error", "Chọn đề thi cho ca thi");
             haveError = true;
         }
@@ -124,21 +124,23 @@ function ExamsPage() {
             haveError = true;
         }
 
-        if (data.examType === "Giữa kỳ") {
-            if (parseInt($("#numberOfNoneCreatedMidtermExamStudents").val()) === 0) {
-                setError("examType", {
-                    type: "custom",
-                    message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
-                });
-                haveError = true;
-            }
-        } else if (data.examType === "Cuối kỳ") {
-            if (parseInt($("#numberOfNoneCreatedFinalTermExamStudents").val()) === 0) {
-                setError("examType", {
-                    type: "custom",
-                    message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
-                });
-                haveError = true;
+        if (!isEdit) {
+            if (data.examType === "Giữa kỳ") {
+                if (parseInt($("#numberOfNoneCreatedMidtermExamStudents").val()) === 0) {
+                    setError("examType", {
+                        type: "custom",
+                        message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
+                    });
+                    haveError = true;
+                }
+            } else if (data.examType === "Cuối kỳ") {
+                if (parseInt($("#numberOfNoneCreatedFinalTermExamStudents").val()) === 0) {
+                    setError("examType", {
+                        type: "custom",
+                        message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
+                    });
+                    haveError = true;
+                }
             }
         }
 
@@ -164,19 +166,15 @@ function ExamsPage() {
             });
         }
 
-        console.log(data);
-
         data[
             "name"
         ] = `${schoolYear}-${semester}-${subjectName}-${group}-${data.examType}-${index}`;
 
-        console.log(data);
-
-        // if (isEdit) {
-        //     dispatch(editExam(data));
-        // } else {
-        //     dispatch(addExam(data));
-        // }
+        if (isEdit) {
+            dispatch(editExam(data));
+        } else {
+            dispatch(addExam(data));
+        }
     };
 
     const {
@@ -190,6 +188,10 @@ function ExamsPage() {
         deleteExam: { successMessage: dsSuccessMessage },
         enableOrDisableExam: { successMessage: eodqSuccessMessage },
     } = useSelector(examState);
+
+    const fetchDataByPageNumber = pageNumber => {
+        dispatch(fetchAllExams({ ...filterObject, page: pageNumber }));
+    };
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
@@ -226,6 +228,7 @@ function ExamsPage() {
         dispatch(fetchCreditClassesForExamAdded());
 
         $(`#${modalId}`).css("display", "none");
+        onCloseForm();
         if (type === "add") {
             $(`#${formId}`)[0].reset();
         }
@@ -281,6 +284,7 @@ function ExamsPage() {
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={userRoles.includes("Sinh viên") ? studentColumns : examColumns}
+                    fetchDataByPageNumber={fetchDataByPageNumber}
                     rows={exams}
                     totalElements={totalElements}
                     totalPages={totalPages}

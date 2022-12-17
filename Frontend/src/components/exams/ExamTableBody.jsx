@@ -1,16 +1,17 @@
-import { Badge, Tooltip } from "flowbite-react";
+import { Badge, Button, Card, Tooltip } from "flowbite-react";
 import $ from "jquery";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { enableOrDisableExam, setEditedExam } from "../../features/examSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import { tailwindCss } from "../../tailwind";
+import checkExamTime, { noticePeriodMappings } from "../../utils/checkExamTime";
 import EnableOrDisable from "../common/EnableOrDisable";
 import MyButton from "../common/MyButton";
+import ViewDetails from "../common/ViewDetails";
 import TableModalViewer from "../utils/tables/TableModalViewer";
 import RegisterList from "./RegisterList";
-// import { noticePeriodMappings } from "../../pages/takeTests/TakeTestPage";
-import checkExamTime, { noticePeriodMappings } from "../../utils/checkExamTime";
+import TestList from "./TestList";
 
 function ExamTableBody({ rows, setIsEdit }) {
     const dispatch = useDispatch();
@@ -51,9 +52,47 @@ function ExamTableBody({ rows, setIsEdit }) {
                         }`}
                         key={row.id}
                     >
-                        <td className={tailwindCss.tableCell}>{row.id}</td>
+                        <td className={tailwindCss.tableCell}>
+                            {" "}
+                            <Tooltip content={"shouldShowInfoMessage"}>
+                                <Button
+                                    style={{ backgroundColor: "none" }}
+                                    onClick={() => {
+                                        $(`#viewExamDetails${row.id}`).css("display", "flex");
+                                    }}
+                                    // disabled={!shouldShowInfo}
+                                >
+                                    {row.id}
+                                </Button>
+                                <TableModalViewer
+                                    modalId={`viewExamDetails${row.id}`}
+                                    modalLabel='Thông tin lớp tín chỉ'
+                                    ModalBody={
+                                        <ViewDetails
+                                            Header={
+                                                <Card>
+                                                    <div
+                                                        className='flex items-center justify-between w-3/6 m-auto
+                                                        
+                                                    '
+                                                    ></div>
+                                                </Card>
+                                            }
+                                            labels={[
+                                                `Danh sách thi (${row.tempTakeExams.length})`,
+                                                `Danh sách đề thi (${row.tests.length})`,
+                                            ]}
+                                            data={[
+                                                <RegisterList takeExams={row.tempTakeExams} />,
+                                                <TestList rows={row.tests} />,
+                                            ]}
+                                        />
+                                    }
+                                />
+                            </Tooltip>
+                        </td>
                         <td className={tailwindCss.tableCell} style={{ maxWidth: "200px" }}>
-                            {row.name.split("-")[5] + "-" + row.name.split("-")[6]}
+                            {row.name}
                         </td>
                         <td className={tailwindCss.tableCell}>{row.subjectId}</td>
                         <td className={tailwindCss.tableCell}>{row.subjectName}</td>
@@ -73,21 +112,6 @@ function ExamTableBody({ rows, setIsEdit }) {
                         <td className={tailwindCss.tableCell}>{row.time} phút</td>
                         <td className={tailwindCss.tableCell}>{row.teacherName}</td>
                         <td className={`${tailwindCss.tableCell} flex items-center`}>
-                            <div className='mr-2'>
-                                <Tooltip content='Xem danh sách thi' placement='top'>
-                                    <MyButton
-                                        type='view'
-                                        onClick={() => {
-                                            $(`#studentsViewer${index}`).css("display", "flex");
-                                        }}
-                                    />
-                                    <TableModalViewer
-                                        modalId={`studentsViewer${index}`}
-                                        modalLabel={`Danh sách sinh viên (${row.tempTakeExams.length})`}
-                                        ModalBody={<RegisterList takeExams={row.tempTakeExams} />}
-                                    />
-                                </Tooltip>
-                            </div>
                             {!userRoles.includes("Sinh viên") && (
                                 <>
                                     <div className='mr-2'>

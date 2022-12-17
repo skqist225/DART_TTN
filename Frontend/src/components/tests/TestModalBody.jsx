@@ -1,27 +1,25 @@
+import { Collapse, FormControlLabel, Switch } from "@mui/material";
+import $ from "jquery";
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { useFieldArray } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { QuestionTableBody } from "..";
 import { chapterState, fetchAllChapters } from "../../features/chapterSlice";
 import {
-    fetchAllQuestions,
     loadQuestionsByCriteria,
     queryAvailableQuestions,
     questionState,
     setQuestions,
 } from "../../features/questionSlice";
 import { subjectState } from "../../features/subjectSlice";
+import { setAddTestDisabled, testState } from "../../features/testSlice";
+import { questionColumnsTestPage } from "../../pages/columns";
+import Help from "../../partials/header/Help";
+import { tailwindCss } from "../../tailwind";
 import TableHeader from "../utils/tables/TableHeader";
 import TablePagination from "../utils/tables/TablePagination";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
-import { QuestionTableBody } from "..";
-import { tailwindCss } from "../../tailwind";
-import { setAddTestDisabled, testState } from "../../features/testSlice";
-import $ from "jquery";
-import { questionColumnsTestPage } from "../../pages/columns";
-import Datepicker from "../../partials/actions/Datepicker";
-import { Tab, Tabs } from "@mui/material";
-import { a11yProps, TabPanel } from "../exams/ExamModalBody";
 
 const levelOptions = [
     {
@@ -48,10 +46,8 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
     const [selectedSubject, setSelectedSubject] = useState(null);
     const [selectedNumber, setSelectedNumber] = useState("");
     const [page, setPage] = useState(1);
-    const [page2, setPage2] = useState(1);
-    const [tabValue, setTabValue] = useState(0);
-    const [allQuestions, setAllQuestions] = useState([]);
     const [disableCurrentQuestionInput, setDisableCurrentQuestionInput] = useState(false);
+    const [levelOptionsLocal, setLevelOptionsLocal] = useState([]);
 
     const { editedTest, errorObject, addTestDisabled } = useSelector(testState);
     const { subjects } = useSelector(subjectState);
@@ -59,15 +55,58 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
     const { questions, totalPages, totalElements, queryAvailableQuestionsArr } =
         useSelector(questionState);
 
+    function lookupLevel(level) {
+        if (level === "Dễ") {
+            return "EASY";
+        } else if ("Trung bình") {
+            return "MEDIUM";
+        } else {
+            return "HARD";
+        }
+    }
+
     useEffect(() => {
         console.log("editedTest: ", editedTest);
         if (editedTest) {
-            setValue("id", editedTest.id);
-            setValue("name", editedTest.name);
-            dispatch(fetchAllQuestions({ page: 0, subject: editedTest.subjectId }));
+            setValue("testId", editedTest.id);
+            setValue("testName", editedTest.name);
+            editedTest.criteria.forEach(({ chapter, levelAndNumbers }) => {
+                levelAndNumbers.forEach(({ level, numberOfQuestions, chapterId }) => {
+                    editPrepend({ chapterId, level: lookupLevel(level), numberOfQuestions });
+                });
+            });
+            let totalActiveQuestionsOfSubject = 0;
+            const tempLevelOptionsLocal = [];
+            editedTest.subjectChapters.forEach(
+                ({
+                    tempQuestions,
+                    numberOfEasyQuestions,
+                    numberOfMediumQuestions,
+                    numberOfHardQuestions,
+                    name,
+                }) => {
+                    totalActiveQuestionsOfSubject += parseInt(tempQuestions.length);
+                    tempLevelOptionsLocal.push({
+                        chapterName: name,
+                        levelAndItsNumber: [
+                            `Dễ (${numberOfEasyQuestions || 0})`,
+                            `Trung bình (${numberOfMediumQuestions || 0})`,
+                            `Khó (${numberOfHardQuestions || 0})`,
+                        ],
+                    });
+                }
+            );
+            setLevelOptionsLocal(tempLevelOptionsLocal);
+
+            $("#loadQuestionTestPageButton").trigger("click");
+            setValue("testSubjectId", editedTest.subjectId);
+            setValue("testSubjectName", editedTest.subjectName);
+            setValue("totalSelected", editedTest.numberOfQuestions);
+            setValue("totalActiveQuestions", totalActiveQuestionsOfSubject);
         } else {
-            setValue("id", "");
-            setValue("name", "");
+            setValue("testId", "");
+            setValue("totalSelected", 0);
+            setValue("totalActiveQuestions", "");
         }
     }, [editedTest]);
 
@@ -77,28 +116,22 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
     });
 
     const {
-        fields: fds,
-        prepend: prd,
-        remove: rm,
+        fields: editFields,
+        prepend: editPrepend,
+        remove: editRemove,
     } = useFieldArray({
         control,
-        name: "editedQuestions",
-    });
-
-    const {
-        fields: fds2,
-        prepend: prd2,
-        remove: rm2,
-    } = useFieldArray({
-        control,
-        name: "etdQsts",
+        name: "criteria2",
     });
 
     useEffect(() => {
-        if (questions && questions.length) {
-            fetchDataByPageNumber2(1);
+        if (editFields && editFields.length) {
+            editFields.forEach(data => {
+                const { chapterId, id, level } = data;
+                dispatch(queryAvailableQuestions({ chapter: chapterId, level, filterIndex: id }));
+            });
         }
-    }, [questions]);
+    }, [editFields]);
 
     useEffect(() => {
         if (subjects && subjects.length) {
@@ -136,7 +169,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
 
     function onChapterChange(event, fieldId) {
         const index = $(event.target).data("index");
-        const criteria = getValues("criteria");
+        let criteria = getValues(editedTest ? "criteria2" : "criteria");
         const chapter = $(event.target).val();
         const level = criteria[index].level;
 
@@ -147,7 +180,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
 
     function onLevelChange(event, fieldId) {
         const index = $(event.target).data("index");
-        const criteria = getValues("criteria");
+        let criteria = getValues(editedTest ? "criteria2" : "criteria");
         const chapter = criteria[index].chapterId;
         const level = $(event.target).val();
 
@@ -156,28 +189,9 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
         }
     }
 
-    const handleChange = (event, newValue) => {
-        setTabValue(newValue);
-    };
-
     const recordsPerPage = 10;
     const fetchDataByPageNumber = pageNumber => {
         setPage(pageNumber);
-    };
-
-    const recordsPerPage2 = 10;
-    const fetchDataByPageNumber2 = pageNumber => {
-        if (editedTest) {
-            setAllQuestions(
-                questions
-                    .filter(({ id }) => !editedTest.questions.map(({ id }) => id).includes(id))
-                    .slice(
-                        (page2 - 1) * recordsPerPage2,
-                        (page2 - 1) * recordsPerPage2 + recordsPerPage2
-                    )
-            );
-            setPage2(pageNumber);
-        }
     };
 
     const handleCurrentQuestionInputChange = ({ target: { value } }) => {
@@ -185,7 +199,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
     };
 
     const handleFilterChange = () => {
-        const criteria = getValues("criteria");
+        let criteria = getValues(editedTest ? "criteria2" : "criteria");
         const totalSelectedQuestion = criteria.reduce(
             (acc, { numberOfQuestions }) => acc + parseInt(numberOfQuestions) || 0,
             0
@@ -195,6 +209,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
     };
 
     console.log(errors);
+    const [isChecked, setIsChecked] = React.useState(true);
 
     return (
         <div>
@@ -220,7 +235,9 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                 register={register}
                                 name='testSubjectId'
                                 options={subjects.map(s => ({
-                                    title: `${s.name} ${s.id.includes("CLC") ? "CLC" : ""}`,
+                                    title: `${s.name} ${s.id.includes("CLC") ? "CLC" : ""} (${
+                                        s.numberOfActiveQuestions
+                                    })`,
                                     value: s.id,
                                 }))}
                                 setValue={setValue}
@@ -259,155 +276,185 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                             />
                         </div>
                     </div>
-                    <ul className='w-full'>
-                        <div className='uppercase flex items-center w-full justify-center text-blue-600 font-semibold'>
-                            Tiêu chí chọn đề thi ({fields.length})
-                        </div>
-                        {fields.map((field, index) => (
-                            <li
-                                className={`mt-3 flex items-end ${
-                                    errors &&
-                                    errors.criteria &&
-                                    errors.criteria.length &&
-                                    errors.criteria[index]
-                                        ? "items-center"
-                                        : "items-end"
-                                }`}
-                                key={index}
-                            >
-                                <div
-                                    className={`flex ${
-                                        errors && errors.criteria && errors.criteria.length
-                                            ? "items-start"
-                                            : "items-end"
-                                    } w-full`}
-                                >
-                                    <div className='w-full mr-3'>
-                                        <Select
-                                            label='Chương'
-                                            register={register}
-                                            name={`criteria.${index}.chapterId`}
-                                            error={
-                                                errors.criteria &&
-                                                errors.criteria[`${index}`] &&
-                                                errors.criteria[`${index}`].chapterId &&
-                                                errors.criteria[`${index}`].chapterId.message
-                                            }
-                                            options={chapters.map(s => ({
-                                                title: s.name + ` (${s.numberOfActiveQuestions})`,
-                                                value: s.id,
-                                            }))}
-                                            index={index}
-                                            setValue={setValue}
-                                            defaultValue={chapters && chapters[0] && chapters[0].id}
-                                            onChangeHandler={e => {
-                                                onChapterChange(e, field.id);
-                                            }}
-                                        />
-                                    </div>
-                                    <div className='w-full mr-3'>
-                                        <Select
-                                            label='Độ khó'
-                                            register={register}
-                                            error={
-                                                errors.criteria &&
-                                                errors.criteria[`${index}`] &&
-                                                errors.criteria[`${index}`].level &&
-                                                errors.criteria[`${index}`].level.message
-                                            }
-                                            name={`criteria.${index}.level`}
-                                            index={index}
-                                            options={levelOptions}
-                                            required
-                                            onChangeHandler={e => {
-                                                onLevelChange(e, field.id);
-                                            }}
-                                        />
-                                    </div>
-                                    <div className='w-full mr-3'>
-                                        <Input
-                                            label={`Số lượng (Hiện có: ${
-                                                (queryAvailableQuestionsArr &&
-                                                    queryAvailableQuestionsArr[field.id] &&
-                                                    queryAvailableQuestionsArr[field.id]) ||
-                                                0
-                                            })`}
-                                            register={register}
-                                            error={
-                                                errors.criteria &&
-                                                errors.criteria[`${index}`] &&
-                                                errors.criteria[`${index}`].numberOfQuestions &&
-                                                errors.criteria[`${index}`].numberOfQuestions
-                                                    .message
-                                            }
-                                            name={`criteria.${index}.numberOfQuestions`}
-                                            required
-                                            type='number'
-                                            onChangeHandler={handleFilterChange}
-                                        />
-                                    </div>
-                                    <input
-                                        type='hidden'
-                                        {...register(`criteria.${index}.fieldIndex`)}
-                                        value={field.id}
-                                    />
+                    <div className='w-full'>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={isChecked}
+                                    onChange={() => {
+                                        setIsChecked(prev => !prev);
+                                    }}
+                                />
+                            }
+                            label={
+                                isChecked
+                                    ? "Thu gọn tiêu chí chọn đề thi"
+                                    : "Mở rộng tiêu chí chọn đề thi"
+                            }
+                        />{" "}
+                        <Collapse in={isChecked}>
+                            <ul className='w-full'>
+                                <div className='uppercase flex items-center w-full justify-center text-blue-600 font-semibold'>
+                                    Tiêu chí chọn đề thi ({fields.length}){" "}
                                 </div>
-                                <div>
-                                    <button
-                                        type='button'
-                                        className={tailwindCss.deleteOutlineButton}
-                                        onClick={() => {
-                                            remove(index);
-                                            if (index === 0) {
-                                                dispatch(setQuestions([]));
-                                                setValue("numberOfQuestions", selectedNumber);
-                                                setDisableCurrentQuestionInput(false);
-                                            } else {
-                                                const criteria = getValues("criteria");
-                                                dispatch(
-                                                    loadQuestionsByCriteria({
-                                                        subject: $("#testSubjectId").val(),
-                                                        criteria,
-                                                    })
-                                                );
-                                            }
-                                            handleFilterChange();
-                                        }}
+                                {fields.map((field, index) => (
+                                    <li
+                                        className={`mt-3 flex items-end ${
+                                            errors &&
+                                            errors.criteria &&
+                                            errors.criteria.length &&
+                                            errors.criteria[index]
+                                                ? "items-center"
+                                                : "items-end"
+                                        }`}
+                                        key={index}
                                     >
-                                        Xóa
-                                    </button>
-                                </div>
-                            </li>
-                        ))}
-                    </ul>
-                    <div className='mt-3 self-start'>
-                        <button
-                            type='button'
-                            className={`${tailwindCss.greenOutlineButton} ${
-                                addTestDisabled &&
-                                "cursor-not-allowed hover:text-green-700 hover:bg-white"
-                            }`}
-                            onClick={e => {
-                                e.preventDefault();
-                                e.stopPropagation();
+                                        <div
+                                            className={`flex ${
+                                                errors && errors.criteria && errors.criteria.length
+                                                    ? "items-start"
+                                                    : "items-end"
+                                            } w-full`}
+                                        >
+                                            <div className='w-full mr-3'>
+                                                <Select
+                                                    label='Chương'
+                                                    register={register}
+                                                    name={`criteria.${index}.chapterId`}
+                                                    error={
+                                                        errors.criteria &&
+                                                        errors.criteria[`${index}`] &&
+                                                        errors.criteria[`${index}`].chapterId &&
+                                                        errors.criteria[`${index}`].chapterId
+                                                            .message
+                                                    }
+                                                    options={chapters
+                                                        .filter(
+                                                            ({ numberOfActiveQuestions }) =>
+                                                                numberOfActiveQuestions > 0
+                                                        )
+                                                        .map(s => ({
+                                                            title:
+                                                                s.name +
+                                                                ` (${s.numberOfActiveQuestions})`,
+                                                            value: s.id,
+                                                        }))}
+                                                    index={index}
+                                                    onChangeHandler={e => {
+                                                        onChapterChange(e, field.id);
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className='w-full mr-3'>
+                                                <Select
+                                                    label='Độ khó'
+                                                    register={register}
+                                                    error={
+                                                        errors.criteria &&
+                                                        errors.criteria[`${index}`] &&
+                                                        errors.criteria[`${index}`].level &&
+                                                        errors.criteria[`${index}`].level.message
+                                                    }
+                                                    name={`criteria.${index}.level`}
+                                                    index={index}
+                                                    options={levelOptions}
+                                                    required
+                                                    onChangeHandler={e => {
+                                                        onLevelChange(e, field.id);
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className='w-full mr-3'>
+                                                <Input
+                                                    label={`Số lượng (Hiện có: ${
+                                                        (queryAvailableQuestionsArr &&
+                                                            queryAvailableQuestionsArr[field.id] &&
+                                                            queryAvailableQuestionsArr[field.id]) ||
+                                                        0
+                                                    })`}
+                                                    register={register}
+                                                    error={
+                                                        errors.criteria &&
+                                                        errors.criteria[`${index}`] &&
+                                                        errors.criteria[`${index}`]
+                                                            .numberOfQuestions &&
+                                                        errors.criteria[`${index}`]
+                                                            .numberOfQuestions.message
+                                                    }
+                                                    name={`criteria.${index}.numberOfQuestions`}
+                                                    required
+                                                    type='number'
+                                                    onChangeHandler={handleFilterChange}
+                                                />
+                                            </div>
+                                            <input
+                                                type='hidden'
+                                                {...register(`criteria.${index}.fieldIndex`)}
+                                                value={field.id}
+                                            />
+                                        </div>
+                                        <div>
+                                            <button
+                                                type='button'
+                                                className={tailwindCss.deleteOutlineButton}
+                                                onClick={() => {
+                                                    remove(index);
+                                                    if (index === 0) {
+                                                        dispatch(setQuestions([]));
+                                                        setValue(
+                                                            "numberOfQuestions",
+                                                            selectedNumber
+                                                        );
+                                                        setDisableCurrentQuestionInput(false);
+                                                    } else {
+                                                        const criteria = getValues("criteria");
+                                                        dispatch(
+                                                            loadQuestionsByCriteria({
+                                                                subject: $("#testSubjectId").val(),
+                                                                criteria,
+                                                            })
+                                                        );
+                                                    }
+                                                    handleFilterChange();
+                                                }}
+                                            >
+                                                Xóa
+                                            </button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>
+                            <div className='mt-3 self-start'>
+                                <button
+                                    type='button'
+                                    className={`${tailwindCss.greenOutlineButton} ${
+                                        addTestDisabled &&
+                                        "cursor-not-allowed hover:text-green-700 hover:bg-white"
+                                    }`}
+                                    onClick={e => {
+                                        e.preventDefault();
+                                        e.stopPropagation();
 
-                                if (fields.length === 0) {
-                                    setSelectedNumber($("#numberOfQuestions").val());
-                                    setValue("numberOfQuestions", "");
-                                }
-                                prepend({
-                                    chapterId: chapters[0].id,
-                                    level: levelOptions[0].value,
-                                    numberOfQuestions: 0,
-                                });
-                                setDisableCurrentQuestionInput(true);
-                                clearErrors("numberOfQuestions");
-                            }}
-                            disabled={addTestDisabled}
-                        >
-                            Thêm tiêu chí {fields.length + 1}
-                        </button>
+                                        if (fields.length === 0) {
+                                            setSelectedNumber($("#numberOfQuestions").val());
+                                            setValue("numberOfQuestions", "");
+                                        }
+                                        prepend({
+                                            chapterId: chapters[0].id,
+                                            level: levelOptions[0].value,
+                                            numberOfQuestions: 0,
+                                        });
+                                        setDisableCurrentQuestionInput(true);
+                                        clearErrors("numberOfQuestions");
+                                    }}
+                                    disabled={addTestDisabled}
+                                >
+                                    Thêm tiêu chí {fields.length + 1}
+                                </button>
+                            </div>
+                        </Collapse>
                     </div>
+
                     {questions && questions.length > 0 && (
                         <div className='w-full'>
                             <div className='uppercase text-center font-semibold text-green-700 w-full'>
@@ -434,74 +481,263 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                 </div>
             ) : (
                 <div className='col-flex items-center justify-center w-full'>
-                    <div className='w-full my-5 mr-5'>
-                        <Input
-                            label='Tên đề thi *'
-                            error={errors.testName && errors.testName.message}
-                            register={register}
-                            name='testName'
-                        />
+                    <div className='w-full flex items-center'>
+                        <div className='w-full mr-5'>
+                            <Input
+                                label='Tên đề thi *'
+                                error={errors.testName && errors.testName.message}
+                                register={register}
+                                name='testName'
+                            />
+                            <Input register={register} name='testSubjectId' type='hidden' />
+                            <Input register={register} name='testId' type='hidden' />
+                        </div>
+                        <div className='w-full'>
+                            <Input
+                                label='Môn học'
+                                error={errors.testName && errors.testName.message}
+                                register={register}
+                                name='testSubjectName'
+                                readOnly={true}
+                            />
+                        </div>
                     </div>
-                    <Tabs value={tabValue} onChange={handleChange} centered>
-                        <Tab label='Câu hỏi hiện có' {...a11yProps(0)} />
-                        <Tab label='Danh sách câu hỏi' {...a11yProps(1)} />
-                    </Tabs>
-                    <TabPanel value={tabValue} index={0}>
-                        <div>
-                            {editedTest.questions && editedTest.questions.length > 0 && (
-                                <div className='w-full'>
-                                    <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                                        <TableHeader
-                                            columns={questionColumnsTestPage}
-                                            addCheckbox
-                                        />
-                                        <QuestionTableBody
-                                            rows={editedTest.questions}
-                                            page={page}
-                                            addTest
-                                            dispatch={dispatch}
-                                            register={register}
-                                            addCheckbox
-                                            check={true}
-                                        />
-                                    </table>
-                                    <TablePagination
-                                        totalElements={editedTest.questions.length}
-                                        totalPages={Math.ceil(editedTest.questions.length / 10)}
-                                        setPage={setPage}
+                    <div className='w-full flex items-center my-2'>
+                        <div className='w-full mr-5'>
+                            <Input
+                                label='Số câu hỏi hiện có'
+                                register={register}
+                                name='totalActiveQuestions'
+                                readOnly={true}
+                            />
+                        </div>
+                        <div className='w-full'>
+                            <Input
+                                label='Số câu hỏi đã chọn'
+                                register={register}
+                                name='totalSelected'
+                                readOnly={true}
+                            />
+                        </div>
+                    </div>
+                    <div className='w-full'>
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={isChecked}
+                                    onChange={() => {
+                                        setIsChecked(prev => !prev);
+                                    }}
+                                />
+                            }
+                            label={
+                                isChecked
+                                    ? "Thu gọn tiêu chí chọn đề thi"
+                                    : "Mở rộng tiêu chí chọn đề thi"
+                            }
+                        />
+                        <Collapse in={isChecked}>
+                            <ul className='w-full'>
+                                <div className='uppercase flex items-center w-full justify-center text-blue-600 font-semibold'>
+                                    Tiêu chí chọn đề thi ({editFields.length}){" "}
+                                    <Help
+                                        children={
+                                            <div>
+                                                <div className='text-black uppercase'>
+                                                    Số lượng câu hỏi theo chương và độ khó
+                                                </div>
+                                                {levelOptionsLocal.map(
+                                                    ({ chapterName, levelAndItsNumber }) => (
+                                                        <div key={chapterName} className='px-4'>
+                                                            <div className='text-left text-black'>
+                                                                {chapterName}
+                                                            </div>
+                                                            <ul>
+                                                                {levelAndItsNumber.map(value => (
+                                                                    <li
+                                                                        key={value}
+                                                                        className='text-left ml-10 text-black'
+                                                                    >
+                                                                        {value}
+                                                                    </li>
+                                                                ))}
+                                                            </ul>
+                                                        </div>
+                                                    )
+                                                )}
+                                            </div>
+                                        }
                                     />
                                 </div>
-                            )}
+                                {editFields.map((field, index) => (
+                                    <li
+                                        className={`mt-3 flex items-end ${
+                                            errors &&
+                                            errors.criteria2 &&
+                                            errors.criteria2.length &&
+                                            errors.criteria2[index]
+                                                ? "items-center"
+                                                : "items-end"
+                                        }`}
+                                        key={index}
+                                    >
+                                        <div
+                                            className={`flex ${
+                                                errors &&
+                                                errors.criteria2 &&
+                                                errors.criteria2.length
+                                                    ? "items-start"
+                                                    : "items-end"
+                                            } w-full`}
+                                        >
+                                            <div className='w-full mr-3'>
+                                                <Select
+                                                    label='Chương'
+                                                    register={register}
+                                                    name={`criteria2.${index}.chapterId`}
+                                                    error={
+                                                        errors.criteria2 &&
+                                                        errors.criteria2[`${index}`] &&
+                                                        errors.criteria2[`${index}`].chapterId &&
+                                                        errors.criteria2[`${index}`].chapterId
+                                                            .message
+                                                    }
+                                                    options={editedTest.subjectChapters.map(s => ({
+                                                        title:
+                                                            s.name +
+                                                            ` (${s.numberOfActiveQuestions})`,
+                                                        value: s.id,
+                                                    }))}
+                                                    index={index}
+                                                    onChangeHandler={e => {
+                                                        onChapterChange(e, field.id);
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className='w-full mr-3'>
+                                                <Select
+                                                    label={
+                                                        <div>
+                                                            Độ khó
+                                                            {/* <Help helperText={}/> */}
+                                                        </div>
+                                                    }
+                                                    register={register}
+                                                    error={
+                                                        errors.criteria2 &&
+                                                        errors.criteria2[`${index}`] &&
+                                                        errors.criteria2[`${index}`].level &&
+                                                        errors.criteria2[`${index}`].level.message
+                                                    }
+                                                    name={`criteria2.${index}.level`}
+                                                    index={index}
+                                                    options={levelOptions}
+                                                    required
+                                                    onChangeHandler={e => {
+                                                        onLevelChange(e, field.id);
+                                                    }}
+                                                />
+                                            </div>
+                                            <div className='w-full mr-3'>
+                                                <Input
+                                                    label={`Số lượng (Hiện có: ${
+                                                        (queryAvailableQuestionsArr &&
+                                                            queryAvailableQuestionsArr[field.id] &&
+                                                            queryAvailableQuestionsArr[field.id]) ||
+                                                        0
+                                                    })`}
+                                                    register={register}
+                                                    error={
+                                                        errors.criteria2 &&
+                                                        errors.criteria2[`${index}`] &&
+                                                        errors.criteria2[`${index}`]
+                                                            .numberOfQuestions &&
+                                                        errors.criteria2[`${index}`]
+                                                            .numberOfQuestions.message
+                                                    }
+                                                    name={`criteria2.${index}.numberOfQuestions`}
+                                                    required
+                                                    type='number'
+                                                    onChangeHandler={handleFilterChange}
+                                                />
+                                            </div>
+                                            <input
+                                                type='hidden'
+                                                {...register(`criteria2.${index}.fieldIndex`)}
+                                                value={field.id}
+                                            />
+                                        </div>
+                                        <div>
+                                            <button
+                                                type='button'
+                                                className={tailwindCss.deleteOutlineButton}
+                                                onClick={() => {
+                                                    editRemove(index);
+                                                    if (index === 0) {
+                                                        dispatch(setQuestions([]));
+                                                        setValue(
+                                                            "numberOfQuestions",
+                                                            selectedNumber
+                                                        );
+                                                        setDisableCurrentQuestionInput(false);
+                                                    } else {
+                                                        const criteria = getValues("criteria");
+                                                        dispatch(
+                                                            loadQuestionsByCriteria({
+                                                                subject: $("#testSubjectId").val(),
+                                                                criteria,
+                                                            })
+                                                        );
+                                                    }
+                                                    handleFilterChange();
+                                                }}
+                                            >
+                                                Xóa
+                                            </button>
+                                        </div>
+                                    </li>
+                                ))}
+                            </ul>{" "}
+                        </Collapse>
+                        <div className='mt-3 self-start'>
+                            <button
+                                type='button'
+                                className={`${tailwindCss.greenOutlineButton} ${
+                                    addTestDisabled &&
+                                    "cursor-not-allowed hover:text-green-700 hover:bg-white"
+                                }`}
+                                onClick={e => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+
+                                    editPrepend({
+                                        chapterId: editedTest.subjectChapters[0].id,
+                                        level: "",
+                                        numberOfQuestions: 0,
+                                    });
+                                }}
+                                disabled={addTestDisabled}
+                            >
+                                Thêm tiêu chí {editFields.length + 1}
+                            </button>
                         </div>
-                    </TabPanel>
-                    <TabPanel value={tabValue} index={1}>
-                        {allQuestions && allQuestions.length > 0 && (
-                            <div>
-                                <div className='uppercase'>Danh sách câu hỏi</div>
-                                <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                                    <TableHeader columns={questionColumnsTestPage} addCheckbox />
-                                    <QuestionTableBody
-                                        rows={allQuestions}
-                                        page={page}
-                                        addTest
-                                        dispatch={dispatch}
-                                        register={register}
-                                        addCheckbox
-                                        check={false}
-                                    />
-                                </table>
-                                <TablePagination
-                                    totalElements={questions.length - editedTest.questions.length}
-                                    totalPages={Math.ceil(
-                                        (questions.length - editedTest.questions.length) /
-                                            recordsPerPage2
-                                    )}
-                                    setPage={setPage2}
-                                    fetchDataByPageNumber={fetchDataByPageNumber2}
-                                />
+                    </div>
+                    {questions && questions.length > 0 && (
+                        <div className='w-full' style={{ maxHeight: "500px", overflow: "scroll" }}>
+                            <div className='uppercase text-center font-semibold text-green-700 w-full'>
+                                Danh sách câu hỏi
                             </div>
-                        )}
-                    </TabPanel>
+                            <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
+                                <TableHeader columns={questionColumnsTestPage} />
+                                <QuestionTableBody
+                                    rows={questions}
+                                    pageNumber={page}
+                                    addTest
+                                    dispatch={dispatch}
+                                />
+                            </table>
+                        </div>
+                    )}
                 </div>
             )}
         </div>
@@ -509,3 +745,9 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
 }
 
 export default TestModalBody;
+// levelOptionsLocal
+//     .filter(({ id }) => $(`#criteria2.${index}.chapterId`).val().toString() !== id.toString())
+//     .map(({ title, value }) => ({
+//         title,
+//         value,
+//     }));

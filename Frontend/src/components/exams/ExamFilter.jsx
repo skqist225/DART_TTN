@@ -44,27 +44,40 @@ function ExamFilter({ setValue }) {
                 e.stopPropagation();
                 handleSubmit(onSubmit)(e);
             }}
-            className='flex items-center'
         >
-            <div className='mr-2 w-full flex items-center justify-start'>
-                {!userRoles.includes("Sinh viên") ? (
-                    <div className='flex items-center'>
-                        <div className='mr-5'>
-                            <Select
-                                label='lớp tín chỉ'
-                                name='creditClassFilter'
-                                register={register}
-                                options={creditClasses.map(
-                                    ({ id, schoolYear, semester, subjectName, group }) => ({
-                                        title: `${schoolYear} ${semester} ${subjectName} ${group}`,
-                                        value: id,
-                                    })
-                                )}
-                                onChangeHandler={handleCreditClassChange}
-                                hiddenOption
-                                width={"w-80"}
-                            />
-                        </div>
+            <div className='flex items-center'>
+                <div className='mr-2 w-full flex items-center'>
+                    {!userRoles.includes("Sinh viên") ? (
+                        <>
+                            <div className='mr-5'>
+                                <Select
+                                    label='lớp tín chỉ'
+                                    name='creditClassFilter'
+                                    register={register}
+                                    options={creditClasses.map(
+                                        ({ id, schoolYear, semester, subjectName, group }) => ({
+                                            title: `${schoolYear} ${semester} ${subjectName} ${group}`,
+                                            value: id,
+                                        })
+                                    )}
+                                    onChangeHandler={handleCreditClassChange}
+                                    hiddenOption
+                                    width={"w-80"}
+                                />
+                            </div>
+                            <div>
+                                <Select
+                                    label='loại kỳ thi'
+                                    name='examTypesFilter'
+                                    register={register}
+                                    options={examTypes}
+                                    onChangeHandler={handleExamTypesChange}
+                                    hiddenOption
+                                    width={"w-52"}
+                                />
+                            </div>
+                        </>
+                    ) : (
                         <div>
                             <Select
                                 label='loại kỳ thi'
@@ -76,61 +89,49 @@ function ExamFilter({ setValue }) {
                                 width={"w-52"}
                             />
                         </div>
-                    </div>
-                ) : (
-                    <div>
-                        <Select
-                            label='loại kỳ thi'
-                            name='examTypesFilter'
-                            register={register}
-                            options={examTypes}
-                            onChangeHandler={handleExamTypesChange}
-                            hiddenOption
-                            width={"w-52"}
-                        />
-                    </div>
-                )}
-            </div>
-            <div>
-                <button
-                    type='button'
-                    className={tailwindCss.clearFilterButton}
-                    onClick={() => {
-                        if (user.roles.map(({ name }) => name).includes("Sinh viên")) {
-                            dispatch(
-                                fetchAllExams({
-                                    page: 1,
-                                    query: "",
-                                    sortField: "id",
-                                    sortDir: "desc",
-                                    subject: "",
-                                    student: user.id,
-                                    schoolYears: "",
-                                    semester: "",
-                                    type: "",
-                                })
-                            );
-                        } else {
-                            dispatch(
-                                fetchAllExams({
-                                    page: 1,
-                                    query: "",
-                                    sortField: "id",
-                                    sortDir: "desc",
-                                    subject: "",
-                                    teacher: "",
-                                    student: "",
-                                    type: "",
-                                })
-                            );
-                        }
+                    )}
+                </div>
+                <div>
+                    <button
+                        type='button'
+                        className={tailwindCss.clearFilterButton}
+                        onClick={() => {
+                            if (userRoles.includes("Sinh viên")) {
+                                dispatch(
+                                    fetchAllExams({
+                                        page: 1,
+                                        query: "",
+                                        sortField: "id",
+                                        sortDir: "desc",
+                                        subject: "",
+                                        student: user.id,
+                                        schoolYears: "",
+                                        semester: "",
+                                        type: "",
+                                    })
+                                );
+                            } else {
+                                dispatch(
+                                    fetchAllExams({
+                                        page: 1,
+                                        query: "",
+                                        sortField: "id",
+                                        sortDir: "desc",
+                                        subject: "",
+                                        teacher: "",
+                                        student: "",
+                                        type: "",
+                                    })
+                                );
+                            }
 
-                        $("#creditClassFilter").val("");
-                        $("#examTypesFilter").val("");
-                    }}
-                >
-                    Xóa bộ lọc
-                </button>
+                            $("#creditClassFilter").val("");
+                            $("#examTypesFilter").val("");
+                        }}
+                    >
+                        Xóa bộ lọc
+                    </button>
+                </div>
             </div>
         </form>
     );

@@ -183,6 +183,7 @@ const initialState = {
     },
     editExam: {
         successMessage: null,
+        loading: false,
     },
     deleteExam: {
         successMessage: null,
@@ -305,10 +306,12 @@ const examSlice = createSlice({
             .addCase(editExam.pending, (state, _) => {
                 state.editExam.successMessage = null;
                 state.errorObject = null;
+                state.editExam.loading = true;
             })
             .addCase(editExam.fulfilled, (state, { payload }) => {
                 if (payload) {
                     state.editExam.successMessage = "Chỉnh sửa ca thi thành công";
+                    state.editExam.loading = false;
                 }
             })
             .addCase(editExam.rejected, (state, { payload }) => {
@@ -324,6 +327,7 @@ const examSlice = createSlice({
                         };
                     });
                 }
+                state.editExam.loading = false;
             })
 
             .addCase(deleteExam.pending, (state, _) => {

@@ -201,7 +201,6 @@ public class CreditClassRestController {
             @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit
     ) {
         CommonUtils commonUtils = new CommonUtils();
-        CreditClass creditClass = null;
         Subject subject = null;
         User teacher = null;
 
@@ -214,7 +213,6 @@ public class CreditClassRestController {
 
         catchCreditClassInputException(commonUtils, schoolYear, semester, subjectId, group,
                 teacherId);
-
 
         if (commonUtils.getArrayNode().size() > 0) {
             return new BadResponse<String>(commonUtils.getArrayNode().toString()).response();
@@ -250,12 +248,12 @@ public class CreditClassRestController {
                 creditCls.setGroup(group);
                 creditCls.setTeacher(teacher);
 
-                creditClass = creditClassService.save(creditCls);
+                 creditClassService.save(creditCls);
             } catch (NotFoundException exception) {
                 return new BadResponse<String>(exception.getMessage()).response();
             }
         } else {
-            creditClass = creditClassService.save(CreditClass.build(postCreateCreditClassDTO,
+            creditClassService.save(CreditClass.build(postCreateCreditClassDTO,
                     subject, teacher));
         }
 
@@ -279,6 +277,44 @@ public class CreditClassRestController {
             return new OkResponse<>(message).response();
         } catch (NotFoundException ex) {
             return new BadResponse<String>(ex.getMessage()).response();
+        }
+    }
+
+    @GetMapping("{id}/get")
+    public ResponseEntity<StandardJSONResponse<CreditClass>> getCreditClass(@PathVariable("id") Integer id) {
+        try {
+            CreditClass creditClass = creditClassService.findById(
+                    id);
+
+            List<Exam> exams = examService.findAllExamsIdByCreditClass(creditClass.getId());
+            creditClass.setExams(exams.stream().map(exam -> new ExamCreditClassPageDTO(exam.getId(),
+                    exam.getName(),
+                    exam.getExamDate(), exam.getNoticePeriod(), exam.getTime(), exam.getTests(),
+                    exam.getType(), exam.isTaken(), exam.isStatus(), exam.getTakeExams().size()
+            )).collect(Collectors.toList()));
+            int numberOfMidTermExam = 0,
+                    numberOfFinalTermExam = 0,
+                    numberOfMidTermExamCreated = 0,
+                    numberOfFinalTermExamCreated = 0;
+
+            for (ExamCreditClassPageDTO exam : creditClass.getExams()) {
+                if (exam.getType().equals("Giữa kỳ") && !exam.isStatus()) {
+                    numberOfMidTermExam++;
+                    numberOfMidTermExamCreated += exam.getNumberOfRegisters();
+                } else if (exam.getType().equals("Cuối kỳ") && !exam.isStatus()) {
+                    numberOfFinalTermExam++;
+                    numberOfFinalTermExamCreated += exam.getNumberOfRegisters();
+                }
+            }
+
+            creditClass.setNumberOfMidTermExam(numberOfMidTermExam);
+            creditClass.setNumberOfFinalTermExam(numberOfFinalTermExam);
+            creditClass.setNumberOfMidTermExamCreated(numberOfMidTermExamCreated);
+            creditClass.setNumberOfFinalTermExamCreated(numberOfFinalTermExamCreated);
+
+            return new OkResponse<>(creditClass).response();
+        } catch (NotFoundException ex) {
+            return new BadResponse<CreditClass>(ex.getMessage()).response();
         }
     }
 }

@@ -79,7 +79,7 @@ export const findCreditClass = createAsyncThunk(
     "creditClass/findCreditClass",
     async ({ id }, { rejectWithValue }) => {
         try {
-            const { data } = await api.get(`/creditClasses/${id}`);
+            const { data } = await api.get(`/creditClasses/${id}/get`);
 
             return { data };
         } catch ({ data: { error } }) {
@@ -144,6 +144,7 @@ const initialState = {
     loading: true,
     creditClasses: [],
     creditClassesForExamAdded: [],
+    creditClass: {},
     totalElements: 0,
     totalPages: 0,
     editedCreditClass: null,
@@ -221,7 +222,7 @@ const creditClassSlice = createSlice({
 
             .addCase(findCreditClass.pending, (state, { payload }) => {})
             .addCase(findCreditClass.fulfilled, (state, { payload }) => {
-                // state.Class = payload.data;
+                state.creditClass = payload.data;
             })
             .addCase(findCreditClass.rejected, (state, { payload }) => {})
 

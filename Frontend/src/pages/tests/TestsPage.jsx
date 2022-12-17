@@ -71,29 +71,65 @@ function TestsPage() {
         resolver: yupResolver(testSchema),
         defaultValues: {
             criteria: [],
-            editedQuestions: [],
-            etdQsts: [],
+            criteria2: [],
         },
     });
 
     const onSubmit = data => {
-        const {
-            criteria,
-            numberOfQuestions,
-            testSubjectId: subject,
-            testName,
-            id,
-            editedQuestions,
-            etdQsts,
-        } = data;
-
-        console.log(data);
+        const { criteria, numberOfQuestions, testSubjectId: subject, id, criteria2 } = data;
 
         let haveError = false;
 
         if (isEdit) {
-            console.log(id, editedQuestions);
-            // dispatch(editTest(data));
+            criteria2.forEach(({ chapterId, level, numberOfQuestions, fieldIndex }, index) => {
+                if (!chapterId) {
+                    setError(`criteria2.${index}.chapterId`, {
+                        type: "custom",
+                        message: "Chương không được để trống",
+                    });
+                    haveError = true;
+                }
+
+                if (!level) {
+                    setError(`criteria2.${index}.level`, {
+                        type: "custom",
+                        message: "Độ khó không được để trống",
+                    });
+                    haveError = true;
+                }
+
+                if (parseInt(numberOfQuestions) == 0) {
+                    setError(`criteria2.${index}.numberOfQuestions`, {
+                        type: "custom",
+                        message: "Số lượng phải lớn hơn 0",
+                    });
+
+                    haveError = true;
+                } else {
+                    if (queryAvailableQuestionsArr[fieldIndex] !== null) {
+                        if (parseInt(numberOfQuestions) > queryAvailableQuestionsArr[fieldIndex]) {
+                            setError(`criteria2.${index}.numberOfQuestions`, {
+                                type: "custom",
+                                message: "Số lượng không thể lớn hơn hiện có",
+                            });
+
+                            haveError = true;
+                        }
+                    }
+                }
+            });
+
+            if (haveError) {
+                dispatch(setQuestions([]));
+                return;
+            }
+
+            dispatch(
+                loadQuestionsByCriteria({
+                    subject,
+                    criteria: criteria2,
+                })
+            );
         } else {
             // If there is no criteria
             if (criteria.length === 0) {
@@ -231,6 +267,8 @@ function TestsPage() {
             dispatch(setEditedTest(null));
             dispatch(setQuestions([]));
         }
+
+        onCloseForm();
     }
 
     useEffect(() => {
@@ -260,13 +298,16 @@ function TestsPage() {
     function onCloseForm() {
         dispatch(setEditedTest(null));
         setValue("criteria", []);
+        setValue("criteria2", []);
+
+        dispatch(setQuestions([]));
 
         setValue("testName", `Đề thi ${subjects[0].name} ${new Date().getTime()}`);
         setValue("testSubjectId", subjects[0].id);
 
         clearErrors("criteria");
-
-        dispatch(setQueryAvailableQuestionsArr([]));
+        clearErrors("criteria2");
+        dispatch(setQueryAvailableQuestionsArr({}));
     }
 
     return (

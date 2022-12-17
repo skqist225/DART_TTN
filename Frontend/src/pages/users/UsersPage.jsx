@@ -231,8 +231,6 @@ const UsersPage = () => {
         }
     }, [amErrorMessage]);
 
-    console.log(eodErrorMessage);
-
     useEffect(() => {
         if (eodErrorMessage) {
             callToast("error", eodErrorMessage);
