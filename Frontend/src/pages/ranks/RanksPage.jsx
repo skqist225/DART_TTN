@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { Frame, RankFilter, RankTableBody, Table } from "../../components";
 import { creditClassState, fetchAllCreditClasses } from "../../features/creditClassSlice";
 import { persistUserState } from "../../features/persistUserSlice";
-import { fetchAllQuestions } from "../../features/questionSlice";
-import { fetchAllSubjects } from "../../features/subjectSlice";
 import {
     fetchAllTakeExams,
     getStudentRankingPosition,
@@ -27,9 +25,16 @@ function RanksPage() {
     useEffect(() => {
         if (userRoles.includes("Sinh viên")) {
             // Lấy ra danh sách tất cả lớp tín chỉ chưa hủy của sinh viên đang theo học
-            dispatch(fetchAllCreditClasses({ page: 0, active: true, student: user.id }));
+            dispatch(
+                fetchAllCreditClasses({
+                    page: 0,
+                    active: true,
+                    student: user.id,
+                    haveRegister: false,
+                })
+            );
         } else {
-            dispatch(fetchAllCreditClasses({ page: 0, active: true }));
+            dispatch(fetchAllCreditClasses({ page: 0, active: true, haveRegister: false }));
         }
     }, []);
 

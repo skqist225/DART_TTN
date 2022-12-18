@@ -17,7 +17,6 @@ import { questionColumnsTestPage } from "../../pages/columns";
 import Help from "../../partials/header/Help";
 import { tailwindCss } from "../../tailwind";
 import TableHeader from "../utils/tables/TableHeader";
-import TablePagination from "../utils/tables/TablePagination";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
 
@@ -58,7 +57,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
     function lookupLevel(level) {
         if (level === "Dễ") {
             return "EASY";
-        } else if ("Trung bình") {
+        } else if (level === "Trung bình") {
             return "MEDIUM";
         } else {
             return "HARD";
@@ -460,22 +459,24 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                             <div className='uppercase text-center font-semibold text-green-700 w-full'>
                                 Danh sách câu hỏi
                             </div>
-                            <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                                <TableHeader columns={questionColumnsTestPage} />
-                                <QuestionTableBody
-                                    rows={questions}
-                                    pageNumber={page}
-                                    addTest
-                                    dispatch={dispatch}
-                                />
-                            </table>
-                            <TablePagination
+                            <div className='w-full overflow-scroll' style={{ maxHeight: "400px" }}>
+                                <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
+                                    <TableHeader columns={questionColumnsTestPage} />
+                                    <QuestionTableBody
+                                        rows={questions}
+                                        pageNumber={page}
+                                        addTest
+                                        dispatch={dispatch}
+                                    />
+                                </table>
+                            </div>
+                            {/* <TablePagination
                                 totalElements={totalElements}
                                 totalPages={totalPages}
                                 setPage={setPage}
                                 recordsPerPage={recordsPerPage}
                                 fetchDataByPageNumber={fetchDataByPageNumber}
-                            />
+                            /> */}
                         </div>
                     )}
                 </div>

@@ -1,7 +1,8 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
+import $ from "jquery";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import {
     Frame,
     QuestionModalBody,
@@ -9,22 +10,21 @@ import {
     QuestionTableBody,
     Table,
 } from "../../components";
-import { questionSchema } from "../../validation";
-import { callToast } from "../../helpers";
 import {
-    addQuestion,
-    editQuestion,
-    questionState,
-    clearQuestionState,
-    fetchAllQuestions,
     addMultipleQuestions,
-    setExcelAdd,
+    addQuestion,
+    clearQuestionState,
+    editQuestion,
+    fetchAllQuestions,
+    questionState,
     setEditedQuestion,
+    setExcelAdd,
 } from "../../features/questionSlice";
-import { fetchAllSubjects } from "../../features/subjectSlice";
-import { questionColumns } from "../columns";
-import $ from "jquery";
+import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
 import { fetchAllUsers } from "../../features/userSlice";
+import { callToast } from "../../helpers";
+import { questionSchema } from "../../validation";
+import { questionColumns } from "../columns";
 
 const Type = {
     oneAnswer: "Một đáp án",
@@ -54,6 +54,7 @@ function QuestionsPage() {
         addMultipleQuestions: { successMessage: amqSuccessMessage, errorMessage: amqErrorMessage },
         enableOrDisableQuestion: { successMessage: eodqSuccessMessage },
     } = useSelector(questionState);
+    const { subjects } = useSelector(subjectState);
 
     const formId = "questionForm";
     const modalId = "questionModal";
@@ -119,7 +120,17 @@ function QuestionsPage() {
                             callToast("error", "Chọn ít nhất 1 đáp án cho câu hỏi có một đáp án");
                             return;
                         }
-                    } else {
+                        let numberOfAnswers = 0;
+                        answers.forEach(({ isAnswer }) => {
+                            if (isAnswer) {
+                                numberOfAnswers++;
+                            }
+                        });
+                        if (numberOfAnswers >= 2) {
+                            callToast("error", "Câu hỏi 1 đáp án không thể có 2 đáp án");
+                            return;
+                        }
+                    } else if (type === Type.multipleAnswer) {
                         // Multiple choices question.
                         let i = 0;
                         answers.forEach(({ isAnswer }) => {
@@ -274,6 +285,7 @@ function QuestionsPage() {
         setValue("answers", []);
         clearErrors("answers");
         dispatch(setExcelAdd(false));
+        setValue("subject", subjects[0].id);
     }
 
     return (

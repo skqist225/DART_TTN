@@ -436,7 +436,10 @@ const questionSlice = createSlice({
                 state.deleteQuestion.successMessage = payload.data;
             })
             .addCase(deleteQuestion.rejected, (state, { payload }) => {
-                state.deleteQuestion.errorMessage = payload;
+                if (payload) {
+                    state.deleteQuestion.errorMessage =
+                        "Không thể xóa câu hỏi vì ràng buộc dữ liệu";
+                }
             });
     },
 });

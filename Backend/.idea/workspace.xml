@@ -5,24 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
-      <change afterPath="$PROJECT_DIR$/scripts/quiz-build.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/charts/LineChart01.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/charts/LineChart02.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/charts/RealtimeChart.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/getLocation.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/get_page_number.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/get_user_sex.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/helpers/index.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/make_get_uri.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/seperate_number.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/use_url_params.js" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/pages/dashboard/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/pages/dashboard/Dashboard.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/actions/FilterButton.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/DashboardAvatars.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/LineChart.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/LineChartDashboard.jsx" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/StackedBarChart.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/StackedBarChart.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/QuizApplication.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/QuizApplication.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/question/QuestionRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/tests/TestModalBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/tests/TestModalBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/features/questionSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/features/questionSlice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/pages/questions/QuestionsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/pages/questions/QuestionsPage.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/pages/ranks/RanksPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/pages/ranks/RanksPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -229,7 +218,7 @@
       <workItem from="1671205598733" duration="335000" />
       <workItem from="1671206148931" duration="3371000" />
       <workItem from="1671236349545" duration="1950000" />
-      <workItem from="1671250021562" duration="25778000" />
+      <workItem from="1671250021562" duration="29756000" />
     </task>
     <servers />
   </component>

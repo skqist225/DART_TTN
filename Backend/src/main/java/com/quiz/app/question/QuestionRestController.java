@@ -209,6 +209,7 @@ public class QuestionRestController {
             try {
                 Question question = questionService.findById(id);
                 question.setContent(content);
+                String oldQuestionTpe = question.getType();
                 question.setType(type);
                 question.setLevel(Question.lookUpLevel(levelStr));
                 question.setChapter(chapter);
@@ -222,54 +223,83 @@ public class QuestionRestController {
                     question.setImage(postCreateQuestionDTO.getImage().getOriginalFilename());
                 }
 
-                if (answers.size() == 0) {
-                    question.removeAll();
+                System.out.println("Old type: " + oldQuestionTpe);
+                System.out.println("type: " + type);
+                if (type.equals("Đáp án điền")) {
+                    if (question
+                            .getAnswers().size() > 0) {
+                        question.removeAll();
+                    }
+                    AnswerDTO answer = answers.get(0);
+                    question.addAnswer(
+                            Answer.build(answer.getContent(),
+                                    answer.getIsTempAnswer().equals("true"), question,
+                                    answer.getOrder()));
+                    ;
                 } else {
-                    for (AnswerDTO answerDTO : answers) {
-                        // Add new question
-                        if (Objects.isNull(answerDTO.getId())) {
-                            question.addAnswer(Answer.build(answerDTO.getContent(),
-                                    answerDTO.getIsTempAnswer().equals("true"), question, answerDTO.getOrder()));
+                    if (oldQuestionTpe.equals("Đáp án điền")) {
+                        if (question
+                                .getAnswers().size() > 0) {
+                            question.removeAll();
+                        }
+                        for (AnswerDTO answer : answers) {
+                            question.addAnswer(
+                                    Answer.build(answer.getContent(),
+                                            answer.getIsTempAnswer().equals("true"), question,
+                                            answer.getOrder()));
+                            ;
+                        }
+                    } else {
+                        if (answers.size() == 0) {
+                            question.removeAll();
                         } else {
-                            for (Answer answer : question.getAnswers()) {
-                                // Edit existed question
-                                if (answerDTO.getId().equals(answer.getId())) {
-                                    answer.setContent(answerDTO.getContent());
-                                    answer.setOrder(answerDTO.getOrder());
-                                    answer.setAnswer(answerDTO.getIsTempAnswer().equals("true"));
-                                    answerService.save(answer);
-                                    break;
+                            for (AnswerDTO answerDTO : answers) {
+                                // Add new question
+                                if (Objects.isNull(answerDTO.getId())) {
+                                    question.addAnswer(Answer.build(answerDTO.getContent(),
+                                            answerDTO.getIsTempAnswer().equals("true"), question, answerDTO.getOrder()));
+                                } else {
+                                    for (Answer answer : question.getAnswers()) {
+                                        // Edit existed question
+                                        if (answerDTO.getId().equals(answer.getId())) {
+                                            answer.setContent(answerDTO.getContent());
+                                            answer.setOrder(answerDTO.getOrder());
+                                            answer.setAnswer(answerDTO.getIsTempAnswer().equals("true"));
+                                            answerService.save(answer);
+                                            break;
+                                        }
+                                    }
                                 }
                             }
                         }
-                    }
-                }
 
-                List<Answer> ans = new ArrayList<>();
-                for (Answer answer : question.getAnswers()) {
-                    if (Objects.isNull(answer.getId())) {
-                        continue;
-                    }
+                        List<Answer> ans = new ArrayList<>();
+                        for (Answer answer : question.getAnswers()) {
+                            if (Objects.isNull(answer.getId())) {
+                                continue;
+                            }
 
-                    boolean shouldDelete = true;
+                            boolean shouldDelete = true;
 
 
-                    for (AnswerDTO a : answers) {
-                        if (Objects.nonNull(a.getId())) {
-                            if (a.getId().equals(answer.getId())) {
-                                shouldDelete = false;
-                                break;
+                            for (AnswerDTO a : answers) {
+                                if (Objects.nonNull(a.getId())) {
+                                    if (a.getId().equals(answer.getId())) {
+                                        shouldDelete = false;
+                                        break;
+                                    }
+                                }
+                            }
+                            // Remove none mentioned question
+                            if (shouldDelete) {
+                                ans.add(answer);
                             }
                         }
-                    }
-                    // Remove none mentioned question
-                    if (shouldDelete) {
-                        ans.add(answer);
-                    }
-                }
 
-                for (Answer answer : ans) {
-                    question.removeAnswer(answer);
+                        for (Answer answer : ans) {
+                            question.removeAnswer(answer);
+                        }
+                    }
                 }
 
                 savedQuestion = questionService.save(question);
