@@ -6,9 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/exam/ExamRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/exam/ExamRestController.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/register/RegisterService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/register/RegisterService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamService.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/exams/ExamModalBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/exams/ExamModalBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/pages/registers/RegistersPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/pages/registers/RegistersPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -215,7 +216,7 @@
       <workItem from="1671205598733" duration="335000" />
       <workItem from="1671206148931" duration="3371000" />
       <workItem from="1671236349545" duration="1950000" />
-      <workItem from="1671250021562" duration="34146000" />
+      <workItem from="1671250021562" duration="36677000" />
     </task>
     <servers />
   </component>

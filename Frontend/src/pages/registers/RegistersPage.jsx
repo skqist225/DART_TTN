@@ -208,7 +208,7 @@ function RegistersPage() {
             title={`DANH SÁCH ${modalLabel.toUpperCase()}`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel} ::`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã sinh viên, tên sinh viên`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={registerColumns}

@@ -113,9 +113,10 @@ function TakeTestPage() {
     useEffect(() => {
         if (questions && questions.length) {
             questions.forEach(question => {
+                console.log(question);
                 if (finalAnswer.has(question.id)) {
                     if (question.type === "Đáp án điền") {
-                        setValue(`question-${question.id}-answer`, finalAnswer.get(question.id));
+                        $(`#question-${question.id}-answer`).val(finalAnswer.get(question.id));
                     } else {
                         $(`#question-${question.id}-answer${finalAnswer.get(question.id)}`).prop(
                             "checked",
@@ -354,12 +355,10 @@ function TakeTestPage() {
                                                   </p>
                                                   {question.type === "Đáp án điền" ? (
                                                       <>
-                                                          <input
-                                                              className={tailwindCss.input}
-                                                              id={`question-${question.id}-answer`}
+                                                          <Input
                                                               register={register}
                                                               name={`question-${question.id}-answer`}
-                                                              onChange={e => {
+                                                              onChangeHandler={e => {
                                                                   finalAnswer.set(
                                                                       question.id,
                                                                       e.target.value

@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { creditClassState, findCreditClass } from "../../features/creditClassSlice";
 import { examState } from "../../features/examSlice";
-import { fetchAllRegisters, setRegisters } from "../../features/registerSlice";
+import { fetchAllRegisters } from "../../features/registerSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
 import DatePicker from "../utils/datePicker/DatePicker";
 import Input from "../utils/userInputs/Input";
@@ -119,6 +119,7 @@ function ExamModalBody({
     useEffect(() => {
         if (creditClass && editedExam) {
             const { schoolYear, semester, subjectName, group } = creditClass;
+            setValue("creditClassId", creditClass.id);
             setValue("creditClassName", `${schoolYear} ${semester} ${subjectName} ${group}`);
 
             const numberOfNoneCreatedMidtermExamStudents =
@@ -232,7 +233,7 @@ function ExamModalBody({
             })
         );
     };
-
+    console.log(errors);
     return (
         <div>
             <div>
