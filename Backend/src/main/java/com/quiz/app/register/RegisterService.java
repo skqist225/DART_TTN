@@ -132,13 +132,13 @@ public class RegisterService {
         List<Predicate> predicates = new ArrayList<>();
 
         if (!StringUtils.isEmpty(searchQuery)) {
-//            Expression<String> id = root.get("id");
-//            Expression<String> name = root.get("name");
+            Expression<String> id = root.get("id");
+            Expression<String> name = root.get("name");
 
-//            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
-//            Expression<String> wantedQueryField = criteriaBuilder.concat("", name);
+            Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, name);
 
-//            predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
+            predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }
 
         if (!StringUtils.isEmpty(creditClassId)) {

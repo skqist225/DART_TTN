@@ -30,6 +30,7 @@ import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 
@@ -58,8 +59,12 @@ public class TakeExamService {
 
     public Integer getStudentRankingPosition(String studentId, Integer creditClassId,
                                              String examType) {
-        return takeExamRepository
+        Integer score = takeExamRepository
                 .getStudentRankingPosition(studentId, creditClassId, examType);
+        if (Objects.isNull(score)) {
+            return 0;
+        }
+        return score;
     }
 
     public String deleteById(TakeExamId id) throws ConstrainstViolationException {
