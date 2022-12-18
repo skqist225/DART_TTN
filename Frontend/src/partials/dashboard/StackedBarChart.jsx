@@ -1,15 +1,15 @@
-import React from "react";
-import { tailwindConfig } from "../../utils/Utils";
-import { Bar } from "react-chartjs-2";
 import {
-    Chart as ChartJS,
-    CategoryScale,
-    LinearScale,
     BarElement,
+    CategoryScale,
+    Chart as ChartJS,
+    Legend,
+    LinearScale,
     Title,
     Tooltip,
-    Legend,
 } from "chart.js";
+import React from "react";
+import { Bar } from "react-chartjs-2";
+import { tailwindConfig } from "../../utils/Utils";
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function StackedBarChart({ data, labels, title = "", legends, Filter }) {
@@ -31,6 +31,7 @@ function StackedBarChart({ data, labels, title = "", legends, Filter }) {
                 stacked: true,
             },
         },
+        maintainAspectRatio: false,
     };
 
     const chartData = {
@@ -69,7 +70,9 @@ function StackedBarChart({ data, labels, title = "", legends, Filter }) {
                 <h2 className='font-semibold text-slate-800'>{title}</h2>
             </header>
             <div className='w-3/6 mb-5 m-auto'>{Filter}</div>
-            <Bar options={options} data={chartData} />
+            <div style={{ height: "320px" }}>
+                <Bar options={options} data={chartData} id='myStackedBarChart' />
+            </div>
         </div>
     );
 }

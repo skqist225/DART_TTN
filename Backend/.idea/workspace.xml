@@ -5,40 +5,24 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
-      <change afterPath="$PROJECT_DIR$/scripts/recover_data.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/scripts/quiz-build.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Dump20221213.sql" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/quiz.sql" beforeDir="false" afterPath="$PROJECT_DIR$/sql/quiz.sql" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/sql /sql.txt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/chapter/ChapterRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/chapter/ChapterRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/creditClass/CreditClassRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/creditClass/CreditClassRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/exam/ExamRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/exam/ExamRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExam/TakeExamService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExamDetail/TakeExamDetailRepository.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExamDetail/TakeExamDetailRepository.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExamDetail/TakeExamDetailService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/takeExamDetail/TakeExamDetailService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRestController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/dto/CriteriaSubDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/dto/CriteriaSubDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/dto/PostCreateTestDTO.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/dto/PostCreateTestDTO.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Chapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Chapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Test.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/entity/Test.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/creditClasses/CreditClassTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/creditClasses/CreditClassTableBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/exams/ExamFilter.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/exams/ExamFilter.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/exams/ExamModalBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/exams/ExamModalBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/exams/ExamTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/exams/ExamTableBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/exams/TestList.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/exams/TestList.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/tests/TestModalBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/tests/TestModalBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/tests/TestTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/tests/TestTableBody.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/utils/tables/TableModal.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/utils/tables/TableModal.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/utils/userInputs/Input.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/utils/userInputs/Input.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/features/creditClassSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/features/creditClassSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/features/examSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/features/examSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/features/registerSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/features/registerSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/features/testSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/features/testSlice.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/pages/exams/ExamsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/pages/exams/ExamsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/pages/tests/TestsPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/pages/tests/TestsPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/pages/users/UsersPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/pages/users/UsersPage.jsx" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/header/Help.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/partials/header/Help.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/charts/LineChart01.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/charts/LineChart02.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/charts/RealtimeChart.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/getLocation.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/get_page_number.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/get_user_sex.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/index.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/helpers/index.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/make_get_uri.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/seperate_number.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/helpers/use_url_params.js" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/pages/dashboard/Dashboard.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/pages/dashboard/Dashboard.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/actions/FilterButton.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/DashboardAvatars.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/LineChart.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/LineChartDashboard.jsx" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/StackedBarChart.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/partials/dashboard/StackedBarChart.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -245,7 +229,7 @@
       <workItem from="1671205598733" duration="335000" />
       <workItem from="1671206148931" duration="3371000" />
       <workItem from="1671236349545" duration="1950000" />
-      <workItem from="1671250021562" duration="23960000" />
+      <workItem from="1671250021562" duration="25778000" />
     </task>
     <servers />
   </component>
