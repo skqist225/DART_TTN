@@ -33,7 +33,8 @@ public interface TakeExamDetailRepository extends CrudRepository<TakeExamDetail,
                                               Integer questionId
     );
 
-    @Query(value = "select * from chitietthi where masv = :studentId AND macathi = :examId",
+    @Query(value = "select * from chitietthi where masv = :studentId AND macathi = :examId order " +
+            "by id",
             nativeQuery = true)
     List<TakeExamDetail> findByStudentAndExam(String studentId, Integer examId);
 }

@@ -63,9 +63,7 @@ public interface QuestionRepository extends CrudRepository<Question, Integer> {
     int countTotalQuestionsDisabled();
 
     @Query(value = "SELECT ch.* FROM chitietthi ctt left join cauhoi ch on ch.macauhoi = ctt" +
-            ".macauhoi where ctt.masv = :studentId AND ctt.macathi = :examId order by ch.macauhoi" +
-            " " +
-            "asc",
+            ".macauhoi where ctt.masv = :studentId AND ctt.macathi = :examId order by ctt.id",
             nativeQuery = true)
     List<Question> findByStudentAndExam(String studentId,
                                         Integer examId);
