@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
+import $ from "jquery";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Frame, SubjectModalBody, SubjectTableBody, Table } from "../../components";
+import { persistUserState } from "../../features/persistUserSlice";
 import {
     addSubject,
     clearSubjectState,
@@ -11,13 +14,13 @@ import {
     setEditedSubject,
     subjectState,
 } from "../../features/subjectSlice";
-import { subjectSchema } from "../../validation";
 import { callToast } from "../../helpers";
+import { subjectSchema } from "../../validation";
 import { subjectColumns } from "../columns";
-import $ from "jquery";
 
 function SubjectsPage() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -29,15 +32,20 @@ function SubjectsPage() {
         totalElements,
         totalPages,
         filterObject,
-        loading,
         addSubject: { successMessage },
         editSubject: { successMessage: esSuccessMessage },
         deleteSubject: { successMessage: dsSuccessMessage, errorMessage: dsErrorMessage },
     } = useSelector(subjectState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     const formId = "subjectForm";
     const modalId = "subjectModal";
     const modalLabel = "môn học";
+
+    if (userRoles.includes("Sinh viên")) {
+        navigate("/");
+    }
 
     useEffect(() => {
         dispatch(

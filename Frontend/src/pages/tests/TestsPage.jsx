@@ -1,19 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Frame, TestModalBody, TestTableBody, Table, TestFilter } from "../../components";
-import {
-    addTest,
-    clearTestState,
-    editTest,
-    fetchAllTests,
-    setEditedTest,
-    testState,
-} from "../../features/testSlice";
-import { testSchema } from "../../validation";
-import { callToast } from "../../helpers";
-import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
+import $ from "jquery";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { Frame, Table, TestFilter, TestModalBody, TestTableBody } from "../../components";
+import { persistUserState } from "../../features/persistUserSlice";
 import {
     fetchAllQuestions,
     loadQuestionsByCriteria,
@@ -21,11 +13,21 @@ import {
     setQueryAvailableQuestionsArr,
     setQuestions,
 } from "../../features/questionSlice";
+import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
+import {
+    addTest,
+    clearTestState,
+    fetchAllTests,
+    setEditedTest,
+    testState,
+} from "../../features/testSlice";
+import { callToast } from "../../helpers";
+import { testSchema } from "../../validation";
 import { testColumns } from "../columns";
-import $ from "jquery";
 
 function TestsPage() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -43,10 +45,16 @@ function TestsPage() {
         enableOrDisableTest: { successMessage: eodTest },
     } = useSelector(testState);
     const { queryAvailableQuestionsArr } = useSelector(questionState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     const formId = "testForm";
     const modalId = "testModal";
     const modalLabel = "đề thi";
+
+    if (userRoles.includes("Sinh viên")) {
+        navigate("/");
+    }
 
     useEffect(() => {
         dispatch(

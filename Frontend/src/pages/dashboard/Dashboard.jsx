@@ -13,10 +13,11 @@ import { Card } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Frame, Select } from "../../components";
 import SimpleStatNumber from "../../components/utils/SimpleStatNumber";
 import { authState } from "../../features/authSlice";
+import { persistUserState } from "../../features/persistUserSlice";
 import {
     countQuestionsByChapter,
     countTestsBySubjectAndStatus,
@@ -25,7 +26,6 @@ import {
     statisticState,
 } from "../../features/statisticSlice";
 import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
-import { userState } from "../../features/userSlice";
 import BarChart from "../../partials/dashboard/BarChart";
 import PieChart from "../../partials/dashboard/PieChart";
 import StackedBarChart from "../../partials/dashboard/StackedBarChart";
@@ -44,15 +44,13 @@ ChartJS.register(
 function Dashboard() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { pathname } = useLocation();
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
-    const { user } = useSelector(userState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
     const {
         register,
         setValue,
-        handleSubmit,
-        setError,
         formState: { errors },
     } = useForm({});
 
@@ -66,6 +64,10 @@ function Dashboard() {
         loginAction: { loading },
     } = useSelector(authState);
     const { subjects } = useSelector(subjectState);
+
+    if (userRoles.includes("Sinh viên") || userRoles.includes("Giảng viên")) {
+        navigate("/");
+    }
 
     useEffect(() => {
         dispatch(countTotalRecords());

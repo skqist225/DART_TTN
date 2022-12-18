@@ -1,10 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { Frame, ExamModalBody, ExamTableBody, Table } from "../../components";
-import { examSchema } from "../../validation";
-import { useForm } from "react-hook-form";
-import { callToast } from "../../helpers";
 import { yupResolver } from "@hookform/resolvers/yup";
+import $ from "jquery";
+import React, { useEffect, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { ExamModalBody, ExamTableBody, Frame, Table } from "../../components";
+import ExamFilter from "../../components/exams/ExamFilter";
+import {
+    creditClassState,
+    fetchAllCreditClasses,
+    fetchCreditClassesForExamAdded,
+} from "../../features/creditClassSlice";
 import {
     addExam,
     clearExamState,
@@ -13,17 +18,12 @@ import {
     fetchAllExams,
     setEditedExam,
 } from "../../features/examSlice";
-import ExamFilter from "../../components/exams/ExamFilter";
-import { fetchAllSubjects } from "../../features/subjectSlice";
-import {
-    creditClassState,
-    fetchAllCreditClasses,
-    fetchCreditClassesForExamAdded,
-} from "../../features/creditClassSlice";
-import { setTests } from "../../features/testSlice";
 import { persistUserState } from "../../features/persistUserSlice";
+import { fetchAllSubjects } from "../../features/subjectSlice";
+import { setTests } from "../../features/testSlice";
+import { callToast } from "../../helpers";
+import { examSchema } from "../../validation";
 import { examColumns, studentColumns } from "../columns";
-import $ from "jquery";
 
 function ExamsPage() {
     const dispatch = useDispatch();

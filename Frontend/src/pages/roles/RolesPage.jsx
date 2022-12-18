@@ -1,24 +1,26 @@
+import { yupResolver } from "@hookform/resolvers/yup";
+import $ from "jquery";
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Frame, RoleModalBody, RoleTableBody, Table } from "../../components";
+import { persistUserState } from "../../features/persistUserSlice";
 import {
     addRole,
     clearRoleState,
     editRole,
     fetchAllRoles,
+    roleState,
     setEditedRole,
 } from "../../features/roleSlice";
-import { roleSchema } from "../../validation";
-import { useForm } from "react-hook-form";
 import { callToast } from "../../helpers";
-import { yupResolver } from "@hookform/resolvers/yup";
-import { roleState } from "../../features/roleSlice";
+import { roleSchema } from "../../validation";
 import { roleColumns } from "../columns";
-import $ from "jquery";
 
 function RolesPage() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -33,10 +35,16 @@ function RolesPage() {
         editRole: { successMessage: esSuccessMessage },
         deleteRole: { successMessage: dsSuccessMessage, errorMessage: drErrorMessage },
     } = useSelector(roleState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     const formId = "roleForm";
     const modalId = "roleModal";
     const modalLabel = "vai trò";
+
+    if (userRoles.includes("Sinh viên") || userRoles.includes("Giảng viên")) {
+        navigate("/");
+    }
 
     useEffect(() => {
         dispatch(

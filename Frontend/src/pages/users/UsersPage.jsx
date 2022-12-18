@@ -3,9 +3,11 @@ import $ from "jquery";
 import { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Frame, Table, UserModalBody, UserTableBody } from "../../components";
 import UserFilter from "../../components/users/UserFilter";
 import "../../css/page/rooms.css";
+import { persistUserState } from "../../features/persistUserSlice";
 import { fetchAllRoles } from "../../features/roleSlice";
 import {
     addMultipleUsers,
@@ -23,14 +25,22 @@ import { userColumns } from "../columns";
 
 const UsersPage = () => {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
     const [image, setImage] = useState(null);
     const [excelFile, setExcelFile] = useState(null);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     const formId = "userForm";
     const modalId = "userModal";
     const modalLabel = "người dùng";
+
+    if (userRoles.includes("Sinh viên") || userRoles.includes("Giảng viên")) {
+        navigate("/");
+    }
 
     useEffect(() => {
         dispatch(

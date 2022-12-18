@@ -3,6 +3,7 @@ import $ from "jquery";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
     CreditClassFilter,
     CreditClassModalBody,
@@ -29,6 +30,8 @@ import { creditClassColumns } from "../columns";
 
 function CreditClassesPage() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
@@ -38,6 +41,10 @@ function CreditClassesPage() {
     const formId = "creditClassForm";
     const modalId = "creditClassModal";
     const modalLabel = "lớp tín chỉ";
+
+    if (userRoles.includes("Sinh viên")) {
+        navigate("/");
+    }
 
     const fetchCreditClases = () => {
         if (userRoles.includes("Quản trị viên")) {

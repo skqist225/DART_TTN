@@ -1,5 +1,8 @@
+import $ from "jquery";
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
     Frame,
     RegisterFilter,
@@ -7,26 +10,22 @@ import {
     RegisterTableBody,
     Table,
 } from "../../components";
-import $ from "jquery";
-import { questionSchema } from "../../validation";
-import { useForm } from "react-hook-form";
-import { callToast } from "../../helpers";
-import { yupResolver } from "@hookform/resolvers/yup";
+import { fetchAllCreditClasses } from "../../features/creditClassSlice";
+import { persistUserState } from "../../features/persistUserSlice";
 import {
+    addMultipleRegisters,
     addRegister,
-    editRegister,
     clearRegisterState,
     fetchAllRegisters,
-    setEditedRegister,
     registerState,
-    addMultipleRegisters,
+    setEditedRegister,
 } from "../../features/registerSlice";
-import { fetchAllCreditClasses } from "../../features/creditClassSlice";
+import { callToast } from "../../helpers";
 import { registerColumns } from "../columns";
-import { fetchAllUsers } from "../../features/userSlice";
 
 function RegistersPage() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -50,10 +49,16 @@ function RegistersPage() {
         },
         enableOrDisableRegister: { successMessage: eodSuccessMessage },
     } = useSelector(registerState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     const formId = "registerForm";
     const modalId = "registerModal";
     const modalLabel = "đăng ký";
+
+    if (userRoles.includes("Sinh viên") || userRoles.includes("Giảng viên")) {
+        navigate("/");
+    }
 
     useEffect(() => {
         dispatch(

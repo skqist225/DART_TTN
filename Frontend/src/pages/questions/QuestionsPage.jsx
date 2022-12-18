@@ -3,6 +3,7 @@ import $ from "jquery";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import {
     Frame,
     QuestionModalBody,
@@ -10,6 +11,7 @@ import {
     QuestionTableBody,
     Table,
 } from "../../components";
+import { persistUserState } from "../../features/persistUserSlice";
 import {
     addMultipleQuestions,
     addQuestion,
@@ -34,6 +36,7 @@ const Type = {
 
 function QuestionsPage() {
     const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
@@ -56,9 +59,16 @@ function QuestionsPage() {
     } = useSelector(questionState);
     const { subjects } = useSelector(subjectState);
 
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
+
     const formId = "questionForm";
     const modalId = "questionModal";
     const modalLabel = "câu hỏi";
+
+    if (userRoles.includes("Sinh viên")) {
+        navigate("/");
+    }
 
     useEffect(() => {
         dispatch(
