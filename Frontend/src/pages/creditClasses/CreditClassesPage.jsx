@@ -17,6 +17,7 @@ import {
     creditClassState,
     editCreditClass,
     fetchAllCreditClasses,
+    fetchAllCreditClassesFixedBug,
     fetchCreditClassesForExamAdded,
     setEditedCreditClass,
 } from "../../features/creditClassSlice";
@@ -68,6 +69,11 @@ function CreditClassesPage() {
             // 3. Lớp tín chỉ chưa hủy : active: true,
             // 4. Lớp tín chỉ có danh sách đăng ký : haveRegister: true,
         }
+        dispatch(
+            fetchAllCreditClassesFixedBug({
+                page: 0,
+            })
+        );
         dispatch(fetchCreditClassesForExamAdded());
     };
 
@@ -89,6 +95,7 @@ function CreditClassesPage() {
         editCreditClass: { successMessage: eqSuccessMessage },
         deleteCreditClass: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
         enableOrDisableCreditClass: { successMessage: eodqSuccessMessage },
+        addExamCreditClassPage: { successMessage: addExamCreditClassPageSuccessMessage },
     } = useSelector(creditClassState);
 
     const {
@@ -96,14 +103,14 @@ function CreditClassesPage() {
     } = useSelector(examState);
 
     useEffect(() => {
-        if (aeSuccessMessage) {
-            callToast("success", aeSuccessMessage);
+        if (addExamCreditClassPageSuccessMessage) {
+            callToast("success", addExamCreditClassPageSuccessMessage);
             $(`#examForm`)[0].reset();
             $("#examModal").css("display", "none");
 
             fetchCreditClases();
         }
-    }, [aeSuccessMessage]);
+    }, [addExamCreditClassPageSuccessMessage]);
 
     const {
         register,

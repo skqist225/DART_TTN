@@ -5,11 +5,13 @@ import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import {
+    addExamCreditClassPage,
+    creditClassState,
     deleteCreditClass,
     enableOrDisableCreditClass,
     setEditedCreditClass,
 } from "../../features/creditClassSlice";
-import { addExam, editExam, examState, setEditedExam } from "../../features/examSlice";
+import { examState, setEditedExam } from "../../features/examSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import { callToast } from "../../helpers";
 import ExamIcon from "../../images/exam.png";
@@ -33,6 +35,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
 
     const dispatch = useDispatch(0);
 
+    const { creditClassedFixedBug: creditClasses } = useSelector(creditClassState);
     const { user } = useSelector(persistUserState);
     const userRoles = user.roles.map(({ name }) => name);
 
@@ -72,7 +75,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
     } = useForm({
         resolver: yupResolver(examSchema),
     });
-
+    console.log(errors);
     const onSubmit = data => {
         let haveError = false;
 
@@ -159,7 +162,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
             "name"
         ] = `${schoolYear}-${semester}-${subjectName}-${group}-${data.examType}-${index}`;
 
-        dispatch(addExam(data));
+        dispatch(addExamCreditClassPage(data));
     };
 
     const [tabValue, setTabValue] = useState(0);

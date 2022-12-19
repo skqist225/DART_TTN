@@ -286,7 +286,11 @@ public class TestRestController {
                 finalAnswer = new StringBuilder(question.getAnswers().get(0).getContent());
             }
             boolean isQuestionMatched = false;
+            System.out.println(answers);
             for (HandInDTO handInDTO : answers) {
+                System.out.println("here");
+                System.out.println(handInDTO.getQuestionId());
+                System.out.println(question.getId());
                 if (handInDTO.getQuestionId().equals(question.getId())) {
                     isQuestionMatched = true;
                     if (question.getType().equals("Nhiều đáp án")) {
@@ -311,8 +315,14 @@ public class TestRestController {
                         }
                     }
                     question.setSelectedAnswer(handInDTO.getAnswer());
-                    break;
                 }
+
+                System.out.println(handInDTO.getAnswer().trim());
+                System.out.println(
+                        student.getId()
+                );
+                System.out.println(examId);
+                System.out.println(handInDTO.getQuestionId());
                 takeExamDetailService.updateAnswerForQuestionInStudentTest(handInDTO.getAnswer().trim(), student.getId(), examId
                         , handInDTO.getQuestionId());
             }

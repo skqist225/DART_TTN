@@ -60,6 +60,65 @@ export const fetchAllCreditClasses = createAsyncThunk(
     }
 );
 
+export const fetchAllCreditClassesFixedBug = createAsyncThunk(
+    "creditClass/fetchAllCreditClassesFixedBug",
+    async (
+        {
+            page = 1,
+            query = "",
+            sortField = "id",
+            sortDir = "desc",
+            subject = "",
+            active = false,
+            teacher = "",
+            student = "",
+            haveRegister = "true",
+        },
+        { dispatch, rejectWithValue }
+    ) => {
+        try {
+            const filterArray = [];
+
+            filterArray.push({
+                field: "query",
+                value: query,
+            });
+
+            filterArray.push({
+                field: "page",
+                value: page,
+            });
+
+            filterArray.push({
+                field: "sortField",
+                value: sortField,
+            });
+
+            filterArray.push({
+                field: "sortDir",
+                value: sortDir,
+            });
+
+            filterArray.push({
+                field: "subject",
+                value: subject,
+            });
+
+            dispatch(setFilterObject(filterArray));
+
+            const {
+                data: { creditClasses, totalElements, totalPages },
+            } = await api.get(
+                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&active=${active}&teacher=${teacher}&student=${student}&haveRegister=${haveRegister}`
+            );
+
+            return { creditClasses, totalElements, totalPages };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 export const fetchCreditClassesForExamAdded = createAsyncThunk(
     "creditClass/fetchCreditClassesForExamAdded",
     async (_, { rejectWithValue }) => {
@@ -140,6 +199,19 @@ export const enableOrDisableCreditClass = createAsyncThunk(
     }
 );
 
+export const addExamCreditClassPage = createAsyncThunk(
+    "creditClass/addExamCreditClassPage",
+    async (postData, { rejectWithValue }) => {
+        try {
+            const { data } = await api.post(`/exams/save`, postData);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 const initialState = {
     loading: true,
     creditClasses: [],
@@ -168,6 +240,11 @@ const initialState = {
     enableOrDisableCreditClass: {
         successMessage: null,
     },
+    creditClassedFixedBug: [],
+    addExamCreditClassPage: {
+        successMessage: null,
+        loading: false,
+    },
 };
 
 const creditClassSlice = createSlice({
@@ -184,6 +261,8 @@ const creditClassSlice = createSlice({
             state.deleteCreditClass.errorObject = null;
 
             state.enableOrDisableCreditClass.successMessage = null;
+
+            state.addExamCreditClassPage.successMessage = null;
         },
         setFilterObject(state, { payload }) {
             if (payload) {
@@ -212,6 +291,10 @@ const creditClassSlice = createSlice({
             })
             .addCase(fetchAllCreditClasses.rejected, (state, { payload }) => {
                 state.loading = false;
+            })
+
+            .addCase(fetchAllCreditClassesFixedBug.fulfilled, (state, { payload }) => {
+                state.creditClassedFixedBug = payload.creditClasses;
             })
 
             .addCase(fetchCreditClassesForExamAdded.pending, (state, { payload }) => {})
@@ -282,7 +365,31 @@ const creditClassSlice = createSlice({
             .addCase(enableOrDisableCreditClass.fulfilled, (state, { payload }) => {
                 state.enableOrDisableCreditClass.successMessage = payload.data;
             })
-            .addCase(enableOrDisableCreditClass.rejected, (state, { payload }) => {});
+            .addCase(enableOrDisableCreditClass.rejected, (state, { payload }) => {})
+            .addCase(addExamCreditClassPage.pending, (state, _) => {
+                state.addExamCreditClassPage.successMessage = null;
+                // state.errorObject = null;
+                state.addExamCreditClassPage.loading = true;
+            })
+            .addCase(addExamCreditClassPage.fulfilled, (state, { payload }) => {
+                state.addExamCreditClassPage.successMessage = payload.data;
+                state.addExamCreditClassPage.loading = false;
+            })
+            .addCase(addExamCreditClassPage.rejected, (state, { payload }) => {
+                // if (payload) {
+                //     const errors = JSON.parse(payload);
+                //     errors.forEach(error => {
+                //         const key = Object.keys(error)[0];
+                //         const value = error[key];
+
+                //         state.errorObject = {
+                //             ...state.errorObject,
+                //             [key]: value,
+                //         };
+                //     });
+                // }
+                state.addExamCreditClassPage.loading = false;
+            });
     },
 });
 

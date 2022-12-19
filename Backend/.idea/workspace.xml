@@ -6,6 +6,10 @@
   <component name="ChangeListManager">
     <list default="true" id="b9d44092-a723-4e1d-9015-f5cd2c34bb2c" name="Changes" comment="db">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRestController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/quiz/app/test/TestRestController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/components/creditClasses/CreditClassTableBody.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/components/creditClasses/CreditClassTableBody.jsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/features/creditClassSlice.js" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/features/creditClassSlice.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Frontend/src/pages/creditClasses/CreditClassesPage.jsx" beforeDir="false" afterPath="$PROJECT_DIR$/../Frontend/src/pages/creditClasses/CreditClassesPage.jsx" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -215,6 +219,8 @@
       <workItem from="1671250021562" duration="37277000" />
       <workItem from="1671422509148" duration="1895000" />
       <workItem from="1671424850379" duration="412000" />
+      <workItem from="1671425499882" duration="968000" />
+      <workItem from="1671426829166" duration="1420000" />
     </task>
     <servers />
   </component>
