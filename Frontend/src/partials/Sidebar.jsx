@@ -1,17 +1,18 @@
 import React, { useEffect, useRef, useState } from "react";
+import { useSelector } from "react-redux";
 import { NavLink, useLocation, useNavigate } from "react-router-dom";
-import SidebarElement from "./SidebarElement";
-import SubjectIcon from "../images/subject.png";
-import QuestionIcon from "../images/question.png";
-import RoleIcon from "../images/role.png";
-import TestIcon from "../images/test.png";
-import UserIcon from "../images/user.png";
+import { persistUserState } from "../features/persistUserSlice";
 import CreditClassIcon from "../images/creditClass.png";
 import ExamIcon from "../images/exam.png";
+import QuestionIcon from "../images/question.png";
+import RankIcon from "../images/rank.png";
 import RegisterIcon from "../images/register.png";
+import RoleIcon from "../images/role.png";
 import StatisticsIcon from "../images/statistics.png";
-import { useSelector } from "react-redux";
-import { persistUserState } from "../features/persistUserSlice";
+import SubjectIcon from "../images/subject.png";
+import TestIcon from "../images/test.png";
+import UserIcon from "../images/user.png";
+import SidebarElement from "./SidebarElement";
 
 function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const location = useLocation();
@@ -21,6 +22,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
     const sidebar = useRef(null);
 
     const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
     const [sidebarExpanded, setSidebarExpanded] = useState(
@@ -157,7 +159,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                             </span>
                         </h3>
                         <ul className='mt-3'>
-                            {user.roles.map(({ name }) => name).includes("Quản trị viên") && (
+                            {userRoles.includes("Quản trị viên") && (
                                 <SidebarElement
                                     pathname={pathname}
                                     name='statistics'
@@ -165,7 +167,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                     Icon={StatisticsIcon}
                                 />
                             )}
-                            {!user.roles.map(({ name }) => name).includes("Sinh viên") && (
+                            {!userRoles.includes("Sinh viên") && (
                                 <>
                                     <SidebarElement
                                         pathname={pathname}
@@ -199,7 +201,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                     />
                                 </>
                             )}
-                            {user.roles.map(({ name }) => name).includes("Quản trị viên") && (
+                            {userRoles.includes("Quản trị viên") && (
                                 <>
                                     <SidebarElement
                                         pathname={pathname}
@@ -215,7 +217,7 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                     />
                                 </>
                             )}
-                            {user.roles.map(({ name }) => name).includes("Sinh viên") && (
+                            {userRoles.includes("Sinh viên") && (
                                 <>
                                     <SidebarElement
                                         pathname={pathname}
@@ -247,9 +249,9 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                 pathname={pathname}
                                 name='ranks'
                                 title='Bảng xếp hạng'
-                                Icon={CreditClassIcon}
+                                Icon={RankIcon}
                             />
-                            {user.roles.map(({ name }) => name).includes("Quản trị viên") && (
+                            {userRoles.includes("Quản trị viên") && (
                                 <SidebarElement
                                     pathname={pathname}
                                     name='users'

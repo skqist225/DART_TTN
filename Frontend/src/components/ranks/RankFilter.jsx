@@ -1,15 +1,15 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import $ from "jquery";
+import React from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { creditClassState } from "../../features/creditClassSlice";
 import {
     fetchAllTakeExams,
     getStudentRankingPosition,
     takeExamState,
 } from "../../features/takeExamSlice";
-import Select from "../utils/userInputs/Select";
 import { examTypes } from "../exams/ExamModalBody";
-import $ from "jquery";
+import Select from "../utils/userInputs/Select";
 
 function QuestionsFilter() {
     const dispatch = useDispatch();
@@ -38,69 +38,71 @@ function QuestionsFilter() {
     };
 
     return (
-        <form
-            onSubmit={e => {
-                e.preventDefault();
-                e.stopPropagation();
-                handleSubmit(onSubmit)(e);
-            }}
-            className='flex items-center'
-        >
-            <div className='mr-2 w-full flex items-center justify-start'>
-                <Select
-                    label='lớp tín chỉ'
-                    name='creditClassFilter'
-                    register={register}
-                    options={creditClasses.map(
-                        ({ id, schoolYear, semester, subjectName, group }) => ({
-                            title: `${schoolYear} ${semester} ${subjectName} ${group}`,
-                            value: id,
-                        })
-                    )}
-                    onChangeHandler={handleCreditClassChange}
-                    defaultValue={creditClasses && creditClasses.length && creditClasses[0].id}
-                    removeLabel={true}
-                    width={"w-80"}
-                />
-            </div>
-            <div className='mr-2 w-full flex items-center justify-start'>
-                <Select
-                    label='loại thi'
-                    name='examTypeFilter'
-                    register={register}
-                    options={examTypes.map(({ title, value }) => ({
-                        title,
-                        value,
-                    }))}
-                    onChangeHandler={handleExamTypeChange}
-                    defaultValue={examTypes[0].value}
-                    removeLabel={true}
-                    width={"w-40"}
-                />
-            </div>
-            <div>
-                <button
-                    type='button'
-                    className='text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-40'
-                    onClick={() => {
-                        dispatch(
-                            fetchAllTakeExams({
-                                page: 1,
-                                query: "",
-                                sortField: "score",
-                                sortDir: "desc",
-                                creditClass: creditClasses[0].id,
-                                examType: "Giữa kỳ",
+        <div className='py-4'>
+            <form
+                onSubmit={e => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    handleSubmit(onSubmit)(e);
+                }}
+                className='flex items-center'
+            >
+                <div className='mr-2 w-full flex items-center justify-start'>
+                    <Select
+                        label='lớp tín chỉ'
+                        name='creditClassFilter'
+                        register={register}
+                        options={creditClasses.map(
+                            ({ id, schoolYear, semester, subjectName, group }) => ({
+                                title: `${schoolYear} ${semester} ${subjectName} ${group}`,
+                                value: id,
                             })
-                        );
-                        setValue("creditClassFilter", creditClasses[0].id);
-                        setValue("examTypeFilter", examTypes[0].value);
-                    }}
-                >
-                    Xóa bộ lọc
-                </button>
-            </div>
-        </form>
+                        )}
+                        onChangeHandler={handleCreditClassChange}
+                        defaultValue={creditClasses && creditClasses.length && creditClasses[0].id}
+                        removeLabel={true}
+                        width={"w-80"}
+                    />
+                </div>
+                <div className='mr-2 w-full flex items-center justify-start'>
+                    <Select
+                        label='loại thi'
+                        name='examTypeFilter'
+                        register={register}
+                        options={examTypes.map(({ title, value }) => ({
+                            title,
+                            value,
+                        }))}
+                        onChangeHandler={handleExamTypeChange}
+                        defaultValue={examTypes[0].value}
+                        removeLabel={true}
+                        width={"w-40"}
+                    />
+                </div>
+                <div>
+                    <button
+                        type='button'
+                        className='text-white bg-gradient-to-r from-blue-500 via-blue-600 to-blue-700 hover:bg-gradient-to-br focus:ring-4 focus:outline-none focus:ring-blue-300 dark:focus:ring-blue-800 font-medium rounded-lg text-sm px-5 py-2.5 text-center w-40'
+                        onClick={() => {
+                            dispatch(
+                                fetchAllTakeExams({
+                                    page: 1,
+                                    query: "",
+                                    sortField: "score",
+                                    sortDir: "desc",
+                                    creditClass: creditClasses[0].id,
+                                    examType: "Giữa kỳ",
+                                })
+                            );
+                            setValue("creditClassFilter", creditClasses[0].id);
+                            setValue("examTypeFilter", examTypes[0].value);
+                        }}
+                    >
+                        Xóa bộ lọc
+                    </button>
+                </div>
+            </form>
+        </div>
     );
 }
 

@@ -140,14 +140,5 @@ export const examSchema = yup
     .object({
         creditClassId: yup.string().required("LTC không được để trống"),
         examDate: yup.string().required("Ngày thi không được để trống"),
-        time: yup
-            .number()
-            .typeError("Thời gian làm bài phải là chữ số")
-            .required("Thời gian làm bài không được để trống"),
-        numberOfStudents: yup
-            .number()
-            .typeError("Số SV thi phải là chữ số")
-            .required("Số  SV thi không được để trống")
-            .min(1, "Số SV thi ít nhất là 1"),
     })
     .required();

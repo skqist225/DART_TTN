@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -87,26 +88,21 @@ public class TakeExamDetailRestController {
                                 }
                             }
                         }
+                        question.setSelectedAnswer(answer.getAnswer());
                     } else if (question.getType().equals("Nhiều đáp án")) {
+                        String userFinalAnswer = answer.getAnswer();
+                        if (Objects.nonNull(answer.getAnswer())) {
+                            String[] userFinalAnswerArr = answer.getAnswer().split(",");
+                            Arrays.sort(userFinalAnswerArr);
+                            userFinalAnswer = String.join(",", userFinalAnswerArr);
 
-                        int count = 0;
-                        int numberOfAns = 0;
-                        for (Answer ans : question.getAnswers()) {
-                            if (ans.isAnswer()) {
-                                numberOfAns++;
-                                if (!Objects.isNull(answer.getAnswer())) {
-                                    for (String selectedAns : answer.getAnswer().split(",")) {
-                                        if (ans.getOrder().toLowerCase().trim().equals(selectedAns.toLowerCase().trim()
-                                        )) {
-                                            count++;
-                                        }
-                                    }
-                                }
+                            System.out.println(finalAnswer);
+                            System.out.println(userFinalAnswer);
+                            if (finalAnswer.toString().toLowerCase().trim().equals(userFinalAnswer.toLowerCase().trim())) {
+                                numberOfRightAnswer++;
                             }
                         }
-                        if (numberOfAns == count) {
-                            numberOfRightAnswer++;
-                        }
+                        question.setSelectedAnswer(userFinalAnswer);
                     } else {
                         String ansss = "";
                         if (!Objects.isNull(answer.getAnswer())) {
@@ -115,11 +111,9 @@ public class TakeExamDetailRestController {
                         if (question.getAnswers().get(0).getContent().trim().toLowerCase().equals(ansss)) {
                             numberOfRightAnswer++;
                         }
+                        question.setSelectedAnswer(answer.getAnswer());
                     }
-
-                    question.setSelectedAnswer(answer.getAnswer());
-
-
+                    
                     break;
                 }
             }

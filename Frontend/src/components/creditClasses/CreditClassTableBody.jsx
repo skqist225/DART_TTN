@@ -11,7 +11,7 @@ import {
     enableOrDisableCreditClass,
     setEditedCreditClass,
 } from "../../features/creditClassSlice";
-import { examState, setEditedExam } from "../../features/examSlice";
+import { examState } from "../../features/examSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import { callToast } from "../../helpers";
 import ExamIcon from "../../images/exam.png";
@@ -33,7 +33,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
     const [isExamEdit, setIsExamEdit] = useState(false);
     const [creditClassId, setCreditClassId] = useState(0);
 
-    const dispatch = useDispatch(0);
+    const dispatch = useDispatch();
 
     const { creditClassedFixedBug: creditClasses } = useSelector(creditClassState);
     const { user } = useSelector(persistUserState);
@@ -41,7 +41,6 @@ function CreditClassTableBody({ rows, setIsEdit }) {
 
     const {
         filterObject,
-        editedExam,
         addExam: { addExamsuccessMessage },
     } = useSelector(examState);
 
@@ -52,11 +51,6 @@ function CreditClassTableBody({ rows, setIsEdit }) {
         $(`#testModal`).css("display", "none");
         if (type === "add") {
             $(`#testModal`)[0].reset();
-        }
-
-        if (type === "edit") {
-            setIsExamEdit(false);
-            dispatch(setEditedExam(null));
         }
     }
 
@@ -78,18 +72,18 @@ function CreditClassTableBody({ rows, setIsEdit }) {
     console.log(errors);
     const onSubmit = data => {
         let haveError = false;
-
-        if (parseInt(data.numberOfStudents) > parseInt($("#numberOfActiveStudents").val())) {
-            setError("numberOfStudents", {
+        if (!data.time) {
+            setError("time", {
                 type: "custom",
-                message: "Số SV thi phải ít hơn SV đang theo học",
+                message: "Thời gian làm bài không được để trống",
             });
             haveError = true;
         }
-        if (data.time > 120) {
-            setError("time", {
+
+        if (!data.numberOfStudents) {
+            setError("numberOfStudents", {
                 type: "custom",
-                message: "Thời gian làm bài phải ít hơn hoặc bằng 120 phút",
+                message: "Số  SV thi không được để trống",
             });
             haveError = true;
         }
@@ -101,7 +95,29 @@ function CreditClassTableBody({ rows, setIsEdit }) {
             }
         });
         if (tests.length === 0) {
-            callToast("error", "Chọn đề thi cho ca thi");
+            setError("tests", {
+                type: "custom",
+                message: "Chọn đề thi cho ca thi",
+            });
+            haveError = true;
+        }
+
+        if (haveError) {
+            return;
+        }
+
+        if (parseInt(data.numberOfStudents) > parseInt($("#numberOfActiveStudents").val())) {
+            setError("numberOfStudents", {
+                type: "custom",
+                message: "Số sinh viên thi phải ít hơn sinh viên đang theo học",
+            });
+            haveError = true;
+        }
+        if (data.time > 120) {
+            setError("time", {
+                type: "custom",
+                message: "Thời gian làm bài phải ít hơn hoặc bằng 120 phút",
+            });
             haveError = true;
         }
 
@@ -122,7 +138,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
             if (parseInt($("#numberOfNoneCreatedMidtermExamStudents").val()) === 0) {
                 setError("examType", {
                     type: "custom",
-                    message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
+                    message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã được tạo cho tất cả sinh viên. Vui lòng chọn loại kỳ thi khác`,
                 });
                 haveError = true;
             }
@@ -130,7 +146,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
             if (parseInt($("#numberOfNoneCreatedFinalTermExamStudents").val()) === 0) {
                 setError("examType", {
                     type: "custom",
-                    message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
+                    message: `Kỳ thi Cuối kỳ của lớp tín chỉ này đã được tạo cho tất cả sinh viên. Vui lòng chọn loại kỳ thi khác`,
                 });
                 haveError = true;
             }
@@ -163,12 +179,6 @@ function CreditClassTableBody({ rows, setIsEdit }) {
         ] = `${schoolYear}-${semester}-${subjectName}-${group}-${data.examType}-${index}`;
 
         dispatch(addExamCreditClassPage(data));
-    };
-
-    const [tabValue, setTabValue] = useState(0);
-
-    const handleChange = (event, newValue) => {
-        setTabValue(newValue);
     };
 
     return (

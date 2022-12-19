@@ -62,55 +62,11 @@ export const fetchAllCreditClasses = createAsyncThunk(
 
 export const fetchAllCreditClassesFixedBug = createAsyncThunk(
     "creditClass/fetchAllCreditClassesFixedBug",
-    async (
-        {
-            page = 1,
-            query = "",
-            sortField = "id",
-            sortDir = "desc",
-            subject = "",
-            active = false,
-            teacher = "",
-            student = "",
-            haveRegister = "true",
-        },
-        { dispatch, rejectWithValue }
-    ) => {
+    async (_, { rejectWithValue }) => {
         try {
-            const filterArray = [];
-
-            filterArray.push({
-                field: "query",
-                value: query,
-            });
-
-            filterArray.push({
-                field: "page",
-                value: page,
-            });
-
-            filterArray.push({
-                field: "sortField",
-                value: sortField,
-            });
-
-            filterArray.push({
-                field: "sortDir",
-                value: sortDir,
-            });
-
-            filterArray.push({
-                field: "subject",
-                value: subject,
-            });
-
-            dispatch(setFilterObject(filterArray));
-
             const {
                 data: { creditClasses, totalElements, totalPages },
-            } = await api.get(
-                `/creditClasses?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&subject=${subject}&active=${active}&teacher=${teacher}&student=${student}&haveRegister=${haveRegister}`
-            );
+            } = await api.get(`/creditClasses?page=0`);
 
             return { creditClasses, totalElements, totalPages };
         } catch ({ data: { error } }) {

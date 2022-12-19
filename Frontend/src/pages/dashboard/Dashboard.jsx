@@ -310,29 +310,24 @@ function Dashboard() {
 
                         <div className='w-full' id='userStat'>
                             <Card>
-                                <div className='uppercase flex items-center justify-center w-full font-semibold text-green-500 '>
+                                <div className='uppercase flex items-center justify-center w-full font-semibold text-fuchsia-800'>
                                     Thống kê người dùng
                                 </div>
                             </Card>
-                            <div className='flex items-center'>
-                                <div className='max-h-6'>
-                                    <PieChart
-                                        data={[
-                                            countTotal.totalUsersAdmin,
-                                            countTotal.totalUsersTeacher,
-                                            countTotal.totalUsersTeacherAndAdmin,
-                                            countTotal.totalUsersStudent,
-                                        ]}
-                                        labels={[
-                                            `Quản trị viên (${countTotal.totalUsersAdmin})`,
-                                            `Giảng viên (${countTotal.totalUsersTeacher})`,
-                                            `Quản trị viên, Giảng viên (${countTotal.totalUsersTeacherAndAdmin})`,
-                                            `Sinh viên (${countTotal.totalUsersStudent})`,
-                                        ]}
-                                    />
-                                </div>
-                                <div className='flex w-50'></div>
-                            </div>
+                            <PieChart
+                                data={[
+                                    countTotal.totalUsersAdmin,
+                                    countTotal.totalUsersTeacher,
+                                    countTotal.totalUsersTeacherAndAdmin,
+                                    countTotal.totalUsersStudent,
+                                ]}
+                                labels={[
+                                    `Quản trị viên (${countTotal.totalUsersAdmin})`,
+                                    `Giảng viên (${countTotal.totalUsersTeacher})`,
+                                    `Quản trị viên, Giảng viên (${countTotal.totalUsersTeacherAndAdmin})`,
+                                    `Sinh viên (${countTotal.totalUsersStudent})`,
+                                ]}
+                            />
                         </div>
                     </div>
                 </>

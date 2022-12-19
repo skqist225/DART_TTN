@@ -137,6 +137,7 @@ function TakeTestPage() {
                 borderWidth: 1,
             },
         ],
+        options: {},
     };
 
     useEffect(() => {

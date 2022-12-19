@@ -7,6 +7,7 @@ import { examState } from "../../features/examSlice";
 import { fetchAllRegisters } from "../../features/registerSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
 import DatePicker from "../utils/datePicker/DatePicker";
+import ErrorMessage from "../utils/errors/ErrorMessage";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
 import TestList from "./TestList";
@@ -308,11 +309,22 @@ function ExamModalBody({
                 </div>
                 {tests.length > 0 ? (
                     <div>
-                        <div className='text-black text-base uppercase mt-3 text-center font-semibold text-blue-500'>
+                        <div
+                            className={`text-base uppercase mt-3 text-center font-semibold ${
+                                errors.tests ? "text-red-500 " : "text-blue-500"
+                            }`}
+                        >
                             Danh sách đề thi
                         </div>
-                        <div className='w-full mt-5 border-2 rounded-sm overflow-y-auto max-h-52'>
+                        <div
+                            className={`w-full mt-5 rounded-sm overflow-y-auto max-h-52 border-2 ${
+                                errors.tests && " border-red-500 "
+                            }`}
+                        >
                             <TestList rows={tests} addCheckbox />
+                        </div>
+                        <div className='w-full text-center'>
+                            <ErrorMessage message={errors.tests && errors.tests.message} />
                         </div>
                     </div>
                 ) : (

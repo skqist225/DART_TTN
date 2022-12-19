@@ -69,11 +69,7 @@ function CreditClassesPage() {
             // 3. Lớp tín chỉ chưa hủy : active: true,
             // 4. Lớp tín chỉ có danh sách đăng ký : haveRegister: true,
         }
-        dispatch(
-            fetchAllCreditClassesFixedBug({
-                page: 0,
-            })
-        );
+        dispatch(fetchAllCreditClassesFixedBug());
         dispatch(fetchCreditClassesForExamAdded());
     };
 
@@ -129,7 +125,7 @@ function CreditClassesPage() {
     };
 
     const handleQueryChange = ({ target: { value: query } }) => {
-        if (user.roles.map(({ name }) => name).includes("Quản trị viên")) {
+        if (userRoles.includes("Quản trị viên")) {
             dispatch(
                 fetchAllCreditClasses({
                     ...filterObject,
@@ -148,7 +144,7 @@ function CreditClassesPage() {
     };
 
     const handleSortChange = (sortField, sortDir) => {
-        if (user.roles.map(({ name }) => name).includes("Quản trị viên")) {
+        if (userRoles.includes("Quản trị viên")) {
             dispatch(
                 fetchAllCreditClasses({
                     ...filterObject,

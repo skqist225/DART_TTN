@@ -427,7 +427,7 @@ export const roleColumns = [
 
 export const rankColumns = [
     {
-        name: "STT",
+        name: "Xếp hạng",
         sortField: "index",
         sortable: true,
     },
@@ -450,7 +450,7 @@ export const rankColumns = [
 
 export const studentRankColumns = [
     {
-        name: "STT",
+        name: "Xếp hạng",
         sortField: "index",
         sortable: true,
     },

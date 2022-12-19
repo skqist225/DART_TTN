@@ -43,6 +43,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.text.DecimalFormat;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -286,45 +287,32 @@ public class TestRestController {
                 finalAnswer = new StringBuilder(question.getAnswers().get(0).getContent());
             }
             boolean isQuestionMatched = false;
-            System.out.println(answers);
+
             for (HandInDTO handInDTO : answers) {
-                System.out.println("here");
-                System.out.println(handInDTO.getQuestionId());
-                System.out.println(question.getId());
                 if (handInDTO.getQuestionId().equals(question.getId())) {
                     isQuestionMatched = true;
                     if (question.getType().equals("Nhiều đáp án")) {
-                        int count = 0;
-                        int numberOfAns = 0;
-                        for (Answer ans : question.getAnswers()) {
-                            if (ans.isAnswer()) {
-                                numberOfAns++;
-                                for (String selectedAns : handInDTO.getAnswer().split(",")) {
-                                    if (ans.getOrder().equals(selectedAns)) {
-                                        count++;
-                                    }
-                                }
-                            }
-                        }
-                        if (numberOfAns == count) {
+                        String[] userFinalAnswerArr = handInDTO.getAnswer().split(",");
+                        Arrays.sort(userFinalAnswerArr);
+                        String userFinalAnswer = String.join(",", userFinalAnswerArr);
+
+                        System.out.println(finalAnswer);
+                        System.out.println(userFinalAnswer);
+                        if (finalAnswer.toString().toLowerCase().trim().equals(userFinalAnswer.toLowerCase().trim())) {
                             numberOfRightAnswer++;
                         }
+                        question.setSelectedAnswer(userFinalAnswer);
+                        takeExamDetailService.updateAnswerForQuestionInStudentTest(userFinalAnswer.trim(), student.getId(), examId
+                                , handInDTO.getQuestionId());
                     } else {
                         if (handInDTO.getAnswer().toLowerCase().trim().equals(finalAnswer.toString().toLowerCase().trim())) {
                             numberOfRightAnswer++;
                         }
+                        question.setSelectedAnswer(handInDTO.getAnswer());
+                        takeExamDetailService.updateAnswerForQuestionInStudentTest(handInDTO.getAnswer().trim(), student.getId(), examId
+                                , handInDTO.getQuestionId());
                     }
-                    question.setSelectedAnswer(handInDTO.getAnswer());
                 }
-
-                System.out.println(handInDTO.getAnswer().trim());
-                System.out.println(
-                        student.getId()
-                );
-                System.out.println(examId);
-                System.out.println(handInDTO.getQuestionId());
-                takeExamDetailService.updateAnswerForQuestionInStudentTest(handInDTO.getAnswer().trim(), student.getId(), examId
-                        , handInDTO.getQuestionId());
             }
             if (!isQuestionMatched) {
                 takeExamDetailService.updateAnswerForQuestionInStudentTest(null, student.getId(),

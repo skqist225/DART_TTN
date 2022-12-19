@@ -18,14 +18,14 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
             {rows.map((row, index) => {
                 let shouldCancel = true;
                 let shouldCancelMessage = "",
-                    shouldDeleteMessage,
-                    shouldEditMessage;
+                    shouldDeleteMessage = "",
+                    shouldEditMessage = "";
 
                 if (row.used) {
                     shouldCancel = false;
-                    shouldCancelMessage = "Đề thi đã sử dụng, không kích hoạt/hủy";
-                    shouldDeleteMessage = "Đề thi đã sử dụng, không xóa";
-                    shouldEditMessage = "Đề thi đã sử dụng, không sửa";
+                    shouldCancelMessage = "Không thể hủy/kích hoạt đề thi đã sử dụng";
+                    shouldDeleteMessage = "Không thể xóa đề thi đã sử dụng";
+                    shouldEditMessage = "Không thể sửa đề thi đã sử dụng";
                 }
 
                 return (

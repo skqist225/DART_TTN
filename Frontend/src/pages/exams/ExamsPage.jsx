@@ -83,18 +83,18 @@ function ExamsPage() {
 
     const onSubmit = data => {
         let haveError = false;
-
-        if (parseInt(data.numberOfStudents) > parseInt($("#numberOfActiveStudents").val())) {
-            setError("numberOfStudents", {
+        if (!data.time) {
+            setError("time", {
                 type: "custom",
-                message: "Số SV thi phải ít hơn SV đang theo học",
+                message: "Thời gian làm bài không được để trống",
             });
             haveError = true;
         }
-        if (data.time > 120) {
-            setError("time", {
+
+        if (!data.numberOfStudents) {
+            setError("numberOfStudents", {
                 type: "custom",
-                message: "Thời gian làm bài phải ít hơn hoặc bằng 120 phút",
+                message: "Số  sinh viên thi không được để trống",
             });
             haveError = true;
         }
@@ -106,7 +106,29 @@ function ExamsPage() {
             }
         });
         if (tests.length === 0) {
-            callToast("error", "Chọn đề thi cho ca thi");
+            setError("tests", {
+                type: "custom",
+                message: "Chọn đề thi cho ca thi",
+            });
+            haveError = true;
+        }
+
+        if (haveError) {
+            return;
+        }
+
+        if (parseInt(data.numberOfStudents) > parseInt($("#numberOfActiveStudents").val())) {
+            setError("numberOfStudents", {
+                type: "custom",
+                message: "Số sinh viên thi phải ít hơn sinh viên đang theo học",
+            });
+            haveError = true;
+        }
+        if (data.time > 120) {
+            setError("time", {
+                type: "custom",
+                message: "Thời gian làm bài phải ít hơn hoặc bằng 120 phút",
+            });
             haveError = true;
         }
 
@@ -129,7 +151,7 @@ function ExamsPage() {
                 if (parseInt($("#numberOfNoneCreatedMidtermExamStudents").val()) === 0) {
                     setError("examType", {
                         type: "custom",
-                        message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
+                        message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã được tạo cho tất cả sinh viên. Vui lòng chọn loại kỳ thi khác`,
                     });
                     haveError = true;
                 }
@@ -137,7 +159,7 @@ function ExamsPage() {
                 if (parseInt($("#numberOfNoneCreatedFinalTermExamStudents").val()) === 0) {
                     setError("examType", {
                         type: "custom",
-                        message: `Kỳ thi Giữa kỳ của lớp tín chỉ này đã tạo cho tất sinh viên. Vui lòng chọn loại kỳ thi khác`,
+                        message: `Kỳ thi Cuối kỳ của lớp tín chỉ này đã được tạo cho tất cả sinh viên. Vui lòng chọn loại kỳ thi khác`,
                     });
                     haveError = true;
                 }

@@ -1,9 +1,9 @@
+import { ArcElement, Chart as ChartJS, Tooltip } from "chart.js";
 import React from "react";
-import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Pie } from "react-chartjs-2";
 ChartJS.register(ArcElement, Tooltip);
 
-function PieChart({ labels, data, width, height }) {
+function PieChart({ labels, data }) {
     const chartData = {
         labels: labels,
         datasets: [
@@ -30,8 +30,26 @@ function PieChart({ labels, data, width, height }) {
             },
         ],
         maintainAspectRatio: false,
+        options: {
+            responsive: true,
+            scales: {
+                yAxes: [
+                    {
+                        ticks: {
+                            beginAtZero: true,
+                        },
+                    },
+                ],
+            },
+        },
     };
-    return <Pie data={chartData} width={width} height={height} />;
+    return (
+        <div className='flex flex-col justify-center items-center col-span-full sm:col-span-6 bg-white shadow-lg rounded-sm border border-slate-200 w-full h-full'>
+            <div style={{ height: "600px", position: "relative", width: "600px" }}>
+                <Pie data={chartData} id='myPieChart' />
+            </div>
+        </div>
+    );
 }
 
 export default PieChart;

@@ -145,6 +145,7 @@ public class CreditClassService {
             predicates.add(criteriaBuilder.and(criteriaBuilder.equal(subject, subjectId)));
         }
 
+        System.out.println(teacherId);
         if (!StringUtils.isEmpty(teacherId)) {
             Expression<String> teacher = root.get("teacher").get("id");
             predicates.add(criteriaBuilder.and(criteriaBuilder.equal(teacher, teacherId)));
