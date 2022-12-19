@@ -38,7 +38,7 @@ public class SubjectService {
     @Autowired
     private EntityManager entityManager;
 
-    public int countTotalSubjects() {
+    public Integer countTotalSubjects() {
         return subjectRepository.countTotalSubjects();
     }
 

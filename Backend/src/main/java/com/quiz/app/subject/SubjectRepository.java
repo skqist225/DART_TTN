@@ -13,7 +13,7 @@ import java.util.List;
 public interface SubjectRepository extends CrudRepository<Subject, String> {
 
     @Query("SELECT count(*) FROM Subject")
-    int countTotalSubjects();
+    Integer countTotalSubjects();
 
     @Query(value = "select mh.* from monhoc mh where mh.mamh in (select c.mamh from chuong c)", nativeQuery = true)
     List<Subject> findByHaveChapter();

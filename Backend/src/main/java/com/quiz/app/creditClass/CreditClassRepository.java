@@ -26,11 +26,11 @@ public interface CreditClassRepository extends CrudRepository<CreditClass, Integ
     List<CreditClass> findAllActiveCreditClassAndStudent(String studentId);
 
     @Query("SELECT count(*) FROM CreditClass")
-    int countTotalCreditClasses();
+    Integer countTotalCreditClasses();
 
     @Query("SELECT count(*) FROM CreditClass c where c.status = false")
-    int countTotalCreditClassesOpened();
+    Integer countTotalCreditClassesOpened();
 
     @Query("SELECT count(*) FROM CreditClass c where c.status = true")
-    int countTotalCreditClassesClosed();
+    Integer countTotalCreditClassesClosed();
 }

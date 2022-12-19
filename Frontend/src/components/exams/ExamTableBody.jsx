@@ -115,25 +115,35 @@ function ExamTableBody({ rows, setIsEdit }) {
                             {!userRoles.includes("Sinh viên") && (
                                 <>
                                     <div className='mr-2'>
-                                        <MyButton
-                                            type='edit'
-                                            onClick={() => {
-                                                $(`#examModal`).css("display", "flex");
-                                                setIsEdit(true);
-                                                dispatch(setEditedExam(row));
-                                            }}
-                                            disabled={!shouldEdit}
-                                            customTooltipMessage={shouldEditMessage}
-                                        />
+                                        {!userRoles.includes("Quản trị viên") &&
+                                        row.teacherId.toString() !== user.id.toString() ? (
+                                            <></>
+                                        ) : (
+                                            <MyButton
+                                                type='edit'
+                                                onClick={() => {
+                                                    $(`#examModal`).css("display", "flex");
+                                                    setIsEdit(true);
+                                                    dispatch(setEditedExam(row));
+                                                }}
+                                                disabled={!shouldEdit}
+                                                customTooltipMessage={shouldEditMessage}
+                                            />
+                                        )}
                                     </div>
-                                    <EnableOrDisable
-                                        status={row.status}
-                                        enableOrDisable={enableOrDisableExam}
-                                        id={row.id}
-                                        disabled={!shouldCancel}
-                                        creditClassPage={true}
-                                        customTooltipMessage={shouldCancelMessage}
-                                    />
+                                    {!userRoles.includes("Quản trị viên") &&
+                                    row.teacherId.toString() !== user.id.toString() ? (
+                                        <></>
+                                    ) : (
+                                        <EnableOrDisable
+                                            status={row.status}
+                                            enableOrDisable={enableOrDisableExam}
+                                            id={row.id}
+                                            disabled={!shouldCancel}
+                                            creditClassPage={true}
+                                            customTooltipMessage={shouldCancelMessage}
+                                        />
+                                    )}
                                 </>
                             )}
                         </td>

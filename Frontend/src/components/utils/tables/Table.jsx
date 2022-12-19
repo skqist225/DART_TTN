@@ -84,12 +84,10 @@ function Table({
                         className='flex items-center
                     '
                     >
-                        {(modalLabel === "môn học" &&
-                            !user.roles.map(({ name }) => name).includes("Quản trị viên")) ||
-                        (modalLabel === "lớp tín chỉ" &&
-                            !user.roles.map(({ name }) => name).includes("Quản trị viên")) ||
-                        (modalLabel === "ca thi" &&
-                            user.roles.map(({ name }) => name).includes("Sinh viên")) ||
+                        {(modalLabel === "môn học" && !userRoles.includes("Quản trị viên")) ||
+                        (modalLabel === "lớp tín chỉ" && !userRoles.includes("Quản trị viên")) ||
+                        (modalLabel === "ca thi" && userRoles.includes("Sinh viên")) ||
+                        (modalLabel === "ca thi" && !userRoles.includes("Quản trị viên")) ||
                         modalLabel === "Bảng xếp hạng" ? (
                             <></>
                         ) : (

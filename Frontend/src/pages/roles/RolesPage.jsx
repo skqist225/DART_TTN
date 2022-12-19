@@ -42,7 +42,7 @@ function RolesPage() {
     const modalId = "roleModal";
     const modalLabel = "vai trò";
 
-    if (userRoles.includes("Sinh viên") || userRoles.includes("Giảng viên")) {
+    if (!userRoles.includes("Quản trị viên")) {
         navigate("/");
     }
 

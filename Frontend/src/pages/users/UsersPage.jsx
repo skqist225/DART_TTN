@@ -38,7 +38,7 @@ const UsersPage = () => {
     const modalId = "userModal";
     const modalLabel = "người dùng";
 
-    if (userRoles.includes("Sinh viên") || userRoles.includes("Giảng viên")) {
+    if (!userRoles.includes("Quản trị viên")) {
         navigate("/");
     }
 

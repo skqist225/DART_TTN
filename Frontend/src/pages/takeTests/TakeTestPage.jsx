@@ -364,6 +364,17 @@ function TakeTestPage() {
                                                                       e.target.value
                                                                   );
                                                                   setFinalAnswer(finalAnswer);
+                                                                  if (e.target.value) {
+                                                                      $(
+                                                                          `#question-${question.id}-answer`
+                                                                      ).addClass("chosen active");
+                                                                  } else {
+                                                                      $(
+                                                                          `#question-${question.id}-answer`
+                                                                      ).removeClass(
+                                                                          "chosen active"
+                                                                      );
+                                                                  }
                                                               }}
                                                           />
                                                       </>
@@ -669,7 +680,7 @@ function TakeTestPage() {
                                                 );
 
                                                 // should check time before doing test.
-                                                const check = false;
+                                                let check = false;
 
                                                 if (check) {
                                                     if (

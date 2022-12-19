@@ -44,32 +44,31 @@ public class StatisticService {
     public CountTotalDTO count() {
         CountTotalDTO countTotalDTO = new CountTotalDTO();
 
-        int totalExams = examRepository.countTotalExams();
-        int totalExamsUsed = examRepository.countTotalExamsUsed();
-        int totalExamsNotUsed = examRepository.countTotalExamsNotUsed();
-        int totalExamsCancelled = examRepository.countTotalExamsCancelled();
+        Integer totalExams = examRepository.countTotalExams();
+        Integer totalExamsUsed = examRepository.countTotalExamsUsed();
+        Integer totalExamsNotUsed = examRepository.countTotalExamsNotUsed();
+        Integer totalExamsCancelled = examRepository.countTotalExamsCancelled();
 
-        int totalCreditClasses = creditClassRepository.countTotalCreditClasses();
-        int totalCreditClassesOpened = creditClassRepository.countTotalCreditClassesOpened();
-        int totalCreditClassesClosed = creditClassRepository.countTotalCreditClassesClosed();
+        Integer totalCreditClasses = creditClassRepository.countTotalCreditClasses();
+        Integer totalCreditClassesOpened = creditClassRepository.countTotalCreditClassesOpened();
+        Integer totalCreditClassesClosed = creditClassRepository.countTotalCreditClassesClosed();
 
-        int totalUsers = userRepository.countAllUsers();
-        int totalUsersAdmin = userRepository.countAllUsersAdmin();
-        int totalUsersTeacher = userRepository.countAllUsersTeacher();
-        int totalUsersTeacherAndAdmin = userRepository.countAllUsersTeacherAndAdmin();
-        int totalUsersStudent = userRepository.countAllUsersStudent();
+        Integer totalUsers = userRepository.countAllUsers();
+        Integer totalUsersAdmin = userRepository.countAllUsersAdmin();
+        Integer totalUsersTeacher = userRepository.countAllUsersTeacher();
+        Integer totalUsersTeacherAndAdmin = userRepository.countAllUsersTeacherAndAdmin();
+        Integer totalUsersStudent = userRepository.countAllUsersStudent();
 
-        int totalSubjects = subjectService.countTotalSubjects();
+        Integer totalSubjects = subjectService.countTotalSubjects();
 
+        Integer totalTests = testRepository.countTotalTests();
+        Integer totalTestsUsed = testRepository.countTotalTestsUsed();
+        Integer totalTestsNotUsed = testRepository.countTotalTestsNotUsed();
+        Integer totalTestsCancelled = testRepository.countTotalTestsCancelled();
 
-        int totalTests = testRepository.countTotalTests();
-        int totalTestsUsed = testRepository.countTotalTestsUsed();
-        int totalTestsNotUsed = testRepository.countTotalTestsNotUsed();
-        int totalTestsCancelled = testRepository.countTotalTestsCancelled();
-
-        int totalQuestions = questionRepository.countTotalQuestions();
-        int totalQuestionsActive = questionRepository.countTotalQuestionsActive();
-        int totalQuestionsDisabled = questionRepository.countTotalQuestionsDisabled();
+        Integer totalQuestions = questionRepository.countTotalQuestions();
+        Integer totalQuestionsActive = questionRepository.countTotalQuestionsActive();
+        Integer totalQuestionsDisabled = questionRepository.countTotalQuestionsDisabled();
 
         countTotalDTO.setTotalExams(totalExams);
         countTotalDTO.setTotalExamsUsed(totalExamsUsed);
@@ -83,7 +82,7 @@ public class StatisticService {
         countTotalDTO.setTotalUsersStudent(totalUsersStudent);
 
         countTotalDTO.setTotalCreditClasses(totalCreditClasses);
-        countTotalDTO.setTotalCreditClassesClosed(totalCreditClassesOpened);
+        countTotalDTO.setTotalCreditClassesOpened(totalCreditClassesOpened);
         countTotalDTO.setTotalCreditClassesClosed(totalCreditClassesClosed);
 
         countTotalDTO.setTotalSubjects(totalSubjects);

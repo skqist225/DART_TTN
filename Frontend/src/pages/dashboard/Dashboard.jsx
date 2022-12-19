@@ -65,7 +65,7 @@ function Dashboard() {
     } = useSelector(authState);
     const { subjects } = useSelector(subjectState);
 
-    if (userRoles.includes("Sinh viên") || userRoles.includes("Giảng viên")) {
+    if (!userRoles.includes("Quản trị viên")) {
         navigate("/");
     }
 
@@ -197,10 +197,10 @@ function Dashboard() {
                                     backgroundColor={`bg-amber-500`}
                                     number={countTotal.totalSubjects}
                                     additionalData={[
-                                        ["Đang mở", countTotal.totalCreditClassesOpened],
-                                        ["Đã hủy", countTotal.totalCreditClassesClosed],
-                                        ["", 0],
-                                        ["", 0],
+                                        ["", ""],
+                                        ["", ""],
+                                        ["", ""],
+                                        ["", ""],
                                     ]}
                                 />
                                 <SimpleStatNumber

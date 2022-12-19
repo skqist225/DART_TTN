@@ -56,7 +56,7 @@ function RegistersPage() {
     const modalId = "registerModal";
     const modalLabel = "đăng ký";
 
-    if (userRoles.includes("Sinh viên") || userRoles.includes("Giảng viên")) {
+    if (!userRoles.includes("Quản trị viên")) {
         navigate("/");
     }
 

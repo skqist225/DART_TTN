@@ -23,6 +23,7 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import java.time.LocalDate;
 import java.util.ArrayList;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -117,6 +118,13 @@ public class Exam {
 
     public int getNumberOfRegisters() {
         return this.takeExams.size();
+    }
+
+    public String getTeacherId() {
+        if (this.takeExams.size() > 0) {
+            return this.takeExams.get(0).getRegister().getCreditClass().getTeacherId();
+        }
+        return "";
     }
 
     public String getTeacherName() {

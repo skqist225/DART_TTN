@@ -10,29 +10,29 @@ import lombok.Setter;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CountTotalDTO {
-    private int totalExams = 0;
-    private int totalExamsUsed = 0;
-    private int totalExamsNotUsed = 0;
-    private int totalExamsCancelled = 0;
+    private Integer totalExams = 0;
+    private Integer totalExamsUsed = 0;
+    private Integer totalExamsNotUsed = 0;
+    private Integer totalExamsCancelled = 0;
 
-    private int totalUsers = 0;
-    private int totalUsersAdmin = 0;
-    private int totalUsersTeacher = 0;
-    private int totalUsersTeacherAndAdmin = 0;
-    private int totalUsersStudent = 0;
+    private Integer totalUsers = 0;
+    private Integer totalUsersAdmin = 0;
+    private Integer totalUsersTeacher = 0;
+    private Integer totalUsersTeacherAndAdmin = 0;
+    private Integer totalUsersStudent = 0;
 
-    private int totalCreditClasses = 0;
-    private int totalCreditClassesOpened = 0;
-    private int totalCreditClassesClosed = 0;
+    private Integer totalCreditClasses = 0;
+    private Integer totalCreditClassesOpened = 0;
+    private Integer totalCreditClassesClosed = 0;
 
-    private int totalSubjects = 0;
+    private Integer totalSubjects = 0;
 
-    private int totalTests = 0;
-    private int totalTestsUsed = 0;
-    private int totalTestsNotUsed = 0;
-    private int totalTestsCancelled = 0;
+    private Integer totalTests = 0;
+    private Integer totalTestsUsed = 0;
+    private Integer totalTestsNotUsed = 0;
+    private Integer totalTestsCancelled = 0;
 
-    private int totalQuestions = 0;
-    private int totalQuestionsActive = 0;
-    private int totalQuestionsDisabled = 0;
+    private Integer totalQuestions = 0;
+    private Integer totalQuestionsActive = 0;
+    private Integer totalQuestionsDisabled = 0;
 }
