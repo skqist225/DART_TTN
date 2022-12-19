@@ -52,45 +52,39 @@ function ExamTableBody({ rows, setIsEdit }) {
                         }`}
                         key={row.id}
                     >
-                        <td className={tailwindCss.tableCell}>
-                            {" "}
-                            <Tooltip content={"shouldShowInfoMessage"}>
-                                <Button
-                                    style={{ backgroundColor: "none" }}
-                                    onClick={() => {
-                                        $(`#viewExamDetails${row.id}`).css("display", "flex");
-                                    }}
-                                    // disabled={!shouldShowInfo}
-                                >
-                                    {row.id}
-                                </Button>
-                                <TableModalViewer
-                                    modalId={`viewExamDetails${row.id}`}
-                                    modalLabel='Thông tin lớp tín chỉ'
-                                    ModalBody={
-                                        <ViewDetails
-                                            Header={
-                                                <Card>
-                                                    <div
-                                                        className='flex items-center justify-between w-3/6 m-auto
-                                                        
-                                                    '
-                                                    ></div>
-                                                </Card>
-                                            }
-                                            labels={[
-                                                `Danh sách thi (${row.tempTakeExams.length})`,
-                                                `Danh sách đề thi (${row.tests.length})`,
-                                            ]}
-                                            data={[
-                                                <RegisterList takeExams={row.tempTakeExams} />,
-                                                <TestList rows={row.tests} />,
-                                            ]}
-                                        />
-                                    }
-                                />
-                            </Tooltip>
-                        </td>
+                        {!userRoles.includes("Sinh viên") && (
+                            <td className={tailwindCss.tableCell}>
+                                {" "}
+                                <Tooltip content={"Xem thông tin ca thi"}>
+                                    <Button
+                                        style={{ backgroundColor: "none" }}
+                                        onClick={() => {
+                                            $(`#viewExamDetails${row.id}`).css("display", "flex");
+                                        }}
+                                        // disabled={!shouldShowInfo}
+                                    >
+                                        {row.id}
+                                    </Button>
+                                    <TableModalViewer
+                                        modalId={`viewExamDetails${row.id}`}
+                                        modalLabel='Thông tin lớp tín chỉ'
+                                        ModalBody={
+                                            <ViewDetails
+                                                Header={<></>}
+                                                labels={[
+                                                    `Danh sách thi (${row.tempTakeExams.length})`,
+                                                    `Danh sách đề thi (${row.tests.length})`,
+                                                ]}
+                                                data={[
+                                                    <RegisterList takeExams={row.tempTakeExams} />,
+                                                    <TestList rows={row.tests} />,
+                                                ]}
+                                            />
+                                        }
+                                    />
+                                </Tooltip>
+                            </td>
+                        )}
                         <td className={tailwindCss.tableCell} style={{ maxWidth: "200px" }}>
                             {row.name}
                         </td>
@@ -109,8 +103,13 @@ function ExamTableBody({ rows, setIsEdit }) {
                             {row.noticePeriod} (
                             {noticePeriodMappings[row.noticePeriod].split("-")[0]})
                         </td>
-                        <td className={tailwindCss.tableCell}>{row.time} phút</td>
-                        <td className={tailwindCss.tableCell}>{row.teacherName}</td>
+                        <td className={tailwindCss.tableCell}>{row.time} phút</td>{" "}
+                        {userRoles.includes("Sinh viên") && (
+                            <td className={tailwindCss.tableCell}>{row.type}</td>
+                        )}
+                        {!userRoles.includes("Sinh viên") && (
+                            <td className={tailwindCss.tableCell}>{row.teacherName}</td>
+                        )}
                         <td className={`${tailwindCss.tableCell} flex items-center`}>
                             {!userRoles.includes("Sinh viên") && (
                                 <>

@@ -72,20 +72,20 @@ function UserModalBody({ errors, register, dispatch, setValue, setImage, isEdit,
                             </div>
                         </div>
                         <div className='w-full flex items-start mb-5'>
-                            <div className='flex-1 mr-5'>
+                            <div className='flex-1  mr-5'>
                                 <Input
                                     label='Họ *'
-                                    error={errors.firstName && errors.firstName.message}
+                                    error={errors.lastName && errors.lastName.message}
                                     register={register}
-                                    name='firstName'
+                                    name='lastName'
                                 />
                             </div>
                             <div className='flex-1'>
                                 <Input
                                     label='Tên *'
-                                    error={errors.lastName && errors.lastName.message}
+                                    error={errors.firstName && errors.firstName.message}
                                     register={register}
-                                    name='lastName'
+                                    name='firstName'
                                 />
                             </div>
                         </div>

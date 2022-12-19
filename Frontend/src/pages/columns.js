@@ -302,18 +302,7 @@ export const studentColumns = [
         sortable: true,
     },
     {
-        name: "Loại thi",
-        sortField: "type",
-        sortable: true,
-    },
-    {
-        name: "Giảng viên",
-        sortField: "time",
-        // sortable: true,
-    },
-    {
-        name: "Thao tác",
-        sortField: "name",
+        name: "Kỳ thi",
     },
 ];
 

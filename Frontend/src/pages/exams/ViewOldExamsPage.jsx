@@ -70,7 +70,7 @@ function ViewOldExamsPage() {
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={userRoles.includes("Sinh viên") ? studentExamColumns : examColumns}
-                    modalLabel='ca thi'
+                    modalLabel='bài thi đã làm'
                     rows={exams}
                     totalElements={totalElements}
                     totalPages={totalPages}

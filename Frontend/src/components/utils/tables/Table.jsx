@@ -195,17 +195,18 @@ function Table({
                     <>
                         {!loading && rows.length > 0 ? (
                             <>
-                                {ranksPage && userRoles.includes("Sinh viên") && (
-                                    <Card>
-                                        <p className='font-normal text-gray-700 dark:text-gray-400'>
-                                            Vị trí của bạn trong bảng xếp hạng là:
-                                            <span className='font-bold'>
-                                                {" "}
-                                                {studentRankingPosition}
-                                            </span>
-                                        </p>
-                                    </Card>
-                                )}
+                                {ranksPage &&
+                                    userRoles.includes("Sinh viên") &&
+                                    parseInt(studentRankingPosition) !== 0 && (
+                                        <Card>
+                                            <p className='font-normal text-gray-700 dark:text-gray-400'>
+                                                Vị trí của bạn trong bảng xếp hạng là:
+                                                <span className='font-bold'>
+                                                    {studentRankingPosition}
+                                                </span>
+                                            </p>
+                                        </Card>
+                                    )}
 
                                 <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
                                     <TableHeader
