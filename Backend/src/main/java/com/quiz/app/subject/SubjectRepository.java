@@ -17,4 +17,10 @@ public interface SubjectRepository extends CrudRepository<Subject, String> {
 
     @Query(value = "select mh.* from monhoc mh where mh.mamh in (select c.mamh from chuong c)", nativeQuery = true)
     List<Subject> findByHaveChapter();
+
+    @Query(value = "select * from (select mh.* from loptinchi ltc left join monhoc mh on mh.mamh " +
+            "= ltc.mamh where magv = :teacherId) temp where temp.mamh in (select c.mamh from chuong c)\n"
+            ,nativeQuery = true)
+    List<Subject> findSubjectsOfTeacher(String teacherId);
+
 }

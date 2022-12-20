@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
 import { Pagination } from "flowbite-react";
-import { questionState, setResetFilter } from "../../../features/questionSlice";
+import React, { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
+import { questionState } from "../../../features/questionSlice";
 
 function TablePagination({
     totalElements,
@@ -10,7 +10,6 @@ function TablePagination({
     fetchDataByPageNumber,
     recordsPerPage = 10,
 }) {
-    const dispatch = useDispatch();
     const [currentIndex, setCurrentIndex] = useState(1);
     const { resetFilter, excelAdd } = useSelector(questionState);
 
@@ -19,12 +18,6 @@ function TablePagination({
             setCurrentIndex(1);
         }
     }, [resetFilter]);
-
-    useEffect(() => {
-        if (currentIndex == 1) {
-            dispatch(setResetFilter(false));
-        }
-    }, [currentIndex]);
 
     return (
         <nav className='col-flex justify-between items-center my-5' aria-label='Table navigation'>

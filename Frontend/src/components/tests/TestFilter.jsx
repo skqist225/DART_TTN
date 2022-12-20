@@ -1,15 +1,15 @@
+import $ from "jquery";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { subjectState } from "../../features/subjectSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
 import Select from "../utils/userInputs/Select";
-import $ from "jquery";
 
 function TestFilter() {
     const dispatch = useDispatch();
     const { filterObject } = useSelector(testState);
-    const { subjects } = useSelector(subjectState);
+    const { subjectsHaveQuestion: subjects } = useSelector(subjectState);
     const { register, handleSubmit } = useForm();
 
     const handleSubjectChange = event => {
@@ -37,7 +37,7 @@ function TestFilter() {
                     options={subjects.map(subject => ({
                         title: subject.id.includes("CLC")
                             ? `${subject.name} CLC`
-                            : `${subject.name}`,
+                            : `${subject.name} (${subject.numberOfTests})`,
                         value: subject.id,
                     }))}
                     onChangeHandler={handleSubjectChange}

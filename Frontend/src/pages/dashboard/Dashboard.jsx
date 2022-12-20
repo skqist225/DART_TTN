@@ -25,7 +25,7 @@ import {
     doughnut,
     statisticState,
 } from "../../features/statisticSlice";
-import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
+import { fetchAllSubjectsFiltered, subjectState } from "../../features/subjectSlice";
 import BarChart from "../../partials/dashboard/BarChart";
 import PieChart from "../../partials/dashboard/PieChart";
 import StackedBarChart from "../../partials/dashboard/StackedBarChart";
@@ -48,22 +48,18 @@ function Dashboard() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const { user } = useSelector(persistUserState);
     const userRoles = user.roles.map(({ name }) => name);
-    const {
-        register,
-        setValue,
-        formState: { errors },
-    } = useForm({});
+    const { register, setValue } = useForm({});
 
     const {
         countTotal,
-        doughnut: { countQuestionsBySubject, countExamsByCreditClass },
+        doughnut: { countQuestionsBySubject },
         countTestsBySubjectAndStatuses,
         countQuestionsByChapters,
     } = useSelector(statisticState);
     const {
         loginAction: { loading },
     } = useSelector(authState);
-    const { subjects } = useSelector(subjectState);
+    const { subjectsHaveQuestion: subjects } = useSelector(subjectState);
 
     if (!userRoles.includes("Quản trị viên")) {
         navigate("/");
@@ -73,7 +69,7 @@ function Dashboard() {
         dispatch(countTotalRecords());
         dispatch(doughnut());
         dispatch(countTestsBySubjectAndStatus());
-        dispatch(fetchAllSubjects({ page: 0, haveChapter: true, haveQuestion: true }));
+        dispatch(fetchAllSubjectsFiltered({ haveChapter: true, haveQuestion: true }));
     }, []);
 
     const bgs = ["rgb(255, 99, 132)", "rgb(75, 192, 192)", "rgb(53, 162, 235)"];

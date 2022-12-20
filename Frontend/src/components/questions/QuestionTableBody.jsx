@@ -1,17 +1,17 @@
+import { Tooltip } from "flowbite-react";
+import $ from "jquery";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { EnableOrDisable, LevelBadge, MyButton } from "..";
+import { AnswerList } from "../";
+import { persistUserState } from "../../features/persistUserSlice";
 import {
     deleteQuestion,
     enableOrDisableQuestion,
     setEditedQuestion,
 } from "../../features/questionSlice";
 import { tailwindCss } from "../../tailwind";
-import { MyButton, LevelBadge } from "..";
-import EnableOrDisable from "../common/EnableOrDisable";
-import { Tooltip } from "flowbite-react";
 import { ButtonType } from "../common/MyButton";
-import { AnswerList } from "../";
-import $ from "jquery";
 
 function QuestionTableBody({
     rows,
@@ -28,6 +28,9 @@ function QuestionTableBody({
     if (page !== null) {
         rows = rows.slice((page - 1) * 10, page * 10);
     }
+
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     return (
         <tbody>
@@ -62,9 +65,6 @@ function QuestionTableBody({
                                                 : `etdQsts.${index}.selected`
                                         )}
                                     />
-                                    <label htmlFor='checkbox-all' className='sr-only'>
-                                        checkbox
-                                    </label>
                                 </div>
                             </th>
                         )}
@@ -118,15 +118,18 @@ function QuestionTableBody({
                                 <td className={tailwindCss.tableCell}>{row.type}</td>
                                 {!chapterListPage && (
                                     <td className={tailwindCss.tableCell}>{row.chapterName}</td>
-                                )}{" "}
+                                )}
                                 <td>
                                     <LevelBadge level={row.level} label={row.level} />
                                 </td>
                             </>
                         )}
-                        <td className={tailwindCss.tableCell}>{row.teacherName}</td>
+                        {userRoles.includes("Quản trị viên") && (
+                            <td className={tailwindCss.tableCell}>{row.teacherName}</td>
+                        )}
                         <td className='py-2 px-3 flex items-center justify-center'>
-                            {!addTest ? (
+                            {!addTest &&
+                            (userRoles.includes("Quản trị viên") || row.teacherId === user.id) ? (
                                 <>
                                     <MyButton
                                         type='edit'

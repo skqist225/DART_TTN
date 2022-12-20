@@ -1,7 +1,8 @@
 import { Badge, Button, Card, Tooltip } from "flowbite-react";
 import $ from "jquery";
 import React from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { persistUserState } from "../../features/persistUserSlice";
 import { deleteTest, enableOrDisableTest, setEditedTest } from "../../features/testSlice";
 import { tailwindCss } from "../../tailwind";
 import EnableOrDisable from "../common/EnableOrDisable";
@@ -13,6 +14,10 @@ import QuestionList from "./QuestionList";
 
 function TestTableBody({ rows, examPage = false, setIsEdit }) {
     const dispatch = useDispatch();
+
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
+
     return (
         <tbody>
             {rows.map((row, index) => {
@@ -103,38 +108,46 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
                             {row.numberOfQuestions}
                         </td>
                         <td className={tailwindCss.tableCell}>{row.subjectName}</td>
-                        <td className={tailwindCss.tableCell}>{row.teacherName}</td>
+                        {userRoles.includes("Quản trị viên") && (
+                            <td className={tailwindCss.tableCell}>{row.teacherName}</td>
+                        )}
+
                         {!examPage && (
                             <td className={`${tailwindCss.tableCell} flex items-center`}>
-                                <div className='mr-2'>
-                                    <MyButton
-                                        type={ButtonType.edit}
-                                        onClick={() => {
-                                            $("#testModal").css("display", "flex");
-                                            setIsEdit(true);
-                                            dispatch(setEditedTest(row));
-                                        }}
-                                        disabled={!shouldCancel}
-                                        customTooltipMessage={shouldEditMessage}
-                                    />
-                                </div>
-                                <div className='mr-2'>
-                                    <MyButton
-                                        type={ButtonType.delete}
-                                        onClick={() => {
-                                            dispatch(deleteTest(row.id));
-                                        }}
-                                        disabled={!shouldCancel}
-                                        customTooltipMessage={shouldDeleteMessage}
-                                    />
-                                </div>
-                                <EnableOrDisable
-                                    status={row.status}
-                                    enableOrDisable={enableOrDisableTest}
-                                    id={row.id}
-                                    disabled={!shouldCancel}
-                                    customTooltipMessage={shouldCancelMessage}
-                                />
+                                {(userRoles.includes("Quản trị viên") ||
+                                    row.teacherId === user.id) && (
+                                    <>
+                                        <div className='mr-2'>
+                                            <MyButton
+                                                type={ButtonType.edit}
+                                                onClick={() => {
+                                                    $("#testModal").css("display", "flex");
+                                                    setIsEdit(true);
+                                                    dispatch(setEditedTest(row));
+                                                }}
+                                                disabled={!shouldCancel}
+                                                customTooltipMessage={shouldEditMessage}
+                                            />
+                                        </div>
+                                        <div className='mr-2'>
+                                            <MyButton
+                                                type={ButtonType.delete}
+                                                onClick={() => {
+                                                    dispatch(deleteTest(row.id));
+                                                }}
+                                                disabled={!shouldCancel}
+                                                customTooltipMessage={shouldDeleteMessage}
+                                            />
+                                        </div>
+                                        <EnableOrDisable
+                                            status={row.status}
+                                            enableOrDisable={enableOrDisableTest}
+                                            id={row.id}
+                                            disabled={!shouldCancel}
+                                            customTooltipMessage={shouldCancelMessage}
+                                        />
+                                    </>
+                                )}
                             </td>
                         )}
                     </tr>

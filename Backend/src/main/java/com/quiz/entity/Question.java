@@ -238,6 +238,11 @@ public class Question {
     }
 
     @Transient
+    public String getTeacherId() {
+        return this.teacher.getId();
+    }
+
+    @Transient
     public String getTeacherName() {
         return this.teacher.getFullName();
     }

@@ -113,16 +113,9 @@ public class ExamService {
 
 
         Sort sort = null;
-//        if(sortField.equals("subjectId")) {
-//            sort = Sort.by(sortField);
-//        } else if(sortField.equals("subjectName")) {
-//            sort = Sort.by(sortField);
-//        } else {
-//            sort = Sort.by(sortField);
-//        }
         sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+        Pageable pageable = PageRequest.of(page - 1, 12, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Exam> criteriaQuery = criteriaBuilder.createQuery(Exam.class);
@@ -144,21 +137,6 @@ public class ExamService {
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, noticePeriod);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-
-//            System.out.println(searchQuery);
-//            String taken3 = "";
-//            if (searchQuery.contains("Chưa thi") || searchQuery.equals("Chưa thi")) {
-//                predicates.add(criteriaBuilder.and(criteriaBuilder.equal(taken2,
-//                        false)));
-//                taken3 = "false";
-//            } else if (searchQuery.contains("Đã thi") || searchQuery.equals("Đã thi")) {
-//                predicates.add(criteriaBuilder.and(criteriaBuilder.equal(taken2,
-//                        true)));
-//                taken3 = "true";
-//            }
-//            System.out.println(taken3);
-//            wantedQueryField = criteriaBuilder.concat(wantedQueryField, taken2);
-//            searchQuery += " " + taken3;
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }

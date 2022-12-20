@@ -293,9 +293,6 @@ const questionSlice = createSlice({
                 return question;
             });
         },
-        setResetFilter(state, { payload }) {
-            state.resetFilter = payload;
-        },
         setQuestions(state, { payload }) {
             state.questions = payload;
         },
@@ -451,7 +448,6 @@ export const {
         setEditedQuestion,
         setExcelAdd,
         disableOrEnableLoadedQuestions,
-        setResetFilter,
         setQuestions,
         setTestedQuestions,
         setExcelQuestions,

@@ -131,7 +131,7 @@ public class TestService {
         }
 
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+        Pageable pageable = PageRequest.of(page - 1, 12, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Test> criteriaQuery = criteriaBuilder.createQuery(Test.class);

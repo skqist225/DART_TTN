@@ -13,7 +13,11 @@ import {
     setQueryAvailableQuestionsArr,
     setQuestions,
 } from "../../features/questionSlice";
-import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
+import {
+    fetchAllSubjects,
+    fetchAllSubjectsFiltered,
+    subjectState,
+} from "../../features/subjectSlice";
 import {
     addTest,
     clearTestState,
@@ -32,7 +36,7 @@ function TestsPage() {
     const [sidebarOpen, setSidebarOpen] = useState(false);
     const [isEdit, setIsEdit] = useState(false);
 
-    const { subjects } = useSelector(subjectState);
+    const { subjectsHaveQuestion: subjects } = useSelector(subjectState);
     const {
         tests,
         totalElements,
@@ -62,7 +66,17 @@ function TestsPage() {
                 page: 1,
             })
         );
-        dispatch(fetchAllSubjects({ page: 0, haveChapter: true, haveQuestion: true }));
+
+        //subjects for adding
+        if (userRoles.includes("Quản trị viên")) {
+            //subjects have chapter
+            dispatch(fetchAllSubjects({ page: 0, haveChapter: true }));
+        } else {
+            //subjects teacher teaches
+            dispatch(fetchAllSubjects({ page: 0, teacher: user.id }));
+        }
+
+        dispatch(fetchAllSubjectsFiltered({ haveChapter: true, haveQuestion: true }));
         dispatch(setQuestions([]));
     }, []);
 

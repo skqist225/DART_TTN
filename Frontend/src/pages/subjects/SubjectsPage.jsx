@@ -11,6 +11,7 @@ import {
     clearSubjectState,
     editSubject,
     fetchAllSubjects,
+    fetchAllSubjectsFiltered,
     setEditedSubject,
     subjectState,
 } from "../../features/subjectSlice";
@@ -53,6 +54,7 @@ function SubjectsPage() {
                 page: 1,
             })
         );
+        dispatch(fetchAllSubjectsFiltered({ teacher: user.id, haveChapter: false }));
     }, []);
 
     const {

@@ -1,19 +1,19 @@
-import React, { useEffect } from "react";
-import { useSelector, useDispatch } from "react-redux";
 import { yupResolver } from "@hookform/resolvers/yup";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { Button, FormControl } from "@mui/material";
 import { Tooltip } from "flowbite-react";
+import $ from "jquery";
+import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate, useParams } from "react-router-dom";
 import { DatePicker, Input, Select } from "../../components";
+import Toast from "../../components/notify/Toast";
 import { sexOptions } from "../../components/users/UserModalBody";
 import { fetchAllRoles, roleState } from "../../features/roleSlice";
-import { registerPageSchema, userRegisterSchema } from "../../validation";
-import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { addUser, clearUserState, editUser, fetchUser, userState } from "../../features/userSlice";
-import { useNavigate, useParams } from "react-router-dom";
-import Toast from "../../components/notify/Toast";
 import { callToast } from "../../helpers";
-import $ from "jquery";
+import { registerPageSchema, userRegisterSchema } from "../../validation";
 
 function RegisterUserPage() {
     const dispatch = useDispatch();
@@ -194,17 +194,17 @@ function RegisterUserPage() {
                             <div className='flex-1 mr-5'>
                                 <Input
                                     label='Họ *'
-                                    error={errors.firstName && errors.firstName.message}
+                                    error={errors.lastName && errors.lastName.message}
                                     register={register}
-                                    name='firstName'
+                                    name='lastName'
                                 />
                             </div>
                             <div className='flex-1'>
                                 <Input
                                     label='Tên *'
-                                    error={errors.lastName && errors.lastName.message}
+                                    error={errors.firstName && errors.firstName.message}
                                     register={register}
-                                    name='lastName'
+                                    name='firstName'
                                 />
                             </div>
                         </div>

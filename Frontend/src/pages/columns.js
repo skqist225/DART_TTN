@@ -159,6 +159,9 @@ export const subjectColumns = [
     {
         name: "Số câu hỏi",
     },
+    {
+        name: "Thao tác",
+    },
 ];
 
 export const userColumns = [

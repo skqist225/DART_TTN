@@ -22,7 +22,11 @@ import {
     setEditedQuestion,
     setExcelAdd,
 } from "../../features/questionSlice";
-import { fetchAllSubjects, subjectState } from "../../features/subjectSlice";
+import {
+    fetchAllSubjects,
+    fetchAllSubjectsFiltered,
+    subjectState,
+} from "../../features/subjectSlice";
 import { fetchAllUsers } from "../../features/userSlice";
 import { callToast } from "../../helpers";
 import { questionSchema } from "../../validation";
@@ -50,7 +54,6 @@ function QuestionsPage() {
         totalPages,
         filterObject,
         excelAdd,
-        loading,
         addQuestion: { successMessage },
         editQuestion: { successMessage: eqSuccessMessage },
         deleteQuestion: { successMessage: dqSuccessMessage, errorMessage: dqErrorMessage },
@@ -76,8 +79,22 @@ function QuestionsPage() {
                 page: 1,
             })
         );
-        dispatch(fetchAllSubjects({ page: 0, haveChapter: true }));
-        dispatch(fetchAllUsers({ page: 0, role: "!SV" }));
+
+        //subjects for adding
+        if (userRoles.includes("Quản trị viên")) {
+            //subjects have chapter
+            dispatch(fetchAllSubjects({ page: 0, haveChapter: true }));
+        } else {
+            //subjects teacher teaches
+            dispatch(fetchAllSubjects({ page: 0, teacher: user.id }));
+        }
+
+        //subjects for filtering
+        dispatch(fetchAllSubjectsFiltered({ haveChapter: true, haveQuestion: true }));
+
+        if (userRoles.includes("Quản trị viên")) {
+            dispatch(fetchAllUsers({ page: 0, role: "!SV" }));
+        }
     }, []);
 
     const {
@@ -305,7 +322,7 @@ function QuestionsPage() {
             title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã câu hỏi, nội dung câu hỏi, tên chương, tên môn học, tên người soạn`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã câu hỏi, nội dung câu hỏi, tên chương`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     fetchDataByPageNumber={fetchDataByPageNumber}
@@ -340,7 +357,6 @@ function QuestionsPage() {
                     Filter={QuestionsFilter}
                     excelAdd={excelAdd}
                     recordsPerPage={10}
-                    // loading={loading}
                     setValue={setValue}
                 />
             }

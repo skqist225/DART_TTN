@@ -361,8 +361,25 @@ public class QuestionRestController {
                     continue;
                 }
 
+                // Check if teacher create question teaches this subject
+                boolean shouldContinue = true;
+                List<Subject> subjects = subjectService.findByTeacher(teacher.getId());
+                for (Subject subject1 : subjects) {
+
+                    System.out.println(subjectId);
+                    System.out.println(subject1.getId());
+                    if (Objects.equals(subjectId, subject1.getId())) {
+                        shouldContinue = false;
+                        break;
+                    }
+                }
+
+                if (shouldContinue) {
+                    continue;
+                }
+
                 i++;
-                System.out.println(i);
+
                 Subject subject = null;
                 try {
                     subject = subjectService.findById(subjectId);
@@ -371,8 +388,7 @@ public class QuestionRestController {
                             Subject.build(new PostCreateSubjectDTO(subjectId
                                     , subjectName, 15, 0, null)));
                 }
-                System.out.println(chapterNumber);
-                System.out.println(chapterName);
+
                 Chapter chapter = null;
                 try {
                     chapter = chapterService.findByName(chapterName);

@@ -1,18 +1,15 @@
+import $ from "jquery";
 import React, { useState } from "react";
 import { useSelector } from "react-redux";
+import { persistUserState } from "../../../features/persistUserSlice";
 import { tailwindCss } from "../../../tailwind";
 import "./css/tableHeader.css";
-import { persistUserState } from "../../../features/persistUserSlice";
-import $ from "jquery";
 
-function TableHeader({
-    columns,
-    handleSortChange,
-    modalLabel,
-    addCheckbox = false,
-    chapterListPage = false,
-}) {
+function TableHeader({ columns, handleSortChange, modalLabel, chapterListPage = false }) {
     const [sortDir, setSortDir] = useState("asc");
+
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     function reverseSortDir(selectedClassName) {
         $(".sort").filter(".active").removeClass("active");
@@ -32,29 +29,15 @@ function TableHeader({
             ? reverseSortDir(`.upper.${sortField}`)
             : reverseSortDir(`.downer.${sortField}`);
     }
-    const { user } = useSelector(persistUserState);
+
     return (
         <thead className={tailwindCss.thead}>
             <tr>
-                {addCheckbox && (
-                    <th scope='col' className='p-4'>
-                        <div className='flex items-center'>
-                            {/* <input
-                                type='checkbox'
-                                className={tailwindCss.checkbox}
-                                checked={true}
-                            /> */}
-                            <label htmlFor='checkbox-all' className='sr-only'>
-                                checkbox
-                            </label>
-                        </div>
-                    </th>
-                )}
                 {columns.map(({ name, sortField, sortable }) => {
                     if (
-                        ["ca thi", "câu hỏi"].includes(modalLabel) &&
-                        !user.roles.map(({ name }) => name).includes("Quản trị viên") &&
-                        name === "Giảng viên"
+                        ["ca thi", "câu hỏi", "đề thi"].includes(modalLabel) &&
+                        !userRoles.includes("Quản trị viên") &&
+                        name === "Người tạo"
                     ) {
                         return null;
                     }

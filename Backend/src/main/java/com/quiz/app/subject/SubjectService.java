@@ -2,7 +2,6 @@ package com.quiz.app.subject;
 
 import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
-import com.quiz.app.statistics.dto.CountQuestionsBySubjectDTO;
 import com.quiz.entity.Chapter;
 import com.quiz.entity.Subject;
 import org.apache.commons.lang.StringUtils;
@@ -69,6 +68,10 @@ public class SubjectService {
         return finSubjects;
     }
 
+    public List<Subject> findByTeacher(String teacherId) {
+        return subjectRepository.findSubjectsOfTeacher(teacherId);
+    }
+
     public String deleteById(String id) throws ConstrainstViolationException {
         try {
             subjectRepository.deleteById(id);
@@ -113,7 +116,7 @@ public class SubjectService {
 
         Sort sort = Sort.by(sortField);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
-        Pageable pageable = PageRequest.of(page - 1, 10, sort);
+        Pageable pageable = PageRequest.of(page - 1, 12, sort);
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Subject> criteriaQuery = criteriaBuilder.createQuery(Subject.class);

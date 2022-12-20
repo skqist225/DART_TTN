@@ -48,11 +48,10 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
     const [disableCurrentQuestionInput, setDisableCurrentQuestionInput] = useState(false);
     const [levelOptionsLocal, setLevelOptionsLocal] = useState([]);
 
-    const { editedTest, errorObject, addTestDisabled } = useSelector(testState);
+    const { editedTest, addTestDisabled } = useSelector(testState);
     const { subjects } = useSelector(subjectState);
     const { chapters } = useSelector(chapterState);
-    const { questions, totalPages, totalElements, queryAvailableQuestionsArr } =
-        useSelector(questionState);
+    const { questions, queryAvailableQuestionsArr } = useSelector(questionState);
 
     function lookupLevel(level) {
         if (level === "Dễ") {

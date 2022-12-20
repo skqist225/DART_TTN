@@ -1,20 +1,22 @@
-import React, { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { useForm } from "react-hook-form";
-import { fetchAllQuestions, questionState, setResetFilter } from "../../features/questionSlice";
-import { subjectState } from "../../features/subjectSlice";
-import Select from "../utils/userInputs/Select";
-import { levelOptions } from "./QuestionModalBody";
-import { userState } from "../../features/userSlice";
 import $ from "jquery";
+import React, { useEffect } from "react";
+import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
+import { persistUserState } from "../../features/persistUserSlice";
+import { fetchAllQuestions, questionState } from "../../features/questionSlice";
+import { subjectState } from "../../features/subjectSlice";
+import { userState } from "../../features/userSlice";
 import { tailwindCss } from "../../tailwind";
+import Select from "../utils/userInputs/Select";
 
 function QuestionsFilter({ setValue }) {
     const dispatch = useDispatch();
 
     const { filterObject } = useSelector(questionState);
-    const { subjects } = useSelector(subjectState);
+    const { subjectsHaveQuestion: subjects } = useSelector(subjectState);
     const { users } = useSelector(userState);
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     const { register, handleSubmit } = useForm();
 
@@ -48,7 +50,7 @@ function QuestionsFilter({ setValue }) {
                     options={subjects.map(subject => ({
                         title: subject.id.includes("CLC")
                             ? `${subject.name} CLC`
-                            : `${subject.name}`,
+                            : `${subject.name} (${subject.numberOfQuestions})`,
                         value: subject.id,
                     }))}
                     onChangeHandler={handleSubjectChange}
@@ -56,17 +58,20 @@ function QuestionsFilter({ setValue }) {
                     width={"w-60"}
                 />
             </div>
-            <div className='mr-2 w-full flex items-center'>
-                <Select
-                    label='người soạn'
-                    name='teacherFilter'
-                    register={register}
-                    options={users.map(user => ({ title: user.fullName, value: user.id }))}
-                    onChangeHandler={handleTeacherChange}
-                    hiddenOption={true}
-                    width={"w-52"}
-                />
-            </div>
+            {userRoles.includes("Quản trị viên") && (
+                <div className='mr-2 w-full flex items-center'>
+                    <Select
+                        label='người soạn'
+                        name='teacherFilter'
+                        register={register}
+                        options={users.map(user => ({ title: user.fullName, value: user.id }))}
+                        onChangeHandler={handleTeacherChange}
+                        hiddenOption={true}
+                        width={"w-52"}
+                    />
+                </div>
+            )}
+
             <div>
                 <button
                     type='button'
@@ -83,7 +88,7 @@ function QuestionsFilter({ setValue }) {
                                 numberOfQuestions: 0,
                             })
                         );
-                        dispatch(setResetFilter(true));
+
                         $("#subjectFilter").val("");
                         $("#teacherFilter").val("");
                     }}

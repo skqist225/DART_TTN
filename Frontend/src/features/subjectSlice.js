@@ -10,7 +10,7 @@ export const fetchAllSubjects = createAsyncThunk(
             sortField = "id",
             sortDir = "asc",
             haveChapter = false,
-            haveQuestion = false,
+            teacher = "",
         },
         { dispatch, rejectWithValue }
     ) => {
@@ -42,10 +42,27 @@ export const fetchAllSubjects = createAsyncThunk(
             const {
                 data: { subjects, totalElements, totalPages },
             } = await api.get(
-                `/subjects?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&haveChapter=${haveChapter}&haveQuestion=${haveQuestion}`
+                `/subjects?page=${page}&query=${query}&sortField=${sortField}&sortDir=${sortDir}&haveChapter=${haveChapter}&teacher=${teacher}`
             );
 
             return { subjects, totalElements, totalPages };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
+export const fetchAllSubjectsFiltered = createAsyncThunk(
+    "subject/fetchAllSubjectsFiltered",
+    async ({ haveChapter = true, haveQuestion = true, teacher = "" }, { rejectWithValue }) => {
+        try {
+            const {
+                data: { subjects },
+            } = await api.get(
+                `/subjects?page=0&haveChapter=${haveChapter}&haveQuestion=${haveQuestion}&teacher=${teacher}`
+            );
+
+            return { subjects };
         } catch ({ data: { error } }) {
             return rejectWithValue(error);
         }
@@ -107,6 +124,7 @@ export const deleteSubject = createAsyncThunk(
 const initialState = {
     loading: true,
     subjects: [],
+    subjectsHaveQuestion: [],
     subject: null,
     totalElements: 0,
     totalPages: 0,
@@ -209,6 +227,10 @@ const subjectSlice = createSlice({
                         };
                     });
                 }
+            })
+
+            .addCase(fetchAllSubjectsFiltered.fulfilled, (state, { payload }) => {
+                state.subjectsHaveQuestion = payload.subjects;
             })
 
             .addCase(editSubject.pending, (state, _) => {
