@@ -248,6 +248,10 @@ function TestsPage() {
         }
     };
 
+    const fetchDataByPageNumber = pageNumber => {
+        dispatch(fetchAllTests({ ...filterObject, page: pageNumber }));
+    };
+
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
             fetchAllTests({
@@ -342,6 +346,7 @@ function TestsPage() {
                     searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã đề thi, tên đề thi, môn học, người tạo`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
+                    fetchDataByPageNumber={fetchDataByPageNumber}
                     columns={testColumns}
                     rows={tests}
                     totalElements={totalElements}

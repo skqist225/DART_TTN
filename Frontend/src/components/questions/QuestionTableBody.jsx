@@ -35,6 +35,13 @@ function QuestionTableBody({
     return (
         <tbody>
             {rows.map((row, index) => {
+                let shouldNotEditMessage = "",
+                    shouldNotDeleteMessage;
+                if (!row.shouldEdit) {
+                    shouldNotEditMessage = "Câu hỏi đã thuộc đề thi được sử dụng không thể sửa";
+                    shouldNotDeleteMessage = "Câu hỏi đã thuộc đề thi được sử dụng không thể xóa";
+                }
+
                 return (
                     <tr
                         className={`${tailwindCss.tr} ${
@@ -138,6 +145,8 @@ function QuestionTableBody({
                                             setIsEdit(true);
                                             dispatch(setEditedQuestion(row));
                                         }}
+                                        customTooltipMessage={shouldNotEditMessage}
+                                        disabled={!row.shouldEdit}
                                     />
                                     <div className='mx-1'>
                                         <MyButton
@@ -145,6 +154,8 @@ function QuestionTableBody({
                                             onClick={() => {
                                                 dispatch(deleteQuestion(row.id));
                                             }}
+                                            customTooltipMessage={shouldNotDeleteMessage}
+                                            disabled={!row.shouldEdit}
                                         />
                                     </div>
                                     <EnableOrDisable

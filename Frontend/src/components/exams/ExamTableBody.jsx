@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Tooltip } from "flowbite-react";
+import { Badge, Button, Tooltip } from "flowbite-react";
 import $ from "jquery";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -134,14 +134,16 @@ function ExamTableBody({ rows, setIsEdit }) {
                                     row.teacherId.toString() !== user.id.toString() ? (
                                         <></>
                                     ) : (
-                                        <EnableOrDisable
-                                            status={row.status}
-                                            enableOrDisable={enableOrDisableExam}
-                                            id={row.id}
-                                            disabled={!shouldCancel}
-                                            creditClassPage={true}
-                                            customTooltipMessage={shouldCancelMessage}
-                                        />
+                                        userRoles.includes("Quản trị viên") && (
+                                            <EnableOrDisable
+                                                status={row.status}
+                                                enableOrDisable={enableOrDisableExam}
+                                                id={row.id}
+                                                disabled={!shouldCancel}
+                                                creditClassPage={true}
+                                                customTooltipMessage={shouldCancelMessage}
+                                            />
+                                        )
                                     )}
                                 </>
                             )}

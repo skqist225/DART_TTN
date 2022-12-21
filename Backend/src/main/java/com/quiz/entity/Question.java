@@ -15,6 +15,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -66,6 +67,10 @@ public class Question {
     @Column(name = "CONSUDUNG", columnDefinition = "BOOLEAN DEFAULT TRUE")
     private boolean status;
 
+    //    @JsonIgnore
+    @ManyToMany(mappedBy = "questions")
+    private List<Test> tests = new ArrayList<>();
+
     @Transient
     public void removeAll() {
         this.answers.clear();
@@ -116,6 +121,18 @@ public class Question {
     public List<Answer> getAnswers() {
         this.answers.sort(Comparator.comparing(Answer::getOrder));
         return this.answers;
+    }
+
+    @Transient
+    public boolean getShouldEdit() {
+        for (Test test : tests) {
+            // Questions that belongs to a used test should not be deleted or edited
+            if (Objects.nonNull(test.getExam())) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public static Level lookUpLevel(String levelStr) {

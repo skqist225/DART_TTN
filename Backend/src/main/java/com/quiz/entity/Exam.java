@@ -87,7 +87,7 @@ public class Exam {
                 .noticePeriod(postCreateExamDTO.getNoticePeriod())
                 .type(postCreateExamDTO.getExamType())
                 .taken(false)
-                .status(false)
+                .status(true)
                 .build();
     }
 

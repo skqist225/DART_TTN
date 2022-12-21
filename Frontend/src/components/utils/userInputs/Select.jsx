@@ -32,7 +32,9 @@ function Select({
             {!removeLabel && (
                 <label
                     htmlFor={propName}
-                    className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"}`}
+                    className={`${!hiddenOption && "mb-2"} ${tailwindCss.label} ${
+                        error && "text-red-700 dark:text-red-500"
+                    }`}
                 >
                     {!hiddenOption && label}
                 </label>

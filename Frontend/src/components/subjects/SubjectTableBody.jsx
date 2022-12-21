@@ -55,7 +55,7 @@ function SubjectTableBody({ rows, setIsEdit }) {
                         <td className={tailwindCss.tableCell}>{row.numberOfTests}</td>
                         <td className={tailwindCss.tableCell}>{row.numberOfQuestions}</td>
                         <td class={`${tailwindCss.tableCell} flex items-center`}>
-                            {!userRoles.includes("Quản trị viên") &&
+                            {userRoles.includes("Quản trị viên") ||
                             subjects.map(({ id }) => id).includes(row.id) ? (
                                 <div className='mr-3'>
                                     <MyButton

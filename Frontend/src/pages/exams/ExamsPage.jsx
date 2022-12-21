@@ -142,7 +142,6 @@ function ExamsPage() {
                 type: "custom",
                 message: "Ngày thi phải lớn hơn ngày hiện tại",
             });
-            // callToast("error", "Ngày thi phải lớn hơn hiện tại");
             haveError = true;
         }
 

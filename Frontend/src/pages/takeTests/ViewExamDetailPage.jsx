@@ -1,8 +1,9 @@
+import { Chip, Divider } from "@mui/material";
+import { Button, Card } from "flowbite-react";
+import $ from "jquery";
 import React, { useEffect, useState } from "react";
-import { Divider } from "@mui/material";
-import { useDispatch, useSelector } from "react-redux";
-import { Card } from "flowbite-react";
 import { useForm } from "react-hook-form";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Answer, Input } from "../../components";
 import { lookupIndex } from "../../components/questions/QuestionModalBody";
@@ -10,8 +11,8 @@ import MyDrawer from "../../components/takeTests/MyDrawer";
 import { persistUserState } from "../../features/persistUserSlice";
 import { findByStudentAndExam, takeExamState } from "../../features/takeExamSlice";
 import { tailwindCss } from "../../tailwind";
-import { isAnswerRight } from "./TakeTestPage";
 import "./css/taketest.css";
+import { isAnswerRight } from "./TakeTestPage";
 
 function ViewExamDetailPage() {
     const dispatch = useDispatch();
@@ -165,162 +166,189 @@ function ViewExamDetailPage() {
                         </div>
 
                         <div
-                            className={`flex-1 w-60 bg-white rounded-md p-4 col-flex items-center justify-center`}
+                            className={`flex-1 w-60 bg-white rounded-md p-4 col-flex items-center justify-center min-h-screen`}
                         >
-                            {questions.length &&
-                                questions.map((question, index) => {
-                                    let additionalClass = "";
-                                    let isRight = false;
-                                    if (
-                                        isAnswerRight(
-                                            question.selectedAnswer,
-                                            question.finalAnswer,
-                                            question.type
-                                        )
-                                    ) {
-                                        additionalClass = "text-emerald-600";
-                                        isRight = true;
-                                    } else {
-                                        additionalClass = "text-rose-600";
-                                        isRight = false;
-                                    }
+                            <div className='w-full flex-1'>
+                                {questions.length &&
+                                    questions.map((question, index) => {
+                                        let additionalClass = "";
+                                        let isRight = false;
+                                        if (
+                                            isAnswerRight(
+                                                question.selectedAnswer,
+                                                question.finalAnswer,
+                                                question.type
+                                            )
+                                        ) {
+                                            additionalClass = "text-emerald-600";
+                                            isRight = true;
+                                        } else {
+                                            additionalClass = "text-rose-600";
+                                            isRight = false;
+                                        }
 
-                                    if (question.type === "Đáp án điền") {
-                                        setValue(
-                                            `question-${question.id}-answer`,
-                                            question.finalAnswer
-                                        );
-                                    }
-                                    return (
-                                        <div key={question.id} className='w-full'>
-                                            <p
-                                                className={
-                                                    additionalClass + " text-base pb-4 font-bold"
-                                                }
-                                            >
-                                                <span>Câu {activeIndex + index}: </span>
-                                                {question.content}{" "}
-                                                {question.type === "Đáp án điền" &&
-                                                    !isRight &&
-                                                    question.selectedAnswer &&
-                                                    `Câu trả lời của SV: ${question.selectedAnswer}`}
-                                            </p>
-                                            {question.type === "Đáp án điền" ? (
-                                                <>
-                                                    <Input
-                                                        id={`question-${question.id}-answer`}
-                                                        register={register}
-                                                        name={`question-${question.id}-answer`}
-                                                        readOnly
-                                                    />
-                                                </>
-                                            ) : (
-                                                question.answers.map((answer, index) => {
-                                                    let additionalClass = "";
-                                                    if (question.type === "Một đáp án") {
-                                                        if (
-                                                            lookupIndex(index) ===
-                                                            question.finalAnswer
-                                                        ) {
-                                                            additionalClass =
-                                                                "text-emerald-600 font-bold";
-                                                        }
-                                                        if (!isRight) {
+                                        if (question.type === "Đáp án điền") {
+                                            setValue(
+                                                `question-${question.id}-answer`,
+                                                question.finalAnswer
+                                            );
+                                        }
+                                        return (
+                                            <div key={question.id} className='w-full'>
+                                                <p
+                                                    className={
+                                                        additionalClass +
+                                                        " text-base pb-4 font-bold"
+                                                    }
+                                                >
+                                                    <span>Câu {activeIndex + index}: </span>
+                                                    {question.content}{" "}
+                                                    {question.type === "Đáp án điền" &&
+                                                        !isRight &&
+                                                        question.selectedAnswer &&
+                                                        `Câu trả lời của SV: ${question.selectedAnswer}`}
+                                                    {question.type === "Nhiều đáp án" &&
+                                                        ". Sinh viên có thể lựa chọn nhiều đáp án"}
+                                                </p>
+                                                {question.type === "Đáp án điền" ? (
+                                                    <>
+                                                        <Input
+                                                            id={`question-${question.id}-answer`}
+                                                            register={register}
+                                                            name={`question-${question.id}-answer`}
+                                                            readOnly
+                                                        />
+                                                    </>
+                                                ) : (
+                                                    question.answers.map((answer, index) => {
+                                                        let additionalClass = "";
+                                                        if (question.type === "Một đáp án") {
                                                             if (
-                                                                question.selectedAnswer &&
                                                                 lookupIndex(index) ===
-                                                                    question.selectedAnswer
+                                                                question.finalAnswer
                                                             ) {
                                                                 additionalClass =
-                                                                    "text-rose-600 font-bold";
+                                                                    "text-emerald-600 font-bold";
                                                             }
-                                                        }
-                                                    } else {
-                                                        if (question.finalAnswer)
-                                                            question.finalAnswer
-                                                                .split(",")
-                                                                .forEach(ans => {
-                                                                    if (
-                                                                        lookupIndex(index) === ans
-                                                                    ) {
-                                                                        additionalClass =
-                                                                            "text-emerald-600 font-bold";
-                                                                    }
-                                                                });
-                                                        if (!isRight) {
-                                                            if (question.selectedAnswer) {
+                                                            if (!isRight) {
                                                                 if (
-                                                                    question.selectedAnswer.includes(
-                                                                        ","
-                                                                    )
-                                                                ) {
-                                                                    question.selectedAnswer
-                                                                        .split(",")
-                                                                        .forEach(ans => {
-                                                                            if (
-                                                                                lookupIndex(
-                                                                                    index
-                                                                                ) === ans
-                                                                            ) {
-                                                                                additionalClass =
-                                                                                    "text-rose-600 font-bold";
-                                                                            }
-                                                                        });
-                                                                } else {
-                                                                    if (
-                                                                        lookupIndex(index) ===
+                                                                    question.selectedAnswer &&
+                                                                    lookupIndex(index) ===
                                                                         question.selectedAnswer
+                                                                ) {
+                                                                    additionalClass =
+                                                                        "text-rose-600 font-bold";
+                                                                }
+                                                            }
+                                                        } else {
+                                                            if (question.finalAnswer)
+                                                                question.finalAnswer
+                                                                    .split(",")
+                                                                    .forEach(ans => {
+                                                                        if (
+                                                                            lookupIndex(index) ===
+                                                                            ans
+                                                                        ) {
+                                                                            additionalClass =
+                                                                                "text-emerald-600 font-bold";
+                                                                        }
+                                                                    });
+                                                            if (!isRight) {
+                                                                if (question.selectedAnswer) {
+                                                                    if (
+                                                                        question.selectedAnswer.includes(
+                                                                            ","
+                                                                        )
                                                                     ) {
-                                                                        additionalClass =
-                                                                            "text-rose-600 font-bold";
+                                                                        question.selectedAnswer
+                                                                            .split(",")
+                                                                            .forEach(ans => {
+                                                                                if (
+                                                                                    lookupIndex(
+                                                                                        index
+                                                                                    ) === ans
+                                                                                ) {
+                                                                                    additionalClass =
+                                                                                        "text-rose-600 font-bold";
+                                                                                }
+                                                                            });
+                                                                    } else {
+                                                                        if (
+                                                                            lookupIndex(index) ===
+                                                                            question.selectedAnswer
+                                                                        ) {
+                                                                            additionalClass =
+                                                                                "text-rose-600 font-bold";
+                                                                        }
                                                                     }
                                                                 }
                                                             }
                                                         }
-                                                    }
 
-                                                    return (
-                                                        <Answer
-                                                            answer={answer}
-                                                            question={question}
-                                                            index={index}
-                                                            additionalClass={additionalClass}
-                                                            readOnly
-                                                        />
-                                                    );
-                                                })
-                                            )}
-                                        </div>
-                                    );
-                                })}
-                            <div className='mt-5'>
-                                <Divider />
+                                                        return (
+                                                            <Answer
+                                                                answer={answer}
+                                                                question={question}
+                                                                index={index}
+                                                                additionalClass={additionalClass}
+                                                                readOnly
+                                                            />
+                                                        );
+                                                    })
+                                                )}
+                                            </div>
+                                        );
+                                    })}
+                            </div>
+                            <div className='mt-5 h-5 w-full'>
+                                <Divider orientation='horizontal'>
+                                    <Chip label='THAO TÁC' />
+                                </Divider>
                             </div>
                             <div className='flex items-center w-full'>
-                                <div className='mt-3'>
-                                    <button
+                                <div className='mt-3 mr-5'>
+                                    <Button
                                         type='button'
-                                        className={tailwindCss.radiantButton}
                                         onClick={() => {
                                             window.location.href = "/viewOldExams";
                                         }}
                                     >
                                         Trở về
-                                    </button>
+                                    </Button>
                                 </div>
-                                <div className='mt-3'>
-                                    {fakeHandInDTO.questions.length !== activeIndex && (
-                                        <button
+
+                                {activeIndex !== 1 && (
+                                    <div className='mt-3 mr-5'>
+                                        <Button
+                                            gradientDuoTone='purpleToBlue'
                                             type='button'
+                                            outline={true}
                                             className={tailwindCss.radiantButton}
                                             onClick={() => {
-                                                handleChangeQuestionPage(activeIndex + 4);
+                                                handleChangeQuestionPage(activeIndex - 4);
                                             }}
                                         >
-                                            Trang kế
-                                        </button>
+                                            {" "}
+                                            Trang trước
+                                        </Button>
+                                    </div>
+                                )}
+
+                                {fakeHandInDTO.questions.length > 4 &&
+                                    fakeHandInDTO.questions.length !== activeIndex && (
+                                        <div className='mt-3'>
+                                            <Button
+                                                gradientDuoTone='greenToBlue'
+                                                type='button'
+                                                outline={true}
+                                                onClick={() => {
+                                                    handleChangeQuestionPage(activeIndex + 4);
+                                                }}
+                                            >
+                                                Trang kế
+                                            </Button>
+                                        </div>
                                     )}
-                                </div>
                             </div>
                         </div>
                     </div>

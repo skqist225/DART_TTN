@@ -1,21 +1,20 @@
+import { Card } from "flowbite-react";
+import $ from "jquery";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { Card } from "flowbite-react";
-import TablePagination from "./TablePagination";
-import TableHeader from "./TableHeader";
-import TableModal from "./TableModal";
-import TableSearch from "./TableSearch";
-import { tailwindCss } from "../../../tailwind";
-import { ExcelIcon } from "../../../images";
-import { setExcelAdd } from "../../../features/questionSlice";
+import { creditClassState } from "../../../features/creditClassSlice";
 import { persistUserState } from "../../../features/persistUserSlice";
-import { setUserExcelAdd } from "../../../features/userSlice";
-import MyButton, { ButtonType } from "../../common/MyButton";
+import { setExcelAdd } from "../../../features/questionSlice";
 import { setRegisterExcelAdd } from "../../../features/registerSlice";
 import { takeExamState } from "../../../features/takeExamSlice";
-import $ from "jquery";
-import Help from "../../../partials/header/Help";
-import { creditClassState } from "../../../features/creditClassSlice";
+import { setUserExcelAdd } from "../../../features/userSlice";
+import { ExcelIcon } from "../../../images";
+import { tailwindCss } from "../../../tailwind";
+import MyButton, { ButtonType } from "../../common/MyButton";
+import TableHeader from "./TableHeader";
+import TableModal from "./TableModal";
+import TablePagination from "./TablePagination";
+import TableSearch from "./TableSearch";
 
 function Table({
     searchPlaceHolder,

@@ -256,15 +256,23 @@ public class TestRestController {
             @RequestBody List<HandInDTO> answers) throws NotFoundException {
         User student = userDetailsImpl.getUser();
 
-        int numberOfRightAnswer = 0;
+        int numberOfRightAnswer = 0,
+                numberOfEasyRightAnswer = 0,
+                numberOfMediumRightAnswer = 0,
+                numberOfHardRightAnswer = 0;
+        int numberOfEasyQuestions = 0, numberOfMediumQuestions = 0, numberOfHardQuestions = 0;
         float mark = 0;
+
+        // Lấy ra danh sách câu hỏi trong đề thi mà sinh viên làm
         List<TakeExamDetail> takeExamDetails =
                 takeExamDetailService.findByStudentAndExam(student.getId(), examId);
+
         List<Question> questions = new ArrayList<>();
         for (TakeExamDetail detail : takeExamDetails) {
             Question question = detail.getQuestion();
             StringBuilder finalAnswer = new StringBuilder();
 
+            // Xác định câu trả lời của câu hỏi.
             if (question.getType().equals("Một đáp án")) {
                 for (Answer ans : question.getAnswers()) {
                     if (ans.isAnswer()) {
@@ -286,34 +294,50 @@ public class TestRestController {
             } else {
                 finalAnswer = new StringBuilder(question.getAnswers().get(0).getContent());
             }
-            boolean isQuestionMatched = false;
 
+            // Đếm số câu hoi theo mức độ
+            if (question.getLevel().equals("Dễ")) {
+                numberOfEasyQuestions++;
+            } else if (question.getLevel().equals("Trung bình")) {
+                numberOfMediumQuestions++;
+            } else {
+                numberOfHardQuestions++;
+            }
+
+            boolean isQuestionMatched = false;
             for (HandInDTO handInDTO : answers) {
                 if (handInDTO.getQuestionId().equals(question.getId())) {
                     isQuestionMatched = true;
+                    // Xác định câu trả lời của sinh viên
+                    String userFinalAnswer = handInDTO.getAnswer();
+
                     if (question.getType().equals("Nhiều đáp án")) {
                         String[] userFinalAnswerArr = handInDTO.getAnswer().split(",");
                         Arrays.sort(userFinalAnswerArr);
-                        String userFinalAnswer = String.join(",", userFinalAnswerArr);
-
-                        System.out.println(finalAnswer);
-                        System.out.println(userFinalAnswer);
-                        if (finalAnswer.toString().toLowerCase().trim().equals(userFinalAnswer.toLowerCase().trim())) {
-                            numberOfRightAnswer++;
-                        }
-                        question.setSelectedAnswer(userFinalAnswer);
-                        takeExamDetailService.updateAnswerForQuestionInStudentTest(userFinalAnswer.trim(), student.getId(), examId
-                                , handInDTO.getQuestionId());
-                    } else {
-                        if (handInDTO.getAnswer().toLowerCase().trim().equals(finalAnswer.toString().toLowerCase().trim())) {
-                            numberOfRightAnswer++;
-                        }
-                        question.setSelectedAnswer(handInDTO.getAnswer());
-                        takeExamDetailService.updateAnswerForQuestionInStudentTest(handInDTO.getAnswer().trim(), student.getId(), examId
-                                , handInDTO.getQuestionId());
+                        userFinalAnswer = String.join(",", userFinalAnswerArr);
                     }
+                    // Nếu câu trả lời của sinh viên khớp với đáp của câu hỏi thì số câu trả lời
+                    // đúng
+                    // +1
+
+                    if (finalAnswer.toString().toLowerCase().trim().equals(userFinalAnswer.toLowerCase().trim())) {
+                        if (question.getLevel().equals("Dễ")) {
+                            numberOfEasyRightAnswer++;
+                        } else if (question.getLevel().equals("Trung bình")) {
+                            numberOfMediumRightAnswer++;
+                        } else {
+                            numberOfHardRightAnswer++;
+                        }
+                        numberOfRightAnswer++;
+                    }
+
+                    question.setSelectedAnswer(userFinalAnswer);
+                    // Cập nhật câu trả lời của sinh viên vào chi tiết thi
+                    takeExamDetailService.updateAnswerForQuestionInStudentTest(userFinalAnswer.trim(), student.getId(), examId
+                            , handInDTO.getQuestionId());
                 }
             }
+            // Nếu sinh viên không chọn đáp án thì câu trả lời là NULL.
             if (!isQuestionMatched) {
                 takeExamDetailService.updateAnswerForQuestionInStudentTest(null, student.getId(),
                         examId
@@ -324,14 +348,26 @@ public class TestRestController {
             questions.add(question);
         }
 
+        // Hệ số, câu hỏi khó gấp đôi điểm câu hỏi dễ, câu hỏi trung bình gấp rưỡi câu hỏi dễ.
+        float factor = (float) (10 / (numberOfEasyQuestions + 1.5 * numberOfMediumQuestions + 2 * numberOfHardQuestions));
+        // mark = (float) numberOfRightAnswer / takeExamDetails.size() * 10;
+        System.out.println(factor);
+        if (numberOfRightAnswer == takeExamDetails.size()) {
+            mark = 10;
+        } else {
+            mark = (float) (factor * numberOfEasyRightAnswer + factor * 1.5 * numberOfMediumRightAnswer
+                    + factor * 2 * numberOfHardRightAnswer);
+        }
+        System.out.println(mark);
         DecimalFormat df = new DecimalFormat("#.#");
-        mark = (float) numberOfRightAnswer / takeExamDetails.size() * 10;
+
         TestDTO testDTO = new TestDTO();
         testDTO.setMark(Float.parseFloat(df.format(mark)));
         testDTO.setNumberOfQuestions(questions.size());
         testDTO.setNumberOfRightAnswer(numberOfRightAnswer);
         testDTO.setQuestions(questions);
 
+        // Cập nhật điểm cho kỳ thi giữa kỳ và cuối kỳ
         takeExamService.updateTakeExamScore(student.getId(), examId, Float.parseFloat(df.format(mark)));
         takeExamService.updateTakeExamTested(student.getId(), examId);
 
@@ -350,8 +386,6 @@ public class TestRestController {
         Exam exam = examService.findById(examId);
         boolean shouldUpdateExamStatus = true;
         for (TakeExam takeExam1 : exam.getTakeExams()) {
-            System.out.println(takeExam1.isTested());
-            System.out.println(takeExamService.isTakeExamTested(takeExam1.getStudentId(), examId));
             // Kiểm tra tất cả sinh viên đã thi hết chưa
             if (!takeExamService.isTakeExamTested(takeExam1.getStudentId(), examId)) {
                 shouldUpdateExamStatus = false;
@@ -376,6 +410,7 @@ public class TestRestController {
             minute = 0;
         }
 
+        // Nếu ca thi quá thời gian thi cập nhật trạng thái ca thi
         int additionalHour = 0, additionalMinute = 0;
         if (exam.getTime() / 60 == 0) {
             additionalMinute = exam.getTime();
@@ -386,10 +421,6 @@ public class TestRestController {
 
         LocalDateTime examDate = exam.getExamDate().atTime(hour + additionalHour, minute + additionalMinute);
         if (now.isAfter(examDate)) {
-            shouldUpdateExamStatus = true;
-        }
-
-        if (shouldUpdateExamStatus) {
             exam.setTaken(true);
             examService.save(exam);
         }

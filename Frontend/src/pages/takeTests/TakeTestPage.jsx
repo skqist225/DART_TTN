@@ -1,4 +1,4 @@
-import { Box, Divider } from "@mui/material";
+import { Box, Chip, Divider } from "@mui/material";
 import LinearProgress from "@mui/material/LinearProgress";
 import Typography from "@mui/material/Typography";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
@@ -21,6 +21,7 @@ import { callToast } from "../../helpers";
 import { tailwindCss } from "../../tailwind";
 import checkExamTime, { noticePeriodMappings } from "../../utils/checkExamTime";
 import "./css/taketest.css";
+import Question from "./Question";
 
 const renderer = ({ hours, minutes, seconds, completed }) => {
     if (completed) {
@@ -89,10 +90,8 @@ function TakeTestPage() {
     useEffect(() => {
         if (exam) {
             const timer = setInterval(() => {
-                setProgress(prevProgress =>
-                    prevProgress >= 100 ? 0 : prevProgress + (5 / exam.time) * 100
-                );
-            }, 60000 * 5);
+                setProgress(prevProgress => (prevProgress >= 100 ? 0 : prevProgress + 0.25 * 100));
+            }, 60000 * exam.time * (25 / 100));
             return () => {
                 clearInterval(timer);
             };
@@ -208,7 +207,9 @@ function TakeTestPage() {
     }, [exams]);
 
     const handleExamChange = ({ target: { value } }) => {
-        setSelectedExam(exams.find(({ id }) => id.toString() === value.toString()));
+        setSelectedExam(
+            exams.filter(({ taken }) => taken).find(({ id }) => id.toString() === value.toString())
+        );
     };
 
     return (
@@ -339,231 +340,254 @@ function TakeTestPage() {
                             </div>
 
                             <div
-                                className={`flex-1 w-60 bg-white rounded-md p-4 ${
-                                    resultMode && "col-flex items-center justify-center"
-                                }`}
+                                className={`flex-1 w-60 bg-white rounded-md p-4 col-flex items-center justify-center min-h-screen`}
                             >
                                 <LinearProgressWithLabel value={progress} />
 
-                                {!resultMode && !viewExamDetails
-                                    ? questions.length &&
-                                      questions.map((question, index) => {
-                                          return (
-                                              <div key={question.id}>
-                                                  <p className='text-base pb-4 font-bold'>
-                                                      <span>Câu {activeIndex + index}: </span>
-                                                      {question.content}
-                                                  </p>
-                                                  {question.type === "Đáp án điền" ? (
-                                                      <>
-                                                          <Input
-                                                              register={register}
-                                                              name={`question-${question.id}-answer`}
-                                                              onChangeHandler={e => {
-                                                                  finalAnswer.set(
-                                                                      question.id,
-                                                                      e.target.value
-                                                                  );
-                                                                  setFinalAnswer(finalAnswer);
-                                                                  if (e.target.value) {
-                                                                      $(
-                                                                          `#question-${question.id}-answer`
-                                                                      ).addClass("chosen active");
-                                                                  } else {
-                                                                      $(
-                                                                          `#question-${question.id}-answer`
-                                                                      ).removeClass(
-                                                                          "chosen active"
-                                                                      );
-                                                                  }
-                                                              }}
-                                                          />
-                                                      </>
-                                                  ) : (
-                                                      question.answers.map((answer, index) => {
-                                                          return (
-                                                              <Answer
-                                                                  answer={answer}
-                                                                  question={question}
-                                                                  finalAnswer={finalAnswer}
-                                                                  setFinalAnswer={setFinalAnswer}
-                                                                  index={index}
-                                                                  type={question.type}
-                                                              />
-                                                          );
-                                                      })
-                                                  )}
+                                <div className='w-full flex-1'>
+                                    {!resultMode && !viewExamDetails
+                                        ? questions.length &&
+                                          questions.map((question, index) => {
+                                              return (
+                                                  <Question
+                                                      question={question}
+                                                      finalAnswer={finalAnswer}
+                                                      setFinalAnswer={setFinalAnswer}
+                                                      register={register}
+                                                      activeIndex={activeIndex}
+                                                      index={index}
+                                                  />
+                                              );
+                                              //       <div key={question.id}>
+                                              //           <p className='text-base pb-4 font-bold'>
+                                              //               <span>Câu {activeIndex + index}: </span>
+                                              //               {question.content}{" "}
+                                              //               {question.type === "Nhiều đáp án" &&
+                                              //                   "(Có thể lựa chọn nhiều đáp án)"}
+                                              //           </p>
+                                              //           {question.type === "Đáp án điền" ? (
+                                              //               <>
+                                              //                   <Input
+                                              //                       register={register}
+                                              //                       name={`question-${question.id}-answer`}
+                                              //                       onChangeHandler={e => {
+                                              //                           finalAnswer.set(
+                                              //                               question.id,
+                                              //                               e.target.value
+                                              //                           );
+                                              //                           setFinalAnswer(finalAnswer);
+                                              //                           if (e.target.value) {
+                                              //                               $(
+                                              //                                   `#question-${question.id}-answer`
+                                              //                               ).addClass(
+                                              //                                   "chosen active"
+                                              //                               );
+                                              //                           } else {
+                                              //                               $(
+                                              //                                   `#question-${question.id}-answer`
+                                              //                               ).removeClass(
+                                              //                                   "chosen active"
+                                              //                               );
+                                              //                           }
+                                              //                       }}
+                                              //                   />
+                                              //               </>
+                                              //           ) : (
+                                              //               question.answers.map((answer, index) => {
+                                              //                   return (
+                                              //                       <Answer
+                                              //                           answer={answer}
+                                              //                           question={question}
+                                              //                           finalAnswer={finalAnswer}
+                                              //                           setFinalAnswer={
+                                              //                               setFinalAnswer
+                                              //                           }
+                                              //                           index={index}
+                                              //                           type={question.type}
+                                              //                       />
+                                              //                   );
+                                              //               })
+                                              //           )}
+                                              //       </div>
+                                              //   );
+                                          })
+                                        : !viewExamDetails && (
+                                              <div
+                                                  style={{
+                                                      maxWidth: "350px",
+                                                      maxHeight: "350px",
+                                                  }}
+                                                  className='mb-5 '
+                                              >
+                                                  <Doughnut data={data} />
                                               </div>
-                                          );
-                                      })
-                                    : !viewExamDetails && (
-                                          <div
-                                              style={{
-                                                  maxWidth: "350px",
-                                                  maxHeight: "350px",
-                                              }}
-                                              className='mb-5 '
-                                          >
-                                              <Doughnut data={data} />
-                                          </div>
-                                      )}
-                                {viewExamDetails &&
-                                    questions.length &&
-                                    questions.map((question, index) => {
-                                        let additionalClass = "";
-                                        let isRight = false;
-                                        if (
-                                            isAnswerRight(
-                                                question.selectedAnswer,
-                                                question.finalAnswer,
-                                                question.type
-                                            )
-                                        ) {
-                                            additionalClass = "text-emerald-600";
-                                            isRight = true;
-                                        } else {
-                                            additionalClass = "text-rose-600";
-                                            isRight = false;
-                                        }
+                                          )}
+                                    {viewExamDetails &&
+                                        questions.length &&
+                                        questions.map((question, index) => {
+                                            let additionalClass = "";
+                                            let isRight = false;
+                                            if (
+                                                isAnswerRight(
+                                                    question.selectedAnswer,
+                                                    question.finalAnswer,
+                                                    question.type
+                                                )
+                                            ) {
+                                                additionalClass = "text-emerald-600";
+                                                isRight = true;
+                                            } else {
+                                                additionalClass = "text-rose-600";
+                                                isRight = false;
+                                            }
 
-                                        if (question.type === "Đáp án điền") {
-                                            setValue(
-                                                `question-${question.id}-answer`,
-                                                question.finalAnswer
-                                            );
-                                        }
-                                        return (
-                                            <div key={question.id} className='w-full'>
-                                                <p
-                                                    className={
-                                                        additionalClass +
-                                                        " text-base pb-4 font-bold"
-                                                    }
-                                                >
-                                                    <span>Câu {activeIndex + index}: </span>
-                                                    {question.content}{" "}
-                                                    {question.type === "Đáp án điền" &&
-                                                        !isRight &&
-                                                        question.selectedAnswer &&
-                                                        `Câu trả lời của SV: ${question.selectedAnswer}`}
-                                                </p>
-                                                {question.type === "Đáp án điền" ? (
-                                                    <>
-                                                        <Input
-                                                            id={`question-${question.id}-answer`}
-                                                            register={register}
-                                                            name={`question-${question.id}-answer`}
-                                                            readOnly
-                                                        />
-                                                    </>
-                                                ) : (
-                                                    question.answers.map((answer, index) => {
-                                                        let additionalClass = "";
-                                                        if (question.type === "Một đáp án") {
-                                                            if (
-                                                                lookupIndex(index) ===
-                                                                question.finalAnswer
-                                                            ) {
-                                                                additionalClass =
-                                                                    "text-emerald-600 font-bold";
-                                                            }
-                                                            if (!isRight) {
+                                            if (question.type === "Đáp án điền") {
+                                                setValue(
+                                                    `question-${question.id}-answer`,
+                                                    question.finalAnswer
+                                                );
+                                            }
+                                            return (
+                                                <div key={question.id} className='w-full'>
+                                                    <p
+                                                        className={
+                                                            additionalClass +
+                                                            " text-base pb-4 font-bold"
+                                                        }
+                                                    >
+                                                        <span>Câu {activeIndex + index}: </span>
+                                                        {question.content}{" "}
+                                                        {question.type === "Đáp án điền" &&
+                                                            !isRight &&
+                                                            question.selectedAnswer &&
+                                                            `Câu trả lời của SV: ${question.selectedAnswer}`}
+                                                    </p>
+                                                    {question.type === "Đáp án điền" ? (
+                                                        <>
+                                                            <Input
+                                                                id={`question-${question.id}-answer`}
+                                                                register={register}
+                                                                name={`question-${question.id}-answer`}
+                                                                readOnly
+                                                            />
+                                                        </>
+                                                    ) : (
+                                                        question.answers.map((answer, index) => {
+                                                            let additionalClass = "";
+                                                            if (question.type === "Một đáp án") {
                                                                 if (
-                                                                    question.selectedAnswer &&
                                                                     lookupIndex(index) ===
-                                                                        question.selectedAnswer
+                                                                    question.finalAnswer
                                                                 ) {
                                                                     additionalClass =
-                                                                        "text-rose-600 font-bold";
+                                                                        "text-emerald-600 font-bold";
                                                                 }
-                                                            }
-                                                        } else {
-                                                            if (question.finalAnswer)
-                                                                question.finalAnswer
-                                                                    .split(",")
-                                                                    .forEach(ans => {
-                                                                        if (
-                                                                            lookupIndex(index) ===
-                                                                            ans
-                                                                        ) {
-                                                                            additionalClass =
-                                                                                "text-emerald-600 font-bold";
-                                                                        }
-                                                                    });
-                                                            if (!isRight) {
-                                                                if (question.selectedAnswer) {
+                                                                if (!isRight) {
                                                                     if (
-                                                                        question.selectedAnswer.includes(
-                                                                            ","
-                                                                        )
-                                                                    ) {
-                                                                        question.selectedAnswer
-                                                                            .split(",")
-                                                                            .forEach(ans => {
-                                                                                if (
-                                                                                    lookupIndex(
-                                                                                        index
-                                                                                    ) === ans
-                                                                                ) {
-                                                                                    additionalClass =
-                                                                                        "text-rose-600 font-bold";
-                                                                                }
-                                                                            });
-                                                                    } else {
-                                                                        if (
-                                                                            lookupIndex(index) ===
+                                                                        question.selectedAnswer &&
+                                                                        lookupIndex(index) ===
                                                                             question.selectedAnswer
+                                                                    ) {
+                                                                        additionalClass =
+                                                                            "text-rose-600 font-bold";
+                                                                    }
+                                                                }
+                                                            } else {
+                                                                if (question.finalAnswer)
+                                                                    question.finalAnswer
+                                                                        .split(",")
+                                                                        .forEach(ans => {
+                                                                            if (
+                                                                                lookupIndex(
+                                                                                    index
+                                                                                ) === ans
+                                                                            ) {
+                                                                                additionalClass =
+                                                                                    "text-emerald-600 font-bold";
+                                                                            }
+                                                                        });
+                                                                if (!isRight) {
+                                                                    if (question.selectedAnswer) {
+                                                                        if (
+                                                                            question.selectedAnswer.includes(
+                                                                                ","
+                                                                            )
                                                                         ) {
-                                                                            additionalClass =
-                                                                                "text-rose-600 font-bold";
+                                                                            question.selectedAnswer
+                                                                                .split(",")
+                                                                                .forEach(ans => {
+                                                                                    if (
+                                                                                        lookupIndex(
+                                                                                            index
+                                                                                        ) === ans
+                                                                                    ) {
+                                                                                        additionalClass =
+                                                                                            "text-rose-600 font-bold";
+                                                                                    }
+                                                                                });
+                                                                        } else {
+                                                                            if (
+                                                                                lookupIndex(
+                                                                                    index
+                                                                                ) ===
+                                                                                question.selectedAnswer
+                                                                            ) {
+                                                                                additionalClass =
+                                                                                    "text-rose-600 font-bold";
+                                                                            }
                                                                         }
                                                                     }
                                                                 }
                                                             }
-                                                        }
 
-                                                        return (
-                                                            <Answer
-                                                                answer={answer}
-                                                                question={question}
-                                                                finalAnswer={finalAnswer}
-                                                                setFinalAnswer={setFinalAnswer}
-                                                                index={index}
-                                                                additionalClass={additionalClass}
-                                                                readOnly
-                                                            />
-                                                        );
-                                                    })
-                                                )}
-                                            </div>
-                                        );
-                                    })}
-                                <div className='mt-5'>
-                                    <Divider />
+                                                            return (
+                                                                <Answer
+                                                                    answer={answer}
+                                                                    question={question}
+                                                                    finalAnswer={finalAnswer}
+                                                                    setFinalAnswer={setFinalAnswer}
+                                                                    index={index}
+                                                                    additionalClass={
+                                                                        additionalClass
+                                                                    }
+                                                                    readOnly
+                                                                />
+                                                            );
+                                                        })
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
                                 </div>
-                                <div className='mt-3'>
-                                    <button
-                                        type='button'
-                                        className={tailwindCss.radiantButton}
-                                        onClick={() => {
-                                            if (!resultMode) {
-                                                dispatch(
-                                                    handIn({
-                                                        exam: examId,
-                                                        answers: finalAnswer,
-                                                    })
-                                                );
-                                                setResultMode(true);
-                                                setFinalAnswer(new Map());
-                                            } else {
-                                                window.location.href = `/takeTest`;
-                                            }
-                                        }}
-                                    >
-                                        {!resultMode ? "Nộp bài" : "Làm bài thi khác"}
-                                    </button>
+                                <div className='mt-5 h-5 w-full'>
+                                    <Divider orientation='horizontal'>
+                                        <Chip label='THAO TÁC' />
+                                    </Divider>
+                                </div>
+                                <div className='flex items-center w-full'>
+                                    <div className='mt-3 mr-5'>
+                                        <Button
+                                            type='button'
+                                            onClick={() => {
+                                                if (!resultMode) {
+                                                    dispatch(
+                                                        handIn({
+                                                            exam: examId,
+                                                            answers: finalAnswer,
+                                                        })
+                                                    );
+                                                    setResultMode(true);
+                                                    setFinalAnswer(new Map());
+                                                } else {
+                                                    window.location.href = `/takeTest`;
+                                                }
+                                            }}
+                                        >
+                                            {!resultMode ? "Nộp bài" : "Làm bài thi khác"}
+                                        </Button>
+                                    </div>
                                     {resultMode ? (
-                                        <button
+                                        <Button
                                             type='button'
                                             className={tailwindCss.radiantButton}
                                             onClick={() => {
@@ -578,19 +602,46 @@ function TakeTestPage() {
                                             {!viewExamDetails
                                                 ? "Xem chi tiết bài thi"
                                                 : "Xem thống kê kết quả"}
-                                        </button>
+                                        </Button>
                                     ) : (
-                                        testedQuestions.length !== activeIndex && (
-                                            <button
-                                                type='button'
-                                                className={tailwindCss.radiantButton}
-                                                onClick={() => {
-                                                    handleChangeQuestionPage(activeIndex + 4);
-                                                }}
-                                            >
-                                                Trang kế
-                                            </button>
-                                        )
+                                        <>
+                                            {activeIndex !== 1 && (
+                                                <div className='mt-3 mr-5'>
+                                                    <Button
+                                                        gradientDuoTone='purpleToBlue'
+                                                        type='button'
+                                                        outline={true}
+                                                        className={tailwindCss.radiantButton}
+                                                        onClick={() => {
+                                                            handleChangeQuestionPage(
+                                                                activeIndex - 4
+                                                            );
+                                                        }}
+                                                    >
+                                                        {" "}
+                                                        Trang trước
+                                                    </Button>
+                                                </div>
+                                            )}
+                                            {testedQuestions.length > 4 &&
+                                                testedQuestions.length !== activeIndex && (
+                                                    <div className='mt-3'>
+                                                        {" "}
+                                                        <Button
+                                                            gradientDuoTone='greenToBlue'
+                                                            type='button'
+                                                            outline={true}
+                                                            onClick={() => {
+                                                                handleChangeQuestionPage(
+                                                                    activeIndex + 4
+                                                                );
+                                                            }}
+                                                        >
+                                                            Trang kế
+                                                        </Button>
+                                                    </div>
+                                                )}
+                                        </>
                                     )}
                                 </div>
                             </div>

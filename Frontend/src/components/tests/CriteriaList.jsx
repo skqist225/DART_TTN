@@ -9,8 +9,9 @@ function CriteriaList({ criteria }) {
             <Table.Head>
                 <Table.HeadCell>STT</Table.HeadCell>
                 <Table.HeadCell>Chương</Table.HeadCell>
-                <Table.HeadCell>Số câu hỏi</Table.HeadCell>
+                <Table.HeadCell>Tổng số câu hỏi</Table.HeadCell>
                 <Table.HeadCell>Mức độ</Table.HeadCell>
+                <Table.HeadCell>Số lượng</Table.HeadCell>
             </Table.Head>
             <Table.Body className='divide-y'>
                 {criteria.map(({ chapter, levelAndNumbers }, index) => (
@@ -31,7 +32,7 @@ function CriteriaList({ criteria }) {
                         </Table.Cell>
                         <Table.Cell className={tailwindCss.tableViewerCell}>
                             {levelAndNumbers.map(({ level, numberOfQuestions }) => (
-                                <div className='flex items-center'>
+                                <div className='flex items-center' key={numberOfQuestions + level}>
                                     <LevelBadge
                                         level={level}
                                         key={level}
@@ -39,14 +40,16 @@ function CriteriaList({ criteria }) {
                                         className='w-full'
                                         style={{ maxWidth: "100px" }}
                                     />
-                                    <LevelBadge
-                                        level={level}
-                                        key={numberOfQuestions + level}
-                                        label={numberOfQuestions}
-                                    />
                                 </div>
                             ))}
                         </Table.Cell>{" "}
+                        <Table.Cell className={tailwindCss.tableViewerCell}>
+                            {levelAndNumbers.map(({ level, numberOfQuestions }) => (
+                                <div className='flex items-center' key={numberOfQuestions + level}>
+                                    <LevelBadge level={level} label={numberOfQuestions} />
+                                </div>
+                            ))}
+                        </Table.Cell>
                     </Table.Row>
                 ))}
             </Table.Body>

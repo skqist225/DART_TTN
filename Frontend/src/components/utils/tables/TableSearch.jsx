@@ -26,6 +26,7 @@ function TableSearch({ placeHolder, handleQueryChange, searchQuery }) {
                     className='block p-2 pl-10 pr-10 w-70 text-sm text-gray-900 bg-gray-50 rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500'
                     onChange={handleQueryChange}
                     value={searchQuery}
+                    style={{ minHeight: "44px" }}
                 />
                 <div className='flex absolute inset-y-0 right-0 items-center pr-3 '>
                     <Help helperText={placeHolder} />

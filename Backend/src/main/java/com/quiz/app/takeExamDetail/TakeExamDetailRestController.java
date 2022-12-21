@@ -10,6 +10,7 @@ import com.quiz.entity.Answer;
 import com.quiz.entity.Exam;
 import com.quiz.entity.Question;
 import com.quiz.entity.TakeExamDetail;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -43,10 +44,12 @@ public class TakeExamDetailRestController {
         float mark = 0;
         List<TakeExamDetail> takeExamDetails =
                 takeExamDetailService.findByStudentAndExam(studentId, examId);
-        List<HandInDTO> answers = takeExamDetailService.findByStudentAndExam(studentId, examId).stream()
+
+        List<HandInDTO> answers = takeExamDetails.stream()
                 .map(takeExamDetail -> new HandInDTO(takeExamDetail.getQuestion().getId(),
                         takeExamDetail.getAnswer()))
                 .collect(Collectors.toList());
+
         List<Question> questions = new ArrayList<>();
         for (TakeExamDetail detail : takeExamDetails) {
             Question question = detail.getQuestion();
@@ -74,47 +77,28 @@ public class TakeExamDetailRestController {
                 finalAnswer = new StringBuilder(question.getAnswers().get(0).getContent());
             }
 
-            for (HandInDTO answer : answers) {
-                if (answer.getQuestionId().equals(question.getId())) {
-                    if (question.getType().equals("Một đáp án")) {
-                        for (Answer ans : question.getAnswers()) {
-                            if (ans.isAnswer()) {
-                                String ansss = "";
-                                if (!Objects.isNull(answer.getAnswer())) {
-                                    ansss = answer.getAnswer().toLowerCase().trim();
-                                }
-                                if (ans.getOrder().toLowerCase().trim().equals(ansss)) {
-                                    numberOfRightAnswer++;
-                                }
-                            }
-                        }
-                        question.setSelectedAnswer(answer.getAnswer());
-                    } else if (question.getType().equals("Nhiều đáp án")) {
-                        String userFinalAnswer = answer.getAnswer();
-                        if (Objects.nonNull(answer.getAnswer())) {
-                            String[] userFinalAnswerArr = answer.getAnswer().split(",");
+            for (HandInDTO handInDTO : answers) {
+                if (handInDTO.getQuestionId().equals(question.getId())) {
+
+                    String userFinalAnswer = handInDTO.getAnswer();
+
+                    if (Objects.nonNull(userFinalAnswer) && !StringUtils.isEmpty(
+                            userFinalAnswer
+                    )) {
+                        if (question.getType().equals("Nhiều đáp án")) {
+                            String[] userFinalAnswerArr = handInDTO.getAnswer().split(",");
                             Arrays.sort(userFinalAnswerArr);
                             userFinalAnswer = String.join(",", userFinalAnswerArr);
+                        }
 
-                            System.out.println(finalAnswer);
-                            System.out.println(userFinalAnswer);
-                            if (finalAnswer.toString().toLowerCase().trim().equals(userFinalAnswer.toLowerCase().trim())) {
-                                numberOfRightAnswer++;
-                            }
-                        }
-                        question.setSelectedAnswer(userFinalAnswer);
-                    } else {
-                        String ansss = "";
-                        if (!Objects.isNull(answer.getAnswer())) {
-                            ansss = answer.getAnswer().toLowerCase().trim();
-                        }
-                        if (question.getAnswers().get(0).getContent().trim().toLowerCase().equals(ansss)) {
+                        if (finalAnswer.toString().toLowerCase().trim().equals(userFinalAnswer.toLowerCase().trim())) {
                             numberOfRightAnswer++;
                         }
-                        question.setSelectedAnswer(answer.getAnswer());
+                    } else {
+                        userFinalAnswer = "";
                     }
-                    
-                    break;
+
+                    question.setSelectedAnswer(userFinalAnswer);
                 }
             }
             question.setFinalAnswer(finalAnswer.toString());

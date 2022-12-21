@@ -1,31 +1,5 @@
 package com.quiz.app.exam;
 
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Random;
-
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.quiz.app.creditClass.CreditClassService;
 import com.quiz.app.exam.dto.ExamsDTO;
 import com.quiz.app.exam.dto.PostCreateExamDTO;
@@ -46,6 +20,30 @@ import com.quiz.entity.Register;
 import com.quiz.entity.TakeExam;
 import com.quiz.entity.Test;
 import com.quiz.entity.User;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Random;
 
 @RestController
 @RequestMapping("/api/exams")
@@ -164,7 +162,7 @@ public class ExamRestController {
     public ResponseEntity<StandardJSONResponse<String>> saveExam(
             @AuthenticationPrincipal UserDetailsImpl userDetailsImpl,
             @RequestBody PostCreateExamDTO postCreateExamDTO,
-            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) {
+            @RequestParam(name = "isEdit", required = false, defaultValue = "false") boolean isEdit) throws NotFoundException {
         User teacher = userDetailsImpl.getUser();
         CommonUtils commonUtils = new CommonUtils();
         Exam exam = null;
@@ -203,12 +201,12 @@ public class ExamRestController {
 
         if (isEdit) {
             try {
-                Exam exm = examService.findById(id);
-                exm.setExamDate(tempExamDate);
-                exm.setNoticePeriod(noticePeriod);
-                exm.setTime(time);
+                exam = examService.findById(id);
+                exam.setExamDate(tempExamDate);
+                exam.setNoticePeriod(noticePeriod);
+                exam.setTime(time);
 
-                for (Test test : exm.getTests()) {
+                for (Test test : exam.getTests()) {
                     test.setExam(null);
                     test.setUsed(false);
                     testService.save(test);
@@ -216,70 +214,61 @@ public class ExamRestController {
 
                 for (Integer testId : tests) {
                     Test test = testService.findById(testId);
-                    test.setExam(exm);
+                    test.setExam(exam);
                     test.setUsed(true);
                     testService.save(test);
                 }
 
-                for (TakeExam takeExam : exm.getTakeExams()) {
+                for (TakeExam takeExam : exam.getTakeExams()) {
                     Random ran = new Random();
                     int randomTest = ran.nextInt(tests.size());
                     int testId = tests.get(randomTest);
                     Register register = takeExam.getRegister();
                     String studentId = register.getStudent().getId();
-                    System.out.printf("Student %s use %d%n", studentId, testId);
+                    System.out.printf("Sinh viên %s sử dụng mã đề %d%n", studentId, testId);
 
                     Test test = testService.findById(testId);
-
                     List<Question> questions = test.getQuestions();
-                    System.out.println("before suffle");
-                    questions.forEach(System.out::println);
                     Collections.shuffle(questions);
-                    System.out.println("after suffle");
-                    questions.forEach(System.out::println);
-                    System.out.println("try time: " + takeExam.getTryTime());
+
                     takeExamDetailService.updateTakeExamDetail(questions,
-                            takeExam.getTryTime(), exm.getId(), register.getCreditClass().getId(),
+                            takeExam.getTryTime(), exam.getId(), register.getCreditClass().getId(),
                             studentId, testId);
                 }
 
-                examService.save(exm);
+                examService.save(exam);
             } catch (NotFoundException e) {
                 return new BadResponse<String>(e.getMessage()).response();
             }
         } else {
-            List<Test> tsts = new ArrayList<>();
             Exam tempExam = Exam.build(postCreateExamDTO);
             tempExam.setTeacher(teacher);
             tempExam.setExamDate(tempExamDate);
-            for (Integer testId : tests) {
-                try {
-                    Test test = testService.findById(testId);
-                    tsts.add(test);
-                    tempExam.addTest(new Test(testId));
-                } catch (NotFoundException e) {
-
-                }
-            }
             exam = examService.save(tempExam);
-            for (Test test : tsts) {
+
+            for (Integer testId : tests) {
+                Test test = testService.findById(testId);
                 test.setExam(exam);
                 test.setUsed(true);
-                testService.save(
-                        test);
+                testService.save(test);
+                exam.addTest(test);
             }
-
-            exam.setTeacher(teacher);
+            exam = examService.save(tempExam);
 
             int i = 0;
+            assert creditClass != null;
             creditClass.getRegisters().sort(Comparator.comparing(register -> register.getStudent().getFullName()));
+
             for (Register register : creditClass.getRegisters()) {
+                // Chỉ tạo ca thi cho số lượng sinh viên nhất định
                 if (i >= numberOfStudents) {
                     break;
                 }
+                // Bỏ qua các trường hợp hủy đăng ký
                 if (register.isStatus()) {
                     continue;
                 }
+                // Nếu đã tạo ca thi rồi, mà ca thi đó chưa hủy thì bỏ qua
                 boolean shouldContinue = false;
                 List<TakeExam> takeExams = takeExamService.findByRegister(register);
                 for (TakeExam takeExam : takeExams) {
@@ -291,16 +280,20 @@ public class ExamRestController {
                 if (shouldContinue) {
                     continue;
                 }
+
                 try {
+                    // Phát ngẫu nhiên đề thi cho sinh viên
                     Random ran = new Random();
                     int randomTest = ran.nextInt(tests.size());
                     int testId = tests.get(randomTest);
                     String studentId = register.getStudent().getId();
-                    System.out.printf("Student %s use %d%n", studentId, testId);
+                    System.out.printf("Sinh viên %s sử dụng mã đề %d%n", studentId, testId);
 
                     int tryTime = takeExamService.determineTryTime(register);
                     takeExamService.insertIntoTakeExamTable(tryTime, exam.getId(),
                             register.getCreditClass().getId(), studentId, testId);
+
+                    // Xáo trộn câu hỏi trong đề thi của sinh viên
                     try {
                         Test test = testService.findById(testId);
                         List<Question> questions = test.getQuestions();
@@ -309,7 +302,6 @@ public class ExamRestController {
                             takeExamDetailService.insertIntoTakeExamDetail(question.getId(), tryTime, exam.getId(),
                                     register.getCreditClass().getId(), register.getStudent().getId());
                         }
-
                     } catch (NotFoundException e) {
                         return new BadResponse<String>(e.getMessage()).response();
                     }

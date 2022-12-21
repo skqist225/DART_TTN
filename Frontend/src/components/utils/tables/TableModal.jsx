@@ -127,21 +127,6 @@ function TableModal({
                     <div className='p-4 space-y-6'>{ModalBody}</div>
 
                     <div className='flex items-center p-4 space-x-2 rounded-b border-t border-gray-200 dark:border-gray-600'>
-                        {addTst && (
-                            <button
-                                id='loadQuestionTestPageButton'
-                                type='submit'
-                                className={`${tailwindCss.blueOutlineButton} ${
-                                    modalLabel === "đề thi" &&
-                                    addTestDisabled &&
-                                    "cursor-not-allowed hover:text-blue-700 hover:bg-white"
-                                }`}
-                                disabled={modalLabel === "đề thi" && addTestDisabled}
-                            >
-                                Tải câu hỏi
-                            </button>
-                        )}
-
                         <button
                             type={
                                 !excelAdd && !addTst
@@ -233,6 +218,22 @@ function TableModal({
                             )}
                             {excelAdd ? "Thêm tất cả" : <span>{buttonLabel}</span>}
                         </button>
+
+                        {addTst && (
+                            <button
+                                id='loadQuestionTestPageButton'
+                                type='submit'
+                                className={`${tailwindCss.blueOutlineButton} ${
+                                    modalLabel === "đề thi" &&
+                                    addTestDisabled &&
+                                    "cursor-not-allowed hover:text-blue-700 hover:bg-white"
+                                }`}
+                                disabled={modalLabel === "đề thi" && addTestDisabled}
+                            >
+                                Tải danh sách câu hỏi
+                            </button>
+                        )}
+
                         {examPage && (
                             <button
                                 type='button'

@@ -139,13 +139,15 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
                                                 customTooltipMessage={shouldDeleteMessage}
                                             />
                                         </div>
-                                        <EnableOrDisable
-                                            status={row.status}
-                                            enableOrDisable={enableOrDisableTest}
-                                            id={row.id}
-                                            disabled={!shouldCancel}
-                                            customTooltipMessage={shouldCancelMessage}
-                                        />
+                                        {userRoles.includes("Quản trị viên") && (
+                                            <EnableOrDisable
+                                                status={row.status}
+                                                enableOrDisable={enableOrDisableTest}
+                                                id={row.id}
+                                                disabled={!shouldCancel}
+                                                customTooltipMessage={shouldCancelMessage}
+                                            />
+                                        )}
                                     </>
                                 )}
                             </td>

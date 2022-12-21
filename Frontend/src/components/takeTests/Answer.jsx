@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
-import { lookupIndex } from "../questions/QuestionModalBody";
 import $ from "jquery";
+import React from "react";
 import { tailwindCss } from "../../tailwind";
+import { lookupIndex } from "../questions/QuestionModalBody";
 
 function Answer({
     answer,
@@ -18,18 +18,19 @@ function Answer({
 
     const { type } = question;
 
-    function addOrRemoveCheckMultipleChoice() {
-        const ans = $(`#question-${questionId}-answer${answerLabel}`);
-        if (ans.prop("checked")) {
+    function addOrRemoveCheckMultipleChoice(element, checked, updateCheckedState = true) {
+        if (checked) {
             let shouldRemoveCheck = true;
             $(`.question-${questionId}-answer-cls`).each(function () {
                 if ($(this).prop("checked")) {
-                    if (!$(this).is(ans)) {
+                    if (!$(this).is(element)) {
                         shouldRemoveCheck = false;
                     }
                 }
             });
-            ans.prop("checked", false);
+            if (updateCheckedState) {
+                element.prop("checked", false);
+            }
 
             if (shouldRemoveCheck) {
                 $(`#question-${questionId}-answer`).removeClass("chosen active");
@@ -38,15 +39,21 @@ function Answer({
             if (finalAnswer.has(questionId)) {
                 const currentAnswer = finalAnswer.get(questionId).split(",");
                 if (currentAnswer.length > 1) {
-                    finalAnswer.set(questionId, currentAnswer.push(answer).join(","));
+                    finalAnswer.set(
+                        questionId,
+                        currentAnswer.filter(answer => answer !== answerLabel).join(",")
+                    );
                 } else {
                     finalAnswer.delete(questionId);
                 }
-
+                console.log(finalAnswer);
                 setFinalAnswer(new Map([...finalAnswer]));
             }
         } else {
-            ans.prop("checked", "true");
+            if (updateCheckedState) {
+                element.prop("checked", "true");
+            }
+
             $(`#question-${questionId}-answer`).addClass("chosen active");
 
             if (finalAnswer.has(questionId)) {
@@ -54,29 +61,33 @@ function Answer({
             } else {
                 finalAnswer.set(questionId, answerLabel);
             }
-
+            console.log(finalAnswer);
             setFinalAnswer(new Map([...finalAnswer]));
         }
     }
 
-    function addOrRemoveOneChoice() {
-        const ans = $(`#question-${questionId}-answer${answerLabel}`);
-        if (ans.prop("checked")) {
-            ans.prop("checked", false);
+    function addOrRemoveOneChoice(element, checked, updateCheckedState = true) {
+        if (checked) {
+            if (updateCheckedState) {
+                element.prop("checked", false);
+            }
 
             $(`#question-${questionId}-answer`).removeClass("chosen active");
 
             if (finalAnswer.has(questionId)) {
                 finalAnswer.delete(questionId);
+                console.log(finalAnswer);
                 setFinalAnswer(new Map([...finalAnswer]));
             }
         } else {
-            // Add check for checkbox
-            ans.prop("checked", "true");
-            // Add selected for answer
+            if (updateCheckedState) {
+                element.prop("checked", "true");
+            }
+
             $(`#question-${questionId}-answer`).addClass("chosen active");
-            // Add to final answer
+
             finalAnswer.set(questionId, answerLabel);
+            console.log(finalAnswer);
             setFinalAnswer(new Map([...finalAnswer]));
         }
     }
@@ -86,54 +97,37 @@ function Answer({
             return;
         }
 
+        const element = $(`#question-${questionId}-answer${answerLabel}`);
+        const checked = element.prop("checked");
+
         if (type === "Một đáp án") {
-            addOrRemoveOneChoice();
+            addOrRemoveOneChoice(element, checked);
         } else {
-            addOrRemoveCheckMultipleChoice();
+            addOrRemoveCheckMultipleChoice(element, checked);
         }
     }
 
-    useEffect(() => {
-        if (readOnly) {
-            $(`#${checkBoxId}`).prop("checked", false);
-        }
-    }, []);
-
     return (
         <div className='flex items-start mb-4' key={answer.id}>
-            <input
-                id={checkBoxId}
-                type={type === "Một đáp án" ? "radio" : "checkbox"}
-                value={lookupIndex(index)}
-                className={`${tailwindCss.checkbox} question-${questionId}-answer-cls`}
-                name={`question-${questionId}-answer`}
-                onClick={e => {
-                    if (readOnly) {
-                        return;
-                    }
-                    if (type === "Một đáp án") {
-                        // Add selected for answer
-                        $(`#question-${questionId}-answer`).addClass("chosen active");
-                        // Add to final answer
-                        finalAnswer.set(questionId, answerLabel);
-                        setFinalAnswer(new Map([...finalAnswer]));
-                    } else {
-                        $(`#question-${questionId}-answer`).addClass("chosen active");
-                        if (finalAnswer.has(questionId)) {
-                            finalAnswer.set(
-                                questionId,
-                                `${finalAnswer.get(questionId)},${answerLabel}`
-                            );
-                        } else {
-                            finalAnswer.set(questionId, answerLabel);
-                        }
+            {!readOnly && (
+                <input
+                    id={checkBoxId}
+                    type={type === "Một đáp án" ? "radio" : "checkbox"}
+                    value={lookupIndex(index)}
+                    className={`${tailwindCss.checkbox} question-${questionId}-answer-cls`}
+                    name={`question-${questionId}-answer`}
+                    onChange={e => {
+                        const self = $(e.target);
 
-                        setFinalAnswer(new Map([...finalAnswer]));
-                    }
-                }}
-                readOnly={readOnly}
-                disabled={readOnly}
-            />
+                        if (type === "Một đáp án") {
+                            addOrRemoveOneChoice(self, !self.prop("checked"), false);
+                        } else if (type === "Nhiều đáp án") {
+                            addOrRemoveCheckMultipleChoice(self, !self.prop("checked"), false);
+                        }
+                    }}
+                />
+            )}
+
             <label
                 id={`${checkBoxId}-label`}
                 className={`${tailwindCss.radioButtonLabel} ${additionalClass} ${

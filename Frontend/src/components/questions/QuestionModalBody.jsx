@@ -1,14 +1,15 @@
-import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
-import { questionState } from "../../features/questionSlice";
-import { tailwindCss } from "../../tailwind";
-import { TextArea, Select, Input } from "..";
-import { chapterState, fetchAllChapters } from "../../features/chapterSlice";
-import { subjectState } from "../../features/subjectSlice";
-import { useFieldArray } from "react-hook-form";
 import $ from "jquery";
+import React, { useEffect, useState } from "react";
+import { useFieldArray } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { createEditor } from "slate";
+import { withReact } from "slate-react";
+import { Input, Select, TextArea } from "..";
+import { chapterState, fetchAllChapters } from "../../features/chapterSlice";
+import { questionState } from "../../features/questionSlice";
+import { subjectState } from "../../features/subjectSlice";
+import { tailwindCss } from "../../tailwind";
 import ExcelModalBody from "../utils/forms/ExcelModalBody";
-
 export const levelOptions = [
     {
         value: "Dễ",
@@ -38,7 +39,12 @@ const types = [
         title: "Đáp án điền",
     },
 ];
-
+const initialValue = [
+    {
+        type: "paragraph",
+        children: [{ text: "A line of text in a paragraph." }],
+    },
+];
 export function lookupIndex(index) {
     const alphabet = [
         "A",
@@ -155,13 +161,16 @@ function QuestionModalBody({
             setValue("typedAnswer", "");
         }
     };
-
+    const [editor] = useState(() => withReact(createEditor()));
     return (
         <div>
             {!excelAdd ? (
                 <div>
                     <div className='col-flex items-center justify-center w-full'>
                         <div className='w-full'>
+                            {/* <Slate editor={editor} value={initialValue}>
+                                <Editable />
+                            </Slate> */}
                             <TextArea
                                 label='Nội dung câu hỏi *'
                                 labelClassName={tailwindCss.label}

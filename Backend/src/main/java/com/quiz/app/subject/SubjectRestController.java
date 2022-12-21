@@ -52,11 +52,11 @@ public class SubjectRestController {
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
             @RequestParam(name = "haveChapter", required = false, defaultValue = "false") Boolean haveChapter,
             @RequestParam(name = "haveQuestion", required = false, defaultValue = "false") Boolean haveQuestion,
-            @RequestParam(name = "teacher", required = false, defaultValue = "false") String teacherId
+            @RequestParam(name = "teacher", required = false, defaultValue = "") String teacherId
     ) {
         SubjectsDTO subjectsDTO = new SubjectsDTO();
 
-        if(page.equals("0")) {
+        if (page.equals("0")) {
             List<Subject> subjects = null;
             if (haveChapter) {
                 subjects = subjectService.findByHaveChapter();
@@ -65,9 +65,6 @@ public class SubjectRestController {
                 }
             } else if (!StringUtils.isEmpty(teacherId)) {
                 subjects = subjectService.findByTeacher(teacherId);
-//                for (Subject subject : subjects) {
-//                    subject.setChapters(null);
-//                }
             } else {
                 subjects = subjectService.findAll();
             }

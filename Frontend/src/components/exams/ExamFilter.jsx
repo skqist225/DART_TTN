@@ -1,13 +1,13 @@
+import $ from "jquery";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
 import { creditClassState } from "../../features/creditClassSlice";
 import { examState, fetchAllExams } from "../../features/examSlice";
 import { persistUserState } from "../../features/persistUserSlice";
+import { tailwindCss } from "../../tailwind";
 import Select from "../utils/userInputs/Select";
 import { examTypes } from "./ExamModalBody";
-import $ from "jquery";
-import { tailwindCss } from "../../tailwind";
 
 function ExamFilter({ setValue }) {
     const dispatch = useDispatch();
@@ -56,7 +56,7 @@ function ExamFilter({ setValue }) {
                                     register={register}
                                     options={creditClasses.map(
                                         ({ id, schoolYear, semester, subjectName, group }) => ({
-                                            title: `${schoolYear} ${semester} ${subjectName} ${group}`,
+                                            title: `${schoolYear}-${semester}-${subjectName}-${group}`,
                                             value: id,
                                         })
                                     )}
