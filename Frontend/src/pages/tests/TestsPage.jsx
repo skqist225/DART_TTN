@@ -22,6 +22,7 @@ import {
     addTest,
     clearTestState,
     fetchAllTests,
+    findTestByUser,
     setEditedTest,
     testState,
 } from "../../features/testSlice";
@@ -78,6 +79,8 @@ function TestsPage() {
 
         dispatch(fetchAllSubjectsFiltered({ haveChapter: true, haveQuestion: true }));
         dispatch(setQuestions([]));
+
+        dispatch(findTestByUser());
     }, []);
 
     const {

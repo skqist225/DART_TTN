@@ -111,6 +111,19 @@ export const handIn = createAsyncThunk(
     }
 );
 
+export const findTestByUser = createAsyncThunk(
+    "test/findTestByUser",
+    async (_, { rejectWithValue }) => {
+        try {
+            const { data } = await api.get(`/tests/findByUser`);
+
+            return { data };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 export const editTest = createAsyncThunk("test/editTest", async (postData, { rejectWithValue }) => {
     try {
         const { data } = await api.post(`/tests/save?isEdit=true`, postData);
@@ -175,6 +188,7 @@ const initialState = {
         successMessage: null,
     },
     addTestDisabled: false,
+    userTests: [],
 };
 
 const testSlice = createSlice({
@@ -293,6 +307,10 @@ const testSlice = createSlice({
                         };
                     });
                 }
+            })
+
+            .addCase(findTestByUser.fulfilled, (state, { payload }) => {
+                state.userTests = payload.data;
             })
 
             .addCase(enableOrDisableTest.pending, (state, { payload }) => {

@@ -4,6 +4,7 @@ import com.quiz.app.exception.ConstrainstViolationException;
 import com.quiz.app.exception.NotFoundException;
 import com.quiz.entity.Subject;
 import com.quiz.entity.Test;
+import com.quiz.entity.User;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -56,6 +57,10 @@ public class TestService {
 
     public List<Test> findBySubjectAndUsed(Subject subject) {
         return testRepository.findBySubjectAndUsedAndStatus(subject, false, true);
+    }
+
+    public List<Test> findByTeacher(User user) {
+        return testRepository.findTop10ByTeacherOrderByIdDesc(user);
     }
 
 

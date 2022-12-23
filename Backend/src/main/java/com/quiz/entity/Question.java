@@ -135,6 +135,17 @@ public class Question {
         return true;
     }
 
+    @Transient
+    public boolean getShouldFullyEdit() {
+        for (Test test : tests) {
+            if (test.isStatus()) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public static Level lookUpLevel(String levelStr) {
         Level level = Level.EASY;
         if (Objects.equals(levelStr, "Khó")) {

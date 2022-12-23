@@ -3,6 +3,7 @@ package com.quiz.app.test;
 import com.quiz.app.statistics.dto.CountTestsBySubjectAndStatus;
 import com.quiz.entity.Subject;
 import com.quiz.entity.Test;
+import com.quiz.entity.User;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -44,4 +45,7 @@ public interface TestRepository extends CrudRepository<Test, Integer> {
     @Query(value = "select dt.* from (select * from thi t where  t.masv = :studentId AND " +
             "macathi = :examId) temp join dethi dt on dt.madethi = temp.madethi", nativeQuery = true)
     Test findByStudentAndExam(String studentId, Integer examId);
+
+
+    List<Test> findTop10ByTeacherOrderByIdDesc(User user);
 }

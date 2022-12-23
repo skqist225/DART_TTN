@@ -12,12 +12,15 @@ import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.app.takeExam.TakeExamService;
 import com.quiz.app.takeExamDetail.TakeExamDetailService;
+import com.quiz.app.test.dto.CriteriaDTO;
+import com.quiz.app.test.dto.CriteriaExtendsDTO;
 import com.quiz.app.test.dto.HandInDTO;
 import com.quiz.app.test.dto.PostCreateTestDTO;
 import com.quiz.app.test.dto.TestDTO;
 import com.quiz.app.test.dto.TestsDTO;
 import com.quiz.app.utils.CommonUtils;
 import com.quiz.entity.Answer;
+import com.quiz.entity.Chapter;
 import com.quiz.entity.Exam;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
@@ -446,5 +449,29 @@ public class TestRestController {
         } catch (NotFoundException ex) {
             return new BadResponse<String>(ex.getMessage()).response();
         }
+    }
+
+    @GetMapping("findByUser")
+    public ResponseEntity<StandardJSONResponse<List<CriteriaExtendsDTO>>> getUserCriteria(@AuthenticationPrincipal UserDetailsImpl userDetails) {
+        List<CriteriaExtendsDTO> tests = new ArrayList<>();
+        for (Test test : testService.findByTeacher(userDetails.getUser())) {
+            boolean shouldAddTest = true;
+
+//            for(CriteriaDTO criteriaDTO :)
+//
+//            for (Chapter chapter : test.getSubjectChapters()) {
+//                if (chapter.getNumberOfActiveQuestions() == 0) {
+//                    shouldAddTest = false;
+//                    break;
+//                }
+//            }
+//
+//            if (shouldAddTest) {
+                tests.add(new CriteriaExtendsDTO(test.getSubjectId(), test.getSubjectName(), test.getId(), test.getCriteria()));
+//            }
+
+        }
+
+        return new OkResponse<>(tests).response();
     }
 }

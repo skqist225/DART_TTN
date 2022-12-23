@@ -333,6 +333,7 @@ function QuestionModalBody({
                                     options={levelOptions}
                                     setValue={setValue}
                                     defaultValue={editedQuestion && editedQuestion.level}
+                                    readOnly={editedQuestion && !editedQuestion.shouldFullyEdit}
                                 />
                             </div>
                         </div>
@@ -352,6 +353,7 @@ function QuestionModalBody({
                                     setValue={setValue}
                                     onChangeHandler={handleSubjectChange}
                                     defaultValue={subjects && subjects.length && subjects[0].id}
+                                    readOnly={editedQuestion && !editedQuestion.shouldFullyEdit}
                                 />
                             </div>
                             <div className='w-full'>
@@ -366,6 +368,7 @@ function QuestionModalBody({
                                     }))}
                                     setValue={setValue}
                                     defaultValue={chapters && chapters.length && chapters[0].id}
+                                    readOnly={editedQuestion && !editedQuestion.shouldFullyEdit}
                                 />
                             </div>
                         </div>

@@ -18,6 +18,7 @@ function Select({
     readOnly = false,
     removeLabel = false,
     index,
+    additionalOption = false,
 }) {
     useEffect(() => {
         if (setValue && defaultValue) {
@@ -43,7 +44,7 @@ function Select({
                 id={propName}
                 className={`${tailwindCss.select} ${width} ${height} ${
                     error && "bg-red-50 border border-red-500"
-                }`}
+                } ${readOnly && "cursor-not-allowed"}`}
                 name={name}
                 onChange={e => {
                     e.preventDefault();
@@ -61,12 +62,12 @@ function Select({
                 data-index={index}
                 style={{ height: height ? "400px" : "" }}
             >
+                {additionalOption && <option value=''>Chọn tiêu chí</option>}
                 {hiddenOption && (
                     <option value='' disabled>
                         Chọn {label}
                     </option>
                 )}
-                {/* disabled selected style={{ display: "none" }} */}
                 {options.map(({ value, title }) => (
                     <option
                         value={value}

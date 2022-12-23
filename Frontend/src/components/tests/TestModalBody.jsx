@@ -47,8 +47,9 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
     const [page, setPage] = useState(1);
     const [disableCurrentQuestionInput, setDisableCurrentQuestionInput] = useState(false);
     const [levelOptionsLocal, setLevelOptionsLocal] = useState([]);
+    const [selectedCriteria, setSelectedCriteria] = useState(null);
 
-    const { editedTest, addTestDisabled } = useSelector(testState);
+    const { editedTest, addTestDisabled, userTests } = useSelector(testState);
     const { subjects } = useSelector(subjectState);
     const { chapters } = useSelector(chapterState);
     const { questions, queryAvailableQuestionsArr } = useSelector(questionState);
@@ -154,7 +155,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
             "testName",
             `Đề thi ${subjects.find(({ id }) => id === value).name} ${new Date().getTime()}`
         );
-
+        setValue("testSubjectId", value);
         const subject = subjects.find(({ id }) => id.toString() === $("#testSubjectId").val());
         setSelectedSubject(subject);
 
@@ -164,6 +165,44 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
             dispatch(setAddTestDisabled(false));
         }
     }
+
+    function onCriteriaChange({ target: { value } }) {
+        setValue("criteria", []);
+        const selectedCriteria = userTests.filter(({ testId }) => testId === parseInt(value))[0];
+        console.log(selectedCriteria);
+        onSubjectChange({ target: { value: selectedCriteria.subjectId } });
+        setSelectedCriteria(selectedCriteria);
+    }
+
+    useEffect(() => {
+        if (chapters && chapters.length > 0 && selectedCriteria) {
+            console.log(chapters);
+            console.log(selectedCriteria);
+
+            let tempTotalSelected = 0;
+            selectedCriteria.criteria.forEach(({ chapter, levelAndNumbers }) => {
+                levelAndNumbers.forEach(({ level, numberOfQuestions, chapterId }) => {
+                    const chapter = chapters.filter(({ id }) => id === parseInt(chapterId))[0];
+
+                    tempTotalSelected += parseInt(numberOfQuestions);
+                    // if (chapter && chapter.numberOfActiveQuestions > 0) {
+                    prepend({ chapterId, level: lookupLevel(level), numberOfQuestions });
+                    // }
+                });
+            });
+
+            setValue("totalSelected", tempTotalSelected);
+        }
+    }, [chapters]);
+
+    useEffect(() => {
+        if (fields && fields.length && selectedCriteria) {
+            fields.forEach(data => {
+                const { chapterId, id, level } = data;
+                dispatch(queryAvailableQuestions({ chapter: chapterId, level, filterIndex: id }));
+            });
+        }
+    }, [fields]);
 
     function onChapterChange(event, fieldId) {
         const index = $(event.target).data("index");
@@ -274,6 +313,19 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                             />
                         </div>
                     </div>
+                    <div className='w-full my-3'>
+                        <Select
+                            label='Chọn tiêu chí sẵn có trong 10 tiêu chí gần nhất'
+                            register={register}
+                            name='availabelCriteria'
+                            options={userTests.map(({ subjectId, subjectName, testId }) => ({
+                                title: `${subjectId} ${subjectName} ${testId}`,
+                                value: testId,
+                            }))}
+                            additionalOption={true}
+                            onChangeHandler={onCriteriaChange}
+                        />
+                    </div>
                     <div className='w-full'>
                         <FormControlLabel
                             control={
@@ -327,10 +379,10 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                                                             .message
                                                     }
                                                     options={chapters
-                                                        .filter(
-                                                            ({ numberOfActiveQuestions }) =>
-                                                                numberOfActiveQuestions > 0
-                                                        )
+                                                        // .filter(
+                                                        //     ({ numberOfActiveQuestions }) =>
+                                                        //         numberOfActiveQuestions > 0
+                                                        // )
                                                         .map(s => ({
                                                             title:
                                                                 s.name +
@@ -452,7 +504,6 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                             </div>
                         </Collapse>
                     </div>
-
                     {questions && questions.length > 0 && (
                         <div className='w-full'>
                             <div className='uppercase text-center font-semibold text-green-700 w-full'>
@@ -745,9 +796,3 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
 }
 
 export default TestModalBody;
-// levelOptionsLocal
-//     .filter(({ id }) => $(`#criteria2.${index}.chapterId`).val().toString() !== id.toString())
-//     .map(({ title, value }) => ({
-//         title,
-//         value,
-//     }));
