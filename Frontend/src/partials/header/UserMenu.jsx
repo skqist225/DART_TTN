@@ -109,7 +109,7 @@ function UserMenu() {
                         <ul>
                             <li>
                                 <Button
-                                    className='font-medium text-sm text-indigo-500 hover:text-indigo-600 flex items-center py-1 px-3'
+                                    className='font-medium text-sm text-indigo-500 hover:text-indigo-600 py-1 px-3 w-full text-left'
                                     onClick={() => {
                                         setDropdownOpen(!dropdownOpen);
                                         window.location.href = `/auth/edit/${user.id}`;
@@ -118,9 +118,9 @@ function UserMenu() {
                                     Xem thông tin
                                 </Button>
                             </li>
-                            <li>
+                            <li className='w-full'>
                                 <Button
-                                    className='font-medium text-sm text-indigo-500 hover:text-indigo-600 flex items-center py-1 px-3'
+                                    className='font-medium text-sm text-indigo-500 hover:text-indigo-600 py-1 px-3 w-full'
                                     onClick={() => {
                                         setDropdownOpen(!dropdownOpen);
                                         if (user) {

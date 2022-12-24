@@ -41,11 +41,11 @@ export const userSchema = yup
         firstName: yup
             .string()
             .required("Tên không được để trống")
-            .max(50, "Tên không được quá 50 ký tự"),
+            .max(100, "Tên không được quá 100 ký tự"),
         lastName: yup
             .string()
             .required("Họ không được để  trống")
-            .max(10, "Họ không được quá 10 ký tự"),
+            .max(100, "Họ không được quá 100 ký tự"),
         email: yup
             .string()
             .required("Địa chỉ email không được để  trống")
@@ -65,11 +65,11 @@ export const userRegisterSchema = yup
         firstName: yup
             .string()
             .required("Tên không được để trống")
-            .max(50, "Tên không được quá 50 ký tự"),
+            .max(100, "Tên không được quá 100 ký tự"),
         lastName: yup
             .string()
             .required("Họ không được để  trống")
-            .max(10, "Họ không được quá 10 ký tự"),
+            .max(100, "Họ không được quá 100 ký tự"),
         email: yup
             .string()
             .required("Địa chỉ email không được để  trống")

@@ -422,8 +422,8 @@ public class TestRestController {
 
         LocalDateTime examDate = exam.getExamDate().atTime(hour + additionalHour, minute + additionalMinute);
         if (now.isAfter(examDate) || shouldUpdateExamStatus) {
-//            exam.setTaken(true);
-//            examService.save(exam);
+            exam.setTaken(true);
+            examService.save(exam);
         }
 
         return new OkResponse<>(testDTO).response();
