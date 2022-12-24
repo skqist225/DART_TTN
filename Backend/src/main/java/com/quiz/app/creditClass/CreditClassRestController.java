@@ -66,7 +66,8 @@ public class CreditClassRestController {
             @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
             @RequestParam(name = "teacher", required = false, defaultValue = "") String teacherId,
             @RequestParam(name = "student", required = false, defaultValue = "") String studentId,
-            @RequestParam(name = "haveRegister", required = false, defaultValue = "true") boolean haveRegister
+            @RequestParam(name = "haveRegister", required = false, defaultValue = "true") boolean haveRegister,
+            @RequestParam(name = "haveExam", required = false, defaultValue = "false") boolean haveExam
     ) {
         CreditClassesDTO creditClassesDTO = new CreditClassesDTO();
         List<CreditClass> creditClasses = new ArrayList<>();
@@ -91,16 +92,23 @@ public class CreditClassRestController {
                     // Have test
                     for (CreditClass creditClass : tempCreditClass) {
                         if (creditClass.getSubject().getTests().size() > 0) {
+                            boolean shouldAddCreditClass = false;
                             for (Test test : creditClass.getSubject().getTests()) {
                                 if (test.isStatus() && !test.getUsed()) {
-                                    creditClasses.add(creditClass);
+                                    shouldAddCreditClass = true;
                                 }
+                            }
+                            if (shouldAddCreditClass) {
+                                creditClasses.add(creditClass);
                             }
                         }
                     }
+
                 } else {
                     creditClasses = creditClassService.findAllActiveCreditClass();
                 }
+            } else if (haveExam) {
+                creditClasses = creditClassService.findAll();
             } else {
                 creditClasses = creditClassService.findAll();
             }
@@ -121,43 +129,55 @@ public class CreditClassRestController {
             totalElements = creditClassesPage.getTotalElements();
             totalPages = creditClassesPage.getTotalPages();
         }
+        if (page.equals("0") && active && haveRegister) {
+            System.out.println(creditClasses.size());
+        }
 
         List<CreditClass> tempCreditClasses = new ArrayList<>();
         for (CreditClass creditClass : creditClasses) {
             List<Exam> exams = examService.findAllExamsIdByCreditClass(creditClass.getId());
-            creditClass.setExams(exams.stream().map(exam -> new ExamCreditClassPageDTO(exam.getId(),
-                    exam.getName(),
-                    exam.getExamDate(), exam.getNoticePeriod(), exam.getTime(), exam.getTests(),
-                    exam.getType(), exam.isTaken(), exam.isStatus(), exam.getTakeExams().size()
-            )).collect(Collectors.toList()));
-            int numberOfMidTermExam = 0,
-                    numberOfFinalTermExam = 0,
-                    numberOfMidTermExamCreated = 0,
-                    numberOfFinalTermExamCreated = 0;
 
-            for (ExamCreditClassPageDTO exam : creditClass.getExams()) {
-                if (exam.getType().equals("Giữa kỳ") && !exam.isStatus()) {
-                    numberOfMidTermExam++;
-                    numberOfMidTermExamCreated += exam.getNumberOfRegisters();
-                } else if (exam.getType().equals("Cuối kỳ") && !exam.isStatus()) {
-                    numberOfFinalTermExam++;
-                    numberOfFinalTermExamCreated += exam.getNumberOfRegisters();
-                }
-            }
-
-            creditClass.setNumberOfMidTermExam(numberOfMidTermExam);
-            creditClass.setNumberOfFinalTermExam(numberOfFinalTermExam);
-            creditClass.setNumberOfMidTermExamCreated(numberOfMidTermExamCreated);
-            creditClass.setNumberOfFinalTermExamCreated(numberOfFinalTermExamCreated);
-
-            if (page.equals("0") && active && haveRegister) {
-                // Có sinh viên chưa được tạo ca thi cuối kỳ hoặc giữa kỳ
-                if (creditClass.getNumberOfActiveStudents() - numberOfMidTermExamCreated > 0 ||
-                        creditClass.getNumberOfActiveStudents() - numberOfFinalTermExamCreated > 0) {
+            if (page.equals("0") && haveExam) {
+                if (exams.size() > 0) {
+                    creditClass.setTotalExams(exams.size());
                     tempCreditClasses.add(creditClass);
                 }
             } else {
-                tempCreditClasses.add(creditClass);
+                creditClass.setExams(exams.stream().map(exam -> new ExamCreditClassPageDTO(exam.getId(),
+                        exam.getName(),
+                        exam.getExamDate(), exam.getNoticePeriod(), exam.getTime(), exam.getTests(),
+                        exam.getType(), exam.isTaken(), exam.isStatus(), exam.getTakeExams().size()
+                )).collect(Collectors.toList()));
+
+                int numberOfMidTermExam = 0,
+                        numberOfFinalTermExam = 0,
+                        numberOfMidTermExamCreated = 0,
+                        numberOfFinalTermExamCreated = 0;
+
+                for (ExamCreditClassPageDTO exam : creditClass.getExams()) {
+                    if (exam.getType().equals("Giữa kỳ") && !exam.isStatus()) {
+                        numberOfMidTermExam++;
+                        numberOfMidTermExamCreated += exam.getNumberOfRegisters();
+                    } else if (exam.getType().equals("Cuối kỳ") && !exam.isStatus()) {
+                        numberOfFinalTermExam++;
+                        numberOfFinalTermExamCreated += exam.getNumberOfRegisters();
+                    }
+                }
+
+                creditClass.setNumberOfMidTermExam(numberOfMidTermExam);
+                creditClass.setNumberOfFinalTermExam(numberOfFinalTermExam);
+                creditClass.setNumberOfMidTermExamCreated(numberOfMidTermExamCreated);
+                creditClass.setNumberOfFinalTermExamCreated(numberOfFinalTermExamCreated);
+
+                if (page.equals("0") && active && haveRegister) {
+                    // Có sinh viên chưa được tạo ca thi cuối kỳ hoặc giữa kỳ
+                    if (creditClass.getNumberOfActiveStudents() - numberOfMidTermExamCreated > 0 ||
+                            creditClass.getNumberOfActiveStudents() - numberOfFinalTermExamCreated > 0) {
+                        tempCreditClasses.add(creditClass);
+                    }
+                } else {
+                    tempCreditClasses.add(creditClass);
+                }
             }
         }
 

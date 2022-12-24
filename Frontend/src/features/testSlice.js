@@ -58,6 +58,23 @@ export const fetchAllTests = createAsyncThunk(
     }
 );
 
+export const fetchAllValidTestsForExam = createAsyncThunk(
+    "test/fetchAllValidTestsForExam",
+    async ({ subject = "", notUsedTest = false, examId = "" }, { rejectWithValue }) => {
+        try {
+            const {
+                data: { tests },
+            } = await api.get(
+                `/tests?page=0&subject=${subject}&notUsedTest=${notUsedTest}&examId=${examId}`
+            );
+
+            return { tests };
+        } catch ({ data: { error } }) {
+            return rejectWithValue(error);
+        }
+    }
+);
+
 export const findTest = createAsyncThunk(
     "test/findTest",
     async ({ subjectId }, { rejectWithValue }) => {
@@ -189,6 +206,7 @@ const initialState = {
     },
     addTestDisabled: false,
     userTests: [],
+    testsForExamPage: [],
 };
 
 const testSlice = createSlice({
@@ -202,6 +220,7 @@ const testSlice = createSlice({
             state.editTest.successMessage = null;
 
             state.deleteTest.successMessage = null;
+            state.deleteTest.errorMessage = null;
             state.deleteTest.errorObject = null;
 
             state.enableOrDisableTest.successMessage = null;
@@ -283,6 +302,10 @@ const testSlice = createSlice({
                         };
                     });
                 }
+            })
+
+            .addCase(fetchAllValidTestsForExam.fulfilled, (state, { payload }) => {
+                state.testsForExamPage = payload.tests;
             })
 
             .addCase(editTest.pending, (state, _) => {

@@ -82,6 +82,9 @@ public class CreditClass {
     @Transient
     private int numberOfFinalTermExamCreated;
 
+    @Transient
+    private int totalExams;
+
     public CreditClass(Integer id) {
         this.id = id;
     }

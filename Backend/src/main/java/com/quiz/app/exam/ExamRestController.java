@@ -316,10 +316,33 @@ public class ExamRestController {
     }
 
     @DeleteMapping("{id}/delete")
-    public ResponseEntity<StandardJSONResponse<String>> delete(@PathVariable("id") Integer id) {
+    public ResponseEntity<StandardJSONResponse<String>> delete(
+            @AuthenticationPrincipal UserDetailsImpl userDetails,
+            @PathVariable("id") Integer id) {
         try {
-            return new OkResponse<>(examService.deleteById(id)).response();
-        } catch (ConstrainstViolationException ex) {
+            User teacher = userDetails.getUser();
+
+            if (teacher.hasRole("Sinh viên")) {
+                return new OkResponse<>("Người dùng không có quyền xoá ca thi").response();
+            }
+
+            Exam exam = examService.findById(id);
+            String message = "Không thể xóa ca thi";
+
+            if (!teacher.hasRole("Quản trị viên")) { // Giảng viên
+                // Chưa thi + chưa duyệt
+                if (!exam.isTaken() && exam.isStatus()) {
+                    message = examService.delete(exam);
+                }
+            } else {
+                // Chưa thi
+                if (!exam.isTaken()) {
+                    message = examService.delete(exam);
+                }
+            }
+
+            return new OkResponse<>(message).response();
+        } catch (ConstrainstViolationException | NotFoundException ex) {
             return new BadResponse<String>(ex.getMessage()).response();
         }
     }

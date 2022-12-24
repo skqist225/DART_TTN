@@ -51,13 +51,23 @@ function ExamsPage() {
             dispatch(
                 fetchAllCreditClasses({
                     page: 0,
+                    haveExam: true,
                 })
             );
-            dispatch(
-                fetchAllExams({
-                    page: 1,
-                })
-            );
+            if (userRoles.includes("Quản trị viên")) {
+                dispatch(
+                    fetchAllExams({
+                        page: 1,
+                    })
+                );
+            } else {
+                dispatch(
+                    fetchAllExams({
+                        page: 1,
+                        teacher: user.id,
+                    })
+                );
+            }
         } else {
             // Lấy ra danh sách ca thi chưa thi của sinh viên
             dispatch(

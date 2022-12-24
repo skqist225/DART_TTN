@@ -55,14 +55,23 @@ function ExamFilter({ setValue }) {
                                     name='creditClassFilter'
                                     register={register}
                                     options={creditClasses.map(
-                                        ({ id, schoolYear, semester, subjectName, group }) => ({
-                                            title: `${schoolYear}-${semester}-${subjectName}-${group}`,
+                                        ({
+                                            id,
+                                            schoolYear,
+                                            semester,
+                                            subjectName,
+                                            group,
+                                            totalExams,
+                                        }) => ({
+                                            title: `${schoolYear}-${semester}-${subjectName}-${group} (${
+                                                totalExams || 0
+                                            })`,
                                             value: id,
                                         })
                                     )}
                                     onChangeHandler={handleCreditClassChange}
                                     hiddenOption
-                                    width={"w-80"}
+                                    width={"w-92"}
                                 />
                             </div>
                             <div>

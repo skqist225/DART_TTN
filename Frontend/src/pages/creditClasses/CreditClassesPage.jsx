@@ -54,8 +54,6 @@ function CreditClassesPage() {
                     page: 1,
                 })
             );
-
-            // dispatch(fetchCreditClassesForExamAdded());
         } else {
             dispatch(
                 fetchAllCreditClasses({
@@ -63,11 +61,6 @@ function CreditClassesPage() {
                     teacher: user.id,
                 })
             );
-            // Lấy ra danh sách lớp tín chỉ thoả điều kiện sau:
-            // 1. Môn học của lớp tín chỉ phải có đề thi chưa được sử dụng.
-            // 2. Có số SV chưa được tạo ca thi giữa kỳ hoặc cuối kỳ > 0
-            // 3. Lớp tín chỉ chưa hủy : active: true,
-            // 4. Lớp tín chỉ có danh sách đăng ký : haveRegister: true,
         }
         dispatch(fetchAllCreditClassesFixedBug());
         dispatch(fetchCreditClassesForExamAdded());

@@ -46,7 +46,7 @@ function TestsPage() {
         loading,
         addTest: { successMessage },
         editTest: { successMessage: esSuccessMessage },
-        deleteTest: { successMessage: dsSuccessMessage },
+        deleteTest: { successMessage: dsSuccessMessage, errorMessage: dtErrorMessage },
         enableOrDisableTest: { successMessage: eodTest },
     } = useSelector(testState);
     const { queryAvailableQuestionsArr } = useSelector(questionState);
@@ -317,6 +317,12 @@ function TestsPage() {
             cleanForm(dsSuccessMessage, "delete");
         }
     }, [dsSuccessMessage]);
+
+    useEffect(() => {
+        if (dtErrorMessage) {
+            callToast("error", dtErrorMessage);
+        }
+    }, [dtErrorMessage]);
 
     useEffect(() => {
         if (eodTest) {

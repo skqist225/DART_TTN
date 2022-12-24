@@ -47,7 +47,7 @@ public class TestService {
             testRepository.deleteById(id);
             return "Xóa đề thi thành công";
         } catch (Exception ex) {
-            throw new ConstrainstViolationException("Không thể xóa bộ đề vì ràng buộc dữ liệu");
+            throw new ConstrainstViolationException("Không thể xóa đề thi ràng buộc dữ liệu");
         }
     }
 

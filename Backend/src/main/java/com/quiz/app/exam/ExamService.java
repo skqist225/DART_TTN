@@ -55,20 +55,14 @@ public class ExamService {
     }
 
     @Transactional
-    public String deleteById(Integer id) throws ConstrainstViolationException {
+    public String delete(Exam exam) throws ConstrainstViolationException {
         try {
-            Exam exam = findById(id);
+            examRepository.deleteTakeExamDetail(exam.getId());
+            examRepository.deleteTakeExam(exam.getId());
+            examRepository.updateExamOfTest(exam.getId());
+            examRepository.deleteExam(exam.getId());
 
-            if (!exam.isTaken() && exam.isStatus()) {
-                examRepository.deleteTakeExamDetail(id);
-                examRepository.deleteTakeExam(id);
-                examRepository.updateExamOfTest(id);
-                examRepository.deleteExam(id);
-
-                return "Xóa ca thi thành công";
-            }
-
-            return "Không thể xóa ca thi";
+            return "Xóa ca thi thành công";
         } catch (Exception ex) {
             throw new ConstrainstViolationException("Không thể xóa ca thi vì ràng buộc dữ liệu");
         }

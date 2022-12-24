@@ -5,7 +5,7 @@ import { useSelector } from "react-redux";
 import { creditClassState, findCreditClass } from "../../features/creditClassSlice";
 import { examState } from "../../features/examSlice";
 import { fetchAllRegisters } from "../../features/registerSlice";
-import { fetchAllTests, testState } from "../../features/testSlice";
+import { fetchAllValidTestsForExam, testState } from "../../features/testSlice";
 import DatePicker from "../utils/datePicker/DatePicker";
 import ErrorMessage from "../utils/errors/ErrorMessage";
 import Input from "../utils/userInputs/Input";
@@ -79,8 +79,8 @@ function ExamModalBody({
 }) {
     const [localExamsType, setLocalExamsType] = useState(examTypes);
     const { creditClassesForExamAdded: creditClasses } = useSelector(creditClassState);
-    const { editedExam, errorObject } = useSelector(examState);
-    const { tests } = useSelector(testState);
+    const { editedExam } = useSelector(examState);
+    const { testsForExamPage: tests } = useSelector(testState);
     const { creditClass } = useSelector(creditClassState);
 
     useEffect(() => {
@@ -135,14 +135,15 @@ function ExamModalBody({
             );
             $("#numberOfActiveStudents").val(creditClass.numberOfActiveStudents);
 
-            dispatch(
-                fetchAllTests({
-                    page: 0,
-                    subject: creditClass.subjectId,
-                    notUsedTest: true,
-                    examId: editedExam.id,
-                })
-            );
+            if (creditClass.subjectId)
+                dispatch(
+                    fetchAllValidTestsForExam({
+                        page: 0,
+                        subject: creditClass.subjectId,
+                        notUsedTest: true,
+                        examId: editedExam.id,
+                    })
+                );
 
             dispatch(
                 fetchAllRegisters({
@@ -219,7 +220,7 @@ function ExamModalBody({
             ]);
         }
         dispatch(
-            fetchAllTests({
+            fetchAllValidTestsForExam({
                 page: 0,
                 subject: creditClass.subjectId,
                 notUsedTest: true,
