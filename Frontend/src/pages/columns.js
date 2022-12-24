@@ -215,22 +215,18 @@ export const examColumns = [
     {
         name: "Mã môn học",
         sortField: "subjectId",
-        // sortable: true,
     },
     {
         name: "Tên môn học",
         sortField: "subjectName",
-        // sortable: true,
     },
     {
         name: "Trạng thái",
         sortField: "taken",
-        // sortable: true,
     },
     {
         name: "Số lượng",
         sortField: "numberOfStudents",
-        // sortable: true,
     },
     {
         name: "Ngày thi",
@@ -255,7 +251,6 @@ export const examColumns = [
     {
         name: "Giảng viên",
         sortField: "time",
-        // sortable: true,
     },
     // {
     //     name: "Người tạo",
@@ -268,7 +263,12 @@ export const examColumns = [
     },
 ];
 
-export const studentColumns = [
+export const studentExamColumns = [
+    {
+        name: "Mã ca thi",
+        sortField: "id",
+        sortable: true,
+    },
     {
         name: "Tên ca thi",
         sortField: "name",
@@ -276,18 +276,12 @@ export const studentColumns = [
     },
     {
         name: "Mã môn học",
-        sortField: "subjectId",
-        // sortable: true,
     },
     {
         name: "Tên môn học",
-        sortField: "subjectName",
-        // sortable: true,
     },
     {
         name: "Số lượng",
-        sortField: "numberOfStudents",
-        // sortable: true,
     },
     {
         name: "Ngày thi",
@@ -307,9 +301,12 @@ export const studentColumns = [
     {
         name: "Kỳ thi",
     },
+    {
+        name: "Danh sách thi",
+    },
 ];
 
-export const studentExamColumns = [
+export const studentOldExamColumns = [
     {
         name: "Tên ca thi",
         sortField: "name",
@@ -431,18 +428,12 @@ export const roleColumns = [
 export const rankColumns = [
     {
         name: "Xếp hạng",
-        sortField: "index",
-        sortable: true,
     },
     {
         name: "MSSV",
-        sortField: "studentId",
-        sortable: true,
     },
     {
         name: "Họ và tên",
-        sortField: "studentName",
-        sortable: true,
     },
     {
         name: "Điểm",
@@ -454,18 +445,12 @@ export const rankColumns = [
 export const studentRankColumns = [
     {
         name: "Xếp hạng",
-        sortField: "index",
-        sortable: true,
     },
     {
         name: "MSSV",
-        sortField: "studentId",
-        sortable: true,
     },
     {
         name: "Họ và tên",
-        sortField: "studentName",
-        sortable: true,
     },
 ];
 

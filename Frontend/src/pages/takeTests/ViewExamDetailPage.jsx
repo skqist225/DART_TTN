@@ -1,5 +1,5 @@
 import { Chip, Divider } from "@mui/material";
-import { Button, Card } from "flowbite-react";
+import { Button } from "flowbite-react";
 import $ from "jquery";
 import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
@@ -7,7 +7,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import { Answer, Input } from "../../components";
 import { lookupIndex } from "../../components/questions/QuestionModalBody";
-import MyDrawer from "../../components/takeTests/MyDrawer";
 import { persistUserState } from "../../features/persistUserSlice";
 import { findByStudentAndExam, takeExamState } from "../../features/takeExamSlice";
 import { tailwindCss } from "../../tailwind";
@@ -78,90 +77,94 @@ function ViewExamDetailPage() {
             {fakeHandInDTO && fakeHandInDTO.questions && (
                 <div>
                     <div className='flex items-start'>
-                        <div className='flex-1 w-40 max-w-xs bg-white box-sh p-4 mr-5'>
-                            <MyDrawer
-                                label='Xem thông tin thi'
-                                Children={
-                                    <Card>
-                                        <div className='flex items-start justify-between w-2/4 m-auto'>
-                                            <div>
-                                                <div>Họ và tên: {user.fullName}</div>
-                                                <div>MSSV: {user.id}</div>
-                                                <div>Môn học: {fakeHandInDTO.subjectName}</div>
-                                                <div>Loại thi: {fakeHandInDTO.examType}</div>
+                        <div className='flex-1 w-40 max-w-xs box-sh'>
+                            <div className='bg-white p-4 mr-5'>
+                                <div className='text-center font-semibold'>
+                                    <span style={{ color: "#00C48C" }} className='text-base'>
+                                        {fakeHandInDTO.numberOfRightAnswer}
+                                    </span>
+                                    /{fakeHandInDTO.numberOfQuestions} đáp án đúng
+                                </div>
+                                <div className='pb-4'>
+                                    <div>
+                                        <div className='flex items-center justify-between text-sm py-5'>
+                                            <div className='flex items-center'>
+                                                <div
+                                                    className='w-4 h-4 rounded-full mr-1'
+                                                    style={{
+                                                        backgroundColor: "#00C48C",
+                                                    }}
+                                                ></div>
+                                                <span className='answered'>Trả lời đúng</span>
                                             </div>
-                                            <div>
-                                                <div>Ngày thi: {fakeHandInDTO.examDate}</div>
-                                                <div>
-                                                    Tiết báo danh: {fakeHandInDTO.noticePeriod}
-                                                </div>
-                                                <div>
-                                                    Thời gian làm bài: {fakeHandInDTO.examTime} phút
-                                                </div>
+                                            <div className='flex items-center'>
+                                                <div
+                                                    className='w-4 h-4 rounded-full mr-1'
+                                                    style={{
+                                                        backgroundColor: "#ff7272",
+                                                    }}
+                                                ></div>
+                                                <span className='notanswer'>Trả lời sai</span>
                                             </div>
                                         </div>
-                                    </Card>
-                                }
-                            />
-                            <div className='pb-4'>
-                                <div>
-                                    <div className='flex items-center justify-between text-sm py-5'>
-                                        <div className='flex items-center'>
+                                        <div className='text-xs'>bấm vào ô để xem câu hỏi</div>
+                                    </div>
+                                    <Divider />
+                                </div>
+                                <div className={`grid grid-cols-${questionPerPage} gap-2`}>
+                                    {qsts.map((question, index) => {
+                                        let additionalClass = "";
+
+                                        if (
+                                            isAnswerRight(
+                                                question.selectedAnswer,
+                                                question.finalAnswer,
+                                                question.type
+                                            )
+                                        ) {
+                                            additionalClass = "right right2";
+                                        } else {
+                                            additionalClass = "wrong wrong2";
+                                        }
+
+                                        return (
                                             <div
-                                                className='w-4 h-4 rounded-full mr-1'
+                                                id={`question-${question.id}-answer`}
+                                                className={`w-10 h-10 text-center rounded-sm cursor-pointer text-base font-semibold flex items-center justify-center question-answer ${additionalClass}`}
                                                 style={{
-                                                    backgroundColor: "#00C48C",
+                                                    color: "#67758D",
+                                                    backgroundColor: "rgb(222, 229, 239)",
                                                 }}
-                                            ></div>
-                                            <span className='answered'>Trả lời đúng</span>
+                                                key={question.id + index}
+                                                onClick={() => {
+                                                    handleChangeQuestionPage(index, question.id);
+                                                }}
+                                            >
+                                                {index + 1}
+                                            </div>
+                                        );
+                                    })}
+                                </div>
+                            </div>
+                            <div className='bg-white p-4 my-3 mr-5'>
+                                <div className='flex-col items-start justify-between w-4/4 m-auto'>
+                                    <div>
+                                        <div>
+                                            Họ và tên:{" "}
+                                            <span className='font-semibold'>{user.fullName}</span>
                                         </div>
-                                        <div className='flex items-center'>
-                                            <div
-                                                className='w-4 h-4 rounded-full mr-1'
-                                                style={{
-                                                    backgroundColor: "#ff7272",
-                                                }}
-                                            ></div>
-                                            <span className='notanswer'>Trả lời sai</span>
+                                        <div>
+                                            MSSV: <span className='font-semibold'> {user.id}</span>
                                         </div>
                                     </div>
-                                    <div className='text-xs'>bấm vào ô để xem câu hỏi</div>
+                                    <div className='mt-5'>
+                                        <div>Môn học: {fakeHandInDTO.subjectName}</div>
+                                        <div>Loại thi: {fakeHandInDTO.examType}</div>
+                                        <div>Ngày thi: {fakeHandInDTO.examDate}</div>
+                                        <div>Tiết báo danh: {fakeHandInDTO.noticePeriod}</div>
+                                        <div>Thời gian làm bài: {fakeHandInDTO.examTime} phút</div>
+                                    </div>
                                 </div>
-                                <Divider />
-                            </div>
-                            <div className={`grid grid-cols-${questionPerPage} gap-2`}>
-                                {qsts.map((question, index) => {
-                                    let additionalClass = "";
-
-                                    if (
-                                        isAnswerRight(
-                                            question.selectedAnswer,
-                                            question.finalAnswer,
-                                            question.type
-                                        )
-                                    ) {
-                                        additionalClass = "right right2";
-                                    } else {
-                                        additionalClass = "wrong wrong2";
-                                    }
-
-                                    return (
-                                        <div
-                                            id={`question-${question.id}-answer`}
-                                            className={`w-10 h-10 text-center rounded-sm cursor-pointer text-base font-semibold flex items-center justify-center question-answer ${additionalClass}`}
-                                            style={{
-                                                color: "#67758D",
-                                                backgroundColor: "rgb(222, 229, 239)",
-                                            }}
-                                            key={question.id}
-                                            onClick={() => {
-                                                handleChangeQuestionPage(index, question.id);
-                                            }}
-                                        >
-                                            {index + 1}
-                                        </div>
-                                    );
-                                })}
                             </div>
                         </div>
 
@@ -345,7 +348,7 @@ function ViewExamDetailPage() {
                                                     handleChangeQuestionPage(activeIndex + 4);
                                                 }}
                                             >
-                                                Trang kế
+                                                Trang sau
                                             </Button>
                                         </div>
                                     )}

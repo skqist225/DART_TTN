@@ -108,7 +108,7 @@ function Answer({
     }
 
     return (
-        <div className='flex items-start mb-4' key={answer.id}>
+        <div className='flex items-start mb-4' key={answer.id + index}>
             {!readOnly && (
                 <input
                     id={checkBoxId}

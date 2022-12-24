@@ -87,6 +87,7 @@ function RanksPage() {
                     handleSortChange={handleSortChange}
                     columns={userRoles.includes("Sinh viên") ? studentRankColumns : rankColumns}
                     rows={takeExams}
+                    recordsPerPage={15}
                     totalElements={totalElements}
                     totalPages={totalPages}
                     TableBody={RankTableBody}

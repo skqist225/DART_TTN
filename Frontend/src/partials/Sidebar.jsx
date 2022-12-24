@@ -10,6 +10,7 @@ import RegisterIcon from "../images/register.png";
 import RoleIcon from "../images/role.png";
 import StatisticsIcon from "../images/statistics.png";
 import SubjectIcon from "../images/subject.png";
+import TestedExam from "../images/test-passed.png";
 import TestIcon from "../images/test.png";
 import UserIcon from "../images/user.png";
 import SidebarElement from "./SidebarElement";
@@ -223,13 +224,13 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                         pathname={pathname}
                                         name='viewExams'
                                         title='Xem lịch thi'
-                                        Icon={RegisterIcon}
+                                        Icon={ExamIcon}
                                     />
                                     <SidebarElement
                                         pathname={pathname}
                                         name='viewOldExams'
                                         title='Xem bài thi đã làm'
-                                        Icon={RegisterIcon}
+                                        Icon={TestedExam}
                                     />
                                     <SidebarElement
                                         pathname={pathname}
@@ -237,12 +238,6 @@ function Sidebar({ sidebarOpen, setSidebarOpen }) {
                                         title='Làm bài thi'
                                         Icon={RoleIcon}
                                     />
-                                    {/* <SidebarElement
-                                        pathname={pathname}
-                                        name='viewMark'
-                                        title='Xem điểm'
-                                        Icon={CreditClassIcon}
-                                    /> */}
                                 </>
                             )}
                             <SidebarElement

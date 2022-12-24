@@ -1,27 +1,27 @@
 import React, { useEffect } from "react";
 import { Route, Routes, useLocation } from "react-router-dom";
-import "./css/style.scss";
 import "./charts/ChartjsConfig";
+import "./css/style.scss";
 
-import Dashboard from "./pages/dashboard/Dashboard";
+import { useSelector } from "react-redux";
+import { persistUserState } from "./features/persistUserSlice";
 import {
     CreditClassesPage,
     ExamsPage,
+    LoginPage,
     QuestionsPage,
+    RanksPage,
+    RegistersPage,
+    RegisterUserPage,
     RolesPage,
     SubjectsPage,
-    UsersPage,
-    TestsPage,
-    LoginPage,
-    RegistersPage,
     TakeTestPage,
-    RanksPage,
-    RegisterUserPage,
+    TestsPage,
+    UsersPage,
 } from "./pages";
-import { useSelector } from "react-redux";
-import { persistUserState } from "./features/persistUserSlice";
-import ViewExamDetailPage from "./pages/takeTests/ViewExamDetailPage";
+import Dashboard from "./pages/dashboard/Dashboard";
 import ViewOldExamsPage from "./pages/exams/ViewOldExamsPage";
+import ViewExamDetailPage from "./pages/takeTests/ViewExamDetailPage";
 
 function App() {
     const location = useLocation();

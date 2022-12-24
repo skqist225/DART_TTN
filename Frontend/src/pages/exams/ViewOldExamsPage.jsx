@@ -1,14 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { Frame, Table } from "../../components";
-import { clearExamState, examState, fetchAllExams } from "../../features/examSlice";
-import ExamFilter from "../../components/exams/ExamFilter";
-import { fetchAllSubjects } from "../../features/subjectSlice";
-import { persistUserState } from "../../features/persistUserSlice";
-import { examColumns, studentExamColumns } from "../columns";
-import { getTestedExam } from "../../features/takeExamSlice";
-import ViewOldExamTableBody from "../../components/exams/ViewOldExamTableBody";
 import ViewOldExamsFilter from "../../components/exams/ViewOldExamsFilter";
+import ViewOldExamTableBody from "../../components/exams/ViewOldExamTableBody";
+import { clearExamState, examState, fetchAllExams } from "../../features/examSlice";
+import { persistUserState } from "../../features/persistUserSlice";
+import { fetchAllSubjects } from "../../features/subjectSlice";
+import { getTestedExam } from "../../features/takeExamSlice";
+import { examColumns, studentOldExamColumns } from "../columns";
 
 function ViewOldExamsPage() {
     const dispatch = useDispatch();
@@ -63,13 +62,13 @@ function ViewOldExamsPage() {
         <Frame
             sidebarOpen={sidebarOpen}
             setSidebarOpen={setSidebarOpen}
-            title={"Các bài thi đã thi"}
+            title={"DANH SÁCH BÀI THI ĐÃ LÀM"}
             children={
                 <Table
                     searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã ca thi, tên ca thi, ngày thi, tiết báo danh`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={userRoles.includes("Sinh viên") ? studentExamColumns : examColumns}
+                    columns={userRoles.includes("Sinh viên") ? studentOldExamColumns : examColumns}
                     modalLabel='bài thi đã làm'
                     rows={exams}
                     totalElements={totalElements}

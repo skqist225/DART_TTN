@@ -1,15 +1,13 @@
-import React, { useState, useRef, useEffect } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
-import { authState } from "../../features/authSlice";
-import { useSelector, useDispatch } from "react-redux";
-import { getImage } from "../../helpers";
 import { Button } from "@mui/material";
-import { persistUserState, setUser } from "../../features/persistUserSlice";
-import Transition from "../../utils/Transition";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { authState } from "../../features/authSlice";
+import { persistUserState, setUser } from "../../features/persistUserSlice";
+import { getImage } from "../../helpers";
 import { removeUserFromLocalStorage } from "../../utils/common";
-import MyDrawer from "../../components/takeTests/MyDrawer";
-import { Card } from "flowbite-react";
+import Transition from "../../utils/Transition";
 
 function UserMenu() {
     const dispatch = useDispatch();

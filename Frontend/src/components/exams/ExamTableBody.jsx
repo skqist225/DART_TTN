@@ -52,16 +52,14 @@ function ExamTableBody({ rows, setIsEdit }) {
                         }`}
                         key={row.id}
                     >
-                        {!userRoles.includes("Sinh viên") && (
+                        {!userRoles.includes("Sinh viên") ? (
                             <td className={tailwindCss.tableCell}>
-                                {" "}
                                 <Tooltip content={"Xem thông tin ca thi"}>
                                     <Button
                                         style={{ backgroundColor: "none" }}
                                         onClick={() => {
                                             $(`#viewExamDetails${row.id}`).css("display", "flex");
                                         }}
-                                        // disabled={!shouldShowInfo}
                                     >
                                         {row.id}
                                     </Button>
@@ -84,6 +82,8 @@ function ExamTableBody({ rows, setIsEdit }) {
                                     />
                                 </Tooltip>
                             </td>
+                        ) : (
+                            <td className={tailwindCss.tableCell}>{row.id}</td>
                         )}
                         <td className={tailwindCss.tableCell} style={{ maxWidth: "200px" }}>
                             {row.name}
@@ -106,6 +106,28 @@ function ExamTableBody({ rows, setIsEdit }) {
                         <td className={tailwindCss.tableCell}>{row.time} phút</td>{" "}
                         {userRoles.includes("Sinh viên") && (
                             <td className={tailwindCss.tableCell}>{row.type}</td>
+                        )}
+                        {userRoles.includes("Sinh viên") && (
+                            <td className={tailwindCss.tableCell}>
+                                <Tooltip content={"Xem thông tin ca thi"}>
+                                    <Button
+                                        style={{ backgroundColor: "none" }}
+                                        onClick={() => {
+                                            $(`#viewStudentTakeExamDetails${row.id}`).css(
+                                                "display",
+                                                "flex"
+                                            );
+                                        }}
+                                    >
+                                        Xem
+                                    </Button>
+                                    <TableModalViewer
+                                        modalId={`viewStudentTakeExamDetails${row.id}`}
+                                        modalLabel='DANH SÁCH THI'
+                                        ModalBody={<RegisterList takeExams={row.tempTakeExams} />}
+                                    />
+                                </Tooltip>
+                            </td>
                         )}
                         {!userRoles.includes("Sinh viên") && (
                             <td className={tailwindCss.tableCell}>{row.teacherName}</td>

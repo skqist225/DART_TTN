@@ -1,6 +1,6 @@
+import { Table } from "flowbite-react";
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
-import { Table } from "flowbite-react";
 import { persistUserState } from "../../features/persistUserSlice";
 import { tailwindCss } from "../../tailwind";
 import TablePagination from "../utils/tables/TablePagination";
@@ -10,6 +10,7 @@ function RegisterList({ takeExams }) {
     const [splitedRegisters, setSplitedRegisters] = useState([]);
 
     const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     const recordsPerPage = 12;
 
@@ -38,7 +39,7 @@ function RegisterList({ takeExams }) {
                     <Table.HeadCell>STT</Table.HeadCell>
                     <Table.HeadCell>MSSV</Table.HeadCell>
                     <Table.HeadCell>Họ tên</Table.HeadCell>
-                    {!user.roles.map(({ name }) => name).includes("Sinh viên") && (
+                    {!userRoles.includes("Sinh viên") && (
                         <>
                             <Table.HeadCell>Đề thi</Table.HeadCell>
                             <Table.HeadCell>Điểm số</Table.HeadCell>
@@ -60,9 +61,8 @@ function RegisterList({ takeExams }) {
                             <Table.Cell className={tailwindCss.tableViewerCell}>
                                 {studentName}
                             </Table.Cell>
-                            {!user.roles.map(({ name }) => name).includes("Sinh viên") && (
+                            {!userRoles.includes("Sinh viên") && (
                                 <>
-                                    {" "}
                                     <Table.Cell className={tailwindCss.tableViewerCell}>
                                         {testName}
                                     </Table.Cell>

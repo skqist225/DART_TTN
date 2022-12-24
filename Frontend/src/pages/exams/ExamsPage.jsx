@@ -23,7 +23,7 @@ import { fetchAllSubjects } from "../../features/subjectSlice";
 import { setTests } from "../../features/testSlice";
 import { callToast } from "../../helpers";
 import { examSchema } from "../../validation";
-import { examColumns, studentColumns } from "../columns";
+import { examColumns, studentExamColumns } from "../columns";
 
 function ExamsPage() {
     const dispatch = useDispatch();
@@ -304,7 +304,7 @@ function ExamsPage() {
                     searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã ca thi, tên ca thi, ngày thi, tiết báo danh`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={userRoles.includes("Sinh viên") ? studentColumns : examColumns}
+                    columns={userRoles.includes("Sinh viên") ? studentExamColumns : examColumns}
                     fetchDataByPageNumber={fetchDataByPageNumber}
                     rows={exams}
                     totalElements={totalElements}

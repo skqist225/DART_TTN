@@ -1,6 +1,4 @@
-import { Box, Chip, Divider } from "@mui/material";
-import LinearProgress from "@mui/material/LinearProgress";
-import Typography from "@mui/material/Typography";
+import { Box, Chip, Divider, LinearProgress, Typography } from "@mui/material";
 import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { Button, Card } from "flowbite-react";
 import $ from "jquery";
@@ -12,14 +10,12 @@ import { useDispatch, useSelector } from "react-redux";
 import { Answer, Input, Select } from "../../components";
 import Toast from "../../components/notify/Toast";
 import { lookupIndex } from "../../components/questions/QuestionModalBody";
-import MyDrawer from "../../components/takeTests/MyDrawer";
 import { examState, fetchAllExams } from "../../features/examSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import { getQuestions, questionState } from "../../features/questionSlice";
 import { handIn, testState } from "../../features/testSlice";
-import { callToast } from "../../helpers";
 import { tailwindCss } from "../../tailwind";
-import checkExamTime, { noticePeriodMappings } from "../../utils/checkExamTime";
+import { noticePeriodMappings } from "../../utils/checkExamTime";
 import "./css/taketest.css";
 import Question from "./Question";
 
@@ -218,132 +214,155 @@ function TakeTestPage() {
                 {doTest ? (
                     testedQuestions.length && (
                         <div className='flex items-start'>
-                            <div className='flex-1 w-40 max-w-xs bg-white box-sh p-4 mr-5'>
-                                <MyDrawer
-                                    label='Xem thông tin thi'
-                                    Children={
-                                        <Card>
-                                            <div className='flex items-start justify-between w-2/4 m-auto'>
-                                                <div>
-                                                    <div>Họ và tên: {user.fullName}</div>
-                                                    <div>MSSV: {user.id}</div>
-                                                    <div>Môn học: {exam.subjectName}</div>
-                                                    <div>Loại thi: {exam.type}</div>
-                                                </div>
-                                                <div>
-                                                    <div>Ngày thi: {exam.examDate}</div>
-                                                    <div>Tiết báo danh: {exam.noticePeriod}</div>
-                                                    <div>Thời gian làm bài: {exam.time} phút</div>
-                                                </div>
+                            <div className='flex-1 w-40 max-w-xs box-sh'>
+                                <div className='bg-white p-4 mr-5'>
+                                    <div className='pb-4'>
+                                        <div
+                                            className={`${
+                                                !resultMode ? "flex" : "col-flex"
+                                            } items-center justify-between`}
+                                        >
+                                            <div className='text-xl font-bold text-slate-800'>
+                                                {!resultMode
+                                                    ? "Danh sách câu hỏi"
+                                                    : "Kết quả bài thi"}
                                             </div>
-                                        </Card>
-                                    }
-                                />
-                                <div className='pb-4'>
-                                    <div className='flex items-center justify-between'>
-                                        <div className='text-xl font-bold text-slate-800'>
-                                            {!resultMode ? "Danh sách câu hỏi" : "Kết quả bài thi"}
-                                        </div>
-                                        {!resultMode ? (
-                                            <Countdown
-                                                date={now + time * 60 * 1000}
-                                                className='text-xl'
-                                                renderer={renderer}
-                                                onComplete={() => {
-                                                    dispatch(
-                                                        handIn({
-                                                            exam: examId,
-                                                            answers: finalAnswer,
-                                                        })
-                                                    );
-                                                    setResultMode(true);
-                                                    setFinalAnswer(new Map());
-                                                }}
-                                            />
-                                        ) : (
-                                            <>
-                                                <span style={{ color: "#00C48C" }}>
-                                                    {test.numberOfRightAnswer}
-                                                </span>
-                                                /{test.numberOfQuestions} đáp án đúng
-                                            </>
-                                        )}
-                                    </div>
-                                    <Divider />
-                                    <div>
-                                        <div className='flex items-center justify-between text-sm py-5'>
-                                            <div className='flex items-center'>
-                                                <div
-                                                    className='w-4 h-4 rounded-full mr-1'
-                                                    style={{
-                                                        backgroundColor: `${
-                                                            !resultMode ? "#f9d2bb" : "#00C48C"
-                                                        }`,
+                                            {!resultMode ? (
+                                                <Countdown
+                                                    date={now + time * 60 * 1000}
+                                                    className='text-xl'
+                                                    renderer={renderer}
+                                                    onComplete={() => {
+                                                        dispatch(
+                                                            handIn({
+                                                                exam: examId,
+                                                                answers: finalAnswer,
+                                                            })
+                                                        );
+                                                        setResultMode(true);
+                                                        setFinalAnswer(new Map());
                                                     }}
-                                                ></div>
-                                                <span className='answered'>
-                                                    {!resultMode ? "Đã trả lời" : "Trả lời đúng"}
-                                                </span>
-                                            </div>
-                                            <div className='flex items-center'>
-                                                <div
-                                                    className='w-4 h-4 rounded-full mr-1'
-                                                    style={{
-                                                        backgroundColor: `${
-                                                            !resultMode ? "#DEE5EF" : "#ff7272"
-                                                        }`,
-                                                    }}
-                                                ></div>
-                                                <span className='notanswer'>
-                                                    {!resultMode ? "Chưa trả lời" : "Trả lời sai"}
-                                                </span>
-                                            </div>
+                                                />
+                                            ) : (
+                                                <div className='font-semibold'>
+                                                    <span style={{ color: "#00C48C" }}>
+                                                        {test.numberOfRightAnswer}
+                                                    </span>
+                                                    /{test.numberOfQuestions} đáp án đúng
+                                                </div>
+                                            )}
                                         </div>
-                                        <div className='text-xs'>bấm vào ô để xem câu hỏi</div>
+                                        <Divider />
+                                        <div>
+                                            <div className='flex items-center justify-between text-sm py-5'>
+                                                <div className='flex items-center'>
+                                                    <div
+                                                        className='w-4 h-4 rounded-full mr-1'
+                                                        style={{
+                                                            backgroundColor: `${
+                                                                !resultMode ? "#f9d2bb" : "#00C48C"
+                                                            }`,
+                                                        }}
+                                                    ></div>
+                                                    <span className='answered'>
+                                                        {!resultMode
+                                                            ? "Đã trả lời"
+                                                            : "Trả lời đúng"}
+                                                    </span>
+                                                </div>
+                                                <div className='flex items-center'>
+                                                    <div
+                                                        className='w-4 h-4 rounded-full mr-1'
+                                                        style={{
+                                                            backgroundColor: `${
+                                                                !resultMode ? "#DEE5EF" : "#ff7272"
+                                                            }`,
+                                                        }}
+                                                    ></div>
+                                                    <span className='notanswer'>
+                                                        {!resultMode
+                                                            ? "Chưa trả lời"
+                                                            : "Trả lời sai"}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <div className='text-xs'>bấm vào ô để xem câu hỏi</div>
+                                        </div>
+                                        <Divider />
                                     </div>
-                                    <Divider />
-                                </div>
-                                <div className={`grid grid-cols-${questionPerPage} gap-2`}>
-                                    {qsts.map((question, index) => {
-                                        let additionalClass = "";
-                                        if (resultMode) {
-                                            if (
-                                                isAnswerRight(
-                                                    question.selectedAnswer,
-                                                    question.finalAnswer,
-                                                    question.type
-                                                )
-                                            ) {
-                                                additionalClass = "right right2";
-                                            } else {
-                                                additionalClass = "wrong wrong2";
+                                    <div className={`grid grid-cols-${questionPerPage} gap-2`}>
+                                        {qsts.map((question, index) => {
+                                            let additionalClass = "";
+                                            if (resultMode) {
+                                                if (
+                                                    isAnswerRight(
+                                                        question.selectedAnswer,
+                                                        question.finalAnswer,
+                                                        question.type
+                                                    )
+                                                ) {
+                                                    additionalClass = "right right2";
+                                                } else {
+                                                    additionalClass = "wrong wrong2";
+                                                }
                                             }
-                                        }
-                                        return (
-                                            <div
-                                                id={`question-${question.id}-answer`}
-                                                className={`w-10 h-10 text-center rounded-sm cursor-pointer text-base font-semibold flex items-center justify-center question-answer ${additionalClass}`}
-                                                style={{
-                                                    color: "#67758D",
-                                                    backgroundColor: "rgb(222, 229, 239)",
-                                                }}
-                                                key={question.id}
-                                                onClick={() => {
-                                                    handleChangeQuestionPage(index, question.id);
-                                                }}
-                                            >
-                                                {index + 1}
+                                            return (
+                                                <div
+                                                    id={`question-${question.id}-answer`}
+                                                    className={`w-10 h-10 text-center rounded-sm cursor-pointer text-base font-semibold flex items-center justify-center question-answer ${additionalClass}`}
+                                                    style={{
+                                                        color: "#67758D",
+                                                        backgroundColor: "rgb(222, 229, 239)",
+                                                    }}
+                                                    key={question.id}
+                                                    onClick={() => {
+                                                        handleChangeQuestionPage(
+                                                            index,
+                                                            question.id
+                                                        );
+                                                    }}
+                                                >
+                                                    {index + 1}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+                                </div>
+                                <div className='bg-white p-4 my-3 mr-5'>
+                                    <div className='flex-col items-start justify-between w-4/4 m-auto'>
+                                        <div>
+                                            <div>
+                                                Họ và tên:{" "}
+                                                <span className='font-semibold'>
+                                                    {user.fullName}
+                                                </span>
                                             </div>
-                                        );
-                                    })}
+                                            <div>
+                                                MSSV:{" "}
+                                                <span className='font-semibold'> {user.id}</span>
+                                            </div>
+                                        </div>
+                                        <div className='mt-5'>
+                                            <div>Môn học: {exam.subjectName}</div>
+                                            <div>Loại thi: {exam.type}</div>
+                                            <div>Ngày thi: {exam.examDate}</div>
+                                            <div>Tiết báo danh: {exam.noticePeriod}</div>
+                                            <div>Thời gian làm bài: {exam.time} phút</div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
                             <div
-                                className={`flex-1 w-60 bg-white rounded-md p-4 col-flex items-center justify-center min-h-screen`}
+                                className={`flex-1 w-60 bg-white rounded-md p-4 col-flex items-center justify-center ${
+                                    !resultMode && "min-h-screen"
+                                }`}
                             >
-                                <LinearProgressWithLabel value={progress} />
-
+                                {!resultMode && (
+                                    <Box sx={{ width: "100%" }}>
+                                        <LinearProgressWithLabel value={progress} />
+                                    </Box>
+                                )}
                                 <div className='w-full flex-1'>
                                     {!resultMode && !viewExamDetails
                                         ? questions.length &&
@@ -358,68 +377,18 @@ function TakeTestPage() {
                                                       index={index}
                                                   />
                                               );
-                                              //       <div key={question.id}>
-                                              //           <p className='text-base pb-4 font-bold'>
-                                              //               <span>Câu {activeIndex + index}: </span>
-                                              //               {question.content}{" "}
-                                              //               {question.type === "Nhiều đáp án" &&
-                                              //                   "(Có thể lựa chọn nhiều đáp án)"}
-                                              //           </p>
-                                              //           {question.type === "Đáp án điền" ? (
-                                              //               <>
-                                              //                   <Input
-                                              //                       register={register}
-                                              //                       name={`question-${question.id}-answer`}
-                                              //                       onChangeHandler={e => {
-                                              //                           finalAnswer.set(
-                                              //                               question.id,
-                                              //                               e.target.value
-                                              //                           );
-                                              //                           setFinalAnswer(finalAnswer);
-                                              //                           if (e.target.value) {
-                                              //                               $(
-                                              //                                   `#question-${question.id}-answer`
-                                              //                               ).addClass(
-                                              //                                   "chosen active"
-                                              //                               );
-                                              //                           } else {
-                                              //                               $(
-                                              //                                   `#question-${question.id}-answer`
-                                              //                               ).removeClass(
-                                              //                                   "chosen active"
-                                              //                               );
-                                              //                           }
-                                              //                       }}
-                                              //                   />
-                                              //               </>
-                                              //           ) : (
-                                              //               question.answers.map((answer, index) => {
-                                              //                   return (
-                                              //                       <Answer
-                                              //                           answer={answer}
-                                              //                           question={question}
-                                              //                           finalAnswer={finalAnswer}
-                                              //                           setFinalAnswer={
-                                              //                               setFinalAnswer
-                                              //                           }
-                                              //                           index={index}
-                                              //                           type={question.type}
-                                              //                       />
-                                              //                   );
-                                              //               })
-                                              //           )}
-                                              //       </div>
-                                              //   );
                                           })
                                         : !viewExamDetails && (
-                                              <div
-                                                  style={{
-                                                      maxWidth: "350px",
-                                                      maxHeight: "350px",
-                                                  }}
-                                                  className='mb-5 '
-                                              >
-                                                  <Doughnut data={data} />
+                                              <div className='flex items-center justify-center w-full'>
+                                                  <div
+                                                      style={{
+                                                          maxWidth: "350px",
+                                                          maxHeight: "350px",
+                                                      }}
+                                                      className='mb-5'
+                                                  >
+                                                      <Doughnut data={data} />
+                                                  </div>
                                               </div>
                                           )}
                                     {viewExamDetails &&
@@ -587,22 +556,24 @@ function TakeTestPage() {
                                         </Button>
                                     </div>
                                     {resultMode ? (
-                                        <Button
-                                            type='button'
-                                            className={tailwindCss.radiantButton}
-                                            onClick={() => {
-                                                if (!viewExamDetails) {
-                                                    setViewExamDetails(true);
-                                                } else {
-                                                    setViewExamDetails(false);
-                                                    setDoTest(true);
-                                                }
-                                            }}
-                                        >
-                                            {!viewExamDetails
-                                                ? "Xem chi tiết bài thi"
-                                                : "Xem thống kê kết quả"}
-                                        </Button>
+                                        <div className='mt-3'>
+                                            <Button
+                                                type='button'
+                                                className={tailwindCss.radiantButton}
+                                                onClick={() => {
+                                                    if (!viewExamDetails) {
+                                                        setViewExamDetails(true);
+                                                    } else {
+                                                        setViewExamDetails(false);
+                                                        setDoTest(true);
+                                                    }
+                                                }}
+                                            >
+                                                {!viewExamDetails
+                                                    ? "Xem chi tiết bài thi"
+                                                    : "Xem thống kê kết quả"}
+                                            </Button>
+                                        </div>
                                     ) : (
                                         <>
                                             {activeIndex !== 1 && (
@@ -626,7 +597,6 @@ function TakeTestPage() {
                                             {testedQuestions.length > 4 &&
                                                 testedQuestions.length !== activeIndex && (
                                                     <div className='mt-3'>
-                                                        {" "}
                                                         <Button
                                                             gradientDuoTone='greenToBlue'
                                                             type='button'
@@ -637,7 +607,7 @@ function TakeTestPage() {
                                                                 );
                                                             }}
                                                         >
-                                                            Trang kế
+                                                            Trang sau
                                                         </Button>
                                                     </div>
                                                 )}
@@ -648,127 +618,123 @@ function TakeTestPage() {
                         </div>
                     )
                 ) : (
-                    <>
-                        <div
-                            style={{
-                                width: "100vw",
-                                height: "100vh",
-                                margin: "auto",
-                                maxWidth: "80%",
-                            }}
-                            className='col-flex items-center justify-center'
-                        >
-                            <div className='w-full mb-5'>
+                    <div
+                        style={{
+                            width: "100vw",
+                            height: "100vh",
+                            margin: "auto",
+                            maxWidth: "60%",
+                        }}
+                        className='col-flex items-center justify-center'
+                    >
+                        <div className='w-full mb-5'>
+                            <Card>
+                                <div className='flex items-center justify-center w-2/4 m-auto'>
+                                    <div>
+                                        <div className='font-semibold'>
+                                            Họ và tên: {user.fullName}
+                                        </div>
+                                        <div className='font-semibold'>MSSV: {user.id}</div>
+                                    </div>
+                                </div>
+                            </Card>
+                            {selectedExam && (
                                 <Card>
                                     <div className='flex items-center justify-center w-2/4 m-auto'>
                                         <div>
-                                            <div className='font-semibold'>
-                                                Họ và tên: {user.fullName}
+                                            <div>Môn học: {selectedExam.subjectName}</div>
+                                            <div>Loại thi: {selectedExam.type}</div>
+                                            <div>Ngày thi: {selectedExam.examDate}</div>
+                                            <div>
+                                                Tiết báo danh: {selectedExam.noticePeriod} (
+                                                {
+                                                    noticePeriodMappings[
+                                                        selectedExam.noticePeriod
+                                                    ].split("-")[0]
+                                                }
+                                                )
                                             </div>
-                                            <div className='font-semibold'>MSSV: {user.id}</div>
+                                            <div>Thời gian làm bài: {selectedExam.time} phút</div>
                                         </div>
                                     </div>
                                 </Card>
-                                {selectedExam && (
-                                    <Card>
-                                        <div className='flex items-center justify-center w-2/4 m-auto'>
-                                            <div>
-                                                <div>Môn học: {selectedExam.subjectName}</div>
-                                                <div>Loại thi: {selectedExam.type}</div>
-                                                <div>Ngày thi: {selectedExam.examDate}</div>
-                                                <div>
-                                                    Tiết báo danh: {selectedExam.noticePeriod} (
-                                                    {
-                                                        noticePeriodMappings[
-                                                            selectedExam.noticePeriod
-                                                        ].split("-")[0]
-                                                    }
-                                                    )
-                                                </div>
-                                                <div>
-                                                    Thời gian làm bài: {selectedExam.time} phút
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </Card>
-                                )}
+                            )}
+                        </div>
+
+                        {exams.length === 0 ? (
+                            <div>{`Chưa có ca thi`}</div>
+                        ) : (
+                            <div className='mb-5 w-full'>
+                                <Select
+                                    label={"Chọn ca thi"}
+                                    name='examSelected'
+                                    register={register}
+                                    options={exams.map(({ id, name }) => ({
+                                        title: name,
+                                        value: id,
+                                    }))}
+                                    onChangeHandler={handleExamChange}
+                                />
+                            </div>
+                        )}
+
+                        <div className='flex items-center w-full mt-5'>
+                            <div className={`w-full ${exams.length > 0 && "mr-5"}`}>
+                                <Button
+                                    onClick={() => {
+                                        window.location.href = "/";
+                                    }}
+                                >
+                                    Trở về trang chủ
+                                </Button>
                             </div>
 
-                            {exams.length === 0 ? (
-                                <div>{`Chưa có ca thi`}</div>
-                            ) : (
-                                <div className='mb-5 w-full'>
-                                    <Select
-                                        label={"Chọn ca thi"}
-                                        name='examSelected'
-                                        register={register}
-                                        options={exams.map(({ id, name }) => ({
-                                            title: name,
-                                            value: id,
-                                        }))}
-                                        onChangeHandler={handleExamChange}
-                                    />
-                                </div>
-                            )}
-
-                            <div className='flex items-center w-full mt-5'>
-                                <div className='mr-5 w-full'>
+                            {exams.length > 0 && (
+                                <div className='w-full'>
                                     <Button
                                         onClick={() => {
-                                            window.location.href = "/";
-                                        }}
-                                    >
-                                        Trở về trang chủ
-                                    </Button>
-                                </div>
+                                            const examId = $("#examSelected").val();
+                                            const { examDate, noticePeriod, time } = exams.find(
+                                                ({ id }) => id.toString() === examId.toString()
+                                            );
 
-                                {exams.length > 0 && (
-                                    <div className='w-full'>
-                                        <Button
-                                            onClick={() => {
-                                                const examId = $("#examSelected").val();
-                                                const { examDate, noticePeriod, time } = exams.find(
-                                                    ({ id }) => id.toString() === examId.toString()
-                                                );
+                                            // should check time before doing test.
+                                            let check = false;
 
-                                                // should check time before doing test.
-                                                let check = false;
-
-                                                if (check) {
-                                                    if (
-                                                        checkExamTime({
-                                                            examDate,
-                                                            noticePeriod,
-                                                            type: "checkBetween",
-                                                        })
-                                                    ) {
-                                                        dispatch(getQuestions({ exam: examId }));
-                                                        setDoTest(true);
-                                                        setExamId(parseInt(examId));
-                                                        setTime(time);
-                                                    } else {
-                                                        callToast(
-                                                            "warning",
-                                                            "Ngoài thời gian làm bài thi"
-                                                        );
-                                                        return;
-                                                    }
-                                                } else {
+                                            if (check) {
+                                                if (
+                                                    checkExamTime({
+                                                        examDate,
+                                                        noticePeriod,
+                                                        type: "checkBetween",
+                                                    })
+                                                ) {
                                                     dispatch(getQuestions({ exam: examId }));
                                                     setDoTest(true);
                                                     setExamId(parseInt(examId));
-
                                                     setTime(time);
+                                                } else {
+                                                    callToast(
+                                                        "warning",
+                                                        "Ngoài thời gian làm bài thi"
+                                                    );
+                                                    return;
                                                 }
-                                            }}
-                                        >
-                                            Làm bài
-                                        </Button>
-                                    </div>
-                                )}
-                            </div>
+                                            } else {
+                                                dispatch(getQuestions({ exam: examId }));
+                                                setDoTest(true);
+                                                setExamId(parseInt(examId));
+
+                                                setTime(time);
+                                            }
+                                        }}
+                                    >
+                                        Làm bài
+                                    </Button>
+                                </div>
+                            )}
                         </div>
-                    </>
+                    </div>
                 )}
             </div>
             <Toast />

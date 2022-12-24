@@ -12,7 +12,6 @@ import com.quiz.app.security.UserDetailsImpl;
 import com.quiz.app.subject.SubjectService;
 import com.quiz.app.takeExam.TakeExamService;
 import com.quiz.app.takeExamDetail.TakeExamDetailService;
-import com.quiz.app.test.dto.CriteriaDTO;
 import com.quiz.app.test.dto.CriteriaExtendsDTO;
 import com.quiz.app.test.dto.HandInDTO;
 import com.quiz.app.test.dto.PostCreateTestDTO;
@@ -20,7 +19,6 @@ import com.quiz.app.test.dto.TestDTO;
 import com.quiz.app.test.dto.TestsDTO;
 import com.quiz.app.utils.CommonUtils;
 import com.quiz.entity.Answer;
-import com.quiz.entity.Chapter;
 import com.quiz.entity.Exam;
 import com.quiz.entity.Question;
 import com.quiz.entity.Subject;
@@ -423,9 +421,9 @@ public class TestRestController {
         }
 
         LocalDateTime examDate = exam.getExamDate().atTime(hour + additionalHour, minute + additionalMinute);
-        if (now.isAfter(examDate)) {
-            exam.setTaken(true);
-            examService.save(exam);
+        if (now.isAfter(examDate) || shouldUpdateExamStatus) {
+//            exam.setTaken(true);
+//            examService.save(exam);
         }
 
         return new OkResponse<>(testDTO).response();

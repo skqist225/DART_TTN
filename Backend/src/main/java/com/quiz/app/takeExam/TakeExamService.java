@@ -60,7 +60,7 @@ public class TakeExamService {
     public Integer getStudentRankingPosition(String studentId, Integer creditClassId,
                                              String examType) {
         Integer score = takeExamRepository
-                .getStudentRankingPosition(studentId, creditClassId, examType);
+                .getStudentRankingPosition(creditClassId, examType, studentId);
         if (Objects.isNull(score)) {
             return 0;
         }
@@ -135,7 +135,11 @@ public class TakeExamService {
         String creditClassId = filters.get("creditClassId");
         String examType = filters.get("examType");
 
-        Sort sort = Sort.by(sortField);
+        Sort sort = null;
+        Sort sortByScore = Sort.by(sortField);
+        Sort sortByStudentId = Sort.by("register.student.id");
+
+        sort = sortByScore.and(sortByStudentId);
         sort = sortDir.equals("asc") ? sort.ascending() : sort.descending();
         Pageable pageable = PageRequest.of(page - 1, 15, sort);
 
@@ -189,30 +193,6 @@ public class TakeExamService {
         for (int i = 0; i < takeExams.size(); i++) {
             takeExams.get(i).setRankOrder(i + 1);
         }
-//        int j = 0;
-//        for (int i = 0; i < takeExams.size(); i++) {
-//            if (Objects.nonNull(takeExams.get(i).getScore())) {
-//                if (i >= 1) {
-//                    if (takeExams.get(i).getScore().equals(takeExams.get(i - 1).getScore())) {
-//                        takeExams.get(i).setRankOrder(j);
-//                    } else {
-//                        j++;
-//                        takeExams.get(i).setRankOrder(j);
-//                    }
-//                } else {
-//                    j++;
-//                    takeExams.get(i).setRankOrder(j);
-//                }
-//            } else {
-//                if (i >= 1) {
-//                    if (Objects.nonNull(takeExams.get(i - 1).getScore())) {
-//                        j++;
-//                    }
-//                }
-//
-//                takeExams.get(i).setRankOrder(j);
-//            }
-//        }
 
         return new PageImpl<>(typedQuery.getResultList(), pageable, totalRows);
     }

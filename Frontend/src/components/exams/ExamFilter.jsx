@@ -108,6 +108,7 @@ function ExamFilter({ setValue }) {
                                         schoolYears: "",
                                         semester: "",
                                         type: "",
+                                        taken: false,
                                     })
                                 );
                             } else {

@@ -197,14 +197,16 @@ function Table({
                                 {ranksPage &&
                                     userRoles.includes("Sinh viên") &&
                                     parseInt(studentRankingPosition) !== 0 && (
-                                        <Card>
-                                            <p className='font-normal text-gray-700 dark:text-gray-400'>
-                                                Vị trí của bạn trong bảng xếp hạng là:
-                                                <span className='font-bold'>
-                                                    {studentRankingPosition}
-                                                </span>
-                                            </p>
-                                        </Card>
+                                        <div className='mb-3'>
+                                            <Card>
+                                                <p className='font-normal text-gray-700 dark:text-gray-400'>
+                                                    Vị trí của bạn trong bảng xếp hạng là:{" "}
+                                                    <span className='font-bold text-lg'>
+                                                        {studentRankingPosition}
+                                                    </span>
+                                                </p>
+                                            </Card>
+                                        </div>
                                     )}
 
                                 <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
@@ -213,7 +215,7 @@ function Table({
                                         handleSortChange={handleSortChange}
                                         modalLabel={modalLabel}
                                     />
-                                    <TableBody rows={rows} setIsEdit={setIsEdit} />{" "}
+                                    <TableBody rows={rows} setIsEdit={setIsEdit} />
                                 </table>
                             </>
                         ) : (
