@@ -8,7 +8,7 @@ import { Frame, Table, UserModalBody, UserTableBody } from "../../components";
 import UserFilter from "../../components/users/UserFilter";
 import "../../css/page/rooms.css";
 import { persistUserState } from "../../features/persistUserSlice";
-import { fetchAllRoles } from "../../features/roleSlice";
+import { fetchAllRoles, roleState } from "../../features/roleSlice";
 import {
     addMultipleUsers,
     addUser,
@@ -31,8 +31,10 @@ const UsersPage = () => {
     const [isEdit, setIsEdit] = useState(false);
     const [image, setImage] = useState(null);
     const [excelFile, setExcelFile] = useState(null);
+
     const { user } = useSelector(persistUserState);
     const userRoles = user.roles.map(({ name }) => name);
+    const { roles } = useSelector(roleState);
 
     const formId = "userForm";
     const modalId = "userModal";
@@ -56,8 +58,6 @@ const UsersPage = () => {
         setValue,
         handleSubmit,
         setError,
-        clearErrors,
-
         formState: { errors },
     } = useForm({
         resolver: yupResolver(isEdit ? userRegisterSchema : userSchema),
@@ -65,7 +65,6 @@ const UsersPage = () => {
 
     const {
         users,
-        roles,
         filterObject,
         errorObject,
         totalElements,
@@ -109,6 +108,16 @@ const UsersPage = () => {
             setIsEdit(false);
             dispatch(setEditedUser(null));
         }
+
+        setValue("id", "");
+        setValue("firstName", "");
+        setValue("lastName", "");
+        setValue("email", "");
+        setValue("password", "");
+        setValue("birthday", "");
+        setValue("sex", "");
+        setValue("address", "");
+        setValue("roles", []);
     }
 
     useEffect(() => {
@@ -119,33 +128,9 @@ const UsersPage = () => {
 
     useEffect(() => {
         if (euSuccessMessage) {
-            cleanForm(euSuccessMessage, "add");
+            cleanForm(euSuccessMessage, "edit");
         }
     }, [euSuccessMessage]);
-
-    function getSelectedRoles() {
-        const roles = $("input.isRoleSelected");
-        let isComplete = [];
-        roles.each(function () {
-            if ($(this).prop("checked")) {
-                isComplete.push($(this).val());
-            }
-        });
-
-        return isComplete;
-    }
-
-    function getSelectedStatuses() {
-        const statuses = $("input.isStatusSelected");
-        let isComplete = [];
-        statuses.each(function () {
-            if ($(this).prop("checked")) {
-                isComplete.push($(this).val());
-            }
-        });
-
-        return isComplete;
-    }
 
     const handleQueryChange = ({ target: { value: query } }) => {
         dispatch(
@@ -169,10 +154,27 @@ const UsersPage = () => {
     const fetchDataByPageNumber = pageNumber => {
         dispatch(fetchAllUsers({ ...filterObject, page: pageNumber }));
     };
-
+    console.log(errors);
     const onSubmit = data => {
         if (data.roles.length === 0) {
             setError("roles", { type: "custom", message: "Vai trò không được để trống" });
+            return;
+        }
+
+        const tempRoles = [];
+        data.roles.forEach(roleId => {
+            const role = roles.filter(({ id }) => id.toString() === roleId.toString())[0];
+            tempRoles.push(role.name);
+        });
+
+        if (
+            (tempRoles.includes("Sinh viên") && tempRoles.includes("Giảng viên")) ||
+            (tempRoles.includes("Sinh viên") && tempRoles.includes("Quản trị viên"))
+        ) {
+            setError("roles", {
+                type: "custom",
+                message: "Vai trò sinh viên không thể kết hợp với các vai trò khác",
+            });
             return;
         }
 
@@ -206,20 +208,6 @@ const UsersPage = () => {
             dispatch(editUser(formData));
         } else {
             dispatch(addUser(formData));
-        }
-    };
-
-    const lookupRole = role => {
-        switch (role) {
-            case "Admin": {
-                return "Quản trị viên";
-            }
-            case "Student": {
-                return "Sinh viên";
-            }
-            case "Teacher": {
-                return "Giảng viên";
-            }
         }
     };
 
@@ -296,10 +284,6 @@ const UsersPage = () => {
                             register={register}
                             dispatch={dispatch}
                             setValue={setValue}
-                            roles={roles.map(({ id, name }) => ({
-                                title: lookupRole(name),
-                                value: id,
-                            }))}
                             setImage={setImage}
                             isEdit={isEdit}
                             setExcelFile={setExcelFile}

@@ -1,8 +1,8 @@
-import React, { useEffect, useState } from "react";
+import $ from "jquery";
+import React, { useEffect } from "react";
 import { EmailIcon } from "../../../images";
 import { tailwindCss } from "../../../tailwind";
 import ErrorMessage from "../errors/ErrorMessage";
-import $ from "jquery";
 
 function Input({
     label,
@@ -46,7 +46,7 @@ function Input({
                 htmlFor={propName}
                 className={`${tailwindCss.label} ${error && "text-red-700 dark:text-red-500"} ${
                     readOnly && "text-slate-400	cursor-not-allowed disabled:opacity-75"
-                }`}
+                } mb-2`}
             >
                 {label}
             </label>

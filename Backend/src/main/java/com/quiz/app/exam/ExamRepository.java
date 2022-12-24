@@ -2,6 +2,7 @@ package com.quiz.app.exam;
 
 import com.quiz.app.statistics.dto.CountExamByCreditClassDTO;
 import com.quiz.entity.Exam;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -54,4 +55,21 @@ public interface ExamRepository extends CrudRepository<Exam, Integer> {
     @Query(value = "SELECT count(*) FROM cathi where dahuy = true", nativeQuery =
             true)
     int countTotalExamsCancelled();
+
+    @Modifying
+    @Query(value = "delete from chitietthi where macathi = :examId", nativeQuery = true)
+    void deleteTakeExamDetail(Integer examId);
+
+    @Modifying
+    @Query(value = "delete from thi where macathi = :examId", nativeQuery = true)
+    void deleteTakeExam(Integer examId);
+
+    @Modifying
+    @Query(value = "update dethi set macathi = null, dasudung = false where macathi = :examId",
+            nativeQuery = true)
+    void updateExamOfTest(Integer examId);
+
+    @Modifying
+    @Query(value = "delete from cathi where macathi = :examId", nativeQuery = true)
+    void deleteExam(Integer examId);
 }

@@ -1,13 +1,12 @@
+import $ from "jquery";
 import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
-import Select from "../utils/userInputs/Select";
-import Input from "../utils/userInputs/Input";
+import { roleState } from "../../features/roleSlice";
 import { userState } from "../../features/userSlice";
 import DatePicker from "../utils/datePicker/DatePicker";
-import FileInput from "../utils/userInputs/FileInput";
-import { roleState } from "../../features/roleSlice";
 import ExcelModalBody from "../utils/forms/ExcelModalBody";
-import $ from "jquery";
+import Input from "../utils/userInputs/Input";
+import Select from "../utils/userInputs/Select";
 
 export const sexOptions = [
     {
@@ -20,7 +19,7 @@ export const sexOptions = [
     },
 ];
 
-function UserModalBody({ errors, register, dispatch, setValue, setImage, isEdit, setExcelFile }) {
+function UserModalBody({ errors, register, setValue, setImage, isEdit, setExcelFile }) {
     const { editedUser, errorObject, userExcelAdd } = useSelector(userState);
     const { roles } = useSelector(roleState);
 

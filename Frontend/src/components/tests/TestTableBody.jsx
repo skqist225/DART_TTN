@@ -1,4 +1,4 @@
-import { Badge, Button, Card, Tooltip } from "flowbite-react";
+import { Badge, Button, Tooltip } from "flowbite-react";
 import $ from "jquery";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -66,20 +66,6 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
                                     modalLabel='Thông tin đề thi'
                                     ModalBody={
                                         <ViewDetails
-                                            Header={
-                                                <Card>
-                                                    <div
-                                                        className=' justify-between w-4/6 m-auto
-                                                    '
-                                                    >
-                                                        <div>Mã đề thi: {row.id}</div>
-                                                        <div>Tên đề thi: {row.name}</div>
-                                                        <div>
-                                                            Số lượng câu hỏi: {row.questions.length}
-                                                        </div>
-                                                    </div>
-                                                </Card>
-                                            }
                                             labels={[
                                                 `Danh sách tiêu chí (${row.criteria.length})`,
                                                 `Danh sách câu hỏi (${row.questions.length})`,

@@ -101,13 +101,6 @@ public class UserService {
         return Period.between(birthday, LocalDate.now()).getYears() < 18;
     }
 
-    public CountUserByRole countUserByRole() {
-        return null;
-        // return new CountUserByRole(userRepository.countUserByRole(1),
-        // userRepository.countUserByRole(2),
-        // userRepository.countUserByRole(3));
-    }
-
     @Transactional
     public User save(User user) {
         return userRepository.save(user);
@@ -159,7 +152,7 @@ public class UserService {
         Expression<String> firstName = root.get("firstName");
         Expression<String> lastName = root.get("lastName");
         Expression<String> email = root.get("email");
-        Expression<String> birthday = root.get("birthday");
+        Expression<String> address = root.get("address");
 
         if (!StringUtils.isEmpty(searchQuery)) {
             Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
@@ -169,7 +162,7 @@ public class UserService {
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, email);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, birthday);
+            wantedQueryField = criteriaBuilder.concat(wantedQueryField, address);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }

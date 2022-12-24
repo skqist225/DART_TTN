@@ -3,7 +3,7 @@ import React from "react";
 import { CloseIcon } from "../../../images";
 import { tailwindCss } from "../../../tailwind";
 
-function TableModalViewer({ modalId, modalLabel, ModalBody }) {
+function TableModalViewer({ modalId, modalLabel, ModalBody, removeMt = false }) {
     return (
         <div
             id={modalId}
@@ -12,7 +12,7 @@ function TableModalViewer({ modalId, modalLabel, ModalBody }) {
             className={tailwindCss.modal.container}
             style={{ backgroundColor: "rgba(0,0,0,0.4)" }}
         >
-            <div className='relative w-full max-w-4xl h-full md:h-full mt-24'>
+            <div className={`relative w-full max-w-4xl h-full md:h-full ${!removeMt && "mt-24"}`}>
                 <div className='relative bg-white rounded-lg shadow dark:bg-gray-700'>
                     <div className={tailwindCss.modal.body}>
                         <h3 className={tailwindCss.modal.title}>{modalLabel}</h3>

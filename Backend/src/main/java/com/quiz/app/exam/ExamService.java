@@ -25,6 +25,7 @@ import javax.persistence.criteria.Join;
 import javax.persistence.criteria.JoinType;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import javax.transaction.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -53,12 +54,23 @@ public class ExamService {
         return examRepository.findByStudentAndTaken(studentId);
     }
 
+    @Transactional
     public String deleteById(Integer id) throws ConstrainstViolationException {
         try {
-            examRepository.deleteById(id);
-            return "Xóa môn học thành công";
+            Exam exam = findById(id);
+
+            if (!exam.isTaken() && exam.isStatus()) {
+                examRepository.deleteTakeExamDetail(id);
+                examRepository.deleteTakeExam(id);
+                examRepository.updateExamOfTest(id);
+                examRepository.deleteExam(id);
+
+                return "Xóa ca thi thành công";
+            }
+
+            return "Không thể xóa ca thi";
         } catch (Exception ex) {
-            throw new ConstrainstViolationException("Không thể xóa môn học vì ràng buộc dữ liệu");
+            throw new ConstrainstViolationException("Không thể xóa ca thi vì ràng buộc dữ liệu");
         }
     }
 

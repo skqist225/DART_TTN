@@ -23,6 +23,7 @@ function QuestionTableBody({
     addCheckbox = false,
     check = false,
     register,
+    recordsPerPage = 10,
 }) {
     const dispatch = useDispatch();
     if (page !== null) {
@@ -77,7 +78,7 @@ function QuestionTableBody({
                         )}
                         {addTest && (
                             <td className={tailwindCss.tableCell}>
-                                {index + 1 + (pageNumber - 1) * 10}
+                                {index + 1 + (pageNumber - 1) * recordsPerPage}
                             </td>
                         )}
                         <td className={tailwindCss.tableCell}>{row.id}</td>

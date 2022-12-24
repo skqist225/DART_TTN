@@ -1,4 +1,4 @@
-import { Button, Card, Table, Tooltip } from "flowbite-react";
+import { Button, Table, Tooltip } from "flowbite-react";
 import React from "react";
 import { tailwindCss } from "../../tailwind";
 import CriteriaList from "../tests/CriteriaList";
@@ -49,20 +49,6 @@ function TestList({ rows, addCheckbox = false }) {
                                     modalLabel='Thông tin đề thi'
                                     ModalBody={
                                         <ViewDetails
-                                            Header={
-                                                <Card>
-                                                    <div
-                                                        className=' justify-between w-4/6 m-auto
-                                                    '
-                                                    >
-                                                        <div>Mã đề thi: {row.id}</div>
-                                                        <div>Tên đề thi: {row.name}</div>
-                                                        <div>
-                                                            Số lượng câu hỏi: {row.questions.length}
-                                                        </div>
-                                                    </div>
-                                                </Card>
-                                            }
                                             labels={[
                                                 `Danh sách tiêu chí (${row.criteria.length})`,
                                                 `Danh sách câu hỏi (${row.questions.length})`,

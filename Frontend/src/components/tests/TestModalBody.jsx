@@ -3,7 +3,6 @@ import $ from "jquery";
 import React, { useEffect, useState } from "react";
 import { useFieldArray } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
-import { QuestionTableBody } from "..";
 import { chapterState, fetchAllChapters } from "../../features/chapterSlice";
 import {
     loadQuestionsByCriteria,
@@ -13,10 +12,8 @@ import {
 } from "../../features/questionSlice";
 import { subjectState } from "../../features/subjectSlice";
 import { setAddTestDisabled, testState } from "../../features/testSlice";
-import { questionColumnsTestPage } from "../../pages/columns";
 import Help from "../../partials/header/Help";
 import { tailwindCss } from "../../tailwind";
-import TableHeader from "../utils/tables/TableHeader";
 import Input from "../utils/userInputs/Input";
 import Select from "../utils/userInputs/Select";
 
@@ -50,7 +47,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
     const [selectedCriteria, setSelectedCriteria] = useState(null);
 
     const { editedTest, addTestDisabled, userTests } = useSelector(testState);
-    const { subjects } = useSelector(subjectState);
+    const { subjectsHaveQuestion: subjects } = useSelector(subjectState);
     const { chapters } = useSelector(chapterState);
     const { questions, queryAvailableQuestionsArr } = useSelector(questionState);
 
@@ -338,14 +335,14 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                             }
                             label={
                                 isChecked
-                                    ? "Thu gọn tiêu chí chọn đề thi"
-                                    : "Mở rộng tiêu chí chọn đề thi"
+                                    ? "Thu gọn tiêu chí chọn câu hỏi"
+                                    : "Mở rộng tiêu chí chọn câu hỏi"
                             }
                         />{" "}
                         <Collapse in={isChecked}>
                             <ul className='w-full'>
                                 <div className='uppercase flex items-center w-full justify-center text-blue-600 font-semibold'>
-                                    Tiêu chí chọn đề thi ({fields.length}){" "}
+                                    Tiêu chí chọn câu hỏi ({fields.length}){" "}
                                 </div>
                                 {fields.map((field, index) => (
                                     <li
@@ -504,31 +501,6 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                             </div>
                         </Collapse>
                     </div>
-                    {questions && questions.length > 0 && (
-                        <div className='w-full'>
-                            <div className='uppercase text-center font-semibold text-green-700 w-full'>
-                                Danh sách câu hỏi
-                            </div>
-                            <div className='w-full overflow-scroll' style={{ maxHeight: "400px" }}>
-                                <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                                    <TableHeader columns={questionColumnsTestPage} />
-                                    <QuestionTableBody
-                                        rows={questions}
-                                        pageNumber={page}
-                                        addTest
-                                        dispatch={dispatch}
-                                    />
-                                </table>
-                            </div>
-                            {/* <TablePagination
-                                totalElements={totalElements}
-                                totalPages={totalPages}
-                                setPage={setPage}
-                                recordsPerPage={recordsPerPage}
-                                fetchDataByPageNumber={fetchDataByPageNumber}
-                            /> */}
-                        </div>
-                    )}
                 </div>
             ) : (
                 <div className='col-flex items-center justify-center w-full'>
@@ -773,22 +745,6 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
                             </button>
                         </div>
                     </div>
-                    {questions && questions.length > 0 && (
-                        <div className='w-full' style={{ maxHeight: "500px", overflow: "scroll" }}>
-                            <div className='uppercase text-center font-semibold text-green-700 w-full'>
-                                Danh sách câu hỏi
-                            </div>
-                            <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                                <TableHeader columns={questionColumnsTestPage} />
-                                <QuestionTableBody
-                                    rows={questions}
-                                    pageNumber={page}
-                                    addTest
-                                    dispatch={dispatch}
-                                />
-                            </table>
-                        </div>
-                    )}
                 </div>
             )}
         </div>
