@@ -243,20 +243,11 @@ export const examColumns = [
         sortField: "time",
         sortable: true,
     },
-    // {
-    //     name: "Loại thi",
-    //     sortField: "type",
-    //     sortable: true,
-    // },
     {
-        name: "Giảng viên",
-        sortField: "time",
+        name: "Người tạo",
+        sortField: "name",
+        sortable: true,
     },
-    // {
-    //     name: "Người tạo",
-    //     sortField: "name",
-    //     sortable: true,
-    // },
     {
         name: "Thao tác",
         sortField: "name",

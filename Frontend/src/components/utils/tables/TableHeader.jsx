@@ -35,7 +35,7 @@ function TableHeader({ columns, handleSortChange, modalLabel, chapterListPage = 
             <tr>
                 {columns.map(({ name, sortField, sortable }) => {
                     if (
-                        ["ca thi", "câu hỏi", "đề thi"].includes(modalLabel) &&
+                        ["câu hỏi", "đề thi"].includes(modalLabel) &&
                         !userRoles.includes("Quản trị viên") &&
                         name === "Người tạo"
                     ) {

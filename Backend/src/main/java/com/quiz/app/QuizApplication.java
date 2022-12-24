@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class QuizApplication extends SpringBootServletInitializer {
 
 	public static void main(String[] args) {
-		System.out.println(60/60);
 		SpringApplication.run(QuizApplication.class, args);
 	}
 }

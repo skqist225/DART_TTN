@@ -26,7 +26,7 @@ function SubjectTableBody({ rows, setIsEdit }) {
                     <tr className={tailwindCss.tr} key={row.id}>
                         <td className={tailwindCss.tableCell}>
                             {" "}
-                            <Tooltip content={"Xem chi tiết đề thi"}>
+                            <Tooltip content={"Xem chi tiết môn học"}>
                                 <Button
                                     style={{ backgroundColor: "none", width: "100px" }}
                                     onClick={() => {

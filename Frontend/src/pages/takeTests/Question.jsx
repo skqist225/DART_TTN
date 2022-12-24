@@ -1,6 +1,6 @@
 import $ from "jquery";
 import React from "react";
-import { Answer } from "../../components";
+import { Answer, Input } from "../../components";
 
 function Question({ question, finalAnswer, setFinalAnswer, register, activeIndex, index }) {
     return (

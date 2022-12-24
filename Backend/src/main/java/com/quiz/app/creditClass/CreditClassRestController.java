@@ -139,8 +139,15 @@ public class CreditClassRestController {
 
             if (page.equals("0") && haveExam) {
                 if (exams.size() > 0) {
-                    creditClass.setTotalExams(exams.size());
-                    tempCreditClasses.add(creditClass);
+                    if (!StringUtils.isEmpty(teacherId)) {
+                        if (creditClass.getTeacherId().equals(teacherId)) {
+                            creditClass.setTotalExams(exams.size());
+                            tempCreditClasses.add(creditClass);
+                        }
+                    } else {
+                        creditClass.setTotalExams(exams.size());
+                        tempCreditClasses.add(creditClass);
+                    }
                 }
             } else {
                 creditClass.setExams(exams.stream().map(exam -> new ExamCreditClassPageDTO(exam.getId(),

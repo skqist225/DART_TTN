@@ -116,68 +116,79 @@ function ExamTableBody({ rows, setIsEdit }) {
                         </td>
                         <td className={tailwindCss.tableCell}>{row.time} phút</td>{" "}
                         {userRoles.includes("Sinh viên") && (
-                            <td className={tailwindCss.tableCell}>{row.type}</td>
-                        )}
-                        {userRoles.includes("Sinh viên") && (
-                            <td className={tailwindCss.tableCell}>
-                                <Tooltip content={"Xem thông tin ca thi"}>
-                                    <Button
-                                        style={{ backgroundColor: "none" }}
-                                        onClick={() => {
-                                            $(`#viewStudentTakeExamDetails${row.id}`).css(
-                                                "display",
-                                                "flex"
-                                            );
-                                        }}
-                                    >
-                                        Xem
-                                    </Button>
-                                    <TableModalViewer
-                                        modalId={`viewStudentTakeExamDetails${row.id}`}
-                                        modalLabel='DANH SÁCH THI'
-                                        ModalBody={<RegisterList takeExams={row.tempTakeExams} />}
-                                    />
-                                </Tooltip>
-                            </td>
+                            <>
+                                <td className={tailwindCss.tableCell}>{row.type}</td>{" "}
+                                <td className={tailwindCss.tableCell}>
+                                    <Tooltip content={"Xem thông tin ca thi"}>
+                                        <Button
+                                            style={{ backgroundColor: "none" }}
+                                            onClick={() => {
+                                                $(`#viewStudentTakeExamDetails${row.id}`).css(
+                                                    "display",
+                                                    "flex"
+                                                );
+                                            }}
+                                        >
+                                            Xem
+                                        </Button>
+                                        <TableModalViewer
+                                            modalId={`viewStudentTakeExamDetails${row.id}`}
+                                            modalLabel='DANH SÁCH THI'
+                                            ModalBody={
+                                                <RegisterList takeExams={row.tempTakeExams} />
+                                            }
+                                        />
+                                    </Tooltip>
+                                </td>
+                            </>
                         )}
                         {!userRoles.includes("Sinh viên") && (
-                            <td className={tailwindCss.tableCell}>{row.teacherName}</td>
-                        )}
-                        <td className={`${tailwindCss.tableCell} flex items-center`}>
-                            {!userRoles.includes("Sinh viên") && (
-                                <>
-                                    <div className='mr-2'>
+                            <>
+                                <td className={tailwindCss.tableCell}>{row.createdBy}</td>
+                                <td className={`${tailwindCss.tableCell} flex items-center`}>
+                                    <>
+                                        <div className='mr-2'>
+                                            {!userRoles.includes("Quản trị viên") &&
+                                            row.teacherId.toString() !== user.id.toString() ? (
+                                                <></>
+                                            ) : (
+                                                <MyButton
+                                                    type='edit'
+                                                    onClick={() => {
+                                                        $(`#examModal`).css("display", "flex");
+                                                        setIsEdit(true);
+                                                        dispatch(setEditedExam(row));
+                                                    }}
+                                                    disabled={!shouldEdit}
+                                                    customTooltipMessage={shouldEditMessage}
+                                                />
+                                            )}
+                                        </div>
                                         {!userRoles.includes("Quản trị viên") &&
                                         row.teacherId.toString() !== user.id.toString() ? (
                                             <></>
-                                        ) : (
-                                            <MyButton
-                                                type='edit'
-                                                onClick={() => {
-                                                    $(`#examModal`).css("display", "flex");
-                                                    setIsEdit(true);
-                                                    dispatch(setEditedExam(row));
-                                                }}
-                                                disabled={!shouldEdit}
-                                                customTooltipMessage={shouldEditMessage}
-                                            />
-                                        )}
-                                    </div>
-                                    {!userRoles.includes("Quản trị viên") &&
-                                    row.teacherId.toString() !== user.id.toString() ? (
-                                        <></>
-                                    ) : userRoles.includes("Quản trị viên") ? (
-                                        <>
-                                            <div className='mr-2'>
-                                                <EnableOrDisable
-                                                    status={row.status}
-                                                    enableOrDisable={enableOrDisableExam}
-                                                    id={row.id}
-                                                    disabled={!shouldCancel}
-                                                    creditClassPage={true}
-                                                    customTooltipMessage={shouldCancelMessage}
+                                        ) : userRoles.includes("Quản trị viên") ? (
+                                            <>
+                                                <div className='mr-2'>
+                                                    <EnableOrDisable
+                                                        status={row.status}
+                                                        enableOrDisable={enableOrDisableExam}
+                                                        id={row.id}
+                                                        disabled={!shouldCancel}
+                                                        creditClassPage={true}
+                                                        customTooltipMessage={shouldCancelMessage}
+                                                    />
+                                                </div>
+                                                <MyButton
+                                                    type='delete'
+                                                    onClick={() => {
+                                                        dispatch(deleteExam(row.id));
+                                                    }}
+                                                    disabled={!shouldDelete}
+                                                    customTooltipMessage={shouldDeleteMessage}
                                                 />
-                                            </div>
+                                            </>
+                                        ) : (
                                             <MyButton
                                                 type='delete'
                                                 onClick={() => {
@@ -186,20 +197,11 @@ function ExamTableBody({ rows, setIsEdit }) {
                                                 disabled={!shouldDelete}
                                                 customTooltipMessage={shouldDeleteMessage}
                                             />
-                                        </>
-                                    ) : (
-                                        <MyButton
-                                            type='delete'
-                                            onClick={() => {
-                                                dispatch(deleteExam(row.id));
-                                            }}
-                                            disabled={!shouldDelete}
-                                            customTooltipMessage={shouldDeleteMessage}
-                                        />
-                                    )}
-                                </>
-                            )}
-                        </td>
+                                        )}
+                                    </>
+                                </td>
+                            </>
+                        )}
                     </tr>
                 );
             })}

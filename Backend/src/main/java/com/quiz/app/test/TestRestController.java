@@ -83,7 +83,8 @@ public class TestRestController {
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
             @RequestParam(name = "subject", required = false, defaultValue = "") String subjectId,
             @RequestParam(name = "notUsedTest", required = false, defaultValue = "false") boolean notUsedTest,
-            @RequestParam(name = "examId", required = false, defaultValue = "") Integer examId
+            @RequestParam(name = "examId", required = false, defaultValue = "") Integer examId,
+            @RequestParam(name = "teacher", required = false, defaultValue = "") String teacherId
     ) throws NotFoundException {
         TestsDTO testsDTO = new TestsDTO();
 
@@ -116,7 +117,7 @@ public class TestRestController {
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
             filters.put("subjectId", subjectId);
-
+            filters.put("teacherId", teacherId);
             Page<Test> testPage = testService.findAllTests(filters);
 
             testsDTO.setTests(testPage.getContent());

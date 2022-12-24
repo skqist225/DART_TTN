@@ -63,15 +63,13 @@ function ExamFilter({ setValue }) {
                                             group,
                                             totalExams,
                                         }) => ({
-                                            title: `${schoolYear}-${semester}-${subjectName}-${group} (${
-                                                totalExams || 0
-                                            })`,
+                                            title: `${schoolYear}-${semester}-${subjectName}-${group}`,
                                             value: id,
                                         })
                                     )}
                                     onChangeHandler={handleCreditClassChange}
                                     hiddenOption
-                                    width={"w-92"}
+                                    width={"w-80"}
                                 />
                             </div>
                             <div>
@@ -121,18 +119,33 @@ function ExamFilter({ setValue }) {
                                     })
                                 );
                             } else {
-                                dispatch(
-                                    fetchAllExams({
-                                        page: 1,
-                                        query: "",
-                                        sortField: "id",
-                                        sortDir: "desc",
-                                        subject: "",
-                                        teacher: "",
-                                        student: "",
-                                        type: "",
-                                    })
-                                );
+                                if (userRoles.includes("Quản trị viên")) {
+                                    dispatch(
+                                        fetchAllExams({
+                                            page: 1,
+                                            query: "",
+                                            sortField: "id",
+                                            sortDir: "desc",
+                                            subject: "",
+                                            teacher: "",
+                                            student: "",
+                                            type: "",
+                                        })
+                                    );
+                                } else {
+                                    dispatch(
+                                        fetchAllExams({
+                                            page: 1,
+                                            query: "",
+                                            sortField: "id",
+                                            sortDir: "desc",
+                                            subject: "",
+                                            teacher: user.id,
+                                            student: "",
+                                            type: "",
+                                        })
+                                    );
+                                }
                             }
 
                             $("#creditClassFilter").val("");

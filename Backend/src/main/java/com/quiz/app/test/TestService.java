@@ -127,6 +127,7 @@ public class TestService {
         String sortDir = filters.get("sortDir");
         String sortField = filters.get("sortField");
         String subjectId = filters.get("subjectId");
+        String teacherId = filters.get("teacherId");
 
         Sort sort = null;
         if (sortField.equals("numberOfQuestions")) {
@@ -166,6 +167,11 @@ public class TestService {
         if (!StringUtils.isEmpty(subjectId)) {
             Expression<String> subject = root.get("subject").get("id");
             predicates.add(criteriaBuilder.and(criteriaBuilder.equal(subject, subjectId)));
+        }
+        System.out.println(teacherId);
+        if (!StringUtils.isEmpty(teacherId)) {
+            Expression<String> teacher = root.get("teacher").get("id");
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(teacher, teacherId)));
         }
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));

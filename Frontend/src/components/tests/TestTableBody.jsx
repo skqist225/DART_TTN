@@ -121,8 +121,8 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
                                                 onClick={() => {
                                                     dispatch(deleteTest(row.id));
                                                 }}
-                                                // disabled={!shouldCancel}
-                                                // customTooltipMessage={shouldDeleteMessage}
+                                                disabled={!shouldCancel}
+                                                customTooltipMessage={shouldDeleteMessage}
                                             />
                                         </div>
                                         {userRoles.includes("Quản trị viên") && (

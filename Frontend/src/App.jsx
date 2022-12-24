@@ -44,7 +44,7 @@ function App() {
         } else if (userRoles.includes("Giảng viên")) {
             HomePage = <QuestionsPage />;
         } else {
-            HomePage = <RanksPage />;
+            HomePage = <ExamsPage />;
         }
     }
 

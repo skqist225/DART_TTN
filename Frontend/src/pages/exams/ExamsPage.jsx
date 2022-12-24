@@ -48,22 +48,30 @@ function ExamsPage() {
             // 3. Lớp tín chỉ chưa hủy : active: true,
             // 4. Lớp tín chỉ có danh sách đăng ký : haveRegister: true,
             dispatch(fetchCreditClassesForExamAdded());
-            dispatch(
-                fetchAllCreditClasses({
-                    page: 0,
-                    haveExam: true,
-                })
-            );
+
             if (userRoles.includes("Quản trị viên")) {
                 dispatch(
                     fetchAllExams({
                         page: 1,
                     })
                 );
+                dispatch(
+                    fetchAllCreditClasses({
+                        page: 0,
+                        haveExam: true,
+                    })
+                );
             } else {
                 dispatch(
                     fetchAllExams({
                         page: 1,
+                        teacher: user.id,
+                    })
+                );
+                dispatch(
+                    fetchAllCreditClasses({
+                        page: 0,
+                        haveExam: true,
                         teacher: user.id,
                     })
                 );

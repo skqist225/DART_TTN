@@ -1,3 +1,4 @@
+import { Button } from "flowbite-react";
 import $ from "jquery";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
@@ -58,7 +59,7 @@ function QuestionsFilter({ setValue }) {
                     width={"w-60"}
                 />
             </div>
-            {userRoles.includes("Quản trị viên") && (
+            {userRoles.includes("Quản trị viên") ? (
                 <div className='mr-2 w-full flex items-center'>
                     <Select
                         label='người soạn'
@@ -69,6 +70,17 @@ function QuestionsFilter({ setValue }) {
                         hiddenOption={true}
                         width={"w-52"}
                     />
+                </div>
+            ) : (
+                <div className='mr-2 w-full flex items-center'>
+                    <Button
+                        type='button'
+                        onClick={e => {
+                            dispatch(fetchAllQuestions({ ...filterObject, teacher: user.id }));
+                        }}
+                    >
+                        Giảng viên soạn
+                    </Button>
                 </div>
             )}
 

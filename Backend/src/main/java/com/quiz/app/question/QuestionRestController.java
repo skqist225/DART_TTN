@@ -213,7 +213,6 @@ public class QuestionRestController {
                 question.setType(type);
                 question.setLevel(Question.lookUpLevel(levelStr));
                 question.setChapter(chapter);
-                question.setTeacher(teacher);
 
                 if (Objects.isNull(question.getAnswers())) {
                     question.setAnswers(new ArrayList<>());

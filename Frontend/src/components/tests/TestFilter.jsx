@@ -1,7 +1,9 @@
+import { Button } from "flowbite-react";
 import $ from "jquery";
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { persistUserState } from "../../features/persistUserSlice";
 import { subjectState } from "../../features/subjectSlice";
 import { fetchAllTests, testState } from "../../features/testSlice";
 import Select from "../utils/userInputs/Select";
@@ -9,6 +11,7 @@ import Select from "../utils/userInputs/Select";
 function TestFilter() {
     const dispatch = useDispatch();
     const { filterObject } = useSelector(testState);
+    const { user } = useSelector(persistUserState);
     const { subjectsHaveQuestion: subjects } = useSelector(subjectState);
     const { register, handleSubmit } = useForm();
 
@@ -44,6 +47,18 @@ function TestFilter() {
                     hiddenOption
                     width={"w-60"}
                 />
+            </div>
+            <div className='mr-2 w-full flex items-center justify-start'>
+                <div className='mr-2 w-full flex items-center'>
+                    <Button
+                        type='button'
+                        onClick={e => {
+                            dispatch(fetchAllTests({ ...filterObject, teacher: user.id }));
+                        }}
+                    >
+                        Giảng viên soạn
+                    </Button>
+                </div>
             </div>
             <div>
                 <button
