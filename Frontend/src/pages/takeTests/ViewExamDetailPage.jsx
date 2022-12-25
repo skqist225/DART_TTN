@@ -76,8 +76,11 @@ function ViewExamDetailPage() {
         <div style={{ width: "1280px", margin: "auto", maxWidth: "90%" }}>
             {fakeHandInDTO && fakeHandInDTO.questions && (
                 <div>
-                    <div className='flex items-start'>
-                        <div className='flex-1 w-40 max-w-xs box-sh'>
+                    <div className='flex items-start relative'>
+                        <div
+                            className='flex-1 w-40 max-w-xs box-sh
+                        '
+                        >
                             <div className='bg-white p-4 mr-5'>
                                 <div className='text-center font-semibold'>
                                     <span style={{ color: "#00C48C" }} className='text-base'>
@@ -169,9 +172,9 @@ function ViewExamDetailPage() {
                         </div>
 
                         <div
-                            className={`flex-1 w-60 bg-white rounded-md p-4 col-flex items-center justify-center min-h-screen`}
+                            className={`flex-1 w-60 bg-white rounded-md p-4 col-flex items-center justify-center min-h-screen max-h-screen`}
                         >
-                            <div className='w-full flex-1'>
+                            <div className='w-full flex-1 overflow-scroll'>
                                 {questions.length &&
                                     questions.map((question, index) => {
                                         let additionalClass = "";
@@ -197,7 +200,10 @@ function ViewExamDetailPage() {
                                             );
                                         }
                                         return (
-                                            <div key={question.id} className='w-full'>
+                                            <div
+                                                key={question.id}
+                                                className='w-full border-2 my-2 p-3 rounded-md'
+                                            >
                                                 <p
                                                     className={
                                                         additionalClass +
@@ -211,7 +217,7 @@ function ViewExamDetailPage() {
                                                         question.selectedAnswer &&
                                                         `Câu trả lời của SV: ${question.selectedAnswer}`}
                                                     {question.type === "Nhiều đáp án" &&
-                                                        ". Sinh viên có thể lựa chọn nhiều đáp án"}
+                                                        "(Có thể lựa chọn nhiều đáp án)"}
                                                 </p>
                                                 {question.type === "Đáp án điền" ? (
                                                     <>
@@ -298,6 +304,25 @@ function ViewExamDetailPage() {
                                                             />
                                                         );
                                                     })
+                                                )}
+                                                {(question.type === "Nhiều đáp án" ||
+                                                    question.type === "Một đáp án") && (
+                                                    <div>
+                                                        <div>
+                                                            {"=>"} Đáp án của câu hỏi là:{" "}
+                                                            <span className='font-semibold'>
+                                                                {question.finalAnswer}
+                                                            </span>{" "}
+                                                        </div>
+
+                                                        <div>
+                                                            {"=>"} Đáp án của sinh viên là:{" "}
+                                                            <span className='font-semibold'>
+                                                                {question.selectedAnswer ||
+                                                                    "Không chọn"}
+                                                            </span>
+                                                        </div>
+                                                    </div>
                                                 )}
                                             </div>
                                         );

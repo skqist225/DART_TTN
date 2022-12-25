@@ -233,12 +233,23 @@ function ExamsPage() {
     };
 
     const handleQueryChange = ({ target: { value: query } }) => {
-        dispatch(
-            fetchAllExams({
-                ...filterObject,
-                query,
-            })
-        );
+        if (userRoles.includes("Quản trị viên")) {
+            dispatch(
+                fetchAllExams({
+                    ...filterObject,
+                    query,
+                })
+            );
+        } else if (userRoles.includes("Giảng viên")) {
+            dispatch(
+                fetchAllExams({
+                    ...filterObject,
+                    query,
+                    teacher: user.id,
+                })
+            );
+        } else {
+        }
     };
 
     const handleSortChange = (sortField, sortDir) => {
@@ -308,6 +319,8 @@ function ExamsPage() {
         clearErrors();
     }
 
+    const columns = userRoles.includes("Sinh viên") ? studentExamColumns : examColumns;
+
     return (
         <Frame
             sidebarOpen={sidebarOpen}
@@ -319,10 +332,10 @@ function ExamsPage() {
             }
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã ca thi, tên ca thi, ngày thi, tiết báo danh`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã ca thi, tên ca thi`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
-                    columns={userRoles.includes("Sinh viên") ? studentExamColumns : examColumns}
+                    columns={columns}
                     fetchDataByPageNumber={fetchDataByPageNumber}
                     rows={exams}
                     totalElements={totalElements}

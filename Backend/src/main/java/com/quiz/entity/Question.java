@@ -136,7 +136,7 @@ public class Question {
     }
 
     @Transient
-    public boolean getShouldFullyEdit() {
+    public boolean getShouldTeacherEdit() {
         for (Test test : tests) {
             if (test.isStatus()) {
                 return false;
@@ -144,6 +144,11 @@ public class Question {
         }
 
         return true;
+    }
+
+    @Transient
+    public boolean getShouldFullyEdit() {
+        return this.tests.size() == 0;
     }
 
     public static Level lookUpLevel(String levelStr) {

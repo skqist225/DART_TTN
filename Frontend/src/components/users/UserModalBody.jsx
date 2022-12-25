@@ -155,7 +155,7 @@ function UserModalBody({ errors, register, setValue, setImage, isEdit, setExcelF
                                     }
                                     setValue={setValue}
                                     multiple
-                                    readOnly={editedUser && editedUser.id.startsWith("N")}
+                                    // readOnly={editedUser && editedUser.id.startsWith("N")}
                                 />
                             </div>
                         </div>

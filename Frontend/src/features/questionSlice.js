@@ -244,6 +244,7 @@ const initialState = {
     loadedQuestions: [],
     resetFilter: false,
     queryAvailableQuestionsArr: {},
+    loadedQuestionsSuccessMessage: null,
 };
 
 const questionSlice = createSlice({
@@ -255,6 +256,8 @@ const questionSlice = createSlice({
 
             state.addQuestion.successMessage = null;
             state.editQuestion.successMessage = null;
+
+            state.loadedQuestionsSuccessMessage = null;
 
             state.deleteQuestion.successMessage = null;
             state.deleteQuestion.errorMessage = null;
@@ -321,11 +324,14 @@ const questionSlice = createSlice({
                 state.loading = false;
             })
 
-            .addCase(loadQuestionsByCriteria.pending, (state, { payload }) => {})
+            .addCase(loadQuestionsByCriteria.pending, (state, { payload }) => {
+                state.loadedQuestionsSuccessMessage = null;
+            })
             .addCase(loadQuestionsByCriteria.fulfilled, (state, { payload }) => {
                 state.questions = payload.data;
                 state.totalElements = payload.data.length;
                 state.totalPages = payload.data.length / 10;
+                state.loadedQuestionsSuccessMessage = "Tải danh sách câu hỏi thành công";
             })
             .addCase(loadQuestionsByCriteria.rejected, (state, { payload }) => {})
 

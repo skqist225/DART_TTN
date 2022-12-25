@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
-import { questionColumnsTestPage } from "../../pages/columns";
+import { adminQuestionColumnsTestPage, questionColumnsTestPage } from "../../pages/columns";
 import TableHeader from "../utils/tables/TableHeader";
 import TablePagination from "../utils/tables/TablePagination";
 import QuestionTableBody from "../questions/QuestionTableBody";
+import { useSelector } from "react-redux";
+import { persistUserState } from "../../features/persistUserSlice";
 
 function QuestionList({ questions, chapterListPage = false }) {
     const [pageNumber, setPageNumber] = useState(1);
 
     const [splitedQuestions, setSplitedQuestions] = useState([]);
+
+    const { user } = useSelector(persistUserState);
+    const userRoles = user.roles.map(({ name }) => name);
 
     const recordsPerPage = 12;
 
@@ -32,7 +37,14 @@ function QuestionList({ questions, chapterListPage = false }) {
     return (
         <>
             <table className='w-full text-sm text-left text-gray-500 dark:text-gray-400'>
-                <TableHeader columns={questionColumnsTestPage} chapterListPage={chapterListPage} />
+                <TableHeader
+                    columns={
+                        userRoles.includes("Quản trị viên")
+                            ? adminQuestionColumnsTestPage
+                            : questionColumnsTestPage
+                    }
+                    chapterListPage={chapterListPage}
+                />
                 <QuestionTableBody
                     rows={splitedQuestions}
                     addTest

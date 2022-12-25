@@ -102,7 +102,7 @@ export const testColumns = [
     },
 ];
 
-export const questionColumnsTestPage = [
+export const adminQuestionColumnsTestPage = [
     {
         name: "STT",
     },
@@ -126,6 +126,30 @@ export const questionColumnsTestPage = [
     },
     {
         name: "Người tạo",
+    },
+];
+
+export const questionColumnsTestPage = [
+    {
+        name: "STT",
+    },
+    {
+        name: "Mã câu hỏi",
+    },
+    {
+        name: "Nội dung",
+    },
+    {
+        name: "Đáp án",
+    },
+    {
+        name: "Loại câu hỏi",
+    },
+    {
+        name: "Chương",
+    },
+    {
+        name: "Độ khó",
     },
 ];
 
@@ -205,12 +229,12 @@ export const examColumns = [
     {
         name: "Mã ca thi",
         sortField: "id",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Tên ca thi",
         sortField: "name",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Mã môn học",
@@ -231,22 +255,22 @@ export const examColumns = [
     {
         name: "Ngày thi",
         sortField: "examDate",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Tiết báo danh",
         sortField: "noticePeriod",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Thời gian thi",
         sortField: "time",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Người tạo",
         sortField: "name",
-        sortable: true,
+        // sortable: true,
     },
     {
         name: "Thao tác",

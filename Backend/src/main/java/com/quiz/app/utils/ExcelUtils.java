@@ -34,6 +34,7 @@ public class ExcelUtils {
     }
 
     public void readQuestionFromFile(List<PostCreateQuestionDTO> questions) {
+
         char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();
         List<String> alphabets = new ArrayList<>();
         for (char c : alphabet) {
@@ -43,8 +44,13 @@ public class ExcelUtils {
         for (int i = 1; i < sheet.getPhysicalNumberOfRows(); i++) {
             PostCreateQuestionDTO question = new PostCreateQuestionDTO();
             Row row = sheet.getRow(i);
-
-            String type = row.getCell(0).getStringCellValue();
+            System.out.println(i);
+            String type;
+            try {
+                type = row.getCell(0).getStringCellValue();
+            } catch (NullPointerException e) {
+                type = null;
+            }
             if (Objects.isNull(type) || StringUtils.isEmpty(type)) {
                 break;
             }
@@ -92,6 +98,7 @@ public class ExcelUtils {
 
             questions.add(question);
         }
+
     }
 
     public void readUserFromFile(List<User> users){

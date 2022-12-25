@@ -76,7 +76,7 @@ function ExamTableBody({ rows, setIsEdit }) {
                                     </Button>
                                     <TableModalViewer
                                         modalId={`viewExamDetails${row.id}`}
-                                        modalLabel='Thông tin lớp tín chỉ'
+                                        modalLabel='Thông tin ca thi'
                                         ModalBody={
                                             <ViewDetails
                                                 Header={<></>}

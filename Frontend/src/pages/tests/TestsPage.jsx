@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 import { Frame, Table, TestFilter, TestModalBody, TestTableBody } from "../../components";
 import { persistUserState } from "../../features/persistUserSlice";
 import {
+    clearQuestionState,
     fetchAllQuestions,
     loadQuestionsByCriteria,
     questionState,
@@ -49,7 +50,8 @@ function TestsPage() {
         deleteTest: { successMessage: dsSuccessMessage, errorMessage: dtErrorMessage },
         enableOrDisableTest: { successMessage: eodTest },
     } = useSelector(testState);
-    const { queryAvailableQuestionsArr } = useSelector(questionState);
+    const { queryAvailableQuestionsArr, loadedQuestionsSuccessMessage } =
+        useSelector(questionState);
     const { user } = useSelector(persistUserState);
     const userRoles = user.roles.map(({ name }) => name);
 
@@ -277,6 +279,7 @@ function TestsPage() {
     useEffect(() => {
         return () => {
             dispatch(clearTestState());
+            dispatch(clearQuestionState());
         };
     }, []);
 
@@ -329,6 +332,13 @@ function TestsPage() {
             cleanForm(eodTest, "");
         }
     }, [eodTest]);
+
+    useEffect(() => {
+        if (loadedQuestionsSuccessMessage) {
+            console.log(loadedQuestionsSuccessMessage);
+            callToast("success", loadedQuestionsSuccessMessage);
+        }
+    }, [loadedQuestionsSuccessMessage]);
 
     function onCloseForm() {
         dispatch(setEditedTest(null));

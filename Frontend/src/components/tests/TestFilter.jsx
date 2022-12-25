@@ -40,7 +40,7 @@ function TestFilter() {
                     options={subjects.map(subject => ({
                         title: subject.id.includes("CLC")
                             ? `${subject.name} CLC`
-                            : `${subject.name} (${subject.numberOfTests})`,
+                            : `${subject.name}`,
                         value: subject.id,
                     }))}
                     onChangeHandler={handleSubjectChange}

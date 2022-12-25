@@ -43,6 +43,15 @@ function QuestionTableBody({
                     shouldNotDeleteMessage = "Câu hỏi đã thuộc đề thi được sử dụng không thể xóa";
                 }
 
+                let shouldTeacherEdit = true;
+
+                // Không cho giảng viên sửa câu hỏi của đề thi đã duyệt
+                if (!userRoles.includes("Quản trị viên") && !row.shouldTeacherEdit) {
+                    shouldTeacherEdit = false;
+                    shouldNotEditMessage = "Câu hỏi đã thuộc đề thi được duyệt không thể sửa";
+                    shouldNotDeleteMessage = "Câu hỏi đã thuộc đề thi được duyệt không thể xóa";
+                }
+
                 return (
                     <tr
                         className={`${tailwindCss.tr} ${
@@ -147,7 +156,7 @@ function QuestionTableBody({
                                             dispatch(setEditedQuestion(row));
                                         }}
                                         customTooltipMessage={shouldNotEditMessage}
-                                        disabled={!row.shouldEdit}
+                                        disabled={!row.shouldEdit || !shouldTeacherEdit}
                                     />
                                     <div className='mx-1'>
                                         <MyButton
@@ -156,7 +165,7 @@ function QuestionTableBody({
                                                 dispatch(deleteQuestion(row.id));
                                             }}
                                             customTooltipMessage={shouldNotDeleteMessage}
-                                            disabled={!row.shouldEdit}
+                                            disabled={!row.shouldEdit || !shouldTeacherEdit}
                                         />
                                     </div>
                                     <EnableOrDisable

@@ -354,16 +354,17 @@ function TakeTestPage() {
                             </div>
 
                             <div
-                                className={`flex-1 w-60 bg-white rounded-md p-4 col-flex items-center justify-center ${
-                                    !resultMode && "min-h-screen"
-                                }`}
+                                className={`flex-1 w-60 bg-white rounded-md p-4 col-flex items-center justify-center min-h-screen max-h-screen`}
                             >
                                 {!resultMode && (
                                     <Box sx={{ width: "100%" }}>
                                         <LinearProgressWithLabel value={progress} />
                                     </Box>
                                 )}
-                                <div className='w-full flex-1'>
+                                <div
+                                    className='w-full flex-1 overflow-scroll
+                                '
+                                >
                                     {!resultMode && !viewExamDetails
                                         ? questions.length &&
                                           questions.map((question, index) => {
@@ -417,7 +418,10 @@ function TakeTestPage() {
                                                 );
                                             }
                                             return (
-                                                <div key={question.id} className='w-full'>
+                                                <div
+                                                    key={question.id}
+                                                    className='w-full border-2 my-2 p-3 rounded-md'
+                                                >
                                                     <p
                                                         className={
                                                             additionalClass +
@@ -523,6 +527,25 @@ function TakeTestPage() {
                                                                 />
                                                             );
                                                         })
+                                                    )}
+                                                    {(question.type === "Nhiều đáp án" ||
+                                                        question.type === "Một đáp án") && (
+                                                        <div>
+                                                            <div>
+                                                                {"=>"} Đáp án của câu hỏi là:{" "}
+                                                                <span className='font-semibold'>
+                                                                    {question.finalAnswer}
+                                                                </span>{" "}
+                                                            </div>
+
+                                                            <div>
+                                                                {"=>"} Đáp án của sinh viên là:{" "}
+                                                                <span className='font-semibold'>
+                                                                    {question.selectedAnswer ||
+                                                                        "Không chọn"}
+                                                                </span>
+                                                            </div>
+                                                        </div>
                                                     )}
                                                 </div>
                                             );

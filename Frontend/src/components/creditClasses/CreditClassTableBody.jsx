@@ -384,14 +384,14 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                                                 customTooltipMessage={couldNotDeleteMessage}
                                             />
                                         </div>
-                                        <EnableOrDisable
+                                        {/* <EnableOrDisable
                                             status={row.status}
                                             enableOrDisable={enableOrDisableCreditClass}
                                             id={row.id}
                                             creditClassPage={true}
                                             disabled={!shouldCancel}
                                             customTooltipMessage={couldNotCancelMessage}
-                                        />
+                                        /> */}
                                     </>
                                 )}
                                 <div className='mx-2'>

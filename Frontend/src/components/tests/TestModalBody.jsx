@@ -47,7 +47,7 @@ function TestModalBody({ errors, register, setValue, control, getValues, clearEr
     const [selectedCriteria, setSelectedCriteria] = useState(null);
 
     const { editedTest, addTestDisabled, userTests } = useSelector(testState);
-    const { subjectsHaveQuestion: subjects } = useSelector(subjectState);
+    const { subjects } = useSelector(subjectState);
     const { chapters } = useSelector(chapterState);
     const { questions, queryAvailableQuestionsArr } = useSelector(questionState);
 
