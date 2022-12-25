@@ -87,6 +87,7 @@ function Table({
                         (modalLabel === "lớp tín chỉ" && !userRoles.includes("Quản trị viên")) ||
                         (modalLabel === "ca thi" && userRoles.includes("Sinh viên")) ||
                         (modalLabel === "ca thi" && !userRoles.includes("Quản trị viên")) ||
+                        modalLabel === "bài thi đã làm" ||
                         modalLabel === "Bảng xếp hạng" ? (
                             <></>
                         ) : (

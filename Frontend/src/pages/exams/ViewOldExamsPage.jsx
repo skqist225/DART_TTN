@@ -65,7 +65,7 @@ function ViewOldExamsPage() {
             title={"DANH SÁCH BÀI THI ĐÃ LÀM"}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã ca thi, tên ca thi, ngày thi, tiết báo danh`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã ca thi, tên ca thi`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={userRoles.includes("Sinh viên") ? studentOldExamColumns : examColumns}
