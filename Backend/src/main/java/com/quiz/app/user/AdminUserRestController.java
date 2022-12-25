@@ -53,7 +53,6 @@ public class AdminUserRestController {
             @RequestParam(name = "sortField", required = false, defaultValue = "id") String sortField,
             @RequestParam(name = "role", required = false, defaultValue = "") String role,
             @RequestParam(name = "roleName", required = false, defaultValue = "") String roleName,
-            @RequestParam(name = "statuses", required = false, defaultValue = "1,0") String statuses,
             @RequestParam(name = "limit", required = false, defaultValue = "0") Integer limit,
             @RequestParam(name = "creditClassId", required = false, defaultValue = "0") Integer creditClassId) throws NotFoundException {
         UsersDTO usersDTO = new UsersDTO();
@@ -84,7 +83,6 @@ public class AdminUserRestController {
             filters.put("sortDir", sortDir);
             filters.put("sortField", sortField);
             filters.put("roleName", roleName);
-            filters.put("statuses", statuses);
 
             usersDTO = userService.findAllUsers(filters);
         }

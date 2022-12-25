@@ -35,7 +35,7 @@ public interface UserRepository extends JpaRepository<User, String> {
 
     @Query(value = "SELECT nd.* FROM nguoidung nd left join nguoidung_vaitro ndvt on nd" +
             ".manguoidung = ndvt.manguoidung join vaitro vt on vt.mavaitro = ndvt.mavaitro WHERE "
-            + "vt.tenvaitro IN (\"Giảng viên\", \"Quản trị viên\") group by nd.manguoidung", nativeQuery = true)
+            + "vt.tenvaitro IN (\"Giảng viên\") group by nd.manguoidung", nativeQuery = true)
     List<User> findUserIsNotStudent();
 
     @Query(value = "SELECT COUNT(*) FROM nguoidung", nativeQuery = true)

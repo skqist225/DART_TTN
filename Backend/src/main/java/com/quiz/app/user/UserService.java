@@ -148,21 +148,15 @@ public class UserService {
 
         List<Predicate> predicates = new ArrayList<>();
 
-        Expression<String> id = root.get("id");
-        Expression<String> firstName = root.get("firstName");
-        Expression<String> lastName = root.get("lastName");
-        Expression<String> email = root.get("email");
-        Expression<String> address = root.get("address");
-
         if (!StringUtils.isEmpty(searchQuery)) {
+            Expression<String> id = root.get("id");
+            Expression<String> firstName = root.get("firstName");
+            Expression<String> lastName = root.get("lastName");
+
             Expression<String> wantedQueryField = criteriaBuilder.concat(id, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, lastName);
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
             wantedQueryField = criteriaBuilder.concat(wantedQueryField, firstName);
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, email);
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, " ");
-            wantedQueryField = criteriaBuilder.concat(wantedQueryField, address);
 
             predicates.add(criteriaBuilder.and(criteriaBuilder.like(wantedQueryField, "%" + searchQuery + "%")));
         }

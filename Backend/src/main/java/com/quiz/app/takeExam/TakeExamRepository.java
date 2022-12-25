@@ -65,7 +65,8 @@ public interface TakeExamRepository extends CrudRepository<TakeExam, TakeExamId>
 
     @Query(value = "select temp2.position from (select @rownum \\:= @rownum + 1 AS position, temp" +
             ".studentId from (SELECT  diem AS score, t.masv AS studentId FROM thi t JOIN cathi ct" +
-            " ON ct.macathi = t.macathi WHERE maltc = :creditClassId AND ct.loaikythi = :examType ORDER " +
+            " ON ct.macathi = t.macathi WHERE maltc = :creditClassId AND ct.loaikythi = :examType" +
+            " AND ct.dahuy = false ORDER " +
             "BY t" +
             ".diem DESC, t.masv DESC) as temp JOIN (SELECT @rownum \\:= 0) r" +
             ") as temp2 where temp2.studentId = :studentId", nativeQuery = true)

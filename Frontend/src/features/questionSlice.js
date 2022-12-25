@@ -313,12 +313,14 @@ const questionSlice = createSlice({
         builder
             .addCase(fetchAllQuestions.pending, (state, { payload }) => {
                 state.loading = true;
+                // state.loadedQuestionsSuccessMessage = null;
             })
             .addCase(fetchAllQuestions.fulfilled, (state, { payload }) => {
                 state.questions = payload.questions;
                 state.totalElements = payload.totalElements;
                 state.totalPages = payload.totalPages;
                 state.loading = false;
+                // state.loadedQuestionsSuccessMessage = "Tải danh sách câu hỏi thành công";
             })
             .addCase(fetchAllQuestions.rejected, (state, { payload }) => {
                 state.loading = false;

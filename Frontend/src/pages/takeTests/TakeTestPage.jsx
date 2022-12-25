@@ -14,8 +14,9 @@ import { examState, fetchAllExams } from "../../features/examSlice";
 import { persistUserState } from "../../features/persistUserSlice";
 import { getQuestions, questionState } from "../../features/questionSlice";
 import { handIn, testState } from "../../features/testSlice";
+import { callToast } from "../../helpers";
 import { tailwindCss } from "../../tailwind";
-import { noticePeriodMappings } from "../../utils/checkExamTime";
+import checkExamTime, { noticePeriodMappings } from "../../utils/checkExamTime";
 import "./css/taketest.css";
 import Question from "./Question";
 
@@ -380,15 +381,23 @@ function TakeTestPage() {
                                               );
                                           })
                                         : !viewExamDetails && (
-                                              <div className='flex items-center justify-center w-full'>
-                                                  <div
-                                                      style={{
-                                                          maxWidth: "350px",
-                                                          maxHeight: "350px",
-                                                      }}
-                                                      className='mb-5'
-                                                  >
-                                                      <Doughnut data={data} />
+                                              <div className='w-full'>
+                                                  <div className='flex items-center justify-center w-full'>
+                                                      <div
+                                                          style={{
+                                                              maxWidth: "350px",
+                                                              maxHeight: "350px",
+                                                          }}
+                                                          className='mb-5'
+                                                      >
+                                                          <Doughnut data={data} />
+                                                      </div>
+                                                  </div>{" "}
+                                                  <div className='text-center w-full'>
+                                                      Điểm của bạn là:{" "}
+                                                      <span className='font-semibold'>
+                                                          {test.mark}
+                                                      </span>
                                                   </div>
                                               </div>
                                           )}

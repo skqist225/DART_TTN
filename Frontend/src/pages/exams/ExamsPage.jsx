@@ -249,6 +249,14 @@ function ExamsPage() {
                 })
             );
         } else {
+            dispatch(
+                fetchAllExams({
+                    ...filterObject,
+                    query,
+                    student: user.id,
+                    taken: false,
+                })
+            );
         }
     };
 

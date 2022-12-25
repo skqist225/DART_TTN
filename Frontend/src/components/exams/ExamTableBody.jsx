@@ -49,11 +49,12 @@ function ExamTableBody({ rows, setIsEdit }) {
                     shouldCancelMessage = "Qua thời gian thi của ca thi";
                     shouldEditMessage = "Qua thời gian thi của ca thi";
                     shouldDeleteMessage = "Qua thời gian thi của ca thi";
-                }
-
-                if (!userRoles.includes("Quản trị viên") && !row.status) {
+                } else if (!userRoles.includes("Quản trị viên") && !row.status) {
                     shouldDelete = false;
+
+                    shouldEdit = false;
                     shouldDeleteMessage = "Ca thi đã duyệt không thể xóa";
+                    shouldEditMessage = "Ca thi đã duyệt không thể sửa";
                 }
 
                 return (

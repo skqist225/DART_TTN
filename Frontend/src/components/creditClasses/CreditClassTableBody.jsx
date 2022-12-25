@@ -217,7 +217,7 @@ function CreditClassTableBody({ rows, setIsEdit }) {
                         couldNotCreateExamMessage = "Môn học của lớp tín chỉ không có đề thi";
                         shouldCreateExam = false;
                     } else if (
-                        row.numberOfActiveStudents - row.numberOfFinalTermExamCreated === 0 &&
+                        row.numberOfActiveStudents - row.numberOfMidTermExamCreated === 0 &&
                         row.numberOfActiveStudents - row.numberOfFinalTermExamCreated === 0
                     ) {
                         couldNotCreateExamMessage = "Đã tạo ca thi cho tất cả sinh viên";

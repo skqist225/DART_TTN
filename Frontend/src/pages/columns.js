@@ -281,13 +281,9 @@ export const examColumns = [
 export const studentExamColumns = [
     {
         name: "Mã ca thi",
-        sortField: "id",
-        sortable: true,
     },
     {
         name: "Tên ca thi",
-        sortField: "name",
-        sortable: true,
     },
     {
         name: "Mã môn học",
@@ -300,18 +296,12 @@ export const studentExamColumns = [
     },
     {
         name: "Ngày thi",
-        sortField: "examDate",
-        sortable: true,
     },
     {
         name: "Tiết báo danh",
-        sortField: "noticePeriod",
-        sortable: true,
     },
     {
         name: "Thời gian thi",
-        sortField: "time",
-        sortable: true,
     },
     {
         name: "Kỳ thi",
@@ -356,74 +346,54 @@ export const creditClassColumns = [
     },
     {
         name: "Năm học",
-        sortField: "content",
+        sortField: "schoolYear",
         sortable: true,
     },
     {
         name: "Học kỳ",
-        sortField: "type",
+        sortField: "semester",
         sortable: true,
     },
     {
         name: "Môn học",
-        sortField: "answerC",
     },
     {
         name: "Nhóm",
-        sortField: "level",
+        sortField: "group",
         sortable: true,
     },
     {
         name: "Tình trạng",
-        sortField: "chapter",
-        sortable: true,
     },
     {
         name: "Giảng viên",
-        sortField: "subject",
-        sortable: true,
     },
     {
         name: "Thao tác",
-        sortable: false,
     },
 ];
 
 export const registerColumns = [
     {
         name: "Mã SV",
-        sortField: "fullName",
-        sortable: true,
     },
     {
         name: "Họ tên",
-        sortField: "creditClass",
-        sortable: true,
     },
     {
         name: "Mã LTC",
-        sortField: "creditClass",
-        sortable: true,
     },
     {
         name: "Niên khóa",
-        sortField: "creditClass",
-        sortable: true,
     },
     {
         name: "Học kỳ",
-        sortField: "creditClass",
-        sortable: true,
     },
     {
         name: "Môn học",
-        sortField: "status",
-        sortable: true,
     },
     {
         name: "Giảng viên",
-        sortField: "status",
-        sortable: true,
     },
 ];
 

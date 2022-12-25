@@ -265,7 +265,7 @@ const UsersPage = () => {
             title={`DANH SÁCH ${modalLabel.toUpperCase()} (${totalElements})`}
             children={
                 <Table
-                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã người dùng, họ & tên, email, địa chỉ`}
+                    searchPlaceHolder={`Tìm kiếm ${modalLabel} :: mã người dùng, họ & tên`}
                     handleQueryChange={handleQueryChange}
                     handleSortChange={handleSortChange}
                     columns={userColumns}

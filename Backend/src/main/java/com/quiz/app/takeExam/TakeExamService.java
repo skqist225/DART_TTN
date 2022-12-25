@@ -173,12 +173,13 @@ public class TakeExamService {
 
             predicates.add(criteriaBuilder.and(creditClassIdExp.in(arrays)));
         }
-
+        Join<TakeExam, Exam> examJoinOptions = root.join("exam", JoinType.INNER);
         System.out.println(examType);
         if (!StringUtils.isEmpty(examType)) {
-            Join<TakeExam, Exam> examJoinOptions = root.join("exam", JoinType.INNER);
-            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(examJoinOptions.get("type"), examType)));
+            predicates.add(criteriaBuilder.and(criteriaBuilder.equal(examJoinOptions.get("status"), false)));
         }
+
+        predicates.add(criteriaBuilder.and(criteriaBuilder.equal(examJoinOptions.get("type"), examType)));
 
         criteriaQuery.where(criteriaBuilder.and(predicates.toArray(new Predicate[predicates.size()])));
         criteriaQuery.orderBy(QueryUtils.toOrders(pageable.getSort(), root, criteriaBuilder));

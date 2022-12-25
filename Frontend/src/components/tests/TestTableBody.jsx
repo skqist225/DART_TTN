@@ -31,6 +31,10 @@ function TestTableBody({ rows, examPage = false, setIsEdit }) {
                     shouldCancelMessage = "Không thể hủy/kích hoạt đề thi đã sử dụng";
                     shouldDeleteMessage = "Không thể xóa đề thi đã sử dụng";
                     shouldEditMessage = "Không thể sửa đề thi đã sử dụng";
+                } else if (!userRoles.includes("Quản trị viên") && row.status) {
+                    shouldCancel = false;
+                    shouldEditMessage = "Không thể sửa đề thi đã được duyệt";
+                    shouldDeleteMessage = "Không thể xóa đề thi đã được duyệt";
                 }
 
                 return (
