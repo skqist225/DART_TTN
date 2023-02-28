@@ -1,24 +1,65 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8" />
-        <link rel="icon" type="image/svg+xml" href="/assets/ttn-transparent-logo.98bb75d0.png" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <title>TTN Application</title>
-      <script type="module" crossorigin src="/assets/index.5135304a.js"></script>
-      <link rel="modulepreload" href="/assets/vendor.4bf3d40a.js">
-      <link rel="stylesheet" href="/assets/index.52b9cbd9.css">
-    </head>
-    <body class="font-inter antialiased bg-slate-100 text-slate-600">
-        <noscript>You need to enable JavaScript to run this app.</noscript>
-        <script>
-            if (localStorage.getItem("sidebar-expanded") == "true") {
-                document.querySelector("body").classList.add("sidebar-expanded");
-            } else {
-                document.querySelector("body").classList.remove("sidebar-expanded");
-            }
-        </script>
-        <div id="root"></div>
-        
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <link
+      rel="icon"
+      type="image/svg+xml"
+      href="/assets/ttn-transparent-logo.98bb75d0.png"
+    />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>TTN Application</title>
+    <script type="module" crossorigin src="/assets/index.5135304a.js"></script>
+    <link rel="modulepreload" href="/assets/vendor.4bf3d40a.js" />
+    <link rel="stylesheet" href="/assets/index.52b9cbd9.css" />
+    <!-- Google tag (gtag.js) -->
+    <script
+      async
+      src="https://www.googletagmanager.com/gtag/js?id=AW-11105436786"
+    ></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag() {
+        dataLayer.push(arguments);
+      }
+      gtag("js", new Date());
+
+      gtag("config", "AW-11105436786");
+    </script>
+    <!-- Google Tag Manager -->
+    <script>
+      (function (w, d, s, l, i) {
+        w[l] = w[l] || [];
+        w[l].push({ "gtm.start": new Date().getTime(), event: "gtm.js" });
+        var f = d.getElementsByTagName(s)[0],
+          j = d.createElement(s),
+          dl = l != "dataLayer" ? "&l=" + l : "";
+        j.async = true;
+        j.src = "https://www.googletagmanager.com/gtm.js?id=" + i + dl;
+        f.parentNode.insertBefore(j, f);
+      })(window, document, "script", "dataLayer", "GTM-MRH9ZWX");
+    </script>
+    <!-- End Google Tag Manager -->
+  </head>
+  <body class="font-inter antialiased bg-slate-100 text-slate-600">
+    <!-- Google Tag Manager (noscript) -->
+    <noscript
+      ><iframe
+        src="https://www.googletagmanager.com/ns.html?id=GTM-MRH9ZWX"
+        height="0"
+        width="0"
+        style="display: none; visibility: hidden"
+      ></iframe
+    ></noscript>
+    <!-- End Google Tag Manager (noscript) -->
+    <noscript>You need to enable JavaScript to run this app.</noscript>
+    <script>
+      if (localStorage.getItem("sidebar-expanded") == "true") {
+        document.querySelector("body").classList.add("sidebar-expanded");
+      } else {
+        document.querySelector("body").classList.remove("sidebar-expanded");
+      }
+    </script>
+    <div id="root"></div>
+  </body>
 </html>
